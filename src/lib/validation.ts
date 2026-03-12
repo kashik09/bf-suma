@@ -13,12 +13,29 @@ export const productSchema = z.object({
 });
 
 export const checkoutSchema = z.object({
-  firstName: z.string().min(2).max(80),
-  lastName: z.string().min(2).max(80),
-  email: z.string().email(),
-  phone: z.string().min(7).max(30),
-  deliveryAddress: z.string().min(10).max(255),
-  notes: z.string().max(500).optional()
+  firstName: z
+    .string()
+    .min(2, "Please enter your first name")
+    .max(80, "Name is too long"),
+  lastName: z
+    .string()
+    .min(2, "Please enter your last name")
+    .max(80, "Name is too long"),
+  email: z
+    .string()
+    .email("Please enter a valid email address"),
+  phone: z
+    .string()
+    .min(7, "Please enter a valid phone number")
+    .max(30, "Phone number is too long"),
+  deliveryAddress: z
+    .string()
+    .min(10, "Please enter your full delivery address")
+    .max(255, "Address is too long"),
+  notes: z
+    .string()
+    .max(500, "Notes are too long")
+    .optional()
 });
 
 export const cartItemSchema = z.object({
