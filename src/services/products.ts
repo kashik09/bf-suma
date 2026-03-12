@@ -1,8 +1,5 @@
-import {
-  FALLBACK_CATEGORIES,
-  FALLBACK_PRODUCTS,
-  SHOP_SORT_OPTIONS
-} from "@/lib/constants";
+import { SHOP_SORT_OPTIONS } from "@/lib/constants";
+import { BFSUMA_CATALOG } from "@/lib/catalog";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type {
   AvailabilityState,
@@ -35,6 +32,8 @@ interface CatalogData {
 }
 
 const LOW_STOCK_THRESHOLD = 10;
+const FALLBACK_CATEGORIES = BFSUMA_CATALOG.categories;
+const FALLBACK_PRODUCTS = BFSUMA_CATALOG.products;
 
 const SORT_ORDER: ProductSort[] = ["featured", "price_asc", "price_desc", "name_asc"];
 
