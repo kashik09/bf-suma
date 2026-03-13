@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -11,7 +12,11 @@ const ubuntu = Ubuntu({
 
 export const metadata: Metadata = {
   title: "BF Suma",
-  description: "Trusted household essentials with clear pricing and fast support."
+  description: "Trusted household essentials with clear pricing and fast support.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg"
+  }
 };
 
 export default function RootLayout({
@@ -21,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={ubuntu.variable}>
-      <body>{children}</body>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }
