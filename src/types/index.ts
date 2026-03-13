@@ -192,8 +192,9 @@ export interface OrderIntakePayload {
 }
 
 export interface OrderIntakeResponse {
-  orderNumber: string;
-  receivedAt: string;
+  persisted: boolean;
+  orderNumber?: string;
+  receivedAt?: string;
   message: string;
 }
 
