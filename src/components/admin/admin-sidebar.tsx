@@ -7,7 +7,6 @@ import {
   Package,
   ShoppingBag,
   Users,
-  Truck,
   BarChart3,
   Settings,
   Store,
@@ -20,7 +19,6 @@ const adminNav = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/drivers", label: "Drivers", icon: Truck },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/admin/settings", label: "Settings", icon: Settings }
 ];
