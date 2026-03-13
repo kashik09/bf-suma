@@ -1,9 +1,11 @@
 import { Card, SectionHeader } from "@/components/ui";
 
-export default function AdminCustomerDetailPage({ params }: { params: { id: string } }) {
+export default async function AdminCustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   return (
     <div className="space-y-6">
-      <SectionHeader title={`Customer ${params.id}`} description="Customer profile and order history scaffold." />
+      <SectionHeader title={`Customer ${id}`} description="Customer profile and order history scaffold." />
       <Card>Customer detail placeholder</Card>
     </div>
   );
