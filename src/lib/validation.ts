@@ -1,0 +1,72 @@
+import { z } from "zod";
+
+export const productSchema = z.object({
+  name: z.string().min(2).max(120),
+  slug: z.string().min(2).max(140),
+  description: z.string().max(2000).optional(),
+  sku: z.string().min(1).max(64),
+  price: z.number().nonnegative(),
+  compareAtPrice: z.number().nonnegative().optional(),
+  stockQty: z.number().int().nonnegative(),
+  categoryId: z.string().uuid(),
+  status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED", "OUT_OF_STOCK"])
+});
+
+export const checkoutSchema = z.object({
+  firstName: z.string().min(2).max(80),
+  lastName: z.string().min(2).max(80),
+  email: z.string().email(),
+  phone: z.string().min(7).max(30),
+  deliveryAddress: z.string().min(10).max(255),
+  notes: z.string().max(500).optional()
+});
+
+export const cartItemSchema = z.object({
+  product_id: z.string().min(1),
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  price: z.number().nonnegative(),
+  image_url: z.string().url(),
+  quantity: z.number().int().min(1).max(99),
+  max_quantity: z.number().int().min(0),
+  availability: z.enum(["in_stock", "low_stock", "out_of_stock"])
+});
+
+export const orderIntakeSchema = checkoutSchema.extend({
+  items: z.array(cartItemSchema).min(1),
+  subtotal: z.number().nonnegative(),
+  deliveryFee: z.number().nonnegative(),
+  total: z.number().nonnegative()
+});
+
+export const inquirySchema = z.object({
+  name: z.string().min(2).max(120),
+  email: z.string().email(),
+  phone: z.preprocess(
+    (value) => {
+      if (typeof value === "string" && value.trim() === "") return undefined;
+      return value;
+    },
+    z.string().min(7).max(30).optional()
+  ),
+  message: z.string().min(10).max(1200),
+  source: z.string().default("contact_page")
+});
+
+export const orderStatusUpdateSchema = z.object({
+  status: z.enum([
+    "PENDING",
+    "CONFIRMED",
+    "PROCESSING",
+    "OUT_FOR_DELIVERY",
+    "DELIVERED",
+    "CANCELED"
+  ])
+});
+
+export type ProductInput = z.infer<typeof productSchema>;
+export type CheckoutInput = z.infer<typeof checkoutSchema>;
+export type CartItemInput = z.infer<typeof cartItemSchema>;
+export type OrderIntakeInput = z.infer<typeof orderIntakeSchema>;
+export type InquiryInput = z.infer<typeof inquirySchema>;
+export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;
