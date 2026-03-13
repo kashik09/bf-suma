@@ -18,6 +18,7 @@ const DELIVERY_FEE = 5000;
 export function CheckoutForm() {
   const { items, subtotal, clear } = useCart();
   const [resultMessage, setResultMessage] = useState<string | null>(null);
+  const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const total = useMemo(() => subtotal + (items.length > 0 ? DELIVERY_FEE : 0), [items.length, subtotal]);
@@ -37,12 +38,14 @@ export function CheckoutForm() {
   async function onSubmit(values: CheckoutInput) {
     if (items.length === 0) {
       setResultMessage("Your cart is empty. Add products before checkout.");
+      setResultStatus("error");
       return;
     }
 
     try {
       setIsSubmitting(true);
       setResultMessage(null);
+      setResultStatus(null);
 
       const response = await submitOrderIntake({
         ...values,
@@ -52,11 +55,23 @@ export function CheckoutForm() {
         total
       });
 
+      if (response.persisted !== true) {
+        setResultMessage(response.message || "Order was not saved. Your cart is still available.");
+        setResultStatus("error");
+        return;
+      }
+
       clear();
       form.reset();
-      setResultMessage(`Order received: ${response.orderNumber}. ${response.message}`);
+      setResultMessage(response.message || "Order saved successfully.");
+      setResultStatus("success");
     } catch (error) {
-      setResultMessage(error instanceof Error ? error.message : "Could not submit order. Try again.");
+      setResultMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not submit order. It was not saved, and your cart is still available."
+      );
+      setResultStatus("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -142,7 +157,11 @@ export function CheckoutForm() {
           {isSubmitting ? "Submitting order..." : "Place Order"}
         </Button>
 
-        {resultMessage ? <p className="text-sm text-slate-700">{resultMessage}</p> : null}
+        {resultMessage ? (
+          <p className={`text-sm ${resultStatus === "success" ? "text-emerald-700" : "text-rose-700"}`}>
+            {resultMessage}
+          </p>
+        ) : null}
       </aside>
     </form>
   );
