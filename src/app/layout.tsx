@@ -10,8 +10,8 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "BF Suma Rebuild",
-  description: "Unified storefront and admin dashboard rebuild"
+  title: "BF Suma",
+  description: "Trusted household essentials with clear pricing and fast support."
 };
 
 export default function RootLayout({
