@@ -15,13 +15,12 @@ export function StoreCartButton() {
 
   return (
     <Link
-      className="relative inline-flex h-10 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800"
+      className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-white transition hover:bg-slate-700"
       href="/cart"
     >
-      <ShoppingCart className="h-4 w-4" />
-      <span>Cart</span>
+      <ShoppingCart className="h-5 w-5" />
       {mounted && count > 0 && (
-        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold">
+        <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
           {count}
         </span>
       )}
