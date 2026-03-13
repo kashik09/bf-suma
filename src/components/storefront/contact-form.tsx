@@ -51,11 +51,11 @@ export function ContactForm() {
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField error={form.formState.errors.email?.message} htmlFor="email" label="Email">
-          <Input id="email" type="email" {...form.register("email")} />
+        <FormField error={form.formState.errors.phone?.message} htmlFor="phone" label="Phone">
+          <Input id="phone" placeholder="+254..." {...form.register("phone")} />
         </FormField>
-        <FormField error={form.formState.errors.phone?.message} htmlFor="phone" label="Phone (Optional)">
-          <Input id="phone" {...form.register("phone")} />
+        <FormField error={form.formState.errors.email?.message} htmlFor="email" label="Email (Optional)">
+          <Input id="email" type="email" {...form.register("email")} />
         </FormField>
       </div>
 
