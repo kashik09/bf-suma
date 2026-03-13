@@ -1,0 +1,2 @@
+-- Initial schema scaffold placeholder.
+-- Phase 3/4 will define concrete DDL for ecommerce entities.

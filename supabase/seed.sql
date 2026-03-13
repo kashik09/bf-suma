@@ -1,0 +1,2 @@
+-- Seed file scaffold
+-- Populate categories, products, and baseline admin users in later phases.
