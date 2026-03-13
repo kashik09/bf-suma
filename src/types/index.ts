@@ -183,7 +183,10 @@ export interface OrderIntakePayload {
   lastName: string;
   email: string;
   phone: string;
-  deliveryAddress: string;
+  fulfillmentType: "delivery" | "pickup";
+  deliveryAddress?: string;
+  pickupLocation?: string;
+  paymentMethod: "pay_on_delivery" | "pay_now";
   notes?: string;
   items: CartItem[];
   subtotal: number;
