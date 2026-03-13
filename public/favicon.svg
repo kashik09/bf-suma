@@ -1,15 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- BF Suma iconic colorful star/flower -->
-  <rect width="32" height="32" rx="6" fill="#ffffff"/>
-  <!-- Petals radiating from center -->
-  <path d="M16 4 L17.5 12 L16 14 L14.5 12 Z" fill="#E85A4F"/>
-  <path d="M24 7 L19 13 L17.5 12 L19.5 10 Z" fill="#F4A259"/>
-  <path d="M28 16 L20 14.5 L18 16 L20 17.5 Z" fill="#8CB369"/>
-  <path d="M24 25 L19 19 L20 17.5 L21 19.5 Z" fill="#5B8E7D"/>
-  <path d="M16 28 L14.5 20 L16 18 L17.5 20 Z" fill="#3BCEAC"/>
-  <path d="M8 25 L13 19 L14.5 20 L12.5 22 Z" fill="#0496FF"/>
-  <path d="M4 16 L12 17.5 L14 16 L12 14.5 Z" fill="#BC96E6"/>
-  <path d="M8 7 L13 13 L12 14.5 L10.5 12 Z" fill="#D81159"/>
-  <!-- Center circle -->
-  <circle cx="16" cy="16" r="3" fill="#333333"/>
+  <defs>
+    <linearGradient id="bfSumaMark" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2F7A4F" />
+      <stop offset="1" stop-color="#1E5136" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#bfSumaMark)" />
+  <text
+    x="16"
+    y="20.5"
+    fill="#F7FFF8"
+    font-family="Ubuntu, Arial, sans-serif"
+    font-size="12"
+    font-weight="700"
+    letter-spacing="0.5"
+    text-anchor="middle"
+  >
+    BF
+  </text>
 </svg>

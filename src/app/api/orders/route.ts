@@ -28,7 +28,7 @@ export async function POST(request: Request) {
         persisted: true,
         orderNumber: result.orderNumber,
         receivedAt: result.receivedAt,
-        message: `Order ${result.orderNumber} saved successfully.`
+        message: `Thanks, your order ${result.orderNumber} has been received.`
       },
       { status: 201 }
     );
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         persisted: false,
-        message: "Order intake is temporarily unavailable. Your order was not saved."
+        message: "We couldn't place your order right now. Please try again in a moment."
       },
       { status: 503 }
     );
