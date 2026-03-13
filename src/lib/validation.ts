@@ -12,7 +12,7 @@ export const productSchema = z.object({
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED", "OUT_OF_STOCK"])
 });
 
-export const checkoutSchema = z.object({
+const checkoutSchemaBase = z.object({
   firstName: z
     .string()
     .trim()
@@ -34,17 +34,50 @@ export const checkoutSchema = z.object({
     .min(7, "Enter a valid phone number")
     .max(30, "Phone number is too long")
     .regex(/^\+?[0-9()\-\s]+$/, "Enter a valid phone number"),
+  fulfillmentType: z.enum(["delivery", "pickup"]),
   deliveryAddress: z
     .string()
     .trim()
-    .min(12, "Add a delivery address we can actually find")
-    .max(255, "Delivery address is too long"),
+    .max(255, "Delivery address is too long")
+    .optional(),
+  pickupLocation: z
+    .string()
+    .trim()
+    .max(120, "Pickup location is too long")
+    .optional(),
+  paymentMethod: z.enum(["pay_on_delivery", "pay_now"]),
   notes: z
     .string()
     .trim()
     .max(500, "Notes are too long")
     .optional()
 });
+
+function validateCheckoutRefinement(
+  data: z.infer<typeof checkoutSchemaBase>,
+  ctx: z.RefinementCtx
+) {
+  if (data.fulfillmentType === "delivery") {
+    if (!data.deliveryAddress || data.deliveryAddress.trim().length < 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["deliveryAddress"],
+        message: "Add at least an area or landmark we can find"
+      });
+    }
+    return;
+  }
+
+  if (!data.pickupLocation || data.pickupLocation.trim().length < 2) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["pickupLocation"],
+      message: "Choose a pickup location"
+    });
+  }
+}
+
+export const checkoutSchema = checkoutSchemaBase.superRefine(validateCheckoutRefinement);
 
 export const cartItemSchema = z.object({
   product_id: z.string().min(1),
@@ -57,12 +90,12 @@ export const cartItemSchema = z.object({
   availability: z.enum(["in_stock", "low_stock", "out_of_stock"])
 });
 
-export const orderIntakeSchema = checkoutSchema.extend({
+export const orderIntakeSchema = checkoutSchemaBase.extend({
   items: z.array(cartItemSchema).min(1),
   subtotal: z.number().nonnegative(),
   deliveryFee: z.number().nonnegative(),
   total: z.number().nonnegative()
-});
+}).superRefine(validateCheckoutRefinement);
 
 export const inquirySchema = z.object({
   name: z.string().min(2, "Please enter your name").max(120),

@@ -15,6 +15,11 @@ import { formatCurrency } from "@/lib/utils";
 import { submitOrderIntake } from "@/services/storefront-api";
 
 const DELIVERY_FEE = 5000;
+const PICKUP_LOCATIONS = [
+  "Main Store - Lubowa",
+  "Main Store - Kampala",
+  "Main Store - Entebbe"
+];
 
 export function CheckoutForm() {
   const { items, subtotal, clear } = useCart();
@@ -23,8 +28,6 @@ export function CheckoutForm() {
   const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const total = useMemo(() => subtotal + (items.length > 0 ? DELIVERY_FEE : 0), [items.length, subtotal]);
-
   const form = useForm<CheckoutInput>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -32,7 +35,10 @@ export function CheckoutForm() {
       lastName: "",
       email: "",
       phone: "",
+      fulfillmentType: "delivery",
       deliveryAddress: "",
+      pickupLocation: PICKUP_LOCATIONS[0],
+      paymentMethod: "pay_on_delivery",
       notes: ""
     }
   });
@@ -41,7 +47,14 @@ export function CheckoutForm() {
   const watchedLastName = form.watch("lastName");
   const watchedPhone = form.watch("phone");
   const watchedEmail = form.watch("email");
+  const watchedFulfillmentType = form.watch("fulfillmentType");
   const watchedDeliveryAddress = form.watch("deliveryAddress");
+  const watchedPickupLocation = form.watch("pickupLocation");
+  const watchedPaymentMethod = form.watch("paymentMethod");
+  const isPickup = watchedFulfillmentType === "pickup";
+  const deliveryFee = items.length > 0 && !isPickup ? DELIVERY_FEE : 0;
+
+  const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
 
   const attentionItems = useMemo(() => {
     const itemsToFix: string[] = [];
@@ -49,9 +62,23 @@ export function CheckoutForm() {
     if (!watchedLastName?.trim()) itemsToFix.push("Add last name");
     if (!watchedPhone?.trim()) itemsToFix.push("Add phone number");
     if (!watchedEmail?.trim()) itemsToFix.push("Add email address");
-    if (!watchedDeliveryAddress?.trim()) itemsToFix.push("Add delivery address");
+    if (watchedFulfillmentType === "pickup") {
+      if (!watchedPickupLocation?.trim()) itemsToFix.push("Choose pickup location");
+    } else if (!watchedDeliveryAddress?.trim()) {
+      itemsToFix.push("Add delivery address");
+    }
+    if (!watchedPaymentMethod) itemsToFix.push("Choose payment method");
     return itemsToFix;
-  }, [watchedDeliveryAddress, watchedEmail, watchedFirstName, watchedLastName, watchedPhone]);
+  }, [
+    watchedDeliveryAddress,
+    watchedEmail,
+    watchedFirstName,
+    watchedFulfillmentType,
+    watchedLastName,
+    watchedPaymentMethod,
+    watchedPhone,
+    watchedPickupLocation
+  ]);
 
   const hasAttention = attentionItems.length > 0;
 
@@ -76,7 +103,7 @@ export function CheckoutForm() {
         ...values,
         items,
         subtotal,
-        deliveryFee: DELIVERY_FEE,
+        deliveryFee,
         total
       });
 
@@ -99,7 +126,10 @@ export function CheckoutForm() {
       setResultStatus("success");
       toast({
         title: "Order received",
-        description: successMessage,
+        description:
+          values.paymentMethod === "pay_now"
+            ? `${successMessage} We will contact you right away to complete payment.`
+            : successMessage,
         variant: "success"
       });
     } catch (error) {
@@ -176,21 +206,75 @@ export function CheckoutForm() {
 
         <section className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Delivery Details</h2>
-            <p className="text-sm text-slate-600">Use an address we can locate quickly for smooth delivery.</p>
+            <h2 className="text-lg font-semibold text-slate-900">Fulfillment and Payment</h2>
+            <p className="text-sm text-slate-600">Choose how you want to receive and pay for your order.</p>
           </div>
 
-          <FormField
-            error={form.formState.errors.deliveryAddress?.message}
-            htmlFor="deliveryAddress"
-            label="Delivery Address"
-          >
-            <Textarea
-              id="deliveryAddress"
-              placeholder="Area, street, nearby landmark, and any useful directions"
-              {...form.register("deliveryAddress")}
-            />
-          </FormField>
+          <fieldset className="space-y-2">
+            <p className="text-sm font-medium text-slate-700">Fulfillment</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+                <input type="radio" value="delivery" {...form.register("fulfillmentType")} />
+                Delivery
+              </label>
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+                <input type="radio" value="pickup" {...form.register("fulfillmentType")} />
+                Pickup
+              </label>
+            </div>
+          </fieldset>
+
+          {isPickup ? (
+            <FormField
+              error={form.formState.errors.pickupLocation?.message}
+              htmlFor="pickupLocation"
+              label="Pickup Location"
+            >
+              <select
+                className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-brand-600 focus:outline-none"
+                id="pickupLocation"
+                {...form.register("pickupLocation")}
+              >
+                {PICKUP_LOCATIONS.map((location) => (
+                  <option key={location} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          ) : (
+            <FormField
+              error={form.formState.errors.deliveryAddress?.message}
+              htmlFor="deliveryAddress"
+              label="Delivery Address"
+            >
+              <Textarea
+                id="deliveryAddress"
+                placeholder="Area, street, nearby landmark, and any useful directions"
+                {...form.register("deliveryAddress")}
+              />
+            </FormField>
+          )}
+
+          <fieldset className="space-y-2">
+            <p className="text-sm font-medium text-slate-700">Payment Method</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+                <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
+                <span>
+                  <span className="block font-medium text-slate-900">{isPickup ? "Pay at pickup" : "Pay on delivery"}</span>
+                  <span className="block text-xs text-slate-500">Pay with cash or mobile money when order arrives.</span>
+                </span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+                <input type="radio" value="pay_now" {...form.register("paymentMethod")} />
+                <span>
+                  <span className="block font-medium text-slate-900">Pay now</span>
+                  <span className="block text-xs text-slate-500">We will contact you immediately to complete payment.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
 
           <FormField error={form.formState.errors.notes?.message} htmlFor="notes" label="Delivery Note (Optional)">
             <Textarea
@@ -233,14 +317,22 @@ export function CheckoutForm() {
               <span className="font-medium">{formatCurrency(subtotal)}</span>
             </div>
             <div className="mb-1 flex items-center justify-between">
-              <span className="text-slate-600">Delivery Fee</span>
-              <span className="font-medium">{formatCurrency(DELIVERY_FEE)}</span>
+              <span className="text-slate-600">{isPickup ? "Pickup Fee" : "Delivery Fee"}</span>
+              <span className="font-medium">{isPickup ? "Free" : formatCurrency(deliveryFee)}</span>
             </div>
             <div className="flex items-center justify-between text-base font-semibold">
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
             </div>
           </div>
+
+          <p className="text-xs text-slate-500">
+            {watchedPaymentMethod === "pay_now"
+              ? "Pay-now requests are confirmed directly by our team after order submission."
+              : isPickup
+                ? "You can pay when you collect your order."
+                : "You can pay when your order is delivered."}
+          </p>
 
           <Button className="mt-4 w-full" disabled={isSubmitting} type="submit">
             {isSubmitting ? "Placing order..." : "Place Order"}
