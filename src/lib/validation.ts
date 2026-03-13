@@ -15,25 +15,33 @@ export const productSchema = z.object({
 export const checkoutSchema = z.object({
   firstName: z
     .string()
-    .min(2, "Please enter your first name")
-    .max(80, "Name is too long"),
+    .trim()
+    .min(1, "Please enter your first name")
+    .max(80, "First name is too long"),
   lastName: z
     .string()
-    .min(2, "Please enter your last name")
-    .max(80, "Name is too long"),
+    .trim()
+    .min(1, "Please enter your last name")
+    .max(80, "Last name is too long"),
   email: z
     .string()
-    .email("Please enter a valid email address"),
+    .trim()
+    .min(1, "Please enter your email address")
+    .email("Your email address looks incomplete"),
   phone: z
     .string()
-    .min(7, "Please enter a valid phone number")
-    .max(30, "Phone number is too long"),
+    .trim()
+    .min(7, "Enter a valid phone number")
+    .max(30, "Phone number is too long")
+    .regex(/^\+?[0-9()\-\s]+$/, "Enter a valid phone number"),
   deliveryAddress: z
     .string()
-    .min(10, "Please enter your full delivery address")
-    .max(255, "Address is too long"),
+    .trim()
+    .min(12, "Add a delivery address we can actually find")
+    .max(255, "Delivery address is too long"),
   notes: z
     .string()
+    .trim()
     .max(500, "Notes are too long")
     .optional()
 });
