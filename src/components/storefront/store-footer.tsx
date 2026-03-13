@@ -20,25 +20,25 @@ export function StoreFooter() {
 
         <div>
           <h4 className="text-sm font-semibold text-slate-900">Explore</h4>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-600">
             {STORE_NAV_LINKS.map((item) => (
-              <Link href={item.href} key={item.href}>
+              <Link className="hover:text-brand-600" href={item.href} key={item.href}>
                 {item.label}
               </Link>
             ))}
-            <Link href="/faq">FAQ</Link>
+            <Link className="hover:text-brand-600" href="/faq">FAQ</Link>
           </div>
         </div>
 
         <div>
           <h4 className="text-sm font-semibold text-slate-900">Support</h4>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
-            <Link href="/contact">Contact Form</Link>
-            <a href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-600">
+            <Link className="hover:text-brand-600" href="/contact">Contact Form</Link>
+            <a className="hover:text-brand-600" href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
               WhatsApp
             </a>
-            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-            <a href={`tel:${SUPPORT_PHONE}`}>{SUPPORT_PHONE}</a>
+            <a className="hover:text-brand-600" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            <a className="hover:text-brand-600" href={`tel:${SUPPORT_PHONE}`}>{SUPPORT_PHONE}</a>
           </div>
         </div>
       </PageContainer>
