@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 
 export function StoreCartButton() {
@@ -14,10 +15,16 @@ export function StoreCartButton() {
 
   return (
     <Link
-      className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
+      className="relative inline-flex h-10 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800"
       href="/cart"
     >
-      Cart {mounted && count > 0 ? `(${count})` : ""}
+      <ShoppingCart className="h-4 w-4" />
+      <span>Cart</span>
+      {mounted && count > 0 && (
+        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold">
+          {count}
+        </span>
+      )}
     </Link>
   );
 }
