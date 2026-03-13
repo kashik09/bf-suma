@@ -1,7 +1,6 @@
-import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { inquirySchema } from "@/lib/validation";
+import { createInquiry } from "@/services/inquiries";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -18,30 +17,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data, error } = await supabase
-      .from("inquiries")
-      .insert({
-        name: parsed.data.name,
-        email: parsed.data.email,
-        phone: parsed.data.phone || null,
-        message: parsed.data.message,
-        source: parsed.data.source,
-        status: "NEW"
-      })
-      .select("id, status")
-      .single();
-
-    if (error) throw error;
+    const data = await createInquiry(parsed.data);
 
     return NextResponse.json({
       id: data.id,
       status: data.status
-    });
+    }, { status: 201 });
   } catch {
-    return NextResponse.json({
-      id: randomUUID(),
-      status: "NEW"
-    });
+    return NextResponse.json(
+      {
+        message: "Inquiry intake is temporarily unavailable. Please try again later or use WhatsApp support."
+      },
+      { status: 503 }
+    );
   }
 }
