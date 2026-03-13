@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatCurrency } from "@/lib/utils";
 import { useCart } from "@/hooks/use-cart";
+import { useToast } from "@/components/ui/toast";
 import type { StorefrontProduct } from "@/types";
 
 function availabilityLabel(availability: StorefrontProduct["availability"]) {
@@ -22,9 +23,9 @@ function availabilityVariant(availability: StorefrontProduct["availability"]) {
 
 export function ProductDetail({ product }: { product: StorefrontProduct }) {
   const { addItem } = useCart();
+  const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(product.gallery_urls[0] || product.image_url);
-  const [message, setMessage] = useState<string | null>(null);
 
   const isUnavailable = product.availability === "out_of_stock";
 
@@ -42,12 +43,20 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
 
   function handleAddToCart() {
     if (isUnavailable) {
-      setMessage("This product is currently unavailable and cannot be added to cart.");
+      toast({
+        title: "Item unavailable",
+        description: "This product is currently out of stock.",
+        variant: "error"
+      });
       return;
     }
 
     addItem(product, quantity);
-    setMessage("Added to cart.");
+    toast({
+      title: "Added to cart",
+      description: `${product.name} x${quantity}`,
+      variant: "success"
+    });
   }
 
   return (
@@ -86,7 +95,13 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
               -
             </button>
             <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
-            <button className="h-9 w-9 rounded-md bg-slate-100" onClick={increment} type="button">
+            <button
+              className="h-9 w-9 rounded-md bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-200"
+              disabled={quantity >= maxQuantity}
+              onClick={increment}
+              title={quantity >= maxQuantity ? "You've reached available quantity." : "Increase quantity"}
+              type="button"
+            >
               +
             </button>
           </div>
@@ -108,8 +123,6 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
             Order via WhatsApp
           </a>
         </div>
-
-        {message ? <p className="text-sm text-slate-700">{message}</p> : null}
       </div>
     </section>
   );
