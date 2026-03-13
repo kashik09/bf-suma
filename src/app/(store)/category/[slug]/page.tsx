@@ -5,15 +5,16 @@ import { ProductGrid } from "@/components/storefront";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getStorefrontCategoryBySlug, listStorefrontProducts } from "@/services/products";
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const category = await getStorefrontCategoryBySlug(params.slug);
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const category = await getStorefrontCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
   const products = await listStorefrontProducts({
-    categorySlug: params.slug,
+    categorySlug: slug,
     sort: "featured"
   });
 
