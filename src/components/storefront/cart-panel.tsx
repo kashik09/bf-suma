@@ -4,10 +4,23 @@ import Link from "next/link";
 import { useCart } from "@/hooks/use-cart";
 import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export function CartPanel() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
+
+  const getAvailabilityMeta = (availability: "in_stock" | "low_stock" | "out_of_stock") => {
+    if (availability === "in_stock") {
+      return { label: "In Stock", variant: "success" as const };
+    }
+
+    if (availability === "low_stock") {
+      return { label: "Low Stock", variant: "warning" as const };
+    }
+
+    return { label: "Out of Stock", variant: "danger" as const };
+  };
 
   if (items.length === 0) {
     return (
@@ -21,43 +34,57 @@ export function CartPanel() {
   return (
     <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
       <div className="space-y-3">
-        {items.map((item) => (
-          <div className="rounded-lg border border-slate-200 bg-white p-4" key={item.product_id}>
-            <div className="flex items-start gap-4">
-              <div className="h-20 w-20 rounded-md bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
-              <div className="flex-1 space-y-2">
-                <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
-                <p className="text-sm text-slate-500">{formatCurrency(item.price)}</p>
+        {items.map((item) => {
+          const availability = getAvailabilityMeta(item.availability);
 
-                <div className="flex items-center gap-2">
-                  <button
-                    className="h-8 w-8 rounded-md bg-slate-100"
-                    onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                    type="button"
-                  >
-                    -
-                  </button>
-                  <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
-                  <button
-                    className="h-8 w-8 rounded-md bg-slate-100"
-                    onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                    type="button"
-                  >
-                    +
-                  </button>
+          return (
+            <div className="rounded-lg border border-slate-200 bg-white p-4" key={item.product_id}>
+              <div className="flex items-start gap-4">
+                <div className="h-20 w-20 rounded-md bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
+                <div className="flex-1 space-y-2">
+                  <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
+                  <p className="text-sm text-slate-500">{formatCurrency(item.price)}</p>
+                  <Badge variant={availability.variant}>{availability.label}</Badge>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="h-8 w-8 rounded-md bg-slate-100"
+                      disabled={item.quantity <= 1}
+                      onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                      type="button"
+                    >
+                      -
+                    </button>
+                    <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
+                    <button
+                      className="h-8 w-8 rounded-md bg-slate-100"
+                      disabled={item.availability === "out_of_stock" || item.quantity >= item.max_quantity}
+                      title={
+                        item.availability === "out_of_stock"
+                          ? "This product is out of stock."
+                          : item.quantity >= item.max_quantity
+                            ? "You reached the available quantity."
+                            : "Increase quantity"
+                      }
+                      onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                      type="button"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                className="text-sm font-medium text-red-600"
-                onClick={() => removeItem(item.product_id)}
-                type="button"
-              >
-                Remove
-              </button>
+                <button
+                  className="text-sm font-medium text-red-600"
+                  onClick={() => removeItem(item.product_id)}
+                  type="button"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <aside className="h-fit space-y-3 rounded-lg border border-slate-200 bg-white p-4">
