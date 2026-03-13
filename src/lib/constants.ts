@@ -48,7 +48,6 @@ export const ADMIN_NAV_LINKS = [
   { label: "Products", href: "/admin/products" },
   { label: "Orders", href: "/admin/orders" },
   { label: "Customers", href: "/admin/customers" },
-  { label: "Drivers", href: "/admin/drivers" },
   { label: "Analytics", href: "/admin/analytics" },
   { label: "Settings", href: "/admin/settings" }
 ] as const;
