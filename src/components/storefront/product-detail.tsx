@@ -90,10 +90,8 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
               +
             </button>
           </div>
-          {isUnavailable ? (
+          {isUnavailable && (
             <p className="text-xs text-red-600">Unavailable right now. Contact support for restock timing.</p>
-          ) : (
-            <p className="text-xs text-slate-500">Available quantity: {product.stock_qty}</p>
           )}
         </div>
 
