@@ -9,8 +9,8 @@ export async function createInquiry(input: InquiryInput): Promise<Pick<Inquiry, 
     .from("inquiries")
     .insert({
       name: input.name.trim(),
-      email: input.email.trim().toLowerCase(),
-      phone: input.phone?.trim() || null,
+      email: input.email?.trim().toLowerCase() || null,
+      phone: input.phone.trim(),
       message: input.message.trim(),
       source: input.source,
       status: "NEW"
