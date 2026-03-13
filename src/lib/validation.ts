@@ -57,16 +57,16 @@ export const orderIntakeSchema = checkoutSchema.extend({
 });
 
 export const inquirySchema = z.object({
-  name: z.string().min(2).max(120),
-  email: z.string().email(),
-  phone: z.preprocess(
+  name: z.string().min(2, "Please enter your name").max(120),
+  email: z.preprocess(
     (value) => {
       if (typeof value === "string" && value.trim() === "") return undefined;
       return value;
     },
-    z.string().min(7).max(30).optional()
+    z.string().email("Please enter a valid email").optional()
   ),
-  message: z.string().min(10).max(1200),
+  phone: z.string().min(7, "Please enter a valid phone number").max(30),
+  message: z.string().min(10, "Please tell us more about your inquiry").max(1200),
   source: z.string().default("contact_page")
 });
 
