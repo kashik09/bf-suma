@@ -3,11 +3,9 @@ import {
   ShoppingBag,
   Users,
   Package,
-  TrendingUp,
   TrendingDown,
   Plus,
   Eye,
-  Truck,
   Settings
 } from "lucide-react";
 import { SectionHeader } from "@/components/ui";
@@ -112,13 +110,6 @@ const quickActions = [
     label: "View Orders",
     description: "Manage customer orders",
     icon: Eye,
-    variant: "default" as const
-  },
-  {
-    href: "/admin/drivers",
-    label: "Manage Drivers",
-    description: "Assign delivery drivers",
-    icon: Truck,
     variant: "default" as const
   },
   {
