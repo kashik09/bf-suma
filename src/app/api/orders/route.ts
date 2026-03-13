@@ -22,13 +22,19 @@ export async function POST(request: Request) {
 
   try {
     const result = await createOrderIntake(parsed.data);
+    const isPickup = parsed.data.fulfillmentType === "pickup";
+    const successMessage = parsed.data.paymentMethod === "pay_now"
+      ? `Thanks, your order ${result.orderNumber} has been received. We will contact you immediately to complete payment.`
+      : isPickup
+        ? `Thanks, your order ${result.orderNumber} has been received. You can pay at pickup.`
+        : `Thanks, your order ${result.orderNumber} has been received. You can pay on delivery.`;
 
     return NextResponse.json(
       {
         persisted: true,
         orderNumber: result.orderNumber,
         receivedAt: result.receivedAt,
-        message: `Thanks, your order ${result.orderNumber} has been received.`
+        message: successMessage
       },
       { status: 201 }
     );

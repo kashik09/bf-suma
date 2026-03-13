@@ -39,6 +39,21 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
 
 export async function createOrderIntake(payload: OrderIntakeInput): Promise<CreateOrderIntakeResult> {
   const supabase = await createServerSupabaseClient();
+  const isPickup = payload.fulfillmentType === "pickup";
+  const normalizedDeliveryAddress = isPickup
+    ? `Pickup: ${(payload.pickupLocation || "Main Store").trim()}`
+    : (payload.deliveryAddress || "").trim();
+
+  const notesParts: string[] = [];
+  if (payload.notes?.trim()) {
+    notesParts.push(payload.notes.trim());
+  }
+  notesParts.push(`Fulfillment: ${isPickup ? "PICKUP" : "DELIVERY"}`);
+  notesParts.push(`Payment: ${payload.paymentMethod === "pay_now" ? "PAY_NOW" : "PAY_ON_DELIVERY"}`);
+  if (isPickup && payload.pickupLocation?.trim()) {
+    notesParts.push(`Pickup location: ${payload.pickupLocation.trim()}`);
+  }
+
   const customer = await upsertCustomerByEmail({
     firstName: payload.firstName,
     lastName: payload.lastName,
@@ -56,10 +71,10 @@ export async function createOrderIntake(payload: OrderIntakeInput): Promise<Crea
       status: "PENDING",
       payment_status: "UNPAID",
       subtotal: payload.subtotal,
-      delivery_fee: payload.deliveryFee,
+      delivery_fee: isPickup ? 0 : payload.deliveryFee,
       total: payload.total,
-      delivery_address: payload.deliveryAddress.trim(),
-      notes: payload.notes?.trim() || null
+      delivery_address: normalizedDeliveryAddress,
+      notes: notesParts.join(" | ")
     })
     .select("id, order_number, created_at")
     .single();
