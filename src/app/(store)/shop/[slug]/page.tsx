@@ -3,8 +3,9 @@ import { PageContainer } from "@/components/layout/page-container";
 import { ProductDetail, RelatedProducts } from "@/components/storefront";
 import { getStorefrontProductBySlug, listRelatedProducts } from "@/services/products";
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = await getStorefrontProductBySlug(params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getStorefrontProductBySlug(slug);
 
   if (!product) {
     notFound();
