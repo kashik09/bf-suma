@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { inquirySchema } from "@/lib/validation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createInquiry } from "@/services/inquiries";
@@ -9,6 +9,7 @@ const RATE_LIMIT_WINDOW_SECONDS = 60;
 
 interface RateLimitDecision {
   retryAfterSeconds: number;
+  fingerprint: string;
 }
 
 interface InMemoryRateLimitState {
@@ -17,6 +18,35 @@ interface InMemoryRateLimitState {
 }
 
 const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
+
+type LogLevel = "info" | "warn" | "error";
+
+function logEvent(level: LogLevel, event: string, payload: Record<string, unknown>) {
+  const line = JSON.stringify({
+    event,
+    timestamp: new Date().toISOString(),
+    ...payload
+  });
+
+  if (level === "error") {
+    console.error(line);
+    return;
+  }
+
+  if (level === "warn") {
+    console.warn(line);
+    return;
+  }
+
+  console.log(line);
+}
+
+function getCorrelationId(request: Request): string {
+  const requestId = request.headers.get("x-correlation-id") || request.headers.get("x-request-id");
+  const trimmed = requestId?.trim() || "";
+  if (trimmed.length > 0 && trimmed.length <= 120) return trimmed;
+  return randomUUID();
+}
 
 function resolveClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -70,7 +100,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
     }
 
     if (state.count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     state.count += 1;
@@ -109,7 +139,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
     }
 
     if (existing.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     const nextCount = existing.request_count + 1;
@@ -135,7 +165,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
       .maybeSingle();
 
     if (latest && latest.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     return fallbackInMemory();
@@ -145,8 +175,16 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
 }
 
 export async function POST(request: Request) {
+  const correlationId = getCorrelationId(request);
   const rateLimit = await enforcePostRateLimit(request, "contact");
   if (rateLimit) {
+    logEvent("warn", "contact.rate_limited", {
+      correlationId,
+      endpoint: "contact",
+      retryAfterSeconds: rateLimit.retryAfterSeconds,
+      fingerprintPrefix: rateLimit.fingerprint.slice(0, 12)
+    });
+
     return NextResponse.json(
       {
         message: "Too many requests. Please retry later.",
@@ -165,6 +203,11 @@ export async function POST(request: Request) {
   const parsed = inquirySchema.safeParse(body);
 
   if (!parsed.success) {
+    logEvent("warn", "contact.validation_failed", {
+      correlationId,
+      fieldErrorKeys: Object.keys(parsed.error.flatten().fieldErrors).sort()
+    });
+
     return NextResponse.json(
       {
         message: "Invalid inquiry payload",
@@ -177,11 +220,23 @@ export async function POST(request: Request) {
   try {
     const data = await createInquiry(parsed.data);
 
+    logEvent("info", "contact.create_succeeded", {
+      correlationId,
+      inquiryId: data.id,
+      status: data.status
+    });
+
     return NextResponse.json({
       id: data.id,
       status: data.status
     }, { status: 201 });
-  } catch {
+  } catch (error) {
+    logEvent("error", "contact.create_failed", {
+      correlationId,
+      reason: "unexpected_error",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
+
     return NextResponse.json(
       {
         message: "Inquiry intake is temporarily unavailable. Please try again later or use WhatsApp support."

@@ -31,6 +31,17 @@ interface CatalogData {
   products: StorefrontProduct[];
 }
 
+function logCatalogFallback(scope: string, error: unknown, context: Record<string, unknown> = {}) {
+  console.warn(JSON.stringify({
+    event: "catalog.fallback_activated",
+    timestamp: new Date().toISOString(),
+    correlationId: "catalog-service",
+    scope,
+    message: error instanceof Error ? error.message : "Unknown error",
+    ...context
+  }));
+}
+
 const LOW_STOCK_THRESHOLD = 10;
 const FALLBACK_CATEGORIES = BFSUMA_CATALOG.categories;
 const FALLBACK_PRODUCTS = BFSUMA_CATALOG.products;
@@ -187,7 +198,12 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
 async function getCatalogData(): Promise<CatalogData> {
   try {
     return await fetchCatalogFromSupabase();
-  } catch {
+  } catch (error) {
+    logCatalogFallback("getCatalogData", error, {
+      fallbackCategories: FALLBACK_CATEGORIES.length,
+      fallbackProducts: FALLBACK_PRODUCTS.length
+    });
+
     return {
       categories: FALLBACK_CATEGORIES,
       products: FALLBACK_PRODUCTS
@@ -207,7 +223,12 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
     if (error) throw error;
 
     return data ?? [];
-  } catch {
+  } catch (error) {
+    logCatalogFallback("listProducts", error, {
+      hasStatusFilter: Boolean(filters.status),
+      hasSearchFilter: Boolean(filters.search)
+    });
+
     return FALLBACK_PRODUCTS.map((product) => ({
       id: product.id,
       name: product.name,
@@ -232,7 +253,9 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
     if (error) return null;
     return data;
-  } catch {
+  } catch (error) {
+    logCatalogFallback("getProductBySlug", error, { slug });
+
     const fallbackProduct = FALLBACK_PRODUCTS.find((product) => product.slug === slug);
     if (!fallbackProduct) return null;
 
