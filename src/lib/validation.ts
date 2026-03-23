@@ -45,7 +45,7 @@ const checkoutSchemaBase = z.object({
     .trim()
     .max(120, "Pickup location is too long")
     .optional(),
-  paymentMethod: z.enum(["pay_on_delivery", "pay_now"]),
+  paymentMethod: z.enum(["pay_on_delivery"]),
   notes: z
     .string()
     .trim()
@@ -79,12 +79,25 @@ function validateCheckoutRefinement(
 
 export const checkoutSchema = checkoutSchemaBase.superRefine(validateCheckoutRefinement);
 
+const absoluteImageUrlSchema = z.string().url().refine((value) => {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}, "Image URL must use http or https");
+
+const relativeImagePathSchema = z
+  .string()
+  .regex(/^\/[^\s]*$/, "Image path must start with '/' and contain no spaces");
+
 export const cartItemSchema = z.object({
   product_id: z.string().min(1),
   slug: z.string().min(1),
   name: z.string().min(1),
-  price: z.number().nonnegative(),
-  image_url: z.string().url(),
+  price: z.number().int().nonnegative(),
+  image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]),
   quantity: z.number().int().min(1).max(99),
   max_quantity: z.number().int().min(0),
   availability: z.enum(["in_stock", "low_stock", "out_of_stock"])
@@ -92,9 +105,9 @@ export const cartItemSchema = z.object({
 
 export const orderIntakeSchema = checkoutSchemaBase.extend({
   items: z.array(cartItemSchema).min(1),
-  subtotal: z.number().nonnegative(),
-  deliveryFee: z.number().nonnegative(),
-  total: z.number().nonnegative()
+  subtotal: z.number().int().nonnegative(),
+  deliveryFee: z.number().int().nonnegative(),
+  total: z.number().int().nonnegative()
 }).superRefine(validateCheckoutRefinement);
 
 export const inquirySchema = z.object({
