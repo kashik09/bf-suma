@@ -44,12 +44,7 @@ export const STORE_NAV_LINKS = [
 ] as const;
 
 export const ADMIN_NAV_LINKS = [
-  { label: "Dashboard", href: "/admin" },
-  { label: "Products", href: "/admin/products" },
-  { label: "Orders", href: "/admin/orders" },
-  { label: "Customers", href: "/admin/customers" },
-  { label: "Analytics", href: "/admin/analytics" },
-  { label: "Settings", href: "/admin/settings" }
+  { label: "Dashboard", href: "/admin" }
 ] as const;
 
 export const TRUST_STRIP_ITEMS = [
