@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
@@ -15,6 +15,7 @@ const RATE_LIMIT_WINDOW_SECONDS = 60;
 
 interface RateLimitDecision {
   retryAfterSeconds: number;
+  fingerprint: string;
 }
 
 interface InMemoryRateLimitState {
@@ -23,6 +24,35 @@ interface InMemoryRateLimitState {
 }
 
 const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
+
+type LogLevel = "info" | "warn" | "error";
+
+function logEvent(level: LogLevel, event: string, payload: Record<string, unknown>) {
+  const line = JSON.stringify({
+    event,
+    timestamp: new Date().toISOString(),
+    ...payload
+  });
+
+  if (level === "error") {
+    console.error(line);
+    return;
+  }
+
+  if (level === "warn") {
+    console.warn(line);
+    return;
+  }
+
+  console.log(line);
+}
+
+function getCorrelationId(request: Request): string {
+  const requestId = request.headers.get("x-correlation-id") || request.headers.get("x-request-id");
+  const trimmed = requestId?.trim() || "";
+  if (trimmed.length > 0 && trimmed.length <= 120) return trimmed;
+  return randomUUID();
+}
 
 function resolveClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -76,7 +106,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
     }
 
     if (state.count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     state.count += 1;
@@ -115,7 +145,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
     }
 
     if (existing.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     const nextCount = existing.request_count + 1;
@@ -141,7 +171,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
       .maybeSingle();
 
     if (latest && latest.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds };
+      return { retryAfterSeconds, fingerprint };
     }
 
     return fallbackInMemory();
@@ -155,8 +185,16 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const correlationId = getCorrelationId(request);
   const rateLimit = await enforcePostRateLimit(request, "orders");
   if (rateLimit) {
+    logEvent("warn", "order.rate_limited", {
+      correlationId,
+      endpoint: "orders",
+      retryAfterSeconds: rateLimit.retryAfterSeconds,
+      fingerprintPrefix: rateLimit.fingerprint.slice(0, 12)
+    });
+
     return NextResponse.json(
       {
         persisted: false,
@@ -181,6 +219,11 @@ export async function POST(request: Request) {
   const idempotencyKey = (idempotencyHeader || idempotencyFromBody || "").trim();
 
   if (!idempotencyKey) {
+    logEvent("warn", "order.validation_failed", {
+      correlationId,
+      reason: "missing_idempotency_key"
+    });
+
     return NextResponse.json(
       {
         persisted: false,
@@ -191,6 +234,11 @@ export async function POST(request: Request) {
   }
 
   if (idempotencyKey.length > 120) {
+    logEvent("warn", "order.validation_failed", {
+      correlationId,
+      reason: "invalid_idempotency_key_length"
+    });
+
     return NextResponse.json(
       {
         persisted: false,
@@ -203,6 +251,11 @@ export async function POST(request: Request) {
   const parsed = orderIntakeSchema.safeParse(body);
 
   if (!parsed.success) {
+    logEvent("warn", "order.validation_failed", {
+      correlationId,
+      fieldErrorKeys: Object.keys(parsed.error.flatten().fieldErrors).sort()
+    });
+
     return NextResponse.json(
       {
         message: "Invalid checkout payload",
@@ -214,11 +267,19 @@ export async function POST(request: Request) {
 
   try {
     const requestHash = hashOrderIntakePayload(parsed.data);
-    const { result } = await createOrderIntakeWithIdempotency(parsed.data, idempotencyKey, requestHash);
+    const { result, replayed } = await createOrderIntakeWithIdempotency(parsed.data, idempotencyKey, requestHash);
     const isPickup = parsed.data.fulfillmentType === "pickup";
     const successMessage = isPickup
       ? `Thanks, your order ${result.orderNumber} has been received. You can pay at pickup.`
       : `Thanks, your order ${result.orderNumber} has been received. You can pay on delivery.`;
+
+    logEvent("info", "order.create_succeeded", {
+      correlationId,
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+      total: result.total,
+      replayed
+    });
 
     return NextResponse.json(
       {
@@ -234,6 +295,13 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     if (error instanceof OrderIntakeRejectedError) {
+      logEvent("warn", "order.create_failed", {
+        correlationId,
+        reason: "order_intake_rejected",
+        message: error.message,
+        fieldErrorKeys: Object.keys(error.fieldErrors).sort()
+      });
+
       return NextResponse.json(
         {
           persisted: false,
@@ -245,6 +313,12 @@ export async function POST(request: Request) {
     }
 
     if (error instanceof OrderIdempotencyConflictError) {
+      logEvent("warn", "order.create_failed", {
+        correlationId,
+        reason: "idempotency_conflict",
+        message: error.message
+      });
+
       return NextResponse.json(
         {
           persisted: false,
@@ -255,6 +329,12 @@ export async function POST(request: Request) {
     }
 
     if (error instanceof OrderIdempotencyInProgressError) {
+      logEvent("warn", "order.create_failed", {
+        correlationId,
+        reason: "idempotency_in_progress",
+        message: error.message
+      });
+
       return NextResponse.json(
         {
           persisted: false,
@@ -263,6 +343,12 @@ export async function POST(request: Request) {
         { status: 409 }
       );
     }
+
+    logEvent("error", "order.create_failed", {
+      correlationId,
+      reason: "unexpected_error",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
 
     return NextResponse.json(
       {
