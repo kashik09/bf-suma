@@ -5,10 +5,36 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency: string = "UGX") {
+export const STORE_CURRENCY = "KES" as const;
+
+const CURRENCY_FRACTION_DIGITS: Record<string, number> = {
+  KES: 2,
+  UGX: 0
+};
+
+function getCurrencyFractionDigits(currency: string): number {
+  return CURRENCY_FRACTION_DIGITS[currency] ?? 2;
+}
+
+export function toMinorUnits(amountMajor: number, currency: string = STORE_CURRENCY) {
+  const fractionDigits = getCurrencyFractionDigits(currency);
+  const multiplier = 10 ** fractionDigits;
+  return Math.round(amountMajor * multiplier);
+}
+
+export function fromMinorUnits(amountMinor: number, currency: string = STORE_CURRENCY) {
+  const fractionDigits = getCurrencyFractionDigits(currency);
+  const divisor = 10 ** fractionDigits;
+  return amountMinor / divisor;
+}
+
+export function formatCurrency(amountMinor: number, currency: string = STORE_CURRENCY) {
+  const fractionDigits = getCurrencyFractionDigits(currency);
+
   return new Intl.NumberFormat("en-UG", {
     style: "currency",
     currency,
-    maximumFractionDigits: 0
-  }).format(amount);
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
+  }).format(fromMinorUnits(amountMinor, currency));
 }
