@@ -50,7 +50,6 @@ export function CheckoutForm() {
   const watchedFulfillmentType = form.watch("fulfillmentType");
   const watchedDeliveryAddress = form.watch("deliveryAddress");
   const watchedPickupLocation = form.watch("pickupLocation");
-  const watchedPaymentMethod = form.watch("paymentMethod");
   const isPickup = watchedFulfillmentType === "pickup";
   const deliveryFee = items.length > 0 && !isPickup ? DELIVERY_FEE : 0;
 
@@ -67,7 +66,6 @@ export function CheckoutForm() {
     } else if (!watchedDeliveryAddress?.trim()) {
       itemsToFix.push("Add delivery address");
     }
-    if (!watchedPaymentMethod) itemsToFix.push("Choose payment method");
     return itemsToFix;
   }, [
     watchedDeliveryAddress,
@@ -75,7 +73,6 @@ export function CheckoutForm() {
     watchedFirstName,
     watchedFulfillmentType,
     watchedLastName,
-    watchedPaymentMethod,
     watchedPhone,
     watchedPickupLocation
   ]);
@@ -126,10 +123,7 @@ export function CheckoutForm() {
       setResultStatus("success");
       toast({
         title: "Order received",
-        description:
-          values.paymentMethod === "pay_now"
-            ? `${successMessage} We will contact you right away to complete payment.`
-            : successMessage,
+        description: successMessage,
         variant: "success"
       });
     } catch (error) {
@@ -258,19 +252,12 @@ export function CheckoutForm() {
 
           <fieldset className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Payment Method</p>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-1">
               <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
                 <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
                 <span>
                   <span className="block font-medium text-slate-900">{isPickup ? "Pay at pickup" : "Pay on delivery"}</span>
                   <span className="block text-xs text-slate-500">Pay with cash or mobile money when order arrives.</span>
-                </span>
-              </label>
-              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
-                <input type="radio" value="pay_now" {...form.register("paymentMethod")} />
-                <span>
-                  <span className="block font-medium text-slate-900">Pay now</span>
-                  <span className="block text-xs text-slate-500">We will contact you immediately to complete payment.</span>
                 </span>
               </label>
             </div>
@@ -327,11 +314,9 @@ export function CheckoutForm() {
           </div>
 
           <p className="text-xs text-slate-500">
-            {watchedPaymentMethod === "pay_now"
-              ? "Pay-now requests are confirmed directly by our team after order submission."
-              : isPickup
-                ? "You can pay when you collect your order."
-                : "You can pay when your order is delivered."}
+            {isPickup
+              ? "You can pay when you collect your order."
+              : "You can pay when your order is delivered."}
           </p>
 
           <Button className="mt-4 w-full" disabled={isSubmitting} type="submit">
