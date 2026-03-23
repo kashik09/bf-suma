@@ -6,6 +6,7 @@
  */
 
 import type { StorefrontCategory, StorefrontProduct, ProductStatus, AvailabilityState } from "@/types";
+import { STORE_CURRENCY, toMinorUnits } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Categories
@@ -140,7 +141,7 @@ interface ManifestProduct {
   source: string;
 }
 
-// Products extracted from manifest - prices in KES (cents)
+// Products extracted from manifest - prices in major currency units.
 const MANIFEST_PRODUCTS: ManifestProduct[] = [
   // SKINCARE
   { name: "Youth Essence Facial Cream", slug: "youth-essence-facial-cream", description: "Packed with the latest cell technology and mitochondrial repair enzymes, this cream is the ultimate solution for restoring firmness.", price: 5371, compare_at_price: 5967, currency: "KES", category_slug: "skincare", image_url: "/catalog-images/joshoppers.com/youth-essence-facial-cream.webp", source: "joshoppers.com" },
@@ -231,14 +232,17 @@ export const BFSUMA_PRODUCTS: StorefrontProduct[] = MANIFEST_PRODUCTS.map((p, in
   const catInfo = getCategoryInfo(p.category_slug);
   const status: ProductStatus = "ACTIVE";
   const availability: AvailabilityState = "in_stock";
+  const currency = (p.currency || STORE_CURRENCY).toUpperCase();
+  const normalizedCurrency = currency === STORE_CURRENCY ? currency : STORE_CURRENCY;
 
   return {
     id: `prod-${p.slug}`,
     name: p.name,
     slug: p.slug,
     description: p.description,
-    price: p.price * 100, // Convert to cents for consistency
-    compare_at_price: p.compare_at_price ? p.compare_at_price * 100 : null,
+    price: toMinorUnits(p.price, normalizedCurrency),
+    compare_at_price: p.compare_at_price !== null ? toMinorUnits(p.compare_at_price, normalizedCurrency) : null,
+    currency: normalizedCurrency,
     sku: generateSku(p.slug, index),
     stock_qty: 50, // Default stock - not invented, just a placeholder
     status,
