@@ -7,6 +7,7 @@ export type OrderStatus =
   | "DELIVERED"
   | "CANCELED";
 export type PaymentStatus = "UNPAID" | "PAID" | "FAILED" | "REFUNDED";
+export type CurrencyCode = "KES" | "UGX";
 export type DeliveryStatus =
   | "UNASSIGNED"
   | "ASSIGNED"
@@ -32,8 +33,10 @@ export interface Product {
   name: string;
   slug: string;
   description: string | null;
+  // Integer minor units (for KES, this is cents).
   price: number;
   compare_at_price: number | null;
+  currency?: CurrencyCode;
   sku: string;
   stock_qty: number;
   status: ProductStatus;
@@ -67,9 +70,11 @@ export interface Order {
   customer_id: string;
   status: OrderStatus;
   payment_status: PaymentStatus;
+  // Integer minor units (for KES, this is cents).
   subtotal: number;
   delivery_fee: number;
   total: number;
+  currency?: CurrencyCode;
   delivery_address: string;
   notes: string | null;
   created_at: string;
@@ -81,9 +86,11 @@ export interface OrderItem {
   order_id: string;
   product_id: string;
   product_name_snapshot: string;
+  // Integer minor units (for KES, this is cents).
   unit_price: number;
   quantity: number;
   line_total: number;
+  currency?: CurrencyCode;
 }
 
 export interface Driver {
@@ -154,8 +161,10 @@ export interface StorefrontProduct {
   name: string;
   slug: string;
   description: string;
+  // Integer minor units (for KES, this is cents).
   price: number;
   compare_at_price: number | null;
+  currency?: CurrencyCode;
   sku: string;
   stock_qty: number;
   status: ProductStatus;
@@ -171,11 +180,13 @@ export interface CartItem {
   product_id: string;
   slug: string;
   name: string;
+  // Integer minor units (for KES, this is cents).
   price: number;
   image_url: string;
   quantity: number;
   max_quantity: number;
   availability: AvailabilityState;
+  currency?: CurrencyCode;
 }
 
 export interface OrderIntakePayload {

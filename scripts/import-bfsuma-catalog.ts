@@ -17,7 +17,8 @@
  *   - Products are upserted by slug
  *   - Category relationships are only set where confirmed in manifest
  *   - Stock quantities default to 50 (not invented, placeholder)
- *   - Prices are stored in cents (KES * 100)
+ *   - Prices are stored as integer minor units (KES cents)
+ *   - Launch scope uses a single canonical store currency (KES)
  *   - Products without category_slug are skipped
  */
 
@@ -31,6 +32,11 @@ import * as path from "path";
 
 const MANIFEST_PATH = path.join(process.cwd(), "data", "catalog", "catalog_manifest.json");
 const DEFAULT_STOCK_QTY = 50;
+const STORE_CURRENCY = "KES";
+const CURRENCY_FRACTION_DIGITS: Record<string, number> = {
+  KES: 2,
+  UGX: 0
+};
 
 // Stats tracking
 const stats = {
@@ -107,6 +113,12 @@ function getLocalImagePath(imageUrl: string | null, slug: string): string {
 
   const ext = path.extname(url.pathname) || ".webp";
   return `/catalog-images/${domain}/${slug}${ext}`;
+}
+
+function toMinorUnits(amountMajor: number, currency: string): number {
+  const fractionDigits = CURRENCY_FRACTION_DIGITS[currency] ?? 2;
+  const multiplier = 10 ** fractionDigits;
+  return Math.round(amountMajor * multiplier);
 }
 
 // ---------------------------------------------------------------------------
@@ -230,12 +242,19 @@ async function main() {
       continue;
     }
 
+    const currency = (prod.currency || STORE_CURRENCY).toUpperCase();
+    if (currency !== STORE_CURRENCY) {
+      console.log(`  [SKIP] ${prod.name}: unsupported currency '${currency}'`);
+      stats.productsSkipped++;
+      continue;
+    }
+
     const productData = {
       name: prod.name,
       slug: prod.slug,
       description: prod.description,
-      price: prod.price * 100, // Convert to cents
-      compare_at_price: prod.compare_at_price ? prod.compare_at_price * 100 : null,
+      price: toMinorUnits(prod.price, currency),
+      compare_at_price: prod.compare_at_price !== null ? toMinorUnits(prod.compare_at_price, currency) : null,
       sku: generateSku(prod.slug, i),
       stock_qty: DEFAULT_STOCK_QTY,
       status: "ACTIVE" as const,
