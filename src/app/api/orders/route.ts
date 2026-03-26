@@ -354,6 +354,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         persisted: false,
+        degraded: true,
+        errorCode: "COMMERCE_UNAVAILABLE",
         message: "We couldn't place your order right now. Please try again in a moment."
       },
       { status: 503 }

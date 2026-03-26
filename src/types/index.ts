@@ -213,6 +213,8 @@ export interface OrderIntakeResponse {
   deliveryFee?: number;
   total?: number;
   currency?: CurrencyCode;
+  degraded?: boolean;
+  errorCode?: string;
   message: string;
 }
 
