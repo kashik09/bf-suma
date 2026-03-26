@@ -43,7 +43,7 @@ export function CartPanel() {
                 <div className="h-20 w-20 rounded-md bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
                 <div className="flex-1 space-y-2">
                   <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
-                  <p className="text-sm text-slate-500">{formatCurrency(item.price)}</p>
+                  <p className="text-sm text-slate-500">{formatCurrency(item.price, item.currency)}</p>
                   <Badge variant={availability.variant}>{availability.label}</Badge>
 
                   <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function CartPanel() {
         <h2 className="text-lg font-semibold text-slate-900">Order Summary</h2>
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600">Subtotal</span>
-          <span className="font-semibold text-slate-900">{formatCurrency(subtotal)}</span>
+          <span className="font-semibold text-slate-900">{formatCurrency(subtotal, items[0]?.currency)}</span>
         </div>
         <p className="text-xs text-slate-500">{DELIVERY_ESTIMATE_TEXT}</p>
 
