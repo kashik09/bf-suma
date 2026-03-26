@@ -7,7 +7,12 @@ import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
-export function CartPanel() {
+interface CartPanelProps {
+  commerceReady?: boolean;
+  degradedReason?: string | null;
+}
+
+export function CartPanel({ commerceReady = true, degradedReason = null }: CartPanelProps) {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
 
   const getAvailabilityMeta = (availability: "in_stock" | "low_stock" | "out_of_stock") => {
@@ -95,12 +100,28 @@ export function CartPanel() {
         </div>
         <p className="text-xs text-slate-500">{DELIVERY_ESTIMATE_TEXT}</p>
 
-        <Link
-          className="inline-flex h-10 w-full items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700"
-          href="/checkout"
-        >
-          Proceed to Checkout
-        </Link>
+        {commerceReady ? (
+          <Link
+            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700"
+            href="/checkout"
+          >
+            Proceed to Checkout
+          </Link>
+        ) : (
+          <button
+            className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center rounded-md bg-slate-300 px-4 text-sm font-medium text-slate-700"
+            disabled
+            type="button"
+          >
+            Checkout Temporarily Unavailable
+          </button>
+        )}
+
+        {!commerceReady ? (
+          <p className="text-xs text-amber-700">
+            {degradedReason || "Live inventory validation is unavailable. Checkout is disabled until service recovery."}
+          </p>
+        ) : null}
       </aside>
     </div>
   );
