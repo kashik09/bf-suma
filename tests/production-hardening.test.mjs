@@ -203,6 +203,86 @@ test("idempotency decision logic enforces replay/conflict/in-progress behavior",
   assert.deepEqual(idempotency.evaluateIdempotencyDecision(failedExpired, "hash-a", now), { kind: "recycle" });
 });
 
+test("atomic order RPC result parsing enforces deterministic write outcomes", async () => {
+  const atomicResult = await loadTsModule("src/lib/order-write-result.ts");
+
+  const created = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "CREATED",
+    message: "created",
+    response_payload: {
+      orderId: "ord_1",
+      orderNumber: "BFS-20260326123456-1234",
+      receivedAt: "2026-03-26T12:34:56.000Z",
+      subtotal: 205400,
+      deliveryFee: 5000,
+      total: 210400,
+      currency: "KES"
+    },
+    field_errors: null
+  });
+  assert.equal(created.kind, "created");
+
+  const replayed = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "REPLAYED",
+    message: "replay",
+    response_payload: {
+      orderId: "ord_1",
+      orderNumber: "BFS-20260326123456-1234",
+      receivedAt: "2026-03-26T12:34:56.000Z",
+      subtotal: 205400,
+      deliveryFee: 5000,
+      total: 210400,
+      currency: "KES"
+    },
+    field_errors: null
+  });
+  assert.equal(replayed.kind, "replayed");
+
+  const rejected = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "REJECTED",
+    message: "totals mismatch",
+    response_payload: null,
+    field_errors: { total: ["Submitted totals do not match current server pricing."] }
+  });
+  assert.equal(rejected.kind, "rejected");
+  assert.deepEqual(rejected.fieldErrors, { total: ["Submitted totals do not match current server pricing."] });
+
+  const conflict = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "CONFLICT",
+    message: "conflict",
+    response_payload: null,
+    field_errors: null
+  });
+  assert.equal(conflict.kind, "conflict");
+
+  const inProgress = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "IN_PROGRESS",
+    message: "in progress",
+    response_payload: null,
+    field_errors: null
+  });
+  assert.equal(inProgress.kind, "in_progress");
+
+  const temporaryFailure = atomicResult.parseAtomicOrderWriteRpcRow({
+    result_code: "TEMPORARY_FAILURE",
+    message: "temporary failure",
+    response_payload: null,
+    field_errors: null
+  });
+  assert.equal(temporaryFailure.kind, "temporary_failure");
+
+  assert.throws(
+    () =>
+      atomicResult.parseAtomicOrderWriteRpcRow({
+        result_code: "CREATED",
+        message: "bad payload",
+        response_payload: { orderId: "ord_1" },
+        field_errors: null
+      }),
+    /Invalid RPC response/
+  );
+});
+
 test("money model helpers enforce canonical minor-unit behavior", async () => {
   const utils = await loadTsModule("src/lib/utils.ts");
 
@@ -229,4 +309,35 @@ test("route guard logic blocks admin scaffolds and hidden surfaces", async () =>
   assert.equal(guards.isScaffoldApiRoute("/api/orders/abc"), true);
   assert.equal(guards.isScaffoldApiRoute("/api/orders"), false);
   assert.equal(guards.isScaffoldApiRoute("/api/orders/"), false);
+});
+
+test("catalog degraded contract is explicit and checkout can be gated fail-safe", async () => {
+  const catalogHealth = await loadTsModule("src/lib/catalog-health.ts");
+
+  const live = catalogHealth.buildLiveCatalogHealth();
+  assert.equal(live.source, "live");
+  assert.equal(live.commerceReady, true);
+  assert.equal(live.degradedReason, null);
+  assert.deepEqual(catalogHealth.buildCatalogResponseHeaders(live), {
+    "X-Catalog-Source": "live",
+    "X-Commerce-Ready": "true"
+  });
+
+  const degraded = catalogHealth.buildFallbackCatalogHealth("Missing Supabase server environment variables.");
+  assert.equal(degraded.source, "fallback");
+  assert.equal(degraded.commerceReady, false);
+  assert.match(catalogHealth.getCommerceDegradedMessage(degraded), /checkout is temporarily disabled/i);
+
+  const degradedHeaders = catalogHealth.buildCatalogResponseHeaders(degraded);
+  assert.equal(degradedHeaders["X-Catalog-Source"], "fallback");
+  assert.equal(degradedHeaders["X-Commerce-Ready"], "false");
+  assert.equal(degradedHeaders["X-Commerce-Degraded"], "true");
+  assert.equal(degradedHeaders["X-Commerce-Degraded-Reason"], "Missing Supabase server environment variables.");
+
+  const readOnlyProducts = catalogHealth.coerceProductsToReadOnly([
+    { id: "prod-1", status: "ACTIVE", stock_qty: 42, availability: "in_stock" }
+  ]);
+  assert.equal(readOnlyProducts[0].status, "OUT_OF_STOCK");
+  assert.equal(readOnlyProducts[0].stock_qty, 0);
+  assert.equal(readOnlyProducts[0].availability, "out_of_stock");
 });
