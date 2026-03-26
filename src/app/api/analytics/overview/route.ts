@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  return NextResponse.json({ message: "Analytics overview endpoint scaffold" });
+  return NextResponse.json({ message: "Not Found" }, { status: 404 });
 }
