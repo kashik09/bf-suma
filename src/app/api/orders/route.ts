@@ -181,7 +181,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
 }
 
 export async function GET() {
-  return NextResponse.json({ message: "Order intake endpoint ready" });
+  return NextResponse.json({ message: "Method not allowed" }, { status: 405 });
 }
 
 export async function POST(request: Request) {
@@ -289,9 +289,10 @@ export async function POST(request: Request) {
         subtotal: result.subtotal,
         deliveryFee: result.deliveryFee,
         total: result.total,
+        currency: result.currency,
         message: successMessage
       },
-      { status: 201 }
+      { status: replayed ? 200 : 201 }
     );
   } catch (error) {
     if (error instanceof OrderIntakeRejectedError) {
