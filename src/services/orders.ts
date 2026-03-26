@@ -7,42 +7,27 @@ import {
   CommerceIntegrityError,
   type CommerceProductSnapshot
 } from "@/lib/commerce-integrity";
-import { evaluateIdempotencyDecision, type IdempotencyStatus } from "@/lib/idempotency-decision";
+import {
+  parseAtomicOrderWriteRpcRow,
+  InvalidAtomicOrderWriteResponseError,
+  type AtomicOrderWriteResultPayload,
+  type AtomicOrderWriteRpcRow
+} from "@/lib/order-write-result";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
 
 const DELIVERY_FEE_AMOUNT = 5000;
-const IDEMPOTENCY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-interface IdempotencyRow {
-  idempotency_key: string;
-  request_hash: string;
-  order_id: string | null;
-  status: IdempotencyStatus;
-  response_payload: CreateOrderIntakeResult | null;
-  last_error: string | null;
-  expires_at: string;
-}
-
-interface OrderRowSummary {
-  id: string;
-  order_number: string;
-  created_at: string;
-  subtotal: number;
-  delivery_fee: number;
-  total: number;
+interface AtomicOrderItemPayload {
+  product_id: string;
+  product_name_snapshot: string;
+  unit_price: number;
+  quantity: number;
+  line_total: number;
   currency: string;
 }
 
-export interface CreateOrderIntakeResult {
-  orderId: string;
-  orderNumber: string;
-  receivedAt: string;
-  subtotal: number;
-  deliveryFee: number;
-  total: number;
-  currency: string;
-}
+export interface CreateOrderIntakeResult extends AtomicOrderWriteResultPayload {}
 
 export class OrderIntakeRejectedError extends Error {
   fieldErrors: Record<string, string[]>;
@@ -79,74 +64,61 @@ function stableSerialize(value: unknown): string {
   return `{${entries.map(([key, nestedValue]) => `${JSON.stringify(key)}:${stableSerialize(nestedValue)}`).join(",")}}`;
 }
 
-function isDuplicateKeyError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
-  const maybeCode = (error as { code?: unknown }).code;
-  return maybeCode === "23505";
-}
-
-function isOrdersIdempotencyUniqueError(error: unknown): boolean {
-  if (!isDuplicateKeyError(error) || !error || typeof error !== "object") return false;
-
-  const details = String((error as { details?: unknown }).details || "").toLowerCase();
-  const hint = String((error as { hint?: unknown }).hint || "").toLowerCase();
-  const message = String((error as { message?: unknown }).message || "").toLowerCase();
-
-  return (
-    details.includes("idempotency_key") ||
-    hint.includes("idempotency_key") ||
-    message.includes("idempotency_key")
-  );
-}
-
-function nextExpiryTimestamp(): string {
-  return new Date(Date.now() + IDEMPOTENCY_WINDOW_MS).toISOString();
-}
-
-function normalizeIdempotencyResponse(payload: unknown): CreateOrderIntakeResult | null {
-  if (!payload || typeof payload !== "object") return null;
-
-  const {
-    orderId,
-    orderNumber,
-    receivedAt,
-    subtotal,
-    deliveryFee,
-    total,
-    currency
-  } = payload as Record<string, unknown>;
-
-  if (
-    typeof orderId !== "string" ||
-    typeof orderNumber !== "string" ||
-    typeof receivedAt !== "string" ||
-    typeof subtotal !== "number" ||
-    typeof deliveryFee !== "number" ||
-    typeof total !== "number" ||
-    typeof currency !== "string"
-  ) {
-    return null;
-  }
-
-  return {
-    orderId,
-    orderNumber,
-    receivedAt,
-    subtotal,
-    deliveryFee,
-    total,
-    currency
-  };
-}
-
-function generateOrderNumber(): string {
-  const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `BFS-${timestamp}-${random}`;
-}
-
 function toInt(value: number | string): number {
   return Math.round(Number(value));
+}
+
+function normalizeDeliveryAddress(payload: OrderIntakeInput): string {
+  if (payload.fulfillmentType === "pickup") {
+    return `Pickup: ${(payload.pickupLocation || "Main Store").trim()}`;
+  }
+
+  return (payload.deliveryAddress || "").trim();
+}
+
+function buildOrderNotes(payload: OrderIntakeInput): string {
+  const notesParts: string[] = [];
+
+  if (payload.notes?.trim()) {
+    notesParts.push(payload.notes.trim());
+  }
+
+  notesParts.push(`Fulfillment: ${payload.fulfillmentType === "pickup" ? "PICKUP" : "DELIVERY"}`);
+  notesParts.push("Payment: PAY_ON_DELIVERY");
+
+  if (payload.fulfillmentType === "pickup" && payload.pickupLocation?.trim()) {
+    notesParts.push(`Pickup location: ${payload.pickupLocation.trim()}`);
+  }
+
+  return notesParts.join(" | ");
+}
+
+function normalizeRpcRow(data: unknown): AtomicOrderWriteRpcRow {
+  if (Array.isArray(data)) {
+    if (data.length === 0) {
+      throw new InvalidAtomicOrderWriteResponseError("Atomic order RPC returned an empty result.");
+    }
+
+    return data[0] as AtomicOrderWriteRpcRow;
+  }
+
+  if (!data || typeof data !== "object") {
+    throw new InvalidAtomicOrderWriteResponseError("Atomic order RPC returned an invalid payload.");
+  }
+
+  return data as AtomicOrderWriteRpcRow;
+}
+
+function mapAtomicResult(payload: AtomicOrderWriteResultPayload): CreateOrderIntakeResult {
+  return {
+    orderId: payload.orderId,
+    orderNumber: payload.orderNumber,
+    receivedAt: payload.receivedAt,
+    subtotal: toInt(payload.subtotal),
+    deliveryFee: toInt(payload.deliveryFee),
+    total: toInt(payload.total),
+    currency: String(payload.currency || STORE_CURRENCY)
+  };
 }
 
 export async function listOrders(): Promise<Order[]> {
@@ -175,153 +147,13 @@ export function hashOrderIntakePayload(payload: OrderIntakeInput): string {
   return createHash("sha256").update(stableSerialize(payload)).digest("hex");
 }
 
-async function getIdempotencyRow(idempotencyKey: string): Promise<IdempotencyRow | null> {
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("order_idempotency_keys")
-    .select("idempotency_key, request_hash, order_id, status, response_payload, last_error, expires_at")
-    .eq("idempotency_key", idempotencyKey)
-    .maybeSingle();
-
-  if (error) throw error;
-  return (data as IdempotencyRow | null) || null;
-}
-
-async function initializeIdempotencyRow(idempotencyKey: string, requestHash: string): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const now = new Date().toISOString();
-
-  const { error } = await supabase.from("order_idempotency_keys").insert({
-    idempotency_key: idempotencyKey,
-    request_hash: requestHash,
-    status: "IN_PROGRESS",
-    expires_at: nextExpiryTimestamp(),
-    created_at: now,
-    updated_at: now
-  });
-
-  if (error) throw error;
-}
-
-async function setIdempotencyInProgress(idempotencyKey: string, requestHash: string): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase
-    .from("order_idempotency_keys")
-    .update({
-      request_hash: requestHash,
-      status: "IN_PROGRESS",
-      order_id: null,
-      response_payload: null,
-      last_error: null,
-      expires_at: nextExpiryTimestamp(),
-      updated_at: new Date().toISOString()
-    })
-    .eq("idempotency_key", idempotencyKey);
-
-  if (error) throw error;
-}
-
-async function markIdempotencySuccess(
-  idempotencyKey: string,
-  requestHash: string,
-  result: CreateOrderIntakeResult
-): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase
-    .from("order_idempotency_keys")
-    .update({
-      status: "SUCCEEDED",
-      order_id: result.orderId,
-      response_payload: result,
-      last_error: null,
-      updated_at: new Date().toISOString()
-    })
-    .eq("idempotency_key", idempotencyKey)
-    .eq("request_hash", requestHash);
-
-  if (error) throw error;
-}
-
-async function markIdempotencyFailed(idempotencyKey: string, requestHash: string, errorMessage: string): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase
-    .from("order_idempotency_keys")
-    .update({
-      status: "FAILED",
-      last_error: errorMessage.slice(0, 500),
-      updated_at: new Date().toISOString()
-    })
-    .eq("idempotency_key", idempotencyKey)
-    .eq("request_hash", requestHash);
-
-  if (error) throw error;
-}
-
-async function beginOrderIntakeIdempotency(
+async function executeAtomicOrderWrite(
+  payload: OrderIntakeInput,
   idempotencyKey: string,
   requestHash: string
-): Promise<CreateOrderIntakeResult | null> {
-  let row = await getIdempotencyRow(idempotencyKey);
-
-  if (!row) {
-    try {
-      await initializeIdempotencyRow(idempotencyKey, requestHash);
-      return null;
-    } catch (error) {
-      if (!isDuplicateKeyError(error)) throw error;
-      row = await getIdempotencyRow(idempotencyKey);
-    }
-  }
-
-  if (!row) {
-    throw new Error("Failed to initialize idempotency record.");
-  }
-
-  const decision = evaluateIdempotencyDecision(row, requestHash);
-
-  if (decision.kind === "conflict") {
-    throw new OrderIdempotencyConflictError(
-      "This idempotency key was already used with a different checkout payload."
-    );
-  }
-
-  if (decision.kind === "replay") {
-    const replayResult = normalizeIdempotencyResponse(row.response_payload);
-    if (replayResult) return replayResult;
-
-    throw new OrderIdempotencyInProgressError(
-      "This checkout request is still finalizing. Please retry in a moment."
-    );
-  }
-
-  if (decision.kind === "in_progress") {
-    throw new OrderIdempotencyInProgressError(
-      "This checkout request is already being processed. Please retry in a moment."
-    );
-  }
-
-  await setIdempotencyInProgress(idempotencyKey, requestHash);
-  return null;
-}
-
-async function findExistingOrderByIdempotencyKey(idempotencyKey: string): Promise<OrderRowSummary | null> {
+): Promise<{ result: CreateOrderIntakeResult; replayed: boolean }> {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("orders")
-    .select("id, order_number, created_at, subtotal, delivery_fee, total, currency")
-    .eq("idempotency_key", idempotencyKey)
-    .maybeSingle();
-
-  if (error) throw error;
-  return (data as OrderRowSummary | null) || null;
-}
-
-export async function createOrderIntake(payload: OrderIntakeInput, idempotencyKey: string): Promise<CreateOrderIntakeResult> {
-  const supabase = await createServerSupabaseClient();
-  const isPickup = payload.fulfillmentType === "pickup";
-  const normalizedDeliveryAddress = isPickup
-    ? `Pickup: ${(payload.pickupLocation || "Main Store").trim()}`
-    : (payload.deliveryAddress || "").trim();
+  const normalizedDeliveryAddress = normalizeDeliveryAddress(payload);
 
   const requestedQuantities = new Map<string, number>();
   payload.items.forEach((item) => {
@@ -350,16 +182,6 @@ export async function createOrderIntake(payload: OrderIntakeInput, idempotencyKe
     throw error;
   }
 
-  const notesParts: string[] = [];
-  if (payload.notes?.trim()) {
-    notesParts.push(payload.notes.trim());
-  }
-  notesParts.push(`Fulfillment: ${isPickup ? "PICKUP" : "DELIVERY"}`);
-  notesParts.push("Payment: PAY_ON_DELIVERY");
-  if (isPickup && payload.pickupLocation?.trim()) {
-    notesParts.push(`Pickup location: ${payload.pickupLocation.trim()}`);
-  }
-
   const customer = await upsertCustomerByEmail({
     firstName: payload.firstName,
     lastName: payload.lastName,
@@ -367,47 +189,7 @@ export async function createOrderIntake(payload: OrderIntakeInput, idempotencyKe
     phone: payload.phone
   });
 
-  const orderNumber = generateOrderNumber();
-
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .insert({
-      order_number: orderNumber,
-      customer_id: customer.id,
-      status: "PENDING",
-      payment_status: "UNPAID",
-      subtotal: computed.subtotal,
-      delivery_fee: computed.deliveryFee,
-      total: computed.total,
-      currency: computed.currency,
-      idempotency_key: idempotencyKey,
-      delivery_address: normalizedDeliveryAddress,
-      notes: notesParts.join(" | ")
-    })
-    .select("id, order_number, created_at, subtotal, delivery_fee, total, currency")
-    .single();
-
-  if (orderError || !order) {
-    if (isOrdersIdempotencyUniqueError(orderError)) {
-      const existing = await findExistingOrderByIdempotencyKey(idempotencyKey);
-      if (existing) {
-        return {
-          orderId: existing.id,
-          orderNumber: existing.order_number,
-          receivedAt: existing.created_at,
-          subtotal: toInt(existing.subtotal),
-          deliveryFee: toInt(existing.delivery_fee),
-          total: toInt(existing.total),
-          currency: String(existing.currency || STORE_CURRENCY)
-        };
-      }
-    }
-
-    throw orderError || new Error("Failed to create order record");
-  }
-
-  const orderItems = computed.items.map((item) => ({
-    order_id: order.id,
+  const orderItemsPayload: AtomicOrderItemPayload[] = computed.items.map((item) => ({
     product_id: item.product_id,
     product_name_snapshot: item.product_name_snapshot,
     unit_price: item.unit_price,
@@ -416,22 +198,59 @@ export async function createOrderIntake(payload: OrderIntakeInput, idempotencyKe
     currency: item.currency
   }));
 
-  const { error: orderItemsError } = await supabase.from("order_items").insert(orderItems);
+  const { data, error } = await supabase.rpc("process_order_intake_atomic", {
+    p_idempotency_key: idempotencyKey,
+    p_request_hash: requestHash,
+    p_customer_id: customer.id,
+    p_delivery_address: normalizedDeliveryAddress,
+    p_notes: buildOrderNotes(payload),
+    p_subtotal: computed.subtotal,
+    p_delivery_fee: computed.deliveryFee,
+    p_total: computed.total,
+    p_currency: computed.currency,
+    p_items: orderItemsPayload
+  });
 
-  if (orderItemsError) {
-    await supabase.from("orders").delete().eq("id", order.id);
-    throw orderItemsError;
+  if (error) throw error;
+
+  const decision = parseAtomicOrderWriteRpcRow(normalizeRpcRow(data));
+
+  if (decision.kind === "created") {
+    return {
+      result: mapAtomicResult(decision.result),
+      replayed: false
+    };
   }
 
-  return {
-    orderId: order.id,
-    orderNumber: order.order_number,
-    receivedAt: order.created_at,
-    subtotal: toInt(order.subtotal),
-    deliveryFee: toInt(order.delivery_fee),
-    total: toInt(order.total),
-    currency: String(order.currency || STORE_CURRENCY)
-  };
+  if (decision.kind === "replayed") {
+    return {
+      result: mapAtomicResult(decision.result),
+      replayed: true
+    };
+  }
+
+  if (decision.kind === "rejected") {
+    throw new OrderIntakeRejectedError(decision.message, decision.fieldErrors);
+  }
+
+  if (decision.kind === "conflict") {
+    throw new OrderIdempotencyConflictError(decision.message);
+  }
+
+  if (decision.kind === "in_progress") {
+    throw new OrderIdempotencyInProgressError(decision.message);
+  }
+
+  throw new Error(decision.message);
+}
+
+export async function createOrderIntake(
+  payload: OrderIntakeInput,
+  idempotencyKey: string,
+  requestHash: string = hashOrderIntakePayload(payload)
+): Promise<CreateOrderIntakeResult> {
+  const { result } = await executeAtomicOrderWrite(payload, idempotencyKey, requestHash);
+  return result;
 }
 
 export async function createOrderIntakeWithIdempotency(
@@ -439,24 +258,5 @@ export async function createOrderIntakeWithIdempotency(
   idempotencyKey: string,
   requestHash: string
 ): Promise<{ result: CreateOrderIntakeResult; replayed: boolean }> {
-  const replayResult = await beginOrderIntakeIdempotency(idempotencyKey, requestHash);
-  if (replayResult) {
-    return { result: replayResult, replayed: true };
-  }
-
-  const result = await createOrderIntake(payload, idempotencyKey).catch(async (error) => {
-    const errorMessage = error instanceof Error ? error.message : "Unknown order processing error";
-    await markIdempotencyFailed(idempotencyKey, requestHash, errorMessage).catch(() => undefined);
-    throw error;
-  });
-
-  try {
-    await markIdempotencySuccess(idempotencyKey, requestHash, result);
-  } catch {
-    throw new OrderIdempotencyInProgressError(
-      "Your order was accepted but confirmation is still finalizing. Retry with the same idempotency key."
-    );
-  }
-
-  return { result, replayed: false };
+  return executeAtomicOrderWrite(payload, idempotencyKey, requestHash);
 }
