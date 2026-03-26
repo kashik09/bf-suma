@@ -26,7 +26,6 @@ export function StoreFooter() {
                 {item.label}
               </Link>
             ))}
-            <Link className="hover:text-brand-600" href="/faq">FAQ</Link>
           </div>
         </div>
 
