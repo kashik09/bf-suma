@@ -37,6 +37,7 @@ create table if not exists public.products (
   description text null,
   price integer not null check (price >= 0),
   compare_at_price integer null check (compare_at_price is null or compare_at_price >= 0),
+  currency text not null default 'KES' check (currency in ('KES')),
   sku text not null unique,
   stock_qty integer not null default 0 check (stock_qty >= 0),
   status text not null default 'ACTIVE'
@@ -89,6 +90,7 @@ create index if not exists idx_customers_created_at on public.customers (created
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   order_number text not null unique,
+  idempotency_key text null unique,
   customer_id uuid not null references public.customers(id) on delete restrict,
   status text not null default 'PENDING'
     check (status in ('PENDING', 'CONFIRMED', 'PROCESSING', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELED')),
@@ -97,6 +99,7 @@ create table if not exists public.orders (
   subtotal integer not null check (subtotal >= 0),
   delivery_fee integer not null check (delivery_fee >= 0),
   total integer not null check (total >= 0),
+  currency text not null default 'KES' check (currency in ('KES')),
   delivery_address text not null,
   notes text null,
   created_at timestamptz not null default now(),
@@ -117,6 +120,7 @@ create table if not exists public.order_items (
   unit_price integer not null check (unit_price >= 0),
   quantity integer not null check (quantity > 0 and quantity <= 99),
   line_total integer not null check (line_total >= 0),
+  currency text not null default 'KES' check (currency in ('KES')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint order_items_name_non_empty check (char_length(trim(product_name_snapshot)) > 0),
