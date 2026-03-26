@@ -82,9 +82,9 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
         <p className="text-sm text-slate-600">{product.description}</p>
 
         <div className="flex items-center gap-2">
-          <p className="text-xl font-semibold text-slate-900">{formatCurrency(product.price)}</p>
+          <p className="text-xl font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
           {product.compare_at_price ? (
-            <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price)}</p>
+            <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
           ) : null}
         </div>
 

@@ -1,4 +1,5 @@
 import type { CartItem, StorefrontProduct } from "@/types";
+import { STORE_CURRENCY } from "@/lib/utils";
 
 const CART_STORAGE_KEY = "bf_suma_cart_v1";
 export const CART_UPDATED_EVENT = "bf_suma_cart_updated";
@@ -17,7 +18,12 @@ function readCartStorage(): CartItem[] {
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
 
-    return parsed.filter((item) => item && typeof item.product_id === "string");
+    return parsed
+      .filter((item) => item && typeof item.product_id === "string")
+      .map((item) => ({
+        ...item,
+        currency: item.currency || STORE_CURRENCY
+      }));
   } catch {
     return [];
   }
@@ -60,7 +66,8 @@ export function addCartItem(product: StorefrontProduct, quantity: number) {
       image_url: product.image_url,
       quantity: safeQuantity,
       max_quantity: safeMax,
-      availability: product.availability
+      availability: product.availability,
+      currency: product.currency || STORE_CURRENCY
     });
   }
 

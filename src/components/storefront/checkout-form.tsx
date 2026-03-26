@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { useCart } from "@/hooks/use-cart";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validation";
 import { formatCurrency } from "@/lib/utils";
-import { submitOrderIntake } from "@/services/storefront-api";
+import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 
 const DELIVERY_FEE = 5000;
 const PICKUP_LOCATIONS = [
@@ -21,12 +21,21 @@ const PICKUP_LOCATIONS = [
   "Main Store - Entebbe"
 ];
 
+function createIdempotencyKey() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `order-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export function CheckoutForm() {
   const { items, subtotal, clear } = useCart();
   const { toast } = useToast();
   const [resultMessage, setResultMessage] = useState<string | null>(null);
   const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const lastSubmissionRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
 
   const form = useForm<CheckoutInput>({
     resolver: zodResolver(checkoutSchema),
@@ -96,13 +105,26 @@ export function CheckoutForm() {
       setResultMessage(null);
       setResultStatus(null);
 
-      const response = await submitOrderIntake({
+      const payload = {
         ...values,
         items,
         subtotal,
         deliveryFee,
         total
-      });
+      };
+      const fingerprint = JSON.stringify(payload);
+
+      const idempotencyKey =
+        lastSubmissionRef.current && lastSubmissionRef.current.fingerprint === fingerprint
+          ? lastSubmissionRef.current.idempotencyKey
+          : createIdempotencyKey();
+
+      lastSubmissionRef.current = {
+        fingerprint,
+        idempotencyKey
+      };
+
+      const response = await submitOrderIntake(payload, idempotencyKey);
 
       if (response.persisted !== true) {
         const message = response.message || "We couldn't place your order right now. Your cart is still available.";
@@ -118,6 +140,7 @@ export function CheckoutForm() {
 
       clear();
       form.reset();
+      lastSubmissionRef.current = null;
       const successMessage = response.message || "Thanks, your order has been received.";
       setResultMessage(successMessage);
       setResultStatus("success");
@@ -127,10 +150,13 @@ export function CheckoutForm() {
         variant: "success"
       });
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "We couldn't place your order right now. Please try again.";
+      let message = "We couldn't place your order right now. Please try again.";
+      if (error instanceof ApiRequestError) {
+        message = error.message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
       setResultMessage(message);
       setResultStatus("error");
       toast({
@@ -293,7 +319,7 @@ export function CheckoutForm() {
                 <span className="line-clamp-1 text-slate-600">
                   {item.name} x {item.quantity}
                 </span>
-                <span className="font-medium text-slate-900">{formatCurrency(item.price * item.quantity)}</span>
+                <span className="font-medium text-slate-900">{formatCurrency(item.price * item.quantity, item.currency)}</span>
               </div>
             ))}
           </div>
@@ -301,15 +327,15 @@ export function CheckoutForm() {
           <div className="mt-3 border-t border-slate-200 pt-3 text-sm">
             <div className="mb-1 flex items-center justify-between">
               <span className="text-slate-600">Subtotal</span>
-              <span className="font-medium">{formatCurrency(subtotal)}</span>
+              <span className="font-medium">{formatCurrency(subtotal, items[0]?.currency)}</span>
             </div>
             <div className="mb-1 flex items-center justify-between">
               <span className="text-slate-600">{isPickup ? "Pickup Fee" : "Delivery Fee"}</span>
-              <span className="font-medium">{isPickup ? "Free" : formatCurrency(deliveryFee)}</span>
+              <span className="font-medium">{isPickup ? "Free" : formatCurrency(deliveryFee, items[0]?.currency)}</span>
             </div>
             <div className="flex items-center justify-between text-base font-semibold">
               <span>Total</span>
-              <span>{formatCurrency(total)}</span>
+              <span>{formatCurrency(total, items[0]?.currency)}</span>
             </div>
           </div>
 
