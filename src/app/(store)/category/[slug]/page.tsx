@@ -3,11 +3,19 @@ import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
 import { ProductGrid } from "@/components/storefront";
 import { SectionHeader } from "@/components/ui/section-header";
-import { getStorefrontCategoryBySlug, listStorefrontProducts } from "@/services/products";
+import { getCommerceDegradedMessage } from "@/lib/catalog-health";
+import {
+  getStorefrontCatalogHealth,
+  getStorefrontCategoryBySlug,
+  listStorefrontProducts
+} from "@/services/products";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const category = await getStorefrontCategoryBySlug(slug);
+  const [category, health] = await Promise.all([
+    getStorefrontCategoryBySlug(slug),
+    getStorefrontCatalogHealth()
+  ]);
 
   if (!category) {
     notFound();
@@ -22,6 +30,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     <PageContainer className="space-y-6 py-10">
       <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-5">
         <SectionHeader title={category.name} description={category.description} />
+        {!health.commerceReady ? (
+          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            {getCommerceDegradedMessage(health)}
+          </div>
+        ) : null}
         <Link
           className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
           href="/shop"
