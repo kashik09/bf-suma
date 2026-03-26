@@ -2,20 +2,17 @@ import type { Order, OrderStatus } from "@/types";
 import { createHash } from "node:crypto";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { OrderIntakeInput } from "@/lib/validation";
+import {
+  computeAuthoritativeOrder,
+  CommerceIntegrityError,
+  type CommerceProductSnapshot
+} from "@/lib/commerce-integrity";
+import { evaluateIdempotencyDecision, type IdempotencyStatus } from "@/lib/idempotency-decision";
+import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
 
 const DELIVERY_FEE_AMOUNT = 5000;
 const IDEMPOTENCY_WINDOW_MS = 24 * 60 * 60 * 1000;
-
-type IdempotencyStatus = "IN_PROGRESS" | "SUCCEEDED" | "FAILED";
-
-interface ProductPricingRow {
-  id: string;
-  name: string;
-  price: number | string | null;
-  status: string | null;
-  stock_qty: number | string | null;
-}
 
 interface IdempotencyRow {
   idempotency_key: string;
@@ -27,13 +24,14 @@ interface IdempotencyRow {
   expires_at: string;
 }
 
-interface ServerOrderItem {
-  order_id: string;
-  product_id: string;
-  product_name_snapshot: string;
-  unit_price: number;
-  quantity: number;
-  line_total: number;
+interface OrderRowSummary {
+  id: string;
+  order_number: string;
+  created_at: string;
+  subtotal: number;
+  delivery_fee: number;
+  total: number;
+  currency: string;
 }
 
 export interface CreateOrderIntakeResult {
@@ -43,6 +41,7 @@ export interface CreateOrderIntakeResult {
   subtotal: number;
   deliveryFee: number;
   total: number;
+  currency: string;
 }
 
 export class OrderIntakeRejectedError extends Error {
@@ -86,8 +85,18 @@ function isDuplicateKeyError(error: unknown): boolean {
   return maybeCode === "23505";
 }
 
-function isExpired(expiresAt: string): boolean {
-  return new Date(expiresAt).getTime() <= Date.now();
+function isOrdersIdempotencyUniqueError(error: unknown): boolean {
+  if (!isDuplicateKeyError(error) || !error || typeof error !== "object") return false;
+
+  const details = String((error as { details?: unknown }).details || "").toLowerCase();
+  const hint = String((error as { hint?: unknown }).hint || "").toLowerCase();
+  const message = String((error as { message?: unknown }).message || "").toLowerCase();
+
+  return (
+    details.includes("idempotency_key") ||
+    hint.includes("idempotency_key") ||
+    message.includes("idempotency_key")
+  );
 }
 
 function nextExpiryTimestamp(): string {
@@ -103,7 +112,8 @@ function normalizeIdempotencyResponse(payload: unknown): CreateOrderIntakeResult
     receivedAt,
     subtotal,
     deliveryFee,
-    total
+    total,
+    currency
   } = payload as Record<string, unknown>;
 
   if (
@@ -112,7 +122,8 @@ function normalizeIdempotencyResponse(payload: unknown): CreateOrderIntakeResult
     typeof receivedAt !== "string" ||
     typeof subtotal !== "number" ||
     typeof deliveryFee !== "number" ||
-    typeof total !== "number"
+    typeof total !== "number" ||
+    typeof currency !== "string"
   ) {
     return null;
   }
@@ -123,22 +134,19 @@ function normalizeIdempotencyResponse(payload: unknown): CreateOrderIntakeResult
     receivedAt,
     subtotal,
     deliveryFee,
-    total
+    total,
+    currency
   };
-}
-
-function normalizeAmount(value: number): number {
-  return Math.round(value);
-}
-
-function resolveDeliveryFee(isPickup: boolean): number {
-  return isPickup ? 0 : DELIVERY_FEE_AMOUNT;
 }
 
 function generateOrderNumber(): string {
   const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
   const random = Math.floor(1000 + Math.random() * 9000);
   return `BFS-${timestamp}-${random}`;
+}
+
+function toInt(value: number | string): number {
+  return Math.round(Number(value));
 }
 
 export async function listOrders(): Promise<Order[]> {
@@ -269,21 +277,24 @@ async function beginOrderIntakeIdempotency(
     throw new Error("Failed to initialize idempotency record.");
   }
 
-  const expired = isExpired(row.expires_at);
-  if (!expired && row.request_hash !== requestHash) {
+  const decision = evaluateIdempotencyDecision(row, requestHash);
+
+  if (decision.kind === "conflict") {
     throw new OrderIdempotencyConflictError(
       "This idempotency key was already used with a different checkout payload."
     );
   }
 
-  if (!expired && row.status === "SUCCEEDED") {
+  if (decision.kind === "replay") {
     const replayResult = normalizeIdempotencyResponse(row.response_payload);
-    if (replayResult) {
-      return replayResult;
-    }
+    if (replayResult) return replayResult;
+
+    throw new OrderIdempotencyInProgressError(
+      "This checkout request is still finalizing. Please retry in a moment."
+    );
   }
 
-  if (!expired && row.status === "IN_PROGRESS") {
+  if (decision.kind === "in_progress") {
     throw new OrderIdempotencyInProgressError(
       "This checkout request is already being processed. Please retry in a moment."
     );
@@ -293,7 +304,19 @@ async function beginOrderIntakeIdempotency(
   return null;
 }
 
-export async function createOrderIntake(payload: OrderIntakeInput): Promise<CreateOrderIntakeResult> {
+async function findExistingOrderByIdempotencyKey(idempotencyKey: string): Promise<OrderRowSummary | null> {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id, order_number, created_at, subtotal, delivery_fee, total, currency")
+    .eq("idempotency_key", idempotencyKey)
+    .maybeSingle();
+
+  if (error) throw error;
+  return (data as OrderRowSummary | null) || null;
+}
+
+export async function createOrderIntake(payload: OrderIntakeInput, idempotencyKey: string): Promise<CreateOrderIntakeResult> {
   const supabase = await createServerSupabaseClient();
   const isPickup = payload.fulfillmentType === "pickup";
   const normalizedDeliveryAddress = isPickup
@@ -309,89 +332,22 @@ export async function createOrderIntake(payload: OrderIntakeInput): Promise<Crea
   const productIds = Array.from(requestedQuantities.keys());
   const { data: productRows, error: productsError } = await supabase
     .from("products")
-    .select("id, name, price, status, stock_qty")
+    .select("id, name, price, currency, status, stock_qty")
     .in("id", productIds);
 
   if (productsError) throw productsError;
 
-  const productsById = new Map(
-    ((productRows || []) as ProductPricingRow[]).map((product) => [product.id, product])
-  );
-
-  const missingProductIds = productIds.filter((productId) => !productsById.has(productId));
-  if (missingProductIds.length > 0) {
-    throw new OrderIntakeRejectedError(
-      "Some products in your cart are no longer available.",
-      { items: ["One or more products could not be found."] }
-    );
-  }
-
-  const tamperedPriceItems = payload.items.filter((item) => {
-    const product = productsById.get(item.product_id);
-    if (!product) return false;
-
-    const authoritativePrice = normalizeAmount(Number(product.price));
-    return !Number.isFinite(authoritativePrice) || normalizeAmount(item.price) !== authoritativePrice;
-  });
-
-  if (tamperedPriceItems.length > 0) {
-    throw new OrderIntakeRejectedError(
-      "One or more item prices changed. Please review your cart and try again.",
-      { items: ["Submitted item pricing does not match current catalog pricing."] }
-    );
-  }
-
-  const computedOrderItemsByProductId = new Map<string, Omit<ServerOrderItem, "order_id">>();
-  let computedSubtotal = 0;
-
-  for (const [productId, quantity] of requestedQuantities.entries()) {
-    const product = productsById.get(productId);
-    if (!product) continue;
-
-    if (product.status !== "ACTIVE") {
-      throw new OrderIntakeRejectedError(
-        "Some products in your cart are not currently available for checkout.",
-        { items: ["One or more products are inactive."] }
-      );
-    }
-
-    const stockQty = Number(product.stock_qty);
-    if (!Number.isFinite(stockQty) || stockQty <= 0 || quantity > stockQty) {
-      throw new OrderIntakeRejectedError(
-        "Some products in your cart do not have enough stock.",
-        { items: ["Requested quantity exceeds available stock."] }
-      );
-    }
-
-    const unitPrice = normalizeAmount(Number(product.price));
-    if (!Number.isFinite(unitPrice) || unitPrice < 0) {
-      throw new Error(`Invalid product price for ${productId}`);
-    }
-
-    const lineTotal = unitPrice * quantity;
-    computedSubtotal += lineTotal;
-
-    computedOrderItemsByProductId.set(productId, {
-      product_id: productId,
-      product_name_snapshot: product.name,
-      unit_price: unitPrice,
-      quantity,
-      line_total: lineTotal
+  let computed;
+  try {
+    computed = computeAuthoritativeOrder(payload, (productRows || []) as CommerceProductSnapshot[], {
+      deliveryFeeAmount: DELIVERY_FEE_AMOUNT,
+      storeCurrency: STORE_CURRENCY
     });
-  }
-
-  const computedDeliveryFee = resolveDeliveryFee(isPickup);
-  const computedTotal = computedSubtotal + computedDeliveryFee;
-
-  if (
-    normalizeAmount(payload.subtotal) !== computedSubtotal ||
-    normalizeAmount(payload.deliveryFee) !== computedDeliveryFee ||
-    normalizeAmount(payload.total) !== computedTotal
-  ) {
-    throw new OrderIntakeRejectedError(
-      "Order totals do not match current pricing. Please refresh your cart and try again.",
-      { total: ["Submitted totals do not match current server pricing."] }
-    );
+  } catch (error) {
+    if (error instanceof CommerceIntegrityError) {
+      throw new OrderIntakeRejectedError(error.message, error.fieldErrors);
+    }
+    throw error;
   }
 
   const notesParts: string[] = [];
@@ -420,24 +376,44 @@ export async function createOrderIntake(payload: OrderIntakeInput): Promise<Crea
       customer_id: customer.id,
       status: "PENDING",
       payment_status: "UNPAID",
-      subtotal: computedSubtotal,
-      delivery_fee: computedDeliveryFee,
-      total: computedTotal,
+      subtotal: computed.subtotal,
+      delivery_fee: computed.deliveryFee,
+      total: computed.total,
+      currency: computed.currency,
+      idempotency_key: idempotencyKey,
       delivery_address: normalizedDeliveryAddress,
       notes: notesParts.join(" | ")
     })
-    .select("id, order_number, created_at")
+    .select("id, order_number, created_at, subtotal, delivery_fee, total, currency")
     .single();
 
-  if (orderError || !order) throw orderError || new Error("Failed to create order record");
+  if (orderError || !order) {
+    if (isOrdersIdempotencyUniqueError(orderError)) {
+      const existing = await findExistingOrderByIdempotencyKey(idempotencyKey);
+      if (existing) {
+        return {
+          orderId: existing.id,
+          orderNumber: existing.order_number,
+          receivedAt: existing.created_at,
+          subtotal: toInt(existing.subtotal),
+          deliveryFee: toInt(existing.delivery_fee),
+          total: toInt(existing.total),
+          currency: String(existing.currency || STORE_CURRENCY)
+        };
+      }
+    }
 
-  const orderItems = Array.from(computedOrderItemsByProductId.values()).map((item) => ({
+    throw orderError || new Error("Failed to create order record");
+  }
+
+  const orderItems = computed.items.map((item) => ({
     order_id: order.id,
     product_id: item.product_id,
     product_name_snapshot: item.product_name_snapshot,
     unit_price: item.unit_price,
     quantity: item.quantity,
-    line_total: item.line_total
+    line_total: item.line_total,
+    currency: item.currency
   }));
 
   const { error: orderItemsError } = await supabase.from("order_items").insert(orderItems);
@@ -451,9 +427,10 @@ export async function createOrderIntake(payload: OrderIntakeInput): Promise<Crea
     orderId: order.id,
     orderNumber: order.order_number,
     receivedAt: order.created_at,
-    subtotal: computedSubtotal,
-    deliveryFee: computedDeliveryFee,
-    total: computedTotal
+    subtotal: toInt(order.subtotal),
+    deliveryFee: toInt(order.delivery_fee),
+    total: toInt(order.total),
+    currency: String(order.currency || STORE_CURRENCY)
   };
 }
 
@@ -467,13 +444,19 @@ export async function createOrderIntakeWithIdempotency(
     return { result: replayResult, replayed: true };
   }
 
-  try {
-    const result = await createOrderIntake(payload);
-    await markIdempotencySuccess(idempotencyKey, requestHash, result);
-    return { result, replayed: false };
-  } catch (error) {
+  const result = await createOrderIntake(payload, idempotencyKey).catch(async (error) => {
     const errorMessage = error instanceof Error ? error.message : "Unknown order processing error";
     await markIdempotencyFailed(idempotencyKey, requestHash, errorMessage).catch(() => undefined);
     throw error;
+  });
+
+  try {
+    await markIdempotencySuccess(idempotencyKey, requestHash, result);
+  } catch {
+    throw new OrderIdempotencyInProgressError(
+      "Your order was accepted but confirmation is still finalizing. Retry with the same idempotency key."
+    );
   }
+
+  return { result, replayed: false };
 }
