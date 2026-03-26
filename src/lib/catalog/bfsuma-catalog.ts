@@ -228,32 +228,38 @@ function generateSku(slug: string, index: number): string {
 }
 
 // Build StorefrontProduct array
-export const BFSUMA_PRODUCTS: StorefrontProduct[] = MANIFEST_PRODUCTS.map((p, index) => {
-  const catInfo = getCategoryInfo(p.category_slug);
-  const status: ProductStatus = "ACTIVE";
-  const availability: AvailabilityState = "in_stock";
-  const currency = (p.currency || STORE_CURRENCY).toUpperCase();
-  const normalizedCurrency = currency === STORE_CURRENCY ? currency : STORE_CURRENCY;
+export const BFSUMA_PRODUCTS: StorefrontProduct[] = MANIFEST_PRODUCTS
+  .map<StorefrontProduct | null>((p, index) => {
+    const catInfo = getCategoryInfo(p.category_slug);
+    const status: ProductStatus = "ACTIVE";
+    const availability: AvailabilityState = "in_stock";
+    const currency = (p.currency || STORE_CURRENCY).toUpperCase();
+    if (currency !== STORE_CURRENCY) {
+      return null;
+    }
 
-  return {
-    id: `prod-${p.slug}`,
-    name: p.name,
-    slug: p.slug,
-    description: p.description,
-    price: toMinorUnits(p.price, normalizedCurrency),
-    compare_at_price: p.compare_at_price !== null ? toMinorUnits(p.compare_at_price, normalizedCurrency) : null,
-    currency: normalizedCurrency,
-    sku: generateSku(p.slug, index),
-    stock_qty: 50, // Default stock - not invented, just a placeholder
-    status,
-    category_id: catInfo.id,
-    category_name: catInfo.name,
-    category_slug: catInfo.slug,
-    image_url: p.image_url || DEFAULT_PRODUCT_IMAGE,
-    gallery_urls: p.image_url ? [p.image_url] : [DEFAULT_PRODUCT_IMAGE],
-    availability
-  };
-});
+    const mappedProduct: StorefrontProduct = {
+      id: `prod-${p.slug}`,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      price: toMinorUnits(p.price, currency),
+      compare_at_price: p.compare_at_price !== null ? toMinorUnits(p.compare_at_price, currency) : null,
+      currency: STORE_CURRENCY,
+      sku: generateSku(p.slug, index),
+      stock_qty: 50, // Default stock - not invented, just a placeholder
+      status,
+      category_id: catInfo.id,
+      category_name: catInfo.name,
+      category_slug: catInfo.slug,
+      image_url: p.image_url || DEFAULT_PRODUCT_IMAGE,
+      gallery_urls: p.image_url ? [p.image_url] : [DEFAULT_PRODUCT_IMAGE],
+      availability
+    };
+
+    return mappedProduct;
+  })
+  .filter((product): product is StorefrontProduct => product !== null);
 
 // ---------------------------------------------------------------------------
 // Exports
