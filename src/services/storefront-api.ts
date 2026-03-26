@@ -1,6 +1,18 @@
 import type { InquiryInput, OrderIntakeInput } from "@/lib/validation";
 import type { Inquiry, OrderIntakeResponse } from "@/types";
 
+export class ApiRequestError extends Error {
+  status: number;
+  body: unknown;
+
+  constructor(message: string, status: number, body: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
 async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
     ...init,
@@ -14,15 +26,18 @@ async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Pro
 
   if (!response.ok) {
     const message = (body && typeof body.message === "string" && body.message) || "Request failed";
-    throw new Error(message);
+    throw new ApiRequestError(message, response.status, body);
   }
 
   return body as T;
 }
 
-export async function submitOrderIntake(payload: OrderIntakeInput): Promise<OrderIntakeResponse> {
+export async function submitOrderIntake(payload: OrderIntakeInput, idempotencyKey: string): Promise<OrderIntakeResponse> {
   return requestJson<OrderIntakeResponse>("/api/orders", {
     method: "POST",
+    headers: {
+      "idempotency-key": idempotencyKey
+    },
     body: JSON.stringify(payload)
   });
 }
