@@ -30,9 +30,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <p className="text-base font-semibold text-slate-900">{formatCurrency(product.price)}</p>
+          <p className="text-base font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
           {product.compare_at_price ? (
-            <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price)}</p>
+            <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
           ) : null}
         </div>
 
