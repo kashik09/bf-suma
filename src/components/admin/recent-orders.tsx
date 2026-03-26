@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowRight, Clock, Package } from "lucide-react";
+import { Clock, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
@@ -56,13 +55,7 @@ export function RecentOrders({ orders, title = "Recent Orders" }: RecentOrdersPr
     <div className="rounded-xl border border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
         <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-        <Link
-          href="/admin/orders"
-          className="flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700"
-        >
-          View all
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        <span className="text-sm font-medium text-slate-500">Read-only preview</span>
       </div>
 
       {orders.length === 0 ? (
@@ -76,9 +69,8 @@ export function RecentOrders({ orders, title = "Recent Orders" }: RecentOrdersPr
       ) : (
         <div className="divide-y divide-slate-100">
           {orders.map((order) => (
-            <Link
+            <div
               key={order.id}
-              href={`/admin/orders/${order.id}`}
               className="flex items-center justify-between px-5 py-3.5 transition-colors hover:bg-slate-50"
             >
               <div className="flex items-center gap-3">
@@ -106,7 +98,7 @@ export function RecentOrders({ orders, title = "Recent Orders" }: RecentOrdersPr
                   {statusLabels[order.status]}
                 </Badge>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
