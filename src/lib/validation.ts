@@ -97,6 +97,7 @@ export const cartItemSchema = z.object({
   slug: z.string().min(1),
   name: z.string().min(1),
   price: z.number().int().nonnegative(),
+  currency: z.literal("KES").default("KES"),
   image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]),
   quantity: z.number().int().min(1).max(99),
   max_quantity: z.number().int().min(0),
