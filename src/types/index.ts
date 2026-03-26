@@ -7,7 +7,7 @@ export type OrderStatus =
   | "DELIVERED"
   | "CANCELED";
 export type PaymentStatus = "UNPAID" | "PAID" | "FAILED" | "REFUNDED";
-export type CurrencyCode = "KES" | "UGX";
+export type CurrencyCode = "KES";
 export type DeliveryStatus =
   | "UNASSIGNED"
   | "ASSIGNED"
@@ -36,7 +36,7 @@ export interface Product {
   // Integer minor units (for KES, this is cents).
   price: number;
   compare_at_price: number | null;
-  currency?: CurrencyCode;
+  currency: CurrencyCode;
   sku: string;
   stock_qty: number;
   status: ProductStatus;
@@ -74,7 +74,7 @@ export interface Order {
   subtotal: number;
   delivery_fee: number;
   total: number;
-  currency?: CurrencyCode;
+  currency: CurrencyCode;
   delivery_address: string;
   notes: string | null;
   created_at: string;
@@ -90,7 +90,7 @@ export interface OrderItem {
   unit_price: number;
   quantity: number;
   line_total: number;
-  currency?: CurrencyCode;
+  currency: CurrencyCode;
 }
 
 export interface Driver {
@@ -164,7 +164,7 @@ export interface StorefrontProduct {
   // Integer minor units (for KES, this is cents).
   price: number;
   compare_at_price: number | null;
-  currency?: CurrencyCode;
+  currency: CurrencyCode;
   sku: string;
   stock_qty: number;
   status: ProductStatus;
@@ -186,7 +186,7 @@ export interface CartItem {
   quantity: number;
   max_quantity: number;
   availability: AvailabilityState;
-  currency?: CurrencyCode;
+  currency: CurrencyCode;
 }
 
 export interface OrderIntakePayload {
@@ -197,7 +197,7 @@ export interface OrderIntakePayload {
   fulfillmentType: "delivery" | "pickup";
   deliveryAddress?: string;
   pickupLocation?: string;
-  paymentMethod: "pay_on_delivery" | "pay_now";
+  paymentMethod: "pay_on_delivery";
   notes?: string;
   items: CartItem[];
   subtotal: number;
@@ -209,6 +209,10 @@ export interface OrderIntakeResponse {
   persisted: boolean;
   orderNumber?: string;
   receivedAt?: string;
+  subtotal?: number;
+  deliveryFee?: number;
+  total?: number;
+  currency?: CurrencyCode;
   message: string;
 }
 

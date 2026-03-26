@@ -255,6 +255,7 @@ async function main() {
       description: prod.description,
       price: toMinorUnits(prod.price, currency),
       compare_at_price: prod.compare_at_price !== null ? toMinorUnits(prod.compare_at_price, currency) : null,
+      currency,
       sku: generateSku(prod.slug, i),
       stock_qty: DEFAULT_STOCK_QTY,
       status: "ACTIVE" as const,
@@ -277,6 +278,7 @@ async function main() {
           description: productData.description,
           price: productData.price,
           compare_at_price: productData.compare_at_price,
+          currency: productData.currency,
           category_id: productData.category_id,
         })
         .eq("id", existing.id);

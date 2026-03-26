@@ -1,6 +1,7 @@
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
 import { BFSUMA_CATALOG } from "@/lib/catalog";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { STORE_CURRENCY } from "@/lib/utils";
 import type {
   AvailabilityState,
   Category,
@@ -169,6 +170,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
         description: product.description || "",
         price: Number(product.price),
         compare_at_price: product.compare_at_price ? Number(product.compare_at_price) : null,
+        currency: (product.currency || STORE_CURRENCY) as "KES",
         sku: product.sku,
         stock_qty: Number(product.stock_qty),
         status,
@@ -236,6 +238,7 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
       description: product.description,
       price: product.price,
       compare_at_price: product.compare_at_price,
+      currency: product.currency,
       sku: product.sku,
       stock_qty: product.stock_qty,
       status: product.status,
@@ -266,6 +269,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       description: fallbackProduct.description,
       price: fallbackProduct.price,
       compare_at_price: fallbackProduct.compare_at_price,
+      currency: fallbackProduct.currency,
       sku: fallbackProduct.sku,
       stock_qty: fallbackProduct.stock_qty,
       status: fallbackProduct.status,
