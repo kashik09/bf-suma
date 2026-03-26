@@ -21,13 +21,19 @@ function availabilityVariant(availability: StorefrontProduct["availability"]) {
   return "danger" as const;
 }
 
-export function ProductDetail({ product }: { product: StorefrontProduct }) {
+interface ProductDetailProps {
+  product: StorefrontProduct;
+  commerceReady?: boolean;
+  degradedReason?: string | null;
+}
+
+export function ProductDetail({ product, commerceReady = true, degradedReason = null }: ProductDetailProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(product.gallery_urls[0] || product.image_url);
 
-  const isUnavailable = product.availability === "out_of_stock";
+  const isUnavailable = product.availability === "out_of_stock" || !commerceReady;
 
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
 
@@ -112,7 +118,7 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button disabled={isUnavailable} onClick={handleAddToCart} title={isUnavailable ? "Product is out of stock" : "Add item to cart"}>
-            {isUnavailable ? "Out of stock" : "Add to cart"}
+            {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to cart"}
           </Button>
           <a
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
@@ -123,6 +129,12 @@ export function ProductDetail({ product }: { product: StorefrontProduct }) {
             Order via WhatsApp
           </a>
         </div>
+
+        {!commerceReady ? (
+          <p className="text-xs text-amber-700">
+            {degradedReason || "Live inventory validation is unavailable. Checkout is temporarily disabled."}
+          </p>
+        ) : null}
       </div>
     </section>
   );

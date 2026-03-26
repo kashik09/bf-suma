@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
 import { ProductDetail, RelatedProducts } from "@/components/storefront";
-import { getStorefrontProductBySlug, listRelatedProducts } from "@/services/products";
+import { getCommerceDegradedMessage } from "@/lib/catalog-health";
+import { getStorefrontCatalogHealth, getStorefrontProductBySlug, listRelatedProducts } from "@/services/products";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getStorefrontProductBySlug(slug);
+  const [product, health] = await Promise.all([
+    getStorefrontProductBySlug(slug),
+    getStorefrontCatalogHealth()
+  ]);
 
   if (!product) {
     notFound();
@@ -15,7 +19,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <PageContainer className="space-y-8 py-10">
-      <ProductDetail product={product} />
+      {!health.commerceReady ? (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          {getCommerceDegradedMessage(health)}
+        </div>
+      ) : null}
+
+      <ProductDetail
+        commerceReady={health.commerceReady}
+        degradedReason={health.degradedReason}
+        product={product}
+      />
       <RelatedProducts products={relatedProducts} />
     </PageContainer>
   );
