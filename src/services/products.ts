@@ -1,5 +1,11 @@
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
 import { BFSUMA_CATALOG } from "@/lib/catalog";
+import {
+  buildFallbackCatalogHealth,
+  buildLiveCatalogHealth,
+  coerceProductsToReadOnly,
+  type CatalogHealth
+} from "@/lib/catalog-health";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { STORE_CURRENCY } from "@/lib/utils";
 import type {
@@ -30,6 +36,13 @@ export interface StorefrontProductFilters {
 interface CatalogData {
   categories: StorefrontCategory[];
   products: StorefrontProduct[];
+  health: CatalogHealth;
+}
+
+export interface StorefrontCatalogSnapshot {
+  categories: StorefrontCategory[];
+  products: StorefrontProduct[];
+  health: CatalogHealth;
 }
 
 function logCatalogFallback(scope: string, error: unknown, context: Record<string, unknown> = {}) {
@@ -193,7 +206,8 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
 
   return {
     categories: mappedCategories,
-    products: mappedProducts
+    products: mappedProducts,
+    health: buildLiveCatalogHealth()
   };
 }
 
@@ -206,9 +220,12 @@ async function getCatalogData(): Promise<CatalogData> {
       fallbackProducts: FALLBACK_PRODUCTS.length
     });
 
+    const degradedReason = error instanceof Error ? error.message : "Unknown catalog error";
+
     return {
       categories: FALLBACK_CATEGORIES,
-      products: FALLBACK_PRODUCTS
+      products: coerceProductsToReadOnly(FALLBACK_PRODUCTS),
+      health: buildFallbackCatalogHealth(degradedReason)
     };
   }
 }
@@ -240,8 +257,8 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
       compare_at_price: product.compare_at_price,
       currency: product.currency,
       sku: product.sku,
-      stock_qty: product.stock_qty,
-      status: product.status,
+      stock_qty: 0,
+      status: "OUT_OF_STOCK",
       category_id: product.category_id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -271,13 +288,30 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       compare_at_price: fallbackProduct.compare_at_price,
       currency: fallbackProduct.currency,
       sku: fallbackProduct.sku,
-      stock_qty: fallbackProduct.stock_qty,
-      status: fallbackProduct.status,
+      stock_qty: 0,
+      status: "OUT_OF_STOCK",
       category_id: fallbackProduct.category_id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
   }
+}
+
+export async function getStorefrontCatalogSnapshot(
+  filters: StorefrontProductFilters = {}
+): Promise<StorefrontCatalogSnapshot> {
+  const catalog = await getCatalogData();
+
+  return {
+    categories: catalog.categories,
+    products: withStorefrontFilters(catalog.products, filters),
+    health: catalog.health
+  };
+}
+
+export async function getStorefrontCatalogHealth(): Promise<CatalogHealth> {
+  const catalog = await getCatalogData();
+  return catalog.health;
 }
 
 export async function listStorefrontCategories(): Promise<StorefrontCategory[]> {
@@ -293,8 +327,8 @@ export async function getStorefrontCategoryBySlug(slug: string): Promise<Storefr
 export async function listStorefrontProducts(
   filters: StorefrontProductFilters = {}
 ): Promise<StorefrontProduct[]> {
-  const catalog = await getCatalogData();
-  return withStorefrontFilters(catalog.products, filters);
+  const catalog = await getStorefrontCatalogSnapshot(filters);
+  return catalog.products;
 }
 
 export async function listFeaturedProducts(limit: number = 6): Promise<StorefrontProduct[]> {
