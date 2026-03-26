@@ -4,9 +4,7 @@ import {
   Users,
   Package,
   TrendingDown,
-  Plus,
-  Eye,
-  Settings
+  ExternalLink
 } from "lucide-react";
 import { SectionHeader } from "@/components/ui";
 import { StatsCard, QuickActions, RecentOrders } from "@/components/admin";
@@ -81,7 +79,8 @@ async function getDashboardStats() {
       lowStockProducts,
       outOfStockProducts,
       totalCustomers,
-      recentOrders: formattedOrders
+      recentOrders: formattedOrders,
+      degraded: false
     };
   } catch {
     return {
@@ -92,32 +91,19 @@ async function getDashboardStats() {
       lowStockProducts: 0,
       outOfStockProducts: 0,
       totalCustomers: 0,
-      recentOrders: []
+      recentOrders: [],
+      degraded: true
     };
   }
 }
 
 const quickActions = [
   {
-    href: "/admin/products/new",
-    label: "Add Product",
-    description: "Create a new product listing",
-    icon: Plus,
+    href: "/shop",
+    label: "View Storefront",
+    description: "Open live public storefront",
+    icon: ExternalLink,
     variant: "primary" as const
-  },
-  {
-    href: "/admin/orders",
-    label: "View Orders",
-    description: "Manage customer orders",
-    icon: Eye,
-    variant: "default" as const
-  },
-  {
-    href: "/admin/settings",
-    label: "Settings",
-    description: "Configure store settings",
-    icon: Settings,
-    variant: "default" as const
   }
 ];
 
@@ -130,6 +116,12 @@ export default async function AdminDashboardPage() {
         title="Dashboard"
         description="Overview of your store performance and recent activity."
       />
+
+      {stats.degraded ? (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          Dashboard data is currently unavailable. Metrics shown below may be incomplete.
+        </div>
+      ) : null}
 
       {/* KPI Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
