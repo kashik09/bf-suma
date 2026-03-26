@@ -29,7 +29,12 @@ function createIdempotencyKey() {
   return `order-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
-export function CheckoutForm() {
+interface CheckoutFormProps {
+  commerceReady?: boolean;
+  degradedReason?: string | null;
+}
+
+export function CheckoutForm({ commerceReady = true, degradedReason = null }: CheckoutFormProps) {
   const { items, subtotal, clear } = useCart();
   const { toast } = useToast();
   const [resultMessage, setResultMessage] = useState<string | null>(null);
@@ -89,6 +94,18 @@ export function CheckoutForm() {
   const hasAttention = attentionItems.length > 0;
 
   async function onSubmit(values: CheckoutInput) {
+    if (!commerceReady) {
+      const message = degradedReason || "Live inventory validation is unavailable. Checkout is temporarily disabled.";
+      setResultMessage(message);
+      setResultStatus("error");
+      toast({
+        title: "Checkout unavailable",
+        description: message,
+        variant: "error"
+      });
+      return;
+    }
+
     if (items.length === 0) {
       setResultMessage("Your cart is empty. Add products before checkout.");
       setResultStatus("error");
@@ -184,6 +201,12 @@ export function CheckoutForm() {
   return (
     <form className="grid gap-6 lg:grid-cols-[1.7fr_1fr]" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
+        {!commerceReady ? (
+          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            {degradedReason || "Live inventory validation is unavailable. Checkout is disabled until service recovery."}
+          </div>
+        ) : null}
+
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
           <p className="text-xs uppercase tracking-wide text-slate-500">Checkout Progress</p>
           <p className="mt-1 text-sm font-semibold text-slate-900">
@@ -345,8 +368,8 @@ export function CheckoutForm() {
               : "You can pay when your order is delivered."}
           </p>
 
-          <Button className="mt-4 w-full" disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Placing order..." : "Place Order"}
+          <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
+            {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
           </Button>
 
           {resultMessage ? (
