@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:critical",
-    "test:critical": "node --test tests/critical-path.test.mjs"
+    "test:critical": "node --test tests/production-hardening.test.mjs",
+    "test:integration": "node --test tests/critical-path.test.mjs && node --test tests/money-model.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
