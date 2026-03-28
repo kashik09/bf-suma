@@ -25,3 +25,5 @@ pnpm-debug.log*
 # local tooling
 .claude/
 .claude-preferences
+.vercel
+.env*.local
