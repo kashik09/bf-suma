@@ -40,7 +40,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
   const featured = products.slice(0, 6);
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-4 sm:space-y-5">
       <SectionHeader
         title="Featured Essentials"
         description="Fast-moving products customers choose most for daily wellness support."
@@ -51,20 +51,20 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
         )}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
           const whatsappMessage = `Hello BF Suma, I would like to order ${product.name}.`;
 
           return (
             <article
-              className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
               <div
-                className="h-44 w-full bg-cover bg-center"
+                className="h-40 w-full bg-cover bg-center sm:h-44"
                 style={{ backgroundImage: `url(${product.image_url})` }}
               />
-              <div className="flex flex-1 flex-col space-y-3 p-4">
+              <div className="flex flex-1 flex-col space-y-2.5 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
                   <Badge variant={availabilityBadgeVariant(product.availability)}>
@@ -73,13 +73,13 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                 </div>
 
                 <div>
-                  <h3 className="text-base font-semibold text-slate-900">{product.name}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{toBenefitText(product)}</p>
+                  <h3 className="text-base font-semibold leading-snug text-slate-900">{product.name}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-600">{toBenefitText(product)}</p>
                 </div>
 
                 <p className="text-lg font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
 
-                <div className="mt-auto flex flex-wrap items-center gap-2">
+                <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
                   <Link
                     className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
                     href={`/shop/${product.slug}`}
@@ -88,7 +88,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                   <a
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+                    className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
                     href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
                     rel="noreferrer"
                     target="_blank"
