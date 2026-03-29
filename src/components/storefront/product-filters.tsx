@@ -54,48 +54,70 @@ export function ProductFilters({
 
   return (
     <div
-      className={`grid gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4 ${isPending ? "opacity-70" : ""}`}
+      className={`grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 ${isPending ? "opacity-70" : ""}`}
     >
-      <form onSubmit={handleSearchSubmit}>
+      <form className="space-y-1.5" onSubmit={handleSearchSubmit}>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="search">
+          Search
+        </label>
         <Input
           defaultValue={state.search}
+          id="search"
           name="search"
           placeholder="Search products..."
           onBlur={(e) => updateFilter("search", e.target.value)}
         />
       </form>
 
-      <Select
-        value={state.category || "all"}
-        onChange={(e) => updateFilter("category", e.target.value)}
-      >
-        <option value="all">All categories</option>
-        {categories.map((category) => (
-          <option key={category.id} value={category.slug}>
-            {category.name}
-          </option>
-        ))}
-      </Select>
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="category-filter">
+          Category
+        </label>
+        <Select
+          id="category-filter"
+          value={state.category || "all"}
+          onChange={(e) => updateFilter("category", e.target.value)}
+        >
+          <option value="all">All categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.slug}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+      </div>
 
-      <Select
-        value={state.availability || "all"}
-        onChange={(e) => updateFilter("availability", e.target.value)}
-      >
-        <option value="all">Any availability</option>
-        <option value="in_stock">In stock</option>
-        <option value="out_of_stock">Out of stock</option>
-      </Select>
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="availability-filter">
+          Availability
+        </label>
+        <Select
+          id="availability-filter"
+          value={state.availability || "all"}
+          onChange={(e) => updateFilter("availability", e.target.value)}
+        >
+          <option value="all">Any availability</option>
+          <option value="in_stock">In stock</option>
+          <option value="out_of_stock">Out of stock</option>
+        </Select>
+      </div>
 
-      <Select
-        value={state.sort || "featured"}
-        onChange={(e) => updateFilter("sort", e.target.value)}
-      >
-        {SHOP_SORT_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </Select>
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="sort-filter">
+          Sort
+        </label>
+        <Select
+          id="sort-filter"
+          value={state.sort || "featured"}
+          onChange={(e) => updateFilter("sort", e.target.value)}
+        >
+          {SHOP_SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </div>
     </div>
   );
 }
