@@ -12,7 +12,7 @@ const ubuntu = Ubuntu({
 
 export const metadata: Metadata = {
   title: "BF Suma",
-  description: "Trusted household essentials with clear pricing and fast support.",
+  description: "Trusted wellness essentials with clear pricing and fast local support.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg"

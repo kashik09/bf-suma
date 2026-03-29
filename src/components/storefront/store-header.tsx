@@ -33,6 +33,12 @@ export function StoreHeader() {
               {item.label}
             </Link>
           ))}
+          <Link
+            className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-3.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            href="/shop"
+          >
+            Shop Now
+          </Link>
         </nav>
 
         <StoreCartButton />
