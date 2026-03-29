@@ -43,8 +43,11 @@ export function ContactForm() {
   }
 
   return (
-    <form className="space-y-4 rounded-lg border border-slate-200 bg-white p-5" onSubmit={form.handleSubmit(onSubmit)}>
-      <h2 className="text-lg font-semibold text-slate-900">Send an Inquiry</h2>
+    <form className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <div className="space-y-1">
+        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Support Team</p>
+        <h2 className="text-xl font-bold text-slate-900">Send an Inquiry</h2>
+      </div>
 
       <FormField error={form.formState.errors.name?.message} htmlFor="name" label="Name">
         <Input id="name" {...form.register("name")} />
@@ -63,11 +66,13 @@ export function ContactForm() {
         <Textarea id="message" {...form.register("message")} />
       </FormField>
 
-      <Button disabled={isSubmitting} type="submit">
+      <Button className="w-full sm:w-auto" disabled={isSubmitting} type="submit">
         {isSubmitting ? "Sending..." : "Send Message"}
       </Button>
 
-      {responseMessage ? <p className="text-sm text-slate-700">{responseMessage}</p> : null}
+      {responseMessage ? (
+        <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">{responseMessage}</p>
+      ) : null}
     </form>
   );
 }

@@ -43,9 +43,9 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
           const availability = getAvailabilityMeta(item.availability);
 
           return (
-            <div className="rounded-lg border border-slate-200 bg-white p-4" key={item.product_id}>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft" key={item.product_id}>
               <div className="flex items-start gap-4">
-                <div className="h-20 w-20 rounded-md bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
+                <div className="h-20 w-20 rounded-lg border border-slate-200 bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
                 <div className="flex-1 space-y-2">
                   <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
                   <p className="text-sm text-slate-500">{formatCurrency(item.price, item.currency)}</p>
@@ -53,7 +53,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
 
                   <div className="flex items-center gap-2">
                     <button
-                      className="h-8 w-8 rounded-md bg-slate-100"
+                      className="h-8 w-8 rounded-md border border-slate-200 bg-slate-50 font-semibold transition hover:bg-slate-100"
                       disabled={item.quantity <= 1}
                       onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                       type="button"
@@ -62,7 +62,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                     </button>
                     <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
                     <button
-                      className="h-8 w-8 rounded-md bg-slate-100"
+                      className="h-8 w-8 rounded-md border border-slate-200 bg-slate-50 font-semibold transition hover:bg-slate-100"
                       disabled={item.availability === "out_of_stock" || item.quantity >= item.max_quantity}
                       title={
                         item.availability === "out_of_stock"
@@ -80,7 +80,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                 </div>
 
                 <button
-                  className="text-sm font-medium text-red-600"
+                  className="text-sm font-semibold text-rose-600 transition hover:text-rose-700"
                   onClick={() => removeItem(item.product_id)}
                   type="button"
                 >
@@ -92,7 +92,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
         })}
       </div>
 
-      <aside className="h-fit space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+      <aside className="h-fit space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
         <h2 className="text-lg font-semibold text-slate-900">Order Summary</h2>
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600">Subtotal</span>
@@ -102,7 +102,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
 
         {commerceReady ? (
           <Link
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700"
+            className="inline-flex h-11 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/checkout"
           >
             Proceed to Checkout
