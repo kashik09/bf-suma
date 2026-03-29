@@ -66,13 +66,18 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-2">
+    <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
       <div className="space-y-3">
-        <div className="h-80 w-full rounded-lg border border-slate-200 bg-cover bg-center" style={{ backgroundImage: `url(${activeImage})` }} />
+        <div
+          className="h-72 w-full rounded-2xl border border-slate-200 bg-cover bg-center shadow-soft sm:h-96"
+          style={{ backgroundImage: `url(${activeImage})` }}
+        />
         <div className="grid grid-cols-4 gap-2">
           {product.gallery_urls.slice(0, 4).map((image) => (
             <button
-              className={`h-20 rounded-md border bg-cover bg-center ${activeImage === image ? "border-brand-600" : "border-slate-200"}`}
+              className={`h-20 rounded-md border bg-cover bg-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+                activeImage === image ? "border-brand-600 ring-1 ring-brand-100" : "border-slate-200 hover:border-slate-300"
+              }`}
               key={image}
               onClick={() => setActiveImage(image)}
               style={{ backgroundImage: `url(${image})` }}
@@ -82,13 +87,13 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
         </div>
       </div>
 
-      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
         <Badge variant={availabilityVariant(product.availability)}>{availabilityLabel(product.availability)}</Badge>
-        <h1 className="text-2xl font-semibold text-slate-900">{product.name}</h1>
-        <p className="text-sm text-slate-600">{product.description}</p>
+        <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
+        <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{product.description}</p>
 
         <div className="flex items-center gap-2">
-          <p className="text-xl font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
           {product.compare_at_price ? (
             <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
           ) : null}
@@ -96,13 +101,13 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
 
         <div className="space-y-2">
           <p className="text-sm font-medium text-slate-700">Quantity</p>
-          <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 p-1">
-            <button className="h-9 w-9 rounded-md bg-slate-100" onClick={decrement} type="button">
+          <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white p-1">
+            <button className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200" onClick={decrement} type="button">
               -
             </button>
             <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
             <button
-              className="h-9 w-9 rounded-md bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-200"
+              className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-200"
               disabled={quantity >= maxQuantity}
               onClick={increment}
               title={quantity >= maxQuantity ? "You've reached available quantity." : "Increase quantity"}
@@ -117,17 +122,26 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Button disabled={isUnavailable} onClick={handleAddToCart} title={isUnavailable ? "Product is out of stock" : "Add item to cart"}>
+          <Button
+            className="sm:flex-1"
+            disabled={isUnavailable}
+            onClick={handleAddToCart}
+            title={isUnavailable ? "Product is out of stock" : "Add item to cart"}
+          >
             {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to cart"}
           </Button>
           <a
-            className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
+            className="inline-flex h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:flex-1"
             href={buildWhatsAppUrl(whatsappMessage)}
             rel="noreferrer"
             target="_blank"
           >
             Order via WhatsApp
           </a>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-600">
+          Clear pricing, local support, and pay-on-delivery checkout help you place orders with confidence.
         </div>
 
         {!commerceReady ? (
