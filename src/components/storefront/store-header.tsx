@@ -7,11 +7,11 @@ import { StoreCartButton } from "@/components/storefront/store-cart-button";
 export function StoreHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="border-b border-slate-100 bg-slate-50 py-2 text-xs text-slate-600">
+      <div className="border-b border-slate-100 bg-gradient-to-r from-sky-50 via-white to-brand-50 py-2 text-xs text-slate-700">
         <PageContainer className="flex items-center justify-between gap-4">
-          <p className="line-clamp-1">Trusted essentials. Clear pricing. Fast local delivery.</p>
+          <p className="line-clamp-1 font-medium">Trusted wellness essentials. Clear pricing. Fast local delivery.</p>
           <a
-            className="shrink-0 font-medium text-brand-700"
+            className="shrink-0 font-semibold text-brand-700 transition hover:text-brand-600"
             href={buildWhatsAppUrl("Hello BF Suma, I need help with my order.", SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
@@ -22,13 +22,14 @@ export function StoreHeader() {
       </div>
 
       <PageContainer className="flex h-16 items-center justify-between gap-5">
-        <Link className="text-lg font-bold text-slate-900" href="/">
-          BF Suma
+        <Link className="flex items-center gap-2 text-lg font-bold text-slate-900" href="/">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-900 text-sm font-bold text-white">BF</span>
+          <span>BF Suma</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium text-slate-700 md:flex">
+        <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-700 md:flex">
           {STORE_NAV_LINKS.map((item) => (
-            <Link className="hover:text-brand-700" href={item.href} key={item.href}>
+            <Link className="transition hover:text-slate-900" href={item.href} key={item.href}>
               {item.label}
             </Link>
           ))}
@@ -36,6 +37,16 @@ export function StoreHeader() {
 
         <StoreCartButton />
       </PageContainer>
+
+      <div className="border-t border-slate-100 bg-white md:hidden">
+        <PageContainer className="flex items-center gap-4 overflow-x-auto py-2 text-sm font-semibold text-slate-700">
+          {STORE_NAV_LINKS.map((item) => (
+            <Link className="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-slate-100" href={item.href} key={item.href}>
+              {item.label}
+            </Link>
+          ))}
+        </PageContainer>
+      </div>
     </header>
   );
 }
