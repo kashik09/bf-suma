@@ -8,7 +8,7 @@ import type {
 } from "@/types";
 
 export const APP_NAME = "BF Suma";
-export const APP_DESCRIPTION = "Trusted household essentials with clear pricing and fast support.";
+export const APP_DESCRIPTION = "Trusted wellness essentials with clear pricing and fast local support.";
 
 export const SUPPORT_EMAIL = "support@bfsuma.com";
 export const SUPPORT_PHONE = "+256700000000";
