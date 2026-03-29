@@ -27,7 +27,7 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
   const items = categories.slice(0, 6);
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-4 sm:space-y-5">
       <SectionHeader
         title="Your Health Interests"
         description="Start with the area you care about most, then discover products matched to that goal."
@@ -38,22 +38,22 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
         )}
       />
 
-      <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3">
         {items.map((category) => (
           <Link
-            className="group min-w-[260px] snap-start overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+            className="group min-w-[250px] snap-start overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
             href={`/category/${category.slug}`}
             key={category.id}
           >
             <div
-              className="h-32 w-full bg-cover bg-center"
+              className="h-28 w-full bg-cover bg-center sm:h-32"
               style={{ backgroundImage: `url(${category.image_url})` }}
             />
-            <div className="flex min-h-44 flex-col space-y-2 p-4">
+            <div className="flex min-h-40 flex-col space-y-2 p-4 sm:min-h-44">
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Category</p>
-              <h3 className="text-base font-semibold text-slate-900">{category.name}</h3>
-              <p className="text-sm text-slate-600">{resolveCategoryBenefit(category)}</p>
-              <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
+              <h3 className="text-base font-semibold leading-snug text-slate-900">{category.name}</h3>
+              <p className="text-sm leading-relaxed text-slate-600">{resolveCategoryBenefit(category)}</p>
+              <span className="mt-auto inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-brand-700 sm:text-sm sm:normal-case sm:tracking-normal">
                 Explore Category
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </span>
