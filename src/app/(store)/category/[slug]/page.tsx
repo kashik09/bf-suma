@@ -27,8 +27,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   });
 
   return (
-    <PageContainer className="space-y-6 py-10">
-      <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-5">
+    <PageContainer className="space-y-6 py-10 sm:py-12">
+      <div className="space-y-3 rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-sky-50/70 to-brand-50/40 p-5 shadow-soft sm:p-6">
         <SectionHeader title={category.name} description={category.description} />
         {!health.commerceReady ? (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
@@ -36,7 +36,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         ) : null}
         <Link
-          className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
+          className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
           href="/shop"
         >
           Back to Shop
