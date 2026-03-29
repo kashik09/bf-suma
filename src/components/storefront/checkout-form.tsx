@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { useCart } from "@/hooks/use-cart";
@@ -188,10 +189,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center shadow-soft">
         <h2 className="text-lg font-semibold text-slate-900">No items to checkout</h2>
         <p className="mt-2 text-sm text-slate-600">Add items from the shop before placing an order.</p>
-        <Link className="mt-4 inline-flex text-sm font-semibold text-brand-700" href="/shop">
+        <Link className="mt-4 inline-flex text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
           Continue shopping
         </Link>
       </div>
@@ -200,7 +201,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
 
   return (
     <form className="grid gap-6 lg:grid-cols-[1.7fr_1fr]" onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
         {!commerceReady ? (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
             {degradedReason || "Live inventory validation is unavailable. Checkout is disabled until service recovery."}
@@ -221,7 +222,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           ) : null}
         </div>
 
-        <section className="space-y-4 border-b border-slate-200 pb-4">
+        <section className="space-y-4 border-b border-slate-200 pb-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Customer Details</h2>
             <p className="text-sm text-slate-600">Tell us who to contact for this order.</p>
@@ -256,11 +257,11 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <fieldset className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Fulfillment</p>
             <div className="grid gap-2 sm:grid-cols-2">
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="delivery" {...form.register("fulfillmentType")} />
                 Delivery
               </label>
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="pickup" {...form.register("fulfillmentType")} />
                 Pickup
               </label>
@@ -273,17 +274,13 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               htmlFor="pickupLocation"
               label="Pickup Location"
             >
-              <select
-                className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-brand-600 focus:outline-none"
-                id="pickupLocation"
-                {...form.register("pickupLocation")}
-              >
+              <Select id="pickupLocation" {...form.register("pickupLocation")}>
                 {PICKUP_LOCATIONS.map((location) => (
                   <option key={location} value={location}>
                     {location}
                   </option>
                 ))}
-              </select>
+              </Select>
             </FormField>
           ) : (
             <FormField
@@ -302,7 +299,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <fieldset className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Payment Method</p>
             <div className="grid gap-2 sm:grid-cols-1">
-              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm">
+              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
                 <span>
                   <span className="block font-medium text-slate-900">{isPickup ? "Pay at pickup" : "Pay on delivery"}</span>
@@ -323,7 +320,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       </div>
 
       <aside className="space-y-3 lg:sticky lg:top-24 lg:h-fit">
-        <div className={`rounded-lg border p-3 text-sm ${hasAttention ? "border-amber-300 bg-amber-50" : "border-emerald-200 bg-emerald-50"}`}>
+        <div className={`rounded-xl border p-3 text-sm shadow-soft ${hasAttention ? "border-amber-300 bg-amber-50" : "border-emerald-200 bg-emerald-50"}`}>
           <p className="font-semibold text-slate-900">{hasAttention ? "Needs attention" : "Ready for submission"}</p>
           <p className="mt-1 text-xs text-slate-700">
             {hasAttention
@@ -332,7 +329,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
           <h3 className="text-base font-semibold text-slate-900">Order Summary</h3>
           <p className="mt-1 text-xs text-slate-500">{items.length} item(s) in this order</p>
 
