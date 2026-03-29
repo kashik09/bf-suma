@@ -47,7 +47,7 @@ export function HomeWhyChooseUs() {
           const Icon = point.icon;
 
           return (
-            <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft ring-1 ring-slate-100" key={point.title}>
+            <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card" key={point.title}>
               <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
                 <Icon className="h-5 w-5" />
               </div>
