@@ -28,7 +28,7 @@ export function HomeStory() {
         </ul>
 
         <Link
-          className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
+          className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
           href="/shop"
         >
           Explore Products

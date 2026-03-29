@@ -12,8 +12,8 @@ const heroHighlights = [
 
 export function Hero() {
   return (
-    <section className="overflow-hidden border-b border-slate-200 bg-gradient-to-br from-brand-50 via-white to-slate-100">
-      <PageContainer className="grid gap-7 py-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-8 md:py-14">
+    <section className="overflow-hidden border-b border-slate-200 bg-gradient-to-br from-white via-sky-50/70 to-brand-50/40">
+      <PageContainer className="grid gap-7 py-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-8 md:py-14 lg:py-16">
         <div className="space-y-4 md:space-y-5">
           <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 shadow-soft">
             <ShieldCheck className="h-3.5 w-3.5" />
@@ -29,7 +29,7 @@ export function Hero() {
 
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <Link
-              className="inline-flex h-11 items-center justify-center rounded-md bg-brand-600 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-card sm:h-12 sm:text-base"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-card sm:h-12 sm:text-base"
               href="/shop"
             >
               Shop Now
@@ -55,7 +55,7 @@ export function Hero() {
         </div>
 
         <div className="space-y-3 md:space-y-4">
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
             <div
               className="h-56 w-full bg-cover bg-center sm:h-64 md:h-72"
               style={{ backgroundImage: "url('/catalog-images/joshoppers.com/youth-essence-facial-cream.webp')" }}

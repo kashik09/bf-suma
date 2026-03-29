@@ -57,7 +57,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
           return (
             <article
-              className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
               <div
@@ -81,14 +81,14 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
                 <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
                   <Link
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
+                    className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                     href={`/shop/${product.slug}`}
                   >
                     View Product
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                   <a
-                    className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                    className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                     href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
                     rel="noreferrer"
                     target="_blank"

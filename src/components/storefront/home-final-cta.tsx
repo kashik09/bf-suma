@@ -18,13 +18,13 @@ export function HomeFinalCta() {
 
       <div className="mt-4 flex flex-wrap gap-2.5 sm:mt-5 sm:gap-3">
         <Link
-          className="inline-flex h-11 items-center justify-center rounded-md bg-brand-600 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-card"
+          className="inline-flex h-11 items-center justify-center rounded-md bg-white px-5 text-sm font-semibold text-slate-900 shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-card"
           href="/shop"
         >
           Shop Products
         </Link>
         <a
-          className="inline-flex h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+          className="inline-flex h-11 items-center justify-center rounded-md border border-slate-500 bg-transparent px-5 text-sm font-semibold text-white transition hover:bg-white/10"
           href={buildWhatsAppUrl("Hello BF Suma, I want to place an order.", SUPPORT_WHATSAPP_PHONE)}
           rel="noreferrer"
           target="_blank"
