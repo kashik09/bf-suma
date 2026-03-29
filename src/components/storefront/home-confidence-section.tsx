@@ -38,7 +38,7 @@ export function HomeConfidenceSection() {
           const Icon = block.icon;
 
           return (
-            <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft ring-1 ring-slate-100" key={block.title}>
+            <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft ring-1 ring-slate-100" key={block.title}>
               <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-md bg-brand-50 text-brand-700">
                 <Icon className="h-4 w-4" />
               </div>
@@ -49,14 +49,14 @@ export function HomeConfidenceSection() {
         })}
       </div>
 
-      <div className="rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 to-brand-100/40 p-4 sm:p-5">
+      <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-brand-100/40 p-4 sm:p-5">
         <p className="flex items-start gap-2 text-sm leading-relaxed text-slate-800">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
           Need product guidance before checkout? Talk to support directly and get practical help choosing what fits your routine.
         </p>
         <div className="mt-3 flex flex-wrap gap-2.5">
           <a
-            className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href={buildWhatsAppUrl("Hello BF Suma, I need help choosing products.", SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
