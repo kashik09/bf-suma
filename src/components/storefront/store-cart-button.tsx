@@ -15,6 +15,7 @@ export function StoreCartButton() {
 
   return (
     <Link
+      aria-label="View cart"
       className="relative inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
       href="/cart"
     >
