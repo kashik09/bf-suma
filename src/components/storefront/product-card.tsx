@@ -14,15 +14,18 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
   const badge = getAvailabilityBadge(product.availability);
 
   return (
-    <Card className="h-full overflow-hidden p-0">
+    <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
       <div className="relative">
-        <div className="h-44 w-full bg-cover bg-center" style={{ backgroundImage: `url(${product.image_url})` }} />
+        <div
+          className="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
+          style={{ backgroundImage: `url(${product.image_url || "/catalog-images/placeholder.webp"})` }}
+        />
         <div className="absolute left-3 top-3">
           <Badge variant={badge.variant}>{badge.label}</Badge>
         </div>
       </div>
 
-      <div className="space-y-3 p-4">
+      <div className="flex h-full flex-col space-y-3 p-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
           <h3 className="line-clamp-1 text-base font-semibold text-slate-900">{product.name}</h3>
@@ -36,12 +39,14 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           ) : null}
         </div>
 
-        <Link
-          className="inline-flex h-10 w-full items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700"
-          href={`/shop/${product.slug}`}
-        >
-          View Product
-        </Link>
+        <div className="mt-auto pt-1">
+          <Link
+            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            href={`/shop/${product.slug}`}
+          >
+            View Product
+          </Link>
+        </div>
       </div>
     </Card>
   );
