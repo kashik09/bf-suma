@@ -10,12 +10,12 @@ export function FormField({
   error?: string;
 }) {
   return (
-    <div className="space-y-1.5">
-      <label className="text-sm font-medium text-slate-700" htmlFor={htmlFor}>
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-slate-800" htmlFor={htmlFor}>
         {label}
       </label>
       {children}
-      {error ? <p className="text-xs text-red-600">{error}</p> : null}
+      {error ? <p className="text-xs font-medium text-rose-700">{error}</p> : null}
     </div>
   );
 }
