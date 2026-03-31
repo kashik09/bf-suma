@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "extracted_at": "2026-03-12",
+    "extracted_at": "2026-03-31",
     "sources": [
       "https://joshoppers.com/products",
       "https://www.bfsumaproducts.co.ke/shop",
-      "https://wellthessentials.co.ke/shop-2/"
+      "https://wellthessentials.co.ke/shop-2/",
+      "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf"
     ],
     "total_products": 48,
     "total_with_images": 31
@@ -624,6 +625,18 @@
       "name": "Own Your Own Business",
       "reason": "Non-product entry - appears to be a business opportunity listing, not a product",
       "source": "bfsumaproducts.co.ke",
+      "price": 0
+    },
+    {
+      "name": "Dr Cow Smart Gummies",
+      "reason": "Found in PRODUCT CATALOGUE.pdf but missing verified price/image in current web-source dataset.",
+      "source": "PRODUCT CATALOGUE.pdf",
+      "price": 0
+    },
+    {
+      "name": "Purewell Water Purifier",
+      "reason": "Found in PRODUCT CATALOGUE.pdf but missing verified price/category mapping for current storefront schema.",
+      "source": "PRODUCT CATALOGUE.pdf",
       "price": 0
     }
   ]

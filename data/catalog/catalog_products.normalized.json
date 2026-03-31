@@ -1,0 +1,1738 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-31T15:02:11.316Z",
+    "source_catalog": "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf",
+    "extraction_companion": "/home/kashi-kweyu/Downloads/BF-SUMA-PRODUCTS-CATALOGUE-1.pdf",
+    "products_in_manifest": 48,
+    "products_total": 50
+  },
+  "products": [
+    {
+      "id": "prod-youth-essence-facial-cream",
+      "name": "Youth Essence Facial Cream",
+      "slug": "youth-essence-facial-cream",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Packed with the latest cell technology and mitochondrial repair enzymes, this cream is the ultimate solution for restoring firmness",
+      "description": "Packed with the latest cell technology and mitochondrial repair enzymes, this cream is the ultimate solution for restoring firmness.",
+      "price": 5371,
+      "compareAtPrice": 5967,
+      "currency": "KES",
+      "sku": "BFS-YOU-001",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-essence-facial-cream.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-youth-essence-lotion",
+      "name": "Youth Essence Lotion",
+      "slug": "youth-essence-lotion",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Contains Niacinamide and Astaxanthin for nourishing and brightening skin without bleaching",
+      "description": "Contains Niacinamide and Astaxanthin for nourishing and brightening skin without bleaching.",
+      "price": 3949,
+      "compareAtPrice": 4387,
+      "currency": "KES",
+      "sku": "BFS-YOU-002",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-essence-lotion.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-youth-essence-toner",
+      "name": "Youth Essence Toner",
+      "slug": "youth-essence-toner",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Designed to restore firmness, hydrate, and protect skin in seconds with advanced technology ingredients",
+      "description": "Designed to restore firmness, hydrate, and protect skin in seconds with advanced technology ingredients.",
+      "price": 4265,
+      "compareAtPrice": 4738,
+      "currency": "KES",
+      "sku": "BFS-YOU-003",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-essence-toner.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-youth-refreshing-facial-cleanser",
+      "name": "Youth Refreshing Facial Cleanser",
+      "slug": "youth-refreshing-facial-cleanser",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Formulated with niacinamide to improve skin barrier and restore firmness quickly",
+      "description": "Formulated with niacinamide to improve skin barrier and restore firmness quickly.",
+      "price": 3475,
+      "compareAtPrice": 3861,
+      "currency": "KES",
+      "sku": "BFS-YOU-004",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-refreshing-facial-cleanser.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-youth-essence-facial-mask",
+      "name": "Youth Essence Facial Mask",
+      "slug": "youth-essence-facial-mask",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Luxury skincare designed to restore firmness and reduce fine lines in minimal time",
+      "description": "Luxury skincare designed to restore firmness and reduce fine lines in minimal time.",
+      "price": 2844,
+      "compareAtPrice": 3159,
+      "currency": "KES",
+      "sku": "BFS-YOU-005",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-essence-facial-mask.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-anatic-herbal-soap",
+      "name": "Anatic Herbal Essence Soap",
+      "slug": "anatic-herbal-soap",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Combines grapefruit, green tea extract, wild honey for deep hydration and age-defying benefits",
+      "description": "Combines grapefruit, green tea extract, wild honey for deep hydration and age-defying benefits.",
+      "price": 348,
+      "compareAtPrice": 386,
+      "currency": "KES",
+      "sku": "BFS-ANA-006",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [
+        "Positioned for skin cleansing and moisture support.",
+        "Marketed for acne/oil and dark-spot support.",
+        "Presented for daily skin-renewal routine."
+      ],
+      "ingredients": [
+        "Wild honey",
+        "Green tea extract",
+        "Virgin olive oil",
+        "Sandalwood",
+        "Grapefruit extract"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/anatic-herbal-soap.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-derma-repair-lotion",
+      "name": "Derma Repair Body Lotion 150ml",
+      "slug": "derma-repair-lotion",
+      "brand": "BF Suma",
+      "category": "Skincare",
+      "subcategory": "",
+      "shortDescription": "Natural botanical ingredients for daily moisturizing and youthful skin health",
+      "description": "Natural botanical ingredients for daily moisturizing and youthful skin health.",
+      "price": 3000,
+      "compareAtPrice": null,
+      "currency": "KES",
+      "sku": "BFS-DER-007",
+      "stockStatus": "",
+      "sizes": [
+        "150ml"
+      ],
+      "variants": [],
+      "tags": [
+        "skincare",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [
+        "Positioned for long-lasting herbal moisture support.",
+        "Marketed with plant-essence skin nourishment.",
+        "Presented for youthful-radiance support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/derma-repair-lotion.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-nmn-duo-release",
+      "name": "NMN DUO Release",
+      "slug": "nmn-duo-release",
+      "brand": "BF Suma",
+      "category": "Anti-Aging",
+      "subcategory": "",
+      "shortDescription": "100% absorbable formula created to fight aging and maximize potential with energy-boosting NAD+ support",
+      "description": "100% absorbable formula created to fight aging and maximize potential with energy-boosting NAD+ support.",
+      "price": 28500,
+      "compareAtPrice": 32000,
+      "currency": "KES",
+      "sku": "BFS-NMN-008",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "anti-aging",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Supports NAD+ replenishment linked to healthy aging routines.",
+        "Positioned for energy metabolism and endurance support.",
+        "Marketed for brain and heart vitality support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/nmn-duo-release.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-nmn-sharp-mind",
+      "name": "NMN Sharp Mind",
+      "slug": "nmn-sharp-mind",
+      "brand": "BF Suma",
+      "category": "Anti-Aging",
+      "subcategory": "",
+      "shortDescription": "Contains NMN, Resveratrol, Ginkgo Biloba for cognitive performance and brain health",
+      "description": "Contains NMN, Resveratrol, Ginkgo Biloba for cognitive performance and brain health.",
+      "price": 31500,
+      "compareAtPrice": 35000,
+      "currency": "KES",
+      "sku": "BFS-NMN-009",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "anti-aging",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for cognitive clarity and healthy aging support.",
+        "Designed for users prioritizing focus and alertness.",
+        "Part of the NMN-based premium anti-aging line."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/nmn-sharp-mind.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-youth-ever",
+      "name": "Youth Ever",
+      "slug": "youth-ever",
+      "brand": "BF Suma",
+      "category": "Anti-Aging",
+      "subcategory": "",
+      "shortDescription": "Age-defying potion with high absorption rate using cold-pressed technology and six fruits",
+      "description": "Age-defying potion with high absorption rate using cold-pressed technology and six fruits.",
+      "price": 22000,
+      "compareAtPrice": 25000,
+      "currency": "KES",
+      "sku": "BFS-YOU-010",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "anti-aging",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Patented anti-aging formula positioning.",
+        "Marketed as inner-to-outer beauty support.",
+        "Presented as an antioxidant-focused product."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/youth-ever.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-xpower-coffee",
+      "name": "Xpower Coffee",
+      "slug": "xpower-coffee",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Combines organic ginseng and Tongkat Ali for vigor, energy, and enhanced sexual confidence",
+      "description": "Combines organic ginseng and Tongkat Ali for vigor, energy, and enhanced sexual confidence.",
+      "price": 2370,
+      "compareAtPrice": 2633,
+      "currency": "KES",
+      "sku": "BFS-XPO-011",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "coffee"
+      ],
+      "benefits": [
+        "Marketed to reduce fatigue and improve energy.",
+        "Positioned for libido and male-performance support.",
+        "Presented as a coffee-format vitality product."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/xpower-coffee.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-ginseng-coffee",
+      "name": "4 in 1 Ginseng Coffee",
+      "slug": "ginseng-coffee",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Premium all-natural coffee with ginseng extract for enhanced stamina and energy",
+      "description": "Premium all-natural coffee with ginseng extract for enhanced stamina and energy.",
+      "price": 2054,
+      "compareAtPrice": 2282,
+      "currency": "KES",
+      "sku": "BFS-GIN-012",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "coffee"
+      ],
+      "benefits": [
+        "Positioned for daily energy and alertness support.",
+        "Marketed for blood-pressure and circulation support.",
+        "Presented as functional coffee for routine vitality."
+      ],
+      "ingredients": [
+        "Ginseng"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/ginseng-coffee.png"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-reishi-coffee",
+      "name": "4 in 1 Reishi Coffee",
+      "slug": "reishi-coffee",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Colombian coffee beans with Reishi extract for immune support and rejuvenation",
+      "description": "Colombian coffee beans with Reishi extract for immune support and rejuvenation.",
+      "price": 2054,
+      "compareAtPrice": 2282,
+      "currency": "KES",
+      "sku": "BFS-REI-013",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "coffee"
+      ],
+      "benefits": [
+        "Positioned for daily energy and alertness support.",
+        "Marketed for stress and fatigue support.",
+        "Presented as functional coffee with wellness orientation."
+      ],
+      "ingredients": [
+        "Reishi"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/reishi-coffee.png"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-cordyceps-coffee",
+      "name": "4 in 1 Cordyceps Coffee",
+      "slug": "cordyceps-coffee",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Premium coffee with Cordyceps mushroom extract for energy and vitality",
+      "description": "Premium coffee with Cordyceps mushroom extract for energy and vitality.",
+      "price": 2054,
+      "compareAtPrice": 2282,
+      "currency": "KES",
+      "sku": "BFS-COR-014",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "coffee"
+      ],
+      "benefits": [
+        "Positioned for daily energy and alertness support.",
+        "Marketed for stress and fatigue support.",
+        "Presented as functional coffee with wellness orientation."
+      ],
+      "ingredients": [
+        "Cordyceps"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/wellthessentials.co.ke/cordyceps-coffee.png"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-relivin-tea",
+      "name": "Relivin Tea",
+      "slug": "relivin-tea",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Caffeine-free herbal tea with green tea and luobuma for stress relief and blood pressure support",
+      "description": "Caffeine-free herbal tea with green tea and luobuma for stress relief and blood pressure support.",
+      "price": 2844,
+      "compareAtPrice": 3159,
+      "currency": "KES",
+      "sku": "BFS-REL-015",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "tea"
+      ],
+      "benefits": [
+        "Positioned for stress and blood-pressure support.",
+        "Marketed to support normal pulse and calmness.",
+        "Presented as caffeine-free herbal tea."
+      ],
+      "ingredients": [
+        "Herbal tea blend (caffeine free)"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/relivin-tea.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-gym-ease-tea",
+      "name": "Gym Ease Tea",
+      "slug": "gym-ease-tea",
+      "brand": "BF Suma",
+      "category": "Beverages",
+      "subcategory": "",
+      "shortDescription": "Contains Gymnema (sugar destroyer) for blood sugar control and weight management",
+      "description": "Contains Gymnema (sugar destroyer) for blood sugar control and weight management.",
+      "price": 2844,
+      "compareAtPrice": 3159,
+      "currency": "KES",
+      "sku": "BFS-GYM-016",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "beverages",
+        "bf-suma",
+        "tea"
+      ],
+      "benefits": [
+        "Positioned for blood-sugar regulation support.",
+        "Marketed for insulin-secretion support.",
+        "Presented as antioxidant herbal tea."
+      ],
+      "ingredients": [
+        "Herbal tea blend (exact composition not specified)"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/gym-ease-tea.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-quad-reishi-capsules",
+      "name": "4 IN 1 Quad Reishi Capsules",
+      "slug": "quad-reishi-capsules",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Contains Yunzhi, Ganoderma, Chaga extracts for immune support and healthy blood sugar",
+      "description": "Contains Yunzhi, Ganoderma, Chaga extracts for immune support and healthy blood sugar.",
+      "price": 5529,
+      "compareAtPrice": 6143,
+      "currency": "KES",
+      "sku": "BFS-QUA-017",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for immune-system support.",
+        "Marketed with antifungal/antibacterial wellness claims.",
+        "Presented as broad chronic-condition support formula."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/quad-reishi-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-pure-ganoderma-spores-30",
+      "name": "Pure & Broken Ganoderma Spores (30s)",
+      "slug": "pure-ganoderma-spores-30",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Premium Ganoderma spores for immune support and overall wellness",
+      "description": "Premium Ganoderma spores for immune support and overall wellness.",
+      "price": 9162,
+      "compareAtPrice": 10179,
+      "currency": "KES",
+      "sku": "BFS-PUR-018",
+      "stockStatus": "",
+      "sizes": [
+        "30s"
+      ],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for immune-system support.",
+        "Marketed with antifungal/antibacterial wellness claims.",
+        "Presented as broad chronic-condition support formula."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-pure-ganoderma-spores-60",
+      "name": "Pure & Broken Ganoderma Spores (60s)",
+      "slug": "pure-ganoderma-spores-60",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Premium Ganoderma spores for immune support and overall wellness - larger pack",
+      "description": "Premium Ganoderma spores for immune support and overall wellness - larger pack.",
+      "price": 17375,
+      "compareAtPrice": 19305,
+      "currency": "KES",
+      "sku": "BFS-PUR-019",
+      "stockStatus": "",
+      "sizes": [
+        "60s"
+      ],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for immune-system support.",
+        "Marketed with antifungal/antibacterial wellness claims.",
+        "Presented as broad chronic-condition support formula."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-ganoderma-spores-oil-60",
+      "name": "Pure Broken Ganoderma Spores Oil Capsules (60s)",
+      "slug": "ganoderma-spores-oil-60",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Premium Ganoderma spores oil for enhanced bioavailability",
+      "description": "Premium Ganoderma spores oil for enhanced bioavailability.",
+      "price": 20218,
+      "compareAtPrice": 22464,
+      "currency": "KES",
+      "sku": "BFS-GAN-020",
+      "stockStatus": "",
+      "sizes": [
+        "60s"
+      ],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for immune-system support.",
+        "Marketed with antifungal/antibacterial wellness claims.",
+        "Presented as broad chronic-condition support formula."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-refined-yunzhi-essence",
+      "name": "Refined Yunzhi Essence",
+      "slug": "refined-yunzhi-essence",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Refined Yunzhi mushroom essence for immune modulation",
+      "description": "Refined Yunzhi mushroom essence for immune modulation.",
+      "price": 4581,
+      "compareAtPrice": 5090,
+      "currency": "KES",
+      "sku": "BFS-REF-021",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for immune-system support.",
+        "Marketed for appetite and vitality support.",
+        "Presented for regular use and longevity routines."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-veggie-veggie",
+      "name": "Veggie Veggie",
+      "slug": "veggie-veggie",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Concentrated vegetable nutrients for daily nutritional support",
+      "description": "Concentrated vegetable nutrients for daily nutritional support.",
+      "price": 4739,
+      "compareAtPrice": 5265,
+      "currency": "KES",
+      "sku": "BFS-VEG-022",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned as detoxification drink.",
+        "Marketed for appetite and metabolism support.",
+        "Presented for cholesterol and intestinal-motility support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-blueberry-chewable",
+      "name": "Blueberry Chewable Tablets",
+      "slug": "blueberry-chewable",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Blueberry-flavored chewable tablets for eye health and antioxidant support",
+      "description": "Blueberry-flavored chewable tablets for eye health and antioxidant support.",
+      "price": 3791,
+      "compareAtPrice": 4212,
+      "currency": "KES",
+      "sku": "BFS-BLU-023",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-vitamin-c-chewable",
+      "name": "Vitamin C Chewable Tablets",
+      "slug": "vitamin-c-chewable",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Chewable Vitamin C tablets for immune support",
+      "description": "Chewable Vitamin C tablets for immune support.",
+      "price": 3159,
+      "compareAtPrice": 3510,
+      "currency": "KES",
+      "sku": "BFS-VIT-024",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-elements",
+      "name": "Elements",
+      "slug": "elements",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Essential mineral elements for overall health and wellbeing",
+      "description": "Essential mineral elements for overall health and wellbeing.",
+      "price": 4739,
+      "compareAtPrice": 5265,
+      "currency": "KES",
+      "sku": "BFS-ELE-025",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned as low-calorie meal replacement support.",
+        "Marketed for metabolism and fat-burning support.",
+        "Presented for cleansing/detox support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-micro2-cycle",
+      "name": "MicrO2 Cycle Tablets",
+      "slug": "micro2-cycle",
+      "brand": "BF Suma",
+      "category": "Supplements",
+      "subcategory": "",
+      "shortDescription": "Supports healthy blood circulation and oxygen delivery",
+      "description": "Supports healthy blood circulation and oxygen delivery.",
+      "price": 3475,
+      "compareAtPrice": 3861,
+      "currency": "KES",
+      "sku": "BFS-MIC-026",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "supplements",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [
+        "Positioned for circulation and heart-function support.",
+        "Marketed for oxygen-delivery and chest-comfort support.",
+        "Presented for cholesterol and clot-risk support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-gluzo-joint-capsules",
+      "name": "Gluzo-Joint Capsules",
+      "slug": "gluzo-joint-capsules",
+      "brand": "BF Suma",
+      "category": "Joint Health",
+      "subcategory": "",
+      "shortDescription": "Super-strength glucosamine supports healthy cartilage and joint mobility",
+      "description": "Super-strength glucosamine supports healthy cartilage and joint mobility.",
+      "price": 4423,
+      "compareAtPrice": 4914,
+      "currency": "KES",
+      "sku": "BFS-GLU-027",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "joint-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for cartilage and flexibility support.",
+        "Marketed to help reduce joint discomfort.",
+        "Presented as suitable for physically active users."
+      ],
+      "ingredients": [
+        "Glucosamine"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/gluzo-joint-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-arthro-xtra-tablets",
+      "name": "Arthro Xtra Tablets",
+      "slug": "arthro-xtra-tablets",
+      "brand": "BF Suma",
+      "category": "Joint Health",
+      "subcategory": "",
+      "shortDescription": "Combines glucosamine and chondroitin for cartilage support and joint health",
+      "description": "Combines glucosamine and chondroitin for cartilage support and joint health.",
+      "price": 6318,
+      "compareAtPrice": 7020,
+      "currency": "KES",
+      "sku": "BFS-ART-028",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "joint-health",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [
+        "Positioned for joint nourishment and movement comfort.",
+        "Marketed for stiffness and swelling symptom support.",
+        "Presented as natural ingredient-based joint support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/arthro-xtra-tablets.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-gluzo-joint-ultra-pro",
+      "name": "GluzoJoint-Ultra Pro",
+      "slug": "gluzo-joint-ultra-pro",
+      "brand": "BF Suma",
+      "category": "Joint Health",
+      "subcategory": "",
+      "shortDescription": "Advanced formula for joint health and mobility - premium strength",
+      "description": "Advanced formula for joint health and mobility - premium strength.",
+      "price": 8846,
+      "compareAtPrice": 9828,
+      "currency": "KES",
+      "sku": "BFS-GLU-029",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "joint-health",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned as advanced joint-support formula.",
+        "Marketed for cartilage and mobility support.",
+        "Presented for sustained daily joint-care routines."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-zaminocal-plus-capsules",
+      "name": "ZaminoCal Plus Capsules",
+      "slug": "zaminocal-plus-capsules",
+      "brand": "BF Suma",
+      "category": "Bone Health",
+      "subcategory": "",
+      "shortDescription": "Calcium, zinc, magnesium, selenium formula for bone health and muscle cramp relief",
+      "description": "Calcium, zinc, magnesium, selenium formula for bone health and muscle cramp relief.",
+      "price": 3633,
+      "compareAtPrice": 4036,
+      "currency": "KES",
+      "sku": "BFS-ZAM-030",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "bone-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for bone and teeth support.",
+        "Marketed for osteoporosis and tissue-repair support.",
+        "Presented for immune and skin collagen support."
+      ],
+      "ingredients": [
+        "Calcium",
+        "Zinc"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/zaminocal-plus-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-dr-cow-calcium-candy",
+      "name": "Dr Cow Calcium Milk Candy",
+      "slug": "dr-cow-calcium-candy",
+      "brand": "BF Suma",
+      "category": "Bone Health",
+      "subcategory": "",
+      "shortDescription": "Cartoon-shaped candies with New Zealand milk providing calcium equivalent of one cup",
+      "description": "Cartoon-shaped candies with New Zealand milk providing calcium equivalent of one cup.",
+      "price": 3791,
+      "compareAtPrice": 4212,
+      "currency": "KES",
+      "sku": "BFS-DR-031",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "bone-health",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for children’s bone, teeth, and growth support.",
+        "Marketed for appetite and immunity support.",
+        "Presented with milk-based calcium formulation."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/dr-cow-calcium-candy.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-calcium-vitamin-d3-milk",
+      "name": "Calcium & Vitamin D3 Milk Tablets",
+      "slug": "calcium-vitamin-d3-milk",
+      "brand": "BF Suma",
+      "category": "Bone Health",
+      "subcategory": "",
+      "shortDescription": "Calcium and Vitamin D3 combination for bone strength",
+      "description": "Calcium and Vitamin D3 combination for bone strength.",
+      "price": 3791,
+      "compareAtPrice": 4212,
+      "currency": "KES",
+      "sku": "BFS-CAL-032",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "bone-health",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-nt-diarr-pills",
+      "name": "NT Diarr Pills",
+      "slug": "nt-diarr-pills",
+      "brand": "BF Suma",
+      "category": "Digestive Health",
+      "subcategory": "",
+      "shortDescription": "Natural red bamboo pills for instant relief from diarrhea, toothaches, and menstrual discomfort",
+      "description": "Natural red bamboo pills for instant relief from diarrhea, toothaches, and menstrual discomfort.",
+      "price": 1895,
+      "compareAtPrice": 2106,
+      "currency": "KES",
+      "sku": "BFS-NT-033",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "digestive-health",
+        "bf-suma"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/nt-diarr-pills.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-novel-depile-capsules",
+      "name": "Novel Depile Capsules",
+      "slug": "novel-depile-capsules",
+      "brand": "BF Suma",
+      "category": "Digestive Health",
+      "subcategory": "",
+      "shortDescription": "100% natural treatment for hemorrhoid relief without surgery",
+      "description": "100% natural treatment for hemorrhoid relief without surgery.",
+      "price": 3475,
+      "compareAtPrice": 3861,
+      "currency": "KES",
+      "sku": "BFS-NOV-034",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "digestive-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for hemorrhoid symptom relief.",
+        "Marketed as non-surgical support option.",
+        "Presented for pain, irritation, and discomfort support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/novel-depile-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-consti-relax-solution",
+      "name": "Consti Relax Solution",
+      "slug": "consti-relax-solution",
+      "brand": "BF Suma",
+      "category": "Digestive Health",
+      "subcategory": "",
+      "shortDescription": "Contains Radix Astragali and FOS prebiotic for digestive health and toxin removal",
+      "description": "Contains Radix Astragali and FOS prebiotic for digestive health and toxin removal.",
+      "price": 4581,
+      "compareAtPrice": 5090,
+      "currency": "KES",
+      "sku": "BFS-CON-035",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "digestive-health",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for constipation relief.",
+        "Marketed for toxin elimination support.",
+        "Presented as safe and natural intestinal cleaner."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/consti-relax-solution.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-probio-3-plus",
+      "name": "Probio 3 Plus",
+      "slug": "probio-3-plus",
+      "brand": "BF Suma",
+      "category": "Digestive Health",
+      "subcategory": "",
+      "shortDescription": "Seven patented bacterial strains for digestive balance and immunity enhancement",
+      "description": "Seven patented bacterial strains for digestive balance and immunity enhancement.",
+      "price": 4815,
+      "compareAtPrice": 5350,
+      "currency": "KES",
+      "sku": "BFS-PRO-036",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "digestive-health",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for gut flora balance support.",
+        "Marketed for digestive and immune support.",
+        "Presented for reducing gastrointestinal discomfort."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/probio-3-plus.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-cool-roll",
+      "name": "Cool Roll",
+      "slug": "cool-roll",
+      "brand": "BF Suma",
+      "category": "Personal Care",
+      "subcategory": "",
+      "shortDescription": "Portable roll-on with plant oils for headaches, muscle aches, mosquito bites",
+      "description": "Portable roll-on with plant oils for headaches, muscle aches, mosquito bites.",
+      "price": 1896,
+      "compareAtPrice": 2106,
+      "currency": "KES",
+      "sku": "BFS-COO-037",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "personal-care",
+        "bf-suma"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/cool-roll.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-dr-ts-toothpaste",
+      "name": "Dr. Ts Toothpaste",
+      "slug": "dr-ts-toothpaste",
+      "brand": "BF Suma",
+      "category": "Personal Care",
+      "subcategory": "",
+      "shortDescription": "4D tooth protection fighting bacteria, repairing gums, strengthening teeth",
+      "description": "4D tooth protection fighting bacteria, repairing gums, strengthening teeth.",
+      "price": 869,
+      "compareAtPrice": 965,
+      "currency": "KES",
+      "sku": "BFS-DR-038",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "personal-care",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned as herbal 4D oral-care formula.",
+        "Marketed for enamel and gum protection.",
+        "Presented for cavity-prevention and sensitivity support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/dr-ts-toothpaste.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-gym-effect-capsules",
+      "name": "Gym Effect Capsules",
+      "slug": "gym-effect-capsules",
+      "brand": "BF Suma",
+      "category": "Weight Management",
+      "subcategory": "",
+      "shortDescription": "Gymnema Sylvestris formulation reducing sugar cravings and supporting healthy blood levels",
+      "description": "Gymnema Sylvestris formulation reducing sugar cravings and supporting healthy blood levels.",
+      "price": 3159,
+      "compareAtPrice": 3510,
+      "currency": "KES",
+      "sku": "BFS-GYM-039",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "weight-management",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/gym-effect-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-ez-xlim",
+      "name": "Ez-Xlim",
+      "slug": "ez-xlim",
+      "brand": "BF Suma",
+      "category": "Weight Management",
+      "subcategory": "",
+      "shortDescription": "Advanced weight management formula for healthy body composition",
+      "description": "Advanced weight management formula for healthy body composition.",
+      "price": 8214,
+      "compareAtPrice": 9126,
+      "currency": "KES",
+      "sku": "BFS-EZ-040",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "weight-management",
+        "bf-suma"
+      ],
+      "benefits": [
+        "Positioned for weight-management support.",
+        "Marketed for reduced sugar/fat absorption.",
+        "Presented for blood-sugar and fat-storage control support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-femicare-cleanser",
+      "name": "FemiCare Feminine Cleanser",
+      "slug": "femicare-cleanser",
+      "brand": "BF Suma",
+      "category": "Women's Health",
+      "subcategory": "",
+      "shortDescription": "Natural ingredients for cleaning, irritation relief, and feminine health maintenance",
+      "description": "Natural ingredients for cleaning, irritation relief, and feminine health maintenance.",
+      "price": 1738,
+      "compareAtPrice": 1931,
+      "currency": "KES",
+      "sku": "BFS-FEM-041",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "womens-health",
+        "bf-suma",
+        "personal-care"
+      ],
+      "benefits": [
+        "Positioned for feminine pH-balanced daily hygiene.",
+        "Marketed for infection-resistance support.",
+        "Presented for daily freshness and comfort."
+      ],
+      "ingredients": [
+        "pH-balanced cleanser base (exact composition not specified)"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/femicare-cleanser.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-feminergy-capsules",
+      "name": "Feminergy Capsules",
+      "slug": "feminergy-capsules",
+      "brand": "BF Suma",
+      "category": "Women's Health",
+      "subcategory": "",
+      "shortDescription": "Specially formulated for female energy, hormonal balance and vitality",
+      "description": "Specially formulated for female energy, hormonal balance and vitality.",
+      "price": 4739,
+      "compareAtPrice": 5265,
+      "currency": "KES",
+      "sku": "BFS-FEM-042",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "womens-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Marketed for hormonal balance support in women.",
+        "Positioned for fatigue and menopause-symptom support.",
+        "Presented as an antioxidant-oriented formula."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-femicalcium-d3",
+      "name": "Femicalcium D3",
+      "slug": "femicalcium-d3",
+      "brand": "BF Suma",
+      "category": "Women's Health",
+      "subcategory": "",
+      "shortDescription": "Calcium and Vitamin D3 specifically formulated for women",
+      "description": "Calcium and Vitamin D3 specifically formulated for women.",
+      "price": 5055,
+      "compareAtPrice": 5616,
+      "currency": "KES",
+      "sku": "BFS-FEM-043",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "womens-health",
+        "bf-suma"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-femibiotics",
+      "name": "FemiBiotics",
+      "slug": "femibiotics",
+      "brand": "BF Suma",
+      "category": "Women's Health",
+      "subcategory": "",
+      "shortDescription": "Probiotic formula designed for women's digestive and intimate health",
+      "description": "Probiotic formula designed for women's digestive and intimate health.",
+      "price": 6318,
+      "compareAtPrice": 7020,
+      "currency": "KES",
+      "sku": "BFS-FEM-044",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "womens-health",
+        "bf-suma"
+      ],
+      "benefits": [],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-xpower-man-plus",
+      "name": "X Power Man Plus Capsules",
+      "slug": "xpower-man-plus",
+      "brand": "BF Suma",
+      "category": "Men's Health",
+      "subcategory": "",
+      "shortDescription": "Premium supplement for male vitality and performance enhancement",
+      "description": "Premium supplement for male vitality and performance enhancement.",
+      "price": 6634,
+      "compareAtPrice": 7371,
+      "currency": "KES",
+      "sku": "BFS-XPO-045",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "mens-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Marketed for male vitality and stamina support.",
+        "Positioned to support libido and sexual performance.",
+        "Presented as herbal formula without highlighted side effects."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-prostat-relax",
+      "name": "ProstatRelax Capsules",
+      "slug": "prostat-relax",
+      "brand": "BF Suma",
+      "category": "Men's Health",
+      "subcategory": "",
+      "shortDescription": "Natural formula for prostate health and urinary function support",
+      "description": "Natural formula for prostate health and urinary function support.",
+      "price": 3791,
+      "compareAtPrice": 4212,
+      "currency": "KES",
+      "sku": "BFS-PRO-046",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "mens-health",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for prostate and urinary support.",
+        "Marketed for libido and sexual-performance support.",
+        "Presented for men’s vitality and testosterone support."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-cerebrain-tablets",
+      "name": "CereBrain Tablets",
+      "slug": "cerebrain-tablets",
+      "brand": "BF Suma",
+      "category": "Brain Health",
+      "subcategory": "",
+      "shortDescription": "Ginkgo Biloba formula enhancing blood flow, supporting memory and concentration",
+      "description": "Ginkgo Biloba formula enhancing blood flow, supporting memory and concentration.",
+      "price": 3949,
+      "compareAtPrice": 4388,
+      "currency": "KES",
+      "sku": "BFS-CER-047",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "brain-health",
+        "bf-suma",
+        "tablets"
+      ],
+      "benefits": [
+        "Positioned for memory and cognitive support.",
+        "Marketed for improved brain circulation.",
+        "Presented for nervous-system support."
+      ],
+      "ingredients": [
+        "Ginkgo Biloba"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/cerebrain-tablets.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-detoxilive-capsules",
+      "name": "Detoxilive Capsules",
+      "slug": "detoxilive-capsules",
+      "brand": "BF Suma",
+      "category": "Detox",
+      "subcategory": "",
+      "shortDescription": "100% natural, absorbable ingredients promoting liver detoxification and cleansing",
+      "description": "100% natural, absorbable ingredients promoting liver detoxification and cleansing.",
+      "price": 3159,
+      "compareAtPrice": 3510,
+      "currency": "KES",
+      "sku": "BFS-DET-048",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "detox",
+        "bf-suma",
+        "capsules"
+      ],
+      "benefits": [
+        "Positioned for liver detox and function support.",
+        "Marketed for cardiovascular and blood-flow support.",
+        "Presented for daily cleansing and wellness routines."
+      ],
+      "ingredients": [
+        "Natural herbal blend (exact composition not specified)"
+      ],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/joshoppers.com/detoxilive-capsules.webp"
+      ],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-dr-cow-smart-gummies",
+      "name": "Dr Cow Smart Gummies",
+      "slug": "dr-cow-smart-gummies",
+      "brand": "BF Suma",
+      "category": "Suma Baby",
+      "subcategory": "",
+      "shortDescription": "Gummy-format product positioned for brain and immunity support in children and adults.",
+      "description": "Catalog highlights support for immunity, eyesight, and brain function development.",
+      "price": null,
+      "compareAtPrice": null,
+      "currency": "",
+      "sku": "",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "suma-baby",
+        "bf-suma",
+        "gummies"
+      ],
+      "benefits": [
+        "Positioned to support immunity and allergy response.",
+        "Marketed for brain function support in adults and children.",
+        "Presented for eyesight and memory-support positioning."
+      ],
+      "ingredients": [],
+      "usageInstructions": "",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    },
+    {
+      "id": "prod-purewell-water-purifier",
+      "name": "Purewell Water Purifier",
+      "slug": "purewell-water-purifier",
+      "brand": "BF Suma",
+      "category": "Suma Living",
+      "subcategory": "",
+      "shortDescription": "7-layer tap water purifier presented for cleaner household drinking water.",
+      "description": "Catalog positions this purifier for filtering rust, heavy metals, bacteria, chlorine, and unpleasant odor while preserving natural minerals.",
+      "price": null,
+      "compareAtPrice": null,
+      "currency": "",
+      "sku": "",
+      "stockStatus": "",
+      "sizes": [],
+      "variants": [],
+      "tags": [
+        "suma-living",
+        "bf-suma",
+        "water-purifier"
+      ],
+      "benefits": [
+        "Positioned for removing common tap-water impurities.",
+        "Marketed for improved drinking-water taste and freshness.",
+        "Presented as cleanable and replaceable cartridge system."
+      ],
+      "ingredients": [],
+      "usageInstructions": "Install on compatible tap and replace filter cartridge periodically (exact replacement interval not specified in catalog).",
+      "images": [],
+      "featured": false,
+      "bestSeller": false,
+      "newArrival": false,
+      "bundle": false
+    }
+  ]
+}
