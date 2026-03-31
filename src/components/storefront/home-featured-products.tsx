@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
@@ -36,6 +36,12 @@ function availabilityLabel(availability: StorefrontProduct["availability"]) {
   return "Out of stock";
 }
 
+function savingsLabel(product: StorefrontProduct) {
+  if (!product.compare_at_price || product.compare_at_price <= product.price) return null;
+  const delta = product.compare_at_price - product.price;
+  return `Save ${formatCurrency(delta, product.currency)}`;
+}
+
 export function HomeFeaturedProducts({ products }: { products: StorefrontProduct[] }) {
   const featured = products.slice(0, 6);
 
@@ -43,7 +49,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
     <section className="space-y-4 sm:space-y-5">
       <SectionHeader
         title="Featured Essentials"
-        description="Fast-moving products customers choose most for daily wellness support."
+        description="Shortlisted products with clear value, practical descriptions, and direct checkout flow."
         action={(
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
             View full catalog
@@ -54,6 +60,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
           const whatsappMessage = `Hello BF Suma, I would like to order ${product.name}.`;
+          const savings = savingsLabel(product);
 
           return (
             <article
@@ -77,14 +84,25 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                   <p className="mt-1 text-sm leading-relaxed text-slate-600">{toBenefitText(product)}</p>
                 </div>
 
-                <p className="text-lg font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <p className="text-lg font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
+                  {product.compare_at_price ? (
+                    <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
+                  ) : null}
+                  {savings ? <span className="text-xs font-semibold text-emerald-700">{savings}</span> : null}
+                </div>
+
+                <p className="flex items-center gap-1.5 text-xs text-slate-600">
+                  <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
+                  Transparent checkout totals. Optional WhatsApp support.
+                </p>
 
                 <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
                   <Link
                     className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                     href={`/shop/${product.slug}`}
                   >
-                    View Product
+                    View Details
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                   <a
