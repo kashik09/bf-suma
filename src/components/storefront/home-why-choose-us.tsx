@@ -3,33 +3,33 @@ import { SectionHeader } from "@/components/ui/section-header";
 
 const trustPoints = [
   {
-    title: "Quality-focused selection",
-    description: "Products are curated for practical daily use, not random catalog noise.",
+    title: "Premium without noise",
+    description: "A focused, mobile-first storefront that removes clutter and repetitive sales blocks.",
     icon: ShieldCheck
   },
   {
-    title: "Clear product information",
-    description: "Pricing, product names, and availability are presented in a straightforward way.",
+    title: "Clear product decisioning",
+    description: "Each listing is written for scanning: what it helps with, key details, and exact pricing.",
     icon: FlaskConical
   },
   {
-    title: "Fast local fulfillment",
-    description: "Delivery and pickup options are designed for local reliability.",
+    title: "Consistent structure",
+    description: "Homepage, product pages, and checkout follow one clear conversion flow from trust to action.",
     icon: Truck
   },
   {
-    title: "Easy payment flow",
-    description: "Pay-on-delivery keeps checkout simple and low-friction for first-time buyers.",
+    title: "Checkout-first funnel",
+    description: "Direct ecommerce checkout is primary, with optional support so sales can scale beyond chat.",
     icon: Wallet
   },
   {
-    title: "Responsive support",
-    description: "WhatsApp and contact channels make help easy to reach when you need it.",
+    title: "Human support on demand",
+    description: "WhatsApp stays available for uncertainty, but users can complete purchases independently.",
     icon: Headset
   },
   {
-    title: "Time-saving ordering",
-    description: "Category-first browsing helps customers find relevant products quickly.",
+    title: "Faster time to checkout",
+    description: "Reduced cognitive load and cleaner hierarchy help users move from browse to buy faster.",
     icon: Clock3
   }
 ];
@@ -38,8 +38,8 @@ export function HomeWhyChooseUs() {
   return (
     <section className="space-y-4 sm:space-y-5">
       <SectionHeader
-        title="Why Customers Choose BF Suma"
-        description="A practical local experience built around trust, clarity, and support."
+        title="Why This Store Converts Better"
+        description="Designed to outperform common BF Suma weaknesses: clutter, weak trust, and WhatsApp-only funnels."
       />
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
