@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
@@ -10,8 +11,17 @@ function getAvailabilityBadge(availability: StorefrontProduct["availability"]) {
   return { label: "Out of Stock", variant: "danger" as const };
 }
 
+function getBenefitSnippet(product: StorefrontProduct) {
+  if (product.category_slug === "beverages") return "Convenient daily routine support";
+  if (product.category_slug === "supplements") return "Targeted wellness support formula";
+  if (product.category_slug === "skincare") return "Daily skin support and care";
+  if (product.category_slug === "weight-management") return "Supports healthier routine consistency";
+  return "Clear product details for faster decisions";
+}
+
 export function ProductCard({ product }: { product: StorefrontProduct }) {
   const badge = getAvailabilityBadge(product.availability);
+  const benefitSnippet = getBenefitSnippet(product);
 
   return (
     <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -30,6 +40,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
           <h3 className="line-clamp-1 text-base font-semibold text-slate-900">{product.name}</h3>
           <p className="mt-1 line-clamp-2 text-sm text-slate-600">{product.description}</p>
+          <p className="mt-1 text-xs font-semibold text-brand-700">{benefitSnippet}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -40,11 +51,15 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         </div>
 
         <div className="mt-auto pt-1">
+          <p className="mb-2 flex items-center gap-1 text-xs text-slate-600">
+            <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
+            Transparent pricing and direct checkout flow
+          </p>
           <Link
             className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             href={`/shop/${product.slug}`}
           >
-            View Product
+            View Details
           </Link>
         </div>
       </div>
