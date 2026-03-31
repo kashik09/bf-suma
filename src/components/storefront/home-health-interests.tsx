@@ -24,13 +24,13 @@ function resolveCategoryBenefit(category: StorefrontCategory) {
 }
 
 export function HomeHealthInterests({ categories }: { categories: StorefrontCategory[] }) {
-  const items = categories.slice(0, 6);
+  const items = categories.slice(0, 4);
 
   return (
     <section className="space-y-5 sm:space-y-6">
       <SectionHeader
-        title="Shop by Your Health Interest"
-        description="Choose your focus area and quickly explore products matched to your daily wellness goals."
+        title="Need Something Specific?"
+        description="Choose one focus area and narrow options quickly to avoid decision overload."
         action={(
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
             View all categories
