@@ -11,7 +11,7 @@ export default async function CheckoutPage() {
       <section className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-sky-50/70 to-brand-50/40 p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Checkout"
-          description="Finalize your order with clear delivery details and a simple pay-on-delivery flow."
+          description="Finalize your order with transparent totals, simple delivery details, and no forced account sign-up."
         />
       </section>
       <CheckoutForm

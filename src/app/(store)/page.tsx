@@ -13,7 +13,7 @@ import { listFeaturedCategories, listFeaturedProducts } from "@/services/product
 
 export default async function HomePage() {
   const [categories, products] = await Promise.all([
-    listFeaturedCategories(6),
+    listFeaturedCategories(4),
     listFeaturedProducts(6)
   ]);
 
@@ -23,11 +23,11 @@ export default async function HomePage() {
       <TrustStrip />
 
       <PageContainer className="space-y-10 py-10 sm:space-y-12 md:space-y-14 md:py-12 lg:py-14">
-        <HomeHealthInterests categories={categories} />
-        <HomeFeaturedProducts products={products} />
-        <HomeStory />
-        <HomeWhyChooseUs />
         <HomeConfidenceSection />
+        <HomeStory />
+        <HomeFeaturedProducts products={products} />
+        <HomeHealthInterests categories={categories} />
+        <HomeWhyChooseUs />
         <HomeFinalCta />
       </PageContainer>
     </>
