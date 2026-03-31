@@ -52,9 +52,9 @@ export function StoreFooter() {
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Why BF Suma</h4>
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
-            <li>Trusted wellness-focused catalog</li>
-            <li>Transparent pricing and availability</li>
-            <li>Local delivery and pickup support</li>
+            <li>Premium, mobile-first product browsing</li>
+            <li>Transparent pricing and checkout totals</li>
+            <li>Direct ecommerce checkout with optional WhatsApp assistance</li>
           </ul>
         </div>
       </PageContainer>
