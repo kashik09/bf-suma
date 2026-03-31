@@ -41,7 +41,7 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
       <section className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-sky-50/70 to-brand-50/40 p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Shop"
-          description="Browse wellness essentials with practical filters, clear pricing, and explicit availability."
+          description="Browse a clean, mobile-first catalog with clear pricing, clear availability, and low-friction checkout paths."
         />
       </section>
 

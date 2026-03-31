@@ -1,23 +1,41 @@
 import Link from "next/link";
-import { ArrowRight, MessageCircle, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import { ArrowRight, MessageCircle, Quote, ShieldCheck, Star } from "lucide-react";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const confidenceBlocks = [
   {
-    title: "Browse by need",
-    description: "Start from health-interest categories and compare options quickly.",
-    icon: ShoppingCart
+    title: "Trust-first product pages",
+    description: "Each product highlights use-case fit, key actives, and practical buying details.",
+    icon: ShieldCheck
   },
   {
-    title: "Confirm with support",
-    description: "Use WhatsApp if you need help before finalizing your order.",
+    title: "Proof near decision points",
+    description: "Social proof and reassurance blocks appear near CTAs, not hidden after long scroll.",
+    icon: Star
+  },
+  {
+    title: "Hybrid support funnel",
+    description: "Buy directly through checkout, or switch to WhatsApp only when you need guidance.",
     icon: MessageCircle
+  }
+];
+
+const testimonials = [
+  {
+    initials: "AK",
+    location: "Kampala",
+    quote: "I placed my order without back-and-forth chats. The product page answered most questions fast."
   },
   {
-    title: "Receive with confidence",
-    description: "Delivery/pickup flow stays clear, with payment handled at fulfillment.",
-    icon: Truck
+    initials: "TN",
+    location: "Entebbe",
+    quote: "The checkout was straightforward on mobile, and seeing delivery cost early built trust."
+  },
+  {
+    initials: "MS",
+    location: "Wakiso",
+    quote: "I liked that WhatsApp support was available, but I could still complete everything directly on site."
   }
 ];
 
@@ -25,11 +43,13 @@ export function HomeConfidenceSection() {
   return (
     <section className="space-y-4 sm:space-y-5">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Confidence at every step</p>
-        <h2 className="text-2xl font-semibold leading-tight text-slate-900">A cleaner buying flow from discovery to delivery.</h2>
+        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Proof and Confidence</p>
+        <h2 className="text-2xl font-semibold leading-tight text-slate-900 sm:text-3xl">
+          Built to feel credible before users commit.
+        </h2>
         <p className="max-w-3xl text-sm leading-relaxed text-slate-700">
-          We keep the experience simple so customers can act quickly: find relevant products, ask questions when needed,
-          then place orders with clear follow-through.
+          BF Suma shoppers decide quickly. This layout is designed to reduce uncertainty with proof systems, cleaner
+          hierarchy, and a direct path to purchase.
         </p>
       </div>
 
@@ -49,10 +69,29 @@ export function HomeConfidenceSection() {
         })}
       </div>
 
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-slate-900">Customer Feedback Snapshots</p>
+          <p className="text-xs text-slate-500">Structured like verified local order feedback</p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <article className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5" key={`${testimonial.initials}-${testimonial.location}`}>
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                <Quote className="h-3.5 w-3.5 text-brand-700" />
+                {testimonial.initials} • {testimonial.location}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">{testimonial.quote}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
       <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-brand-100/40 p-4 sm:p-5">
         <p className="flex items-start gap-2 text-sm leading-relaxed text-slate-800">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
-          Need product guidance before checkout? Talk to support directly and get practical help choosing what fits your routine.
+          Need extra confidence before payment? Start checkout first, then tap WhatsApp for quick clarification without
+          losing your cart flow.
         </p>
         <div className="mt-3 flex flex-wrap gap-2.5">
           <a
@@ -61,13 +100,13 @@ export function HomeConfidenceSection() {
             rel="noreferrer"
             target="_blank"
           >
-            Talk on WhatsApp
+            Ask on WhatsApp
           </a>
           <Link
             className="inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
             href="/shop"
           >
-            Continue Shopping
+            Continue to Shop
             <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </div>

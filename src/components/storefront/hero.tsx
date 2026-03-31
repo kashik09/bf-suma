@@ -1,37 +1,44 @@
 import Link from "next/link";
-import { CheckCircle2, MessageCircle, ShieldCheck, Truck } from "lucide-react";
+import { CheckCircle2, MessageCircle, ShieldCheck, ShoppingBag, Sparkles, Truck } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const heroHighlights = [
-  "Clearly labeled products and prices",
-  "Local support before and after order",
-  "Simple checkout with pay-on-delivery option"
+  "Know what each product does in under 10 seconds",
+  "See transparent pricing before checkout",
+  "Choose direct checkout or WhatsApp guidance"
+];
+
+const trustSignals = [
+  "No forced account sign-up at checkout",
+  "Clear delivery or pickup flow",
+  "Pay on delivery or pickup"
 ];
 
 export function Hero() {
   return (
-    <section className="overflow-hidden border-b border-slate-200 bg-gradient-to-br from-white via-sky-50/70 to-brand-50/40">
-      <PageContainer className="grid gap-7 py-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-8 md:py-14 lg:py-16">
-        <div className="space-y-4 md:space-y-5">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 shadow-soft">
+    <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_right,_#e2f4f3,_transparent_58%),linear-gradient(160deg,_#ffffff_0%,_#f5fafb_42%,_#f3f7f9_100%)]">
+      <PageContainer className="grid gap-8 py-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-10 md:py-14 lg:py-16">
+        <div className="space-y-5">
+          <p className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 shadow-soft">
             <ShieldCheck className="h-3.5 w-3.5" />
-            Local Health Essentials
+            Premium Local Wellness Store
           </p>
-          <h1 className="max-w-xl text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-            Daily wellness products you trust, with support that stays close to home.
+          <h1 className="max-w-xl text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-[2.7rem]">
+            Shop trusted wellness essentials without the WhatsApp chase.
           </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-slate-700 md:text-base">
-            BF Suma helps you find supplements and personal-care essentials faster, with transparent pricing,
-            clear availability, and responsive support when you need guidance.
+          <p className="max-w-xl text-sm leading-relaxed text-slate-700 sm:text-base">
+            BF Suma gives you a cleaner way to buy: clear product outcomes, credible details, and a direct checkout
+            flow with optional human support when you need it.
           </p>
 
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
             <Link
-              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-card sm:h-12 sm:text-base"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-card sm:h-12 sm:px-6 sm:text-base"
               href="/shop"
             >
+              <ShoppingBag className="mr-1.5 h-4 w-4" />
               Shop Now
             </Link>
             <Link
@@ -40,11 +47,12 @@ export function Hero() {
               rel="noreferrer"
               target="_blank"
             >
+              <MessageCircle className="mr-1.5 h-4 w-4" />
               WhatsApp Support
             </Link>
           </div>
 
-          <ul className="space-y-1.5">
+          <ul className="space-y-1.5 sm:space-y-2">
             {heroHighlights.map((item) => (
               <li className="flex items-start gap-2 text-xs text-slate-700 sm:text-sm" key={item}>
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
@@ -54,39 +62,52 @@ export function Hero() {
           </ul>
         </div>
 
-        <div className="space-y-3 md:space-y-4">
+        <div className="space-y-3.5 md:space-y-4">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
             <div
               className="h-56 w-full bg-cover bg-center sm:h-64 md:h-72"
               style={{ backgroundImage: "url('/catalog-images/joshoppers.com/youth-essence-facial-cream.webp')" }}
             />
-            <div className="space-y-2 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Curated for local needs</p>
+            <div className="space-y-2 p-4 sm:p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Built for decision confidence</p>
               <p className="text-sm text-slate-700">
-                From daily support formulas to targeted wellness options, each listing is easy to compare and order.
+                Product pages are structured for fast scanning: problem fit, active ingredients, practical benefits, and
+                next-step checkout.
               </p>
             </div>
           </div>
 
-          <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
-            <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-soft">
+          <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3.5">
+            <div className="rounded-lg border border-slate-200 bg-white p-3.5 shadow-soft">
               <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                 <Truck className="h-4 w-4 text-brand-600" />
                 Delivery and Pickup
               </p>
               <p className="mt-1 text-xs text-slate-600">
-                Choose delivery or pickup and pay when your order reaches you.
+                Choose your preferred fulfillment and see costs clearly before placing your order.
               </p>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-soft">
+            <div className="rounded-lg border border-slate-200 bg-white p-3.5 shadow-soft">
               <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <MessageCircle className="h-4 w-4 text-brand-600" />
-                Fast Human Support
+                <Sparkles className="h-4 w-4 text-brand-600" />
+                Low-Friction Checkout
               </p>
               <p className="mt-1 text-xs text-slate-600">
-                Ask questions on WhatsApp before you order and get practical guidance.
+                Minimal form steps, no account wall, and support available if you want extra guidance.
               </p>
             </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-soft">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">Trust Signals</p>
+            <ul className="mt-2 space-y-1.5">
+              {trustSignals.map((signal) => (
+                <li className="flex items-start gap-2 text-xs text-slate-700 sm:text-sm" key={signal}>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <span>{signal}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </PageContainer>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,10 +210,11 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
         ) : null}
 
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Checkout Progress</p>
+          <p className="text-xs uppercase tracking-wide text-slate-500">Checkout Progress (Step 2 of 2)</p>
           <p className="mt-1 text-sm font-semibold text-slate-900">
             {hasAttention ? "Details needed before placing order" : "Details complete. Ready to place order"}
           </p>
+          <p className="mt-1 text-xs text-slate-600">No account creation required to complete this order.</p>
           {hasAttention ? (
             <ul className="mt-2 space-y-1 text-xs text-slate-600">
               {attentionItems.map((item) => (
@@ -364,6 +366,21 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               ? "You can pay when you collect your order."
               : "You can pay when your order is delivered."}
           </p>
+
+          <ul className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
+            <li className="flex items-start gap-1.5">
+              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-700" />
+              <span>Transparent totals shown before order submission.</span>
+            </li>
+            <li className="flex items-start gap-1.5">
+              <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-700" />
+              <span>Clear delivery or pickup process after confirmation.</span>
+            </li>
+            <li className="flex items-start gap-1.5">
+              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-700" />
+              <span>No forced account sign-up to place this order.</span>
+            </li>
+          </ul>
 
           <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
             {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
