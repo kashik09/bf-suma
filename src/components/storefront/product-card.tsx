@@ -25,8 +25,14 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
   return (
     <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
-      <div className="relative">
-        <div className="h-48 w-full bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)]" />
+      <div className="relative overflow-hidden">
+        <div
+          className="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
+          style={{
+            backgroundImage: `url(${product.image_url || "/catalog-images/placeholder.webp"})`
+          }}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/10 to-transparent" />
         <div className="absolute left-3 top-3">
           <Badge variant={badge.variant}>{badge.label}</Badge>
         </div>
@@ -52,12 +58,20 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
             Transparent pricing and direct checkout flow
           </p>
-          <Link
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-            href={`/shop/${product.slug}`}
-          >
-            View Details
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              href={`/shop/${product.slug}`}
+            >
+              View Details
+            </Link>
+            <Link
+              className="inline-flex h-10 w-fit items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              href={`/category/${product.category_slug}`}
+            >
+              Category
+            </Link>
+          </div>
         </div>
       </div>
     </Card>

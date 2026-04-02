@@ -38,7 +38,29 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
         )}
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Link
+          className="group relative isolate overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-sky-700 p-5 shadow-soft sm:col-span-2 lg:col-span-1 lg:row-span-2"
+          href="/shop"
+        >
+          <div className="relative z-10 flex h-full min-h-44 flex-col justify-between">
+            <div>
+              <p className="inline-flex rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">
+                Start here
+              </p>
+              <h3 className="mt-3 text-xl font-bold leading-tight text-white">Not sure what to choose?</h3>
+              <p className="mt-2 text-sm text-white/85">
+                Browse all categories first, then narrow by availability and price in the shop view.
+              </p>
+            </div>
+            <span className="mt-4 inline-flex h-10 w-fit items-center justify-center gap-1 rounded-md bg-white px-4 text-sm font-semibold text-slate-900 shadow-soft">
+              Browse all
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </span>
+          </div>
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_50%)]" />
+        </Link>
+
         {items.map((category) => (
           <Link
             className="group relative isolate overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-soft ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-card hover:ring-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
