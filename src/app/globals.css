@@ -57,10 +57,28 @@ a {
     background-image: linear-gradient(
       112deg,
       rgba(80, 183, 72, 0.16) 0%,
-      rgba(249, 165, 51, 0.16) 24%,
-      rgba(244, 129, 50, 0.14) 47%,
-      rgba(236, 41, 123, 0.12) 73%,
-      rgba(0, 170, 219, 0.15) 100%
+      rgba(236, 41, 123, 0.11) 52%,
+      rgba(0, 170, 219, 0.16) 100%
+    );
+  }
+
+  .bg-logo-spectrum-warm {
+    background-color: #ffffff;
+    background-image: linear-gradient(
+      115deg,
+      rgba(249, 165, 51, 0.16) 0%,
+      rgba(244, 129, 50, 0.13) 48%,
+      rgba(236, 41, 123, 0.11) 100%
+    );
+  }
+
+  .bg-logo-spectrum-cool {
+    background-color: #ffffff;
+    background-image: linear-gradient(
+      110deg,
+      rgba(80, 183, 72, 0.15) 0%,
+      rgba(0, 170, 219, 0.15) 56%,
+      rgba(249, 165, 51, 0.1) 100%
     );
   }
 
