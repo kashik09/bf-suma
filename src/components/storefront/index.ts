@@ -15,6 +15,7 @@ export * from "./product-filters";
 export * from "./product-grid";
 export * from "./related-products";
 export * from "./store-cart-button";
+export * from "./shop-catalog";
 export * from "./store-footer";
 export * from "./store-header";
 export * from "./trust-strip";
