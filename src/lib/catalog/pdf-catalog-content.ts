@@ -76,6 +76,7 @@ interface PdfCatalogSource {
     extractionMethod: string;
     traceabilityFormat: string;
     accuracyPolicy: string;
+    sourcePagesReviewed?: number;
   };
   brandProfile: {
     brand: string;
@@ -116,4 +117,8 @@ export function getPdfProductBySlug(slug: string): PdfProduct | null {
 
 export function listPdfComplianceFlags(): string[] {
   return PDF_CATALOG_CONTENT.manualReview.complianceSensitiveClaims;
+}
+
+export function getPdfExtractionMetadata() {
+  return PDF_CATALOG_CONTENT.metadata;
 }
