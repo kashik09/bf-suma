@@ -16,14 +16,20 @@ export function ProductGrid({ products, emptyTitle, emptyDescription }: {
     );
   }
 
+  const availableCount = products.filter((product) => product.availability !== "out_of_stock").length;
+
   return (
     <section className="space-y-3">
       <p className="text-sm text-slate-600">
         Showing <span className="font-semibold text-slate-900">{products.length}</span> products
+        <span className="px-1 text-slate-400">•</span>
+        <span className="font-semibold text-slate-900">{availableCount}</span> available now
       </p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-3 2xl:grid-cols-4" role="list">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <div className="h-full" key={product.id} role="listitem">
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
     </section>

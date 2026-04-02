@@ -25,14 +25,35 @@ export function ProductFilters({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const normalizedSearch = state.search.trim();
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (state.search.trim()) count += 1;
+    if (normalizedSearch) count += 1;
     if (state.category && state.category !== "all") count += 1;
     if (state.availability && state.availability !== "all") count += 1;
     if (state.sort && state.sort !== "featured") count += 1;
     return count;
-  }, [state.availability, state.category, state.search, state.sort]);
+  }, [normalizedSearch, state.availability, state.category, state.sort]);
+
+  const activeFilterChips = useMemo(() => {
+    const chips: Array<{ id: string; label: string; clearValue: string }> = [];
+    if (normalizedSearch) {
+      chips.push({ id: "search", label: `Search: "${normalizedSearch}"`, clearValue: "" });
+    }
+    if (state.category && state.category !== "all") {
+      const categoryName = categories.find((category) => category.slug === state.category)?.name || state.category;
+      chips.push({ id: "category", label: `Category: ${categoryName}`, clearValue: "all" });
+    }
+    if (state.availability && state.availability !== "all") {
+      const availabilityLabel = state.availability === "in_stock" ? "In stock" : "Out of stock";
+      chips.push({ id: "availability", label: `Availability: ${availabilityLabel}`, clearValue: "all" });
+    }
+    if (state.sort && state.sort !== "featured") {
+      const sortLabel = SHOP_SORT_OPTIONS.find((option) => option.value === state.sort)?.label || state.sort;
+      chips.push({ id: "sort", label: `Sort: ${sortLabel}`, clearValue: "featured" });
+    }
+    return chips;
+  }, [categories, normalizedSearch, state.availability, state.category, state.sort]);
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -88,6 +109,22 @@ export function ProductFilters({
           </button>
         ) : null}
       </div>
+
+      {activeFilterChips.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {activeFilterChips.map((chip) => (
+            <button
+              className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+              key={chip.id}
+              type="button"
+              onClick={() => updateFilter(chip.id, chip.clearValue)}
+            >
+              {chip.label}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         <form className="space-y-1.5" onSubmit={handleSearchSubmit}>
