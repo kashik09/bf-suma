@@ -45,13 +45,59 @@ export interface StorefrontCatalogSnapshot {
   health: CatalogHealth;
 }
 
+function asString(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object";
+}
+
+function extractCatalogErrorLogFields(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      errorName: error.name
+    };
+  }
+
+  if (isRecord(error)) {
+    const message =
+      asString(error.message) ||
+      asString(error.error_description) ||
+      asString(error.details) ||
+      "Unknown error";
+
+    return {
+      message,
+      errorCode: asString(error.code),
+      errorDetails: asString(error.details),
+      errorHint: asString(error.hint),
+      errorRaw: message === "Unknown error" ? error : undefined
+    };
+  }
+
+  if (typeof error === "string") {
+    return { message: error };
+  }
+
+  return {
+    message: "Unknown error",
+    errorRaw: error
+  };
+}
+
 function logCatalogFallback(scope: string, error: unknown, context: Record<string, unknown> = {}) {
+  const errorInfo = extractCatalogErrorLogFields(error);
+
   console.warn(JSON.stringify({
     event: "catalog.fallback_activated",
     timestamp: new Date().toISOString(),
     correlationId: "catalog-service",
     scope,
-    message: error instanceof Error ? error.message : "Unknown error",
+    ...errorInfo,
     ...context
   }));
 }
