@@ -2,7 +2,7 @@ import { ContactForm } from "@/components/storefront";
 import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import { SUPPORT_EMAIL, SUPPORT_PHONE, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { SUPPORT_EMAIL, SUPPORT_PHONES, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export default function ContactPage() {
@@ -27,9 +27,11 @@ export default function ContactPage() {
           <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </a>
-          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${SUPPORT_PHONE}`}>
-            {SUPPORT_PHONE}
-          </a>
+          {SUPPORT_PHONES.map((phone) => (
+            <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${phone}`} key={phone}>
+              {phone}
+            </a>
+          ))}
         </Card>
       </div>
     </PageContainer>
