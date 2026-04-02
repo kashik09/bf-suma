@@ -45,7 +45,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
           return (
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft" key={item.product_id}>
               <div className="flex items-start gap-4">
-                <div className="h-20 w-20 rounded-lg border border-slate-200 bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
+                <div className="h-20 w-20 rounded-lg border border-slate-200 bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)]" />
                 <div className="flex-1 space-y-2">
                   <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
                   <p className="text-sm text-slate-500">{formatCurrency(item.price, item.currency)}</p>

@@ -9,7 +9,7 @@
       "https://bfsumakenya.odoo.com/shop"
     ],
     "total_products": 50,
-    "total_with_images": 50
+    "total_with_images": 0
   },
   "categories": [
     {
@@ -100,7 +100,7 @@
       "compare_at_price": 5967,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/bf-suma-youth-essence-facial-cream-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -111,7 +111,7 @@
       "compare_at_price": 4387,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/bf-suma-youth-essence-lotion-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -122,7 +122,7 @@
       "compare_at_price": 4738,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/bf-suma-youth-essence-tonner-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -133,7 +133,7 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/bf-suma-youth-refreshing-facial-cleanser-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -144,7 +144,7 @@
       "compare_at_price": 3159,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/bf-suma-youth-essence-facial-mask-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -155,7 +155,7 @@
       "compare_at_price": 386,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/anatic-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -166,7 +166,7 @@
       "compare_at_price": null,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://joshoppers.com/storage/webp-images/derma-evers-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -177,7 +177,7 @@
       "compare_at_price": 32000,
       "currency": "KES",
       "category_slug": "anti-aging",
-      "image_url": "https://joshoppers.com/storage/webp-images/nmn-duo-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -188,7 +188,7 @@
       "compare_at_price": 35000,
       "currency": "KES",
       "category_slug": "anti-aging",
-      "image_url": "https://joshoppers.com/storage/webp-images/nmn-sharp-mind-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -199,7 +199,7 @@
       "compare_at_price": 25000,
       "currency": "KES",
       "category_slug": "anti-aging",
-      "image_url": "https://joshoppers.com/storage/webp-images/youth-ever-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -210,7 +210,7 @@
       "compare_at_price": 2633,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://joshoppers.com/storage/webp-images/xpower-coffee-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -221,7 +221,7 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://joshoppers.com/storage/ginseng-coffee-2-540x600.png",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -232,7 +232,7 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://joshoppers.com/storage/reishi-coffee-2-540x600.png",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -243,7 +243,7 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://wellthessentials.co.ke/wp-content/uploads/2025/07/4-in-1-Cordyceps-Coffee.png",
+      "image_url": null,
       "source": "wellthessentials.co.ke"
     },
     {
@@ -254,7 +254,7 @@
       "compare_at_price": 3159,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://joshoppers.com/storage/webp-images/relivin-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -265,7 +265,7 @@
       "compare_at_price": 3159,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://joshoppers.com/storage/webp-images/gym-ease-1-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -276,7 +276,7 @@
       "compare_at_price": 6143,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://joshoppers.com/storage/webp-images/quad-rieshi-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -287,7 +287,7 @@
       "compare_at_price": 10179,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -298,7 +298,7 @@
       "compare_at_price": 19305,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -309,7 +309,7 @@
       "compare_at_price": 22464,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -320,7 +320,7 @@
       "compare_at_price": 5090,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -331,7 +331,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -342,7 +342,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -353,7 +353,7 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -364,7 +364,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -375,7 +375,7 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -386,7 +386,7 @@
       "compare_at_price": 4914,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/gluzo-1-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -397,7 +397,7 @@
       "compare_at_price": 7020,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/arthro-xtra-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -408,7 +408,7 @@
       "compare_at_price": 9828,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -419,7 +419,7 @@
       "compare_at_price": 4036,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/zaminocal-1-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -430,7 +430,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/dr-cow-1-1-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -441,7 +441,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -452,7 +452,7 @@
       "compare_at_price": 2106,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/nt-diorr-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -463,7 +463,7 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/novel-depile-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -474,7 +474,7 @@
       "compare_at_price": 5090,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/consiti-relax-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -485,7 +485,7 @@
       "compare_at_price": 5350,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/probio3-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -496,7 +496,7 @@
       "compare_at_price": 2106,
       "currency": "KES",
       "category_slug": "personal-care",
-      "image_url": "https://joshoppers.com/storage/webp-images/cool-rool-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -507,7 +507,7 @@
       "compare_at_price": 965,
       "currency": "KES",
       "category_slug": "personal-care",
-      "image_url": "https://joshoppers.com/storage/webp-images/dr-ts-toothpaste-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -518,7 +518,7 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "weight-management",
-      "image_url": "https://joshoppers.com/storage/webp-images/gym-effect-2-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -529,7 +529,7 @@
       "compare_at_price": 9126,
       "currency": "KES",
       "category_slug": "weight-management",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -540,7 +540,7 @@
       "compare_at_price": 1931,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/femicare-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -551,7 +551,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -562,7 +562,7 @@
       "compare_at_price": 5616,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -573,7 +573,7 @@
       "compare_at_price": 7020,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -584,7 +584,7 @@
       "compare_at_price": 7371,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -595,7 +595,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -606,7 +606,7 @@
       "compare_at_price": 4388,
       "currency": "KES",
       "category_slug": "brain-health",
-      "image_url": "https://joshoppers.com/storage/webp-images/cere-brain-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -617,7 +617,7 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "detox",
-      "image_url": "https://joshoppers.com/storage/webp-images/detoxilive-540x600.webp",
+      "image_url": null,
       "source": "joshoppers.com"
     },
     {
@@ -628,7 +628,7 @@
       "compare_at_price": null,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumakenya.odoo.com"
     },
     {
@@ -639,7 +639,7 @@
       "compare_at_price": null,
       "currency": "KES",
       "category_slug": "personal-care",
-      "image_url": "/catalog-images/placeholder.webp",
+      "image_url": null,
       "source": "bfsumakenya.odoo.com"
     }
   ],
