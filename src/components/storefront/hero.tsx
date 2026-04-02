@@ -1,113 +1,159 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, MessageCircle, ShieldCheck, ShoppingBag, Sparkles, Truck } from "lucide-react";
-import { PageContainer } from "@/components/layout/page-container";
-import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 
-const heroHighlights = [
-  "Know what each product does in under 10 seconds",
-  "See transparent pricing before checkout",
-  "Choose direct checkout or WhatsApp guidance"
-];
-
-const trustSignals = [
-  "No forced account sign-up at checkout",
-  "Clear delivery or pickup flow",
-  "Pay on delivery or pickup"
+const heroSlides = [
+  {
+    id: "partner",
+    badge: "Premium Formulations",
+    headline: "YOUR BEST PARTNER",
+    subhead: "Trusted daily wellness support for consistent results"
+  },
+  {
+    id: "ingredients",
+    badge: "Quality Ingredients",
+    headline: "BEST INGREDIENTS",
+    subhead: "Thoughtful blends selected for performance and safety"
+  },
+  {
+    id: "lifestyle",
+    badge: "Everyday Fit",
+    headline: "SUPPLEMENTS FOR EVERY LIFESTYLE",
+    subhead: "Flexible options for workdays, training days, and recovery days"
+  }
 ];
 
 export function Hero() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [heroFading, setHeroFading] = useState(false);
+  const [pauseHero, setPauseHero] = useState(false);
+  const fadeTimeoutRef = useRef<number | null>(null);
+
+  function clearFadeTimeout() {
+    if (fadeTimeoutRef.current === null) return;
+    window.clearTimeout(fadeTimeoutRef.current);
+    fadeTimeoutRef.current = null;
+  }
+
+  function transitionToSlide(nextIndex: number) {
+    clearFadeTimeout();
+    setHeroFading(true);
+    fadeTimeoutRef.current = window.setTimeout(() => {
+      setActiveSlide((nextIndex + heroSlides.length) % heroSlides.length);
+      setHeroFading(false);
+      fadeTimeoutRef.current = null;
+    }, 260);
+  }
+
+  function goToPrevSlide() {
+    transitionToSlide(activeSlide - 1);
+  }
+
+  function goToNextSlide() {
+    transitionToSlide(activeSlide + 1);
+  }
+
+  useEffect(() => {
+    if (pauseHero || heroSlides.length <= 1) return;
+    const timer = window.setInterval(() => {
+      setHeroFading(true);
+      clearFadeTimeout();
+      fadeTimeoutRef.current = window.setTimeout(() => {
+        setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+        setHeroFading(false);
+        fadeTimeoutRef.current = null;
+      }, 260);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [pauseHero]);
+
+  useEffect(() => {
+    return () => {
+      clearFadeTimeout();
+    };
+  }, []);
+
+  const slide = heroSlides[activeSlide];
+
   return (
-    <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_right,_#e2f4f3,_transparent_58%),linear-gradient(160deg,_#ffffff_0%,_#f5fafb_42%,_#f3f7f9_100%)]">
-      <PageContainer className="grid gap-8 py-10 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-10 md:py-14 lg:py-16">
-        <div className="space-y-5">
-          <p className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 shadow-soft">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Premium Local Wellness Store
-          </p>
-          <h1 className="max-w-xl text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-[2.7rem]">
-            Shop trusted wellness essentials without the WhatsApp chase.
-          </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-slate-700 sm:text-base">
-            BF Suma gives you a cleaner way to buy: clear product outcomes, credible details, and a direct checkout
-            flow with optional human support when you need it.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
-            <Link
-              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-5 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-card sm:h-12 sm:px-6 sm:text-base"
-              href="/shop"
-            >
-              <ShoppingBag className="mr-1.5 h-4 w-4" />
-              Shop Now
-            </Link>
-            <Link
-              className="inline-flex h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:h-12 sm:px-5 sm:text-base"
-              href={buildWhatsAppUrl("Hello BF Suma, I'd like help choosing the right products.", SUPPORT_WHATSAPP_PHONE)}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <MessageCircle className="mr-1.5 h-4 w-4" />
-              WhatsApp Support
-            </Link>
-          </div>
-
-          <ul className="space-y-1.5 sm:space-y-2">
-            {heroHighlights.map((item) => (
-              <li className="flex items-start gap-2 text-xs text-slate-700 sm:text-sm" key={item}>
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+    <section
+      className="group relative h-[70vh] min-h-[400px] max-h-[600px] w-full overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900"
+      onMouseEnter={() => setPauseHero(true)}
+      onMouseLeave={() => setPauseHero(false)}
+    >
+      {heroSlides.map((s, index) => (
+        <div
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            index === activeSlide ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          key={s.id}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-slate-900/40 to-slate-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/30" />
         </div>
+      ))}
 
-        <div className="space-y-3.5 md:space-y-4">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
-            <div className="h-56 w-full bg-[linear-gradient(145deg,_#f1f5f9_0%,_#e2e8f0_45%,_#cbd5e1_100%)] sm:h-64 md:h-72" />
-            <div className="space-y-2 p-4 sm:p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Built for decision confidence</p>
-              <p className="text-sm text-slate-700">
-                Product pages are structured for fast scanning: problem fit, active ingredients, practical benefits, and
-                next-step checkout.
-              </p>
-            </div>
-          </div>
+      <div
+        className={`relative z-10 flex h-full flex-col items-center justify-center px-4 text-center transition-opacity duration-300 ${
+          heroFading ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <p className="mb-4 inline-flex rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 backdrop-blur-sm">
+          {slide.badge}
+        </p>
+        <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          {slide.headline}
+        </h1>
+        <p className="mb-8 max-w-xl text-sm font-medium text-white/80 sm:text-base md:text-lg">
+          {slide.subhead}
+        </p>
+        <Link
+          className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-14 sm:px-8 sm:text-base"
+          href="/shop"
+        >
+          <ShoppingBag className="mr-2 h-5 w-5" />
+          Shop Now
+        </Link>
+      </div>
 
-          <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3.5">
-            <div className="rounded-lg border border-slate-200 bg-white p-3.5 shadow-soft">
-              <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Truck className="h-4 w-4 text-brand-600" />
-                Delivery and Pickup
-              </p>
-              <p className="mt-1 text-xs text-slate-600">
-                Choose your preferred fulfillment and see costs clearly before placing your order.
-              </p>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-white p-3.5 shadow-soft">
-              <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Sparkles className="h-4 w-4 text-brand-600" />
-                Low-Friction Checkout
-              </p>
-              <p className="mt-1 text-xs text-slate-600">
-                Minimal form steps, no account wall, and support available if you want extra guidance.
-              </p>
-            </div>
-          </div>
+      <button
+        aria-label="Previous slide"
+        className="absolute left-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-white opacity-0 transition duration-300 hover:scale-110 hover:bg-white/20 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:left-5"
+        onClick={goToPrevSlide}
+        type="button"
+      >
+        <ChevronLeft className="h-7 w-7 stroke-[2.5]" />
+      </button>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-soft">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">Trust Signals</p>
-            <ul className="mt-2 space-y-1.5">
-              {trustSignals.map((signal) => (
-                <li className="flex items-start gap-2 text-xs text-slate-700 sm:text-sm" key={signal}>
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                  <span>{signal}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <button
+        aria-label="Next slide"
+        className="absolute right-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-white opacity-0 transition duration-300 hover:scale-110 hover:bg-white/20 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:right-5"
+        onClick={goToNextSlide}
+        type="button"
+      >
+        <ChevronRight className="h-7 w-7 stroke-[2.5]" />
+      </button>
+
+      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center pb-6">
+        <div className="flex items-center gap-2 rounded-full bg-black/30 px-3 py-1.5 backdrop-blur-sm">
+          {heroSlides.map((s, index) => (
+            <button
+              aria-label={`Show slide ${index + 1}`}
+              className={`h-2 rounded-full transition ${
+                index === activeSlide
+                  ? "w-8 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                  : "w-2 bg-white/50 hover:bg-white/80"
+              }`}
+              key={s.id}
+              onClick={() => transitionToSlide(index)}
+              type="button"
+            />
+          ))}
         </div>
-      </PageContainer>
+      </div>
     </section>
   );
 }
