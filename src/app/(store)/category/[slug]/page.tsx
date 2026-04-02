@@ -37,7 +37,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         ]}
       />
 
-      <div className="space-y-3 rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-5 shadow-soft sm:p-6">
+      <div className="space-y-3 rounded-2xl border border-slate-200 bg-logo-spectrum-cool p-5 shadow-soft sm:p-6">
         <SectionHeader title={category.name} description={category.description} />
         {!health.commerceReady ? (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
