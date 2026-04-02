@@ -3,8 +3,7 @@ import {
   Hero,
   HomeFeaturedProducts,
   HomeFinalCta,
-  HomeHealthInterests,
-  TrustStrip
+  HomeHealthInterests
 } from "@/components/storefront";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
 
@@ -17,7 +16,6 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
-      <TrustStrip />
 
       <PageContainer className="space-y-10 py-10 sm:space-y-12 md:space-y-14 md:py-12 lg:py-14">
         <HomeHealthInterests categories={categories} />
