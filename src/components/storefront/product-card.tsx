@@ -26,10 +26,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
   return (
     <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
       <div className="relative">
-        <div
-          className="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
-          style={{ backgroundImage: `url(${product.image_url || "/catalog-images/placeholder.webp"})` }}
-        />
+        <div className="h-48 w-full bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)]" />
         <div className="absolute left-3 top-3">
           <Badge variant={badge.variant}>{badge.label}</Badge>
         </div>

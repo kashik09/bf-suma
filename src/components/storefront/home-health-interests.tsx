@@ -45,12 +45,8 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
             href={`/category/${category.slug}`}
             key={category.id}
           >
-            <div
-              className="h-56 w-full bg-cover bg-center transition duration-500 group-hover:scale-105 sm:h-64"
-              style={{ backgroundImage: `url(${category.image_url || "/catalog-images/placeholder.webp"})` }}
-            />
-
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/45 to-slate-900/10 transition duration-300 group-hover:from-slate-950/95 group-hover:via-slate-900/60" />
+            <div className="h-56 w-full bg-[linear-gradient(145deg,_#0f172a_0%,_#1e293b_50%,_#334155_100%)] transition duration-300 sm:h-64" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/45 to-slate-900/10" />
 
             <div className="absolute inset-x-0 bottom-0 flex h-full flex-col justify-end p-4 sm:p-5">
               <h3 className="text-lg font-semibold leading-tight text-white">{category.name}</h3>
