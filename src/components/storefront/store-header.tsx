@@ -9,7 +9,7 @@ import { SearchAutocomplete } from "@/components/storefront/search-autocomplete"
 export function StoreHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="border-b border-slate-100 bg-gradient-to-r from-sky-50 via-white to-brand-50 py-2 text-xs text-slate-700">
+      <div className="border-b border-slate-100 bg-logo-spectrum-soft py-2 text-xs text-slate-700">
         <PageContainer className="flex items-center justify-between gap-4">
           <p className="line-clamp-1 font-medium">Trusted wellness products. Direct checkout first. WhatsApp help when needed.</p>
           <a
