@@ -58,6 +58,24 @@ export function StoreFooter() {
           </ul>
         </div>
       </PageContainer>
+
+      <PageContainer className="mt-8 flex flex-col gap-3 border-t border-slate-800 pt-4 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <p>&copy; {new Date().getFullYear()} BF Suma. All rights reserved.</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            className="inline-flex items-center rounded-md border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:text-white"
+            href="/shop"
+          >
+            Shop Catalog
+          </Link>
+          <Link
+            className="inline-flex items-center rounded-md border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:text-white"
+            href="/contact"
+          >
+            Contact Support
+          </Link>
+        </div>
+      </PageContainer>
     </footer>
   );
 }
