@@ -8,20 +8,30 @@ const heroSlides = [
   {
     id: "partner",
     badge: "Premium Formulations",
-    headline: "YOUR BEST PARTNER",
-    subhead: "Trusted daily wellness support for consistent results"
+    headline: "YOUR BEST PARTNERS",
+    subhead: "Trusted daily wellness support for consistent results",
+    image: "/hero-images/supplements.jpg"
   },
   {
     id: "ingredients",
     badge: "Quality Ingredients",
     headline: "BEST INGREDIENTS",
-    subhead: "Thoughtful blends selected for performance and safety"
+    subhead: "Thoughtful blends selected for performance and safety",
+    image: "/hero-images/vegetables.jpg"
   },
   {
     id: "lifestyle",
     badge: "Everyday Fit",
     headline: "SUPPLEMENTS FOR EVERY LIFESTYLE",
-    subhead: "Flexible options for workdays, training days, and recovery days"
+    subhead: "Flexible options for workdays, training days, and recovery days",
+    image: "/hero-images/lifestyle.jpg"
+  },
+  {
+    id: "joint-care",
+    badge: "Bone & Joint Care",
+    headline: "FREE YOUR JOINT DANCE YOUR LIFE",
+    subhead: "Support for mobility, comfort, and active living",
+    image: "/hero-images/joint-health.jpg"
   }
 ];
 
@@ -91,6 +101,10 @@ export function Hero() {
           }`}
           key={s.id}
         >
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${s.image})` }}
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-slate-900/40 to-slate-900/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/30" />
         </div>
