@@ -229,7 +229,6 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(product.gallery_urls[0] || product.image_url);
 
   const isUnavailable = product.availability === "out_of_stock" || !commerceReady;
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
@@ -270,23 +269,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
     <div className="space-y-6">
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         <div className="space-y-3">
-          <div
-            className="h-72 w-full rounded-2xl border border-slate-200 bg-cover bg-center shadow-soft sm:h-96"
-            style={{ backgroundImage: `url(${activeImage})` }}
-          />
-          <div className="grid grid-cols-4 gap-2">
-            {product.gallery_urls.slice(0, 4).map((image) => (
-              <button
-                className={`h-20 rounded-md border bg-cover bg-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
-                  activeImage === image ? "border-brand-600 ring-1 ring-brand-100" : "border-slate-200 hover:border-slate-300"
-                }`}
-                key={image}
-                onClick={() => setActiveImage(image)}
-                style={{ backgroundImage: `url(${image})` }}
-                type="button"
-              />
-            ))}
-          </div>
+          <div className="h-72 w-full rounded-2xl border border-slate-200 bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_50%,_#cbd5e1_100%)] shadow-soft sm:h-96" />
         </div>
 
         <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
