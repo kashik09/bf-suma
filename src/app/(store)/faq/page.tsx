@@ -1,19 +1,27 @@
 import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import { listPdfComplianceFlags, listPdfFaqEntries } from "@/lib/catalog/pdf-catalog-content";
+import {
+  getPdfExtractionMetadata,
+  listPdfComplianceFlags,
+  listPdfFaqEntries
+} from "@/lib/catalog/pdf-catalog-content";
 
 export default function FaqPage() {
   const faqEntries = listPdfFaqEntries();
   const complianceFlags = listPdfComplianceFlags();
+  const extractionMeta = getPdfExtractionMetadata();
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
-      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-5 shadow-soft sm:p-6">
+      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-warm p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="FAQ"
           description="Answers below are sourced from the PDF catalog and should be treated as product-label guidance, not medical advice."
         />
+        <p className="mt-2 text-xs text-slate-500">
+          Source: {extractionMeta.sourceFile} • Extracted: {extractionMeta.extractedAt}
+        </p>
       </section>
 
       <div className="grid gap-4">
@@ -21,7 +29,7 @@ export default function FaqPage() {
           <Card className="space-y-2 rounded-2xl p-5" key={entry.question}>
             <h2 className="text-base font-semibold text-slate-900 sm:text-lg">{entry.question}</h2>
             <p className="text-sm leading-relaxed text-slate-700">{entry.answer}</p>
-            <p className="text-xs text-slate-500">Source: {entry.sourcePageRefs.join(", ")}</p>
+            <p className="text-xs text-slate-500">Source pages: {entry.sourcePageRefs.join(", ")}</p>
           </Card>
         ))}
       </div>

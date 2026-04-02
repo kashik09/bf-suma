@@ -8,7 +8,7 @@ export default async function CheckoutPage() {
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
-      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-5 shadow-soft sm:p-6">
+      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-cool p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Checkout"
           description="Finalize your order with transparent totals, simple delivery details, and no forced account sign-up."
