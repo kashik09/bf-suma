@@ -35,7 +35,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       ) : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-sky-50/70 to-brand-50/40 p-4 shadow-soft sm:p-5">
+      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-4 shadow-soft sm:p-5">
         <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{product.category_name}</p>
         <h2 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">Problem, solution, proof, then checkout</h2>
         <p className="mt-1 text-sm text-slate-700">

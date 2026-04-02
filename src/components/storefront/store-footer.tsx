@@ -11,13 +11,13 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function StoreFooter() {
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-slate-950 py-12 text-slate-200">
+    <footer className="mt-16 border-t border-white/10 bg-logo-spectrum-footer py-12 text-slate-100">
       <PageContainer className="grid gap-8 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
         <div className="space-y-3">
           <h3 className="text-lg font-bold text-white">BF Suma</h3>
-          <p className="text-sm leading-relaxed text-slate-300">{APP_DESCRIPTION}</p>
+          <p className="text-sm leading-relaxed text-slate-100/85">{APP_DESCRIPTION}</p>
           <a
-            className="inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-brand-500 via-earth-500 to-sky-500 px-4 text-sm font-semibold text-white shadow-soft transition hover:brightness-105"
             href={buildWhatsAppUrl("Hello BF Suma, I need product guidance.", SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
@@ -27,10 +27,10 @@ export function StoreFooter() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Explore</h4>
-          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-300">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Explore</h4>
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-100/85">
             {STORE_NAV_LINKS.map((item) => (
-              <Link className="transition hover:text-white" href={item.href} key={item.href}>
+              <Link className="transition hover:text-accent-sun" href={item.href} key={item.href}>
                 {item.label}
               </Link>
             ))}
@@ -38,15 +38,15 @@ export function StoreFooter() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Support</h4>
-          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-300">
-            <Link className="transition hover:text-white" href="/contact">Contact Form</Link>
-            <a className="transition hover:text-white" href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Support</h4>
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-100/85">
+            <Link className="transition hover:text-accent-sun" href="/contact">Contact Form</Link>
+            <a className="transition hover:text-accent-sun" href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
               WhatsApp
             </a>
-            <a className="transition hover:text-white" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            <a className="transition hover:text-accent-sun" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
             {SUPPORT_PHONES.map((phone) => (
-              <a className="transition hover:text-white" href={`tel:${phone}`} key={phone}>
+              <a className="transition hover:text-accent-sun" href={`tel:${phone}`} key={phone}>
                 {phone}
               </a>
             ))}
@@ -54,8 +54,8 @@ export function StoreFooter() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Why BF Suma</h4>
-          <ul className="mt-3 space-y-2 text-sm text-slate-300">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Why BF Suma</h4>
+          <ul className="mt-3 space-y-2 text-sm text-slate-100/85">
             <li>Premium, mobile-first product browsing</li>
             <li>Transparent pricing and checkout totals</li>
             <li>Direct ecommerce checkout with optional WhatsApp assistance</li>
@@ -63,17 +63,17 @@ export function StoreFooter() {
         </div>
       </PageContainer>
 
-      <PageContainer className="mt-8 flex flex-col gap-3 border-t border-slate-800 pt-4 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+      <PageContainer className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-4 text-xs text-slate-100/80 sm:flex-row sm:items-center sm:justify-between">
         <p>&copy; {new Date().getFullYear()} BF Suma. All rights reserved.</p>
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            className="inline-flex items-center rounded-md border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:text-white"
+            className="inline-flex items-center rounded-md border border-white/25 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-white/90 transition hover:border-accent-sun/60 hover:text-accent-sun"
             href="/shop"
           >
             Shop Catalog
           </Link>
           <Link
-            className="inline-flex items-center rounded-md border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:text-white"
+            className="inline-flex items-center rounded-md border border-white/25 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-white/90 transition hover:border-accent-sun/60 hover:text-accent-sun"
             href="/contact"
           >
             Contact Support
