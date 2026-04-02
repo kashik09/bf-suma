@@ -17,7 +17,7 @@ export function StoreFooter() {
           <h3 className="text-lg font-bold text-white">BF Suma</h3>
           <p className="text-sm leading-relaxed text-slate-100/85">{APP_DESCRIPTION}</p>
           <a
-            className="inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-brand-500 via-earth-500 to-sky-500 px-4 text-sm font-semibold text-white shadow-soft transition hover:brightness-105"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-brand-500 px-4 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-600"
             href={buildWhatsAppUrl("Hello BF Suma, I need product guidance.", SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"

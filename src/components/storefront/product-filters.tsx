@@ -34,7 +34,7 @@ export function ProductFilters({
   }, [normalizedSearch, state.availability, state.category, state.sort]);
 
   const activeFilterChips = useMemo(() => {
-    const chips: Array<{ id: string; label: string; clearValue: string }> = [];
+    const chips: Array<{ id: keyof ProductFilterState; label: string; clearValue: string }> = [];
     if (normalizedSearch) {
       chips.push({ id: "search", label: `Search: "${normalizedSearch}"`, clearValue: "" });
     }
