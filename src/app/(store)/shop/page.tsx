@@ -1,5 +1,5 @@
 import { PageContainer } from "@/components/layout/page-container";
-import { ProductFilters, ProductGrid } from "@/components/storefront";
+import { ShopCatalog } from "@/components/storefront";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
 import { getStorefrontCatalogSnapshot } from "@/services/products";
@@ -26,14 +26,7 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
       | "name_asc"
       | undefined) || "featured";
 
-  const filters = {
-    search,
-    categorySlug: category !== "all" ? category : undefined,
-    availability,
-    sort
-  } as const;
-
-  const snapshot = await getStorefrontCatalogSnapshot(filters);
+  const snapshot = await getStorefrontCatalogSnapshot();
   const degradedMessage = getCommerceDegradedMessage(snapshot.health);
 
   return (
@@ -51,19 +44,14 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
         </div>
       ) : null}
 
-      <ProductFilters
+      <ShopCatalog
         categories={snapshot.categories}
-        state={{
-          search: filters.search,
+        initialState={{
+          search,
           category,
-          availability: filters.availability,
-          sort: filters.sort
+          availability,
+          sort
         }}
-      />
-
-      <ProductGrid
-        emptyDescription="No products match your current filters. Try another category or clear search."
-        emptyTitle="No matching products"
         products={snapshot.products}
       />
     </PageContainer>
