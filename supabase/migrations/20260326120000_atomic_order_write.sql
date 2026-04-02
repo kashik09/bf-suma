@@ -26,19 +26,6 @@ for each row execute function public.set_updated_at();
 
 alter table public.order_request_replays disable row level security;
 
-drop function if exists public.process_order_intake_atomic(
-  text,
-  text,
-  uuid,
-  text,
-  text,
-  integer,
-  integer,
-  integer,
-  text,
-  jsonb
-);
-
 create or replace function public.process_order_intake_atomic(
   p_idempotency_key text,
   p_request_hash text,
