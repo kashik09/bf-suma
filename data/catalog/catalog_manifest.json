@@ -5,10 +5,11 @@
       "https://joshoppers.com/products",
       "https://www.bfsumaproducts.co.ke/shop",
       "https://wellthessentials.co.ke/shop-2/",
-      "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf"
+      "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf",
+      "https://bfsumakenya.odoo.com/shop"
     ],
-    "total_products": 48,
-    "total_with_images": 31
+    "total_products": 50,
+    "total_with_images": 50
   },
   "categories": [
     {
@@ -286,7 +287,7 @@
       "compare_at_price": 10179,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -297,7 +298,7 @@
       "compare_at_price": 19305,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -308,7 +309,7 @@
       "compare_at_price": 22464,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -319,7 +320,7 @@
       "compare_at_price": 5090,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -330,7 +331,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -341,7 +342,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -352,7 +353,7 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -363,7 +364,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -374,7 +375,7 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -407,7 +408,7 @@
       "compare_at_price": 9828,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -440,7 +441,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -528,7 +529,7 @@
       "compare_at_price": 9126,
       "currency": "KES",
       "category_slug": "weight-management",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -550,7 +551,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -561,7 +562,7 @@
       "compare_at_price": 5616,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -572,7 +573,7 @@
       "compare_at_price": 7020,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -583,7 +584,7 @@
       "compare_at_price": 7371,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -594,7 +595,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": null,
+      "image_url": "/catalog-images/placeholder.webp",
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -618,6 +619,28 @@
       "category_slug": "detox",
       "image_url": "https://joshoppers.com/storage/webp-images/detoxilive-540x600.webp",
       "source": "joshoppers.com"
+    },
+    {
+      "name": "Dr Cow Smart Gummies",
+      "slug": "dr-cow-smart-gummies",
+      "description": "Omega-3 gummy supplement positioned for children's growth, eyesight, appetite, and brain development support.",
+      "price": 3888,
+      "compare_at_price": null,
+      "currency": "KES",
+      "category_slug": "supplements",
+      "image_url": "/catalog-images/placeholder.webp",
+      "source": "bfsumakenya.odoo.com"
+    },
+    {
+      "name": "Purewell Water Purifier",
+      "slug": "purewell-water-purifier",
+      "description": "Seven-layer faucet-mounted household water purifier designed to reduce impurities and improve drinking water quality.",
+      "price": 6480,
+      "compare_at_price": null,
+      "currency": "KES",
+      "category_slug": "personal-care",
+      "image_url": "/catalog-images/placeholder.webp",
+      "source": "bfsumakenya.odoo.com"
     }
   ],
   "flagged_for_review": [
@@ -629,13 +652,13 @@
     },
     {
       "name": "Dr Cow Smart Gummies",
-      "reason": "Found in PRODUCT CATALOGUE.pdf but missing verified price/image in current web-source dataset.",
+      "reason": "Price mapped from BF Suma Kenya distributor listing; using placeholder image pending verified product media.",
       "source": "PRODUCT CATALOGUE.pdf",
       "price": 0
     },
     {
       "name": "Purewell Water Purifier",
-      "reason": "Found in PRODUCT CATALOGUE.pdf but missing verified price/category mapping for current storefront schema.",
+      "reason": "Price mapped from BF Suma Kenya distributor listing; temporarily mapped to personal-care pending dedicated home category confirmation and verified media.",
       "source": "PRODUCT CATALOGUE.pdf",
       "price": 0
     }

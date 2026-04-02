@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "generated_at": "2026-03-31T15:02:11.316Z",
+    "generated_at": "2026-03-31T16:19:17.171Z",
     "source_catalog": "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf",
     "extraction_companion": "/home/kashi-kweyu/Downloads/BF-SUMA-PRODUCTS-CATALOGUE-1.pdf",
-    "products_in_manifest": 48,
-    "products_total": 50
+    "extraction_product_blocks": 27,
+    "existing_manifest_products": 50,
+    "normalized_products_total": 50
   },
   "products": [
     {
@@ -28,7 +29,11 @@
         "bf-suma",
         "personal-care"
       ],
-      "benefits": [],
+      "benefits": [
+        "Supports daily skin-care routines.",
+        "Designed for consistent topical use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -60,7 +65,11 @@
         "bf-suma",
         "personal-care"
       ],
-      "benefits": [],
+      "benefits": [
+        "Supports daily skin-care routines.",
+        "Designed for consistent topical use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -92,7 +101,11 @@
         "bf-suma",
         "personal-care"
       ],
-      "benefits": [],
+      "benefits": [
+        "Supports daily skin-care routines.",
+        "Designed for consistent topical use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -124,7 +137,11 @@
         "bf-suma",
         "personal-care"
       ],
-      "benefits": [],
+      "benefits": [
+        "Supports daily skin-care routines.",
+        "Designed for consistent topical use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -156,7 +173,11 @@
         "bf-suma",
         "personal-care"
       ],
-      "benefits": [],
+      "benefits": [
+        "Supports daily skin-care routines.",
+        "Designed for consistent topical use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -191,7 +212,7 @@
       "benefits": [
         "Positioned for skin cleansing and moisture support.",
         "Marketed for acne/oil and dark-spot support.",
-        "Presented for daily skin-renewal routine."
+        "Presented for daily skin-renewal routines."
       ],
       "ingredients": [
         "Wild honey",
@@ -233,9 +254,9 @@
         "personal-care"
       ],
       "benefits": [
-        "Positioned for long-lasting herbal moisture support.",
-        "Marketed with plant-essence skin nourishment.",
-        "Presented for youthful-radiance support."
+        "Positioned for long-lasting moisture support.",
+        "Marketed with plant-essence nourishment claims.",
+        "Presented for daily skin-radiance routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -268,9 +289,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Supports NAD+ replenishment linked to healthy aging routines.",
-        "Positioned for energy metabolism and endurance support.",
-        "Marketed for brain and heart vitality support."
+        "Supports NAD+ replenishment positioning for healthy aging.",
+        "Marketed for energy-metabolism and endurance support.",
+        "Presented for brain and heart vitality support."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -303,9 +324,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for cognitive clarity and healthy aging support.",
-        "Designed for users prioritizing focus and alertness.",
-        "Part of the NMN-based premium anti-aging line."
+        "Positioned for healthy-aging routines.",
+        "Marketed for vitality and antioxidant support.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -338,9 +359,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Patented anti-aging formula positioning.",
-        "Marketed as inner-to-outer beauty support.",
-        "Presented as an antioxidant-focused product."
+        "Positioned as anti-aging support.",
+        "Marketed for inner-to-outer beauty support.",
+        "Presented as antioxidant-focused formulation."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -374,9 +395,9 @@
         "coffee"
       ],
       "benefits": [
-        "Marketed to reduce fatigue and improve energy.",
-        "Positioned for libido and male-performance support.",
-        "Presented as a coffee-format vitality product."
+        "Positioned for energy and fatigue support.",
+        "Marketed for male sexual-performance support.",
+        "Presented as coffee-format wellness routine."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -411,8 +432,8 @@
       ],
       "benefits": [
         "Positioned for daily energy and alertness support.",
-        "Marketed for blood-pressure and circulation support.",
-        "Presented as functional coffee for routine vitality."
+        "Marketed for circulation and blood-pressure support.",
+        "Presented as functional coffee routine."
       ],
       "ingredients": [
         "Ginseng"
@@ -450,7 +471,7 @@
       "benefits": [
         "Positioned for daily energy and alertness support.",
         "Marketed for stress and fatigue support.",
-        "Presented as functional coffee with wellness orientation."
+        "Presented as functional coffee routine."
       ],
       "ingredients": [
         "Reishi"
@@ -488,7 +509,7 @@
       "benefits": [
         "Positioned for daily energy and alertness support.",
         "Marketed for stress and fatigue support.",
-        "Presented as functional coffee with wellness orientation."
+        "Presented as functional coffee routine."
       ],
       "ingredients": [
         "Cordyceps"
@@ -525,12 +546,10 @@
       ],
       "benefits": [
         "Positioned for stress and blood-pressure support.",
-        "Marketed to support normal pulse and calmness.",
+        "Marketed for calmness and pulse support.",
         "Presented as caffeine-free herbal tea."
       ],
-      "ingredients": [
-        "Herbal tea blend (caffeine free)"
-      ],
+      "ingredients": [],
       "usageInstructions": "",
       "images": [
         "/catalog-images/joshoppers.com/relivin-tea.webp"
@@ -562,13 +581,11 @@
         "tea"
       ],
       "benefits": [
-        "Positioned for blood-sugar regulation support.",
-        "Marketed for insulin-secretion support.",
-        "Presented as antioxidant herbal tea."
+        "Positioned for blood-sugar routine support.",
+        "Marketed for glucose-absorption control support.",
+        "Presented as caffeine-free herbal tea support."
       ],
-      "ingredients": [
-        "Herbal tea blend (exact composition not specified)"
-      ],
+      "ingredients": [],
       "usageInstructions": "",
       "images": [
         "/catalog-images/joshoppers.com/gym-ease-tea.webp"
@@ -600,9 +617,9 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for immune-system support.",
-        "Marketed with antifungal/antibacterial wellness claims.",
-        "Presented as broad chronic-condition support formula."
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -637,13 +654,15 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for immune-system support.",
-        "Marketed with antifungal/antibacterial wellness claims.",
-        "Presented as broad chronic-condition support formula."
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -672,13 +691,15 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for immune-system support.",
-        "Marketed with antifungal/antibacterial wellness claims.",
-        "Presented as broad chronic-condition support formula."
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -708,13 +729,15 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for immune-system support.",
-        "Marketed with antifungal/antibacterial wellness claims.",
-        "Presented as broad chronic-condition support formula."
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -743,11 +766,13 @@
       "benefits": [
         "Positioned for immune-system support.",
         "Marketed for appetite and vitality support.",
-        "Presented for regular use and longevity routines."
+        "Presented for regular-use wellness routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -776,11 +801,13 @@
       "benefits": [
         "Positioned as detoxification drink.",
         "Marketed for appetite and metabolism support.",
-        "Presented for cholesterol and intestinal-motility support."
+        "Presented for digestive burden support."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -807,10 +834,16 @@
         "bf-suma",
         "tablets"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -837,10 +870,16 @@
         "bf-suma",
         "tablets"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for daily wellness support.",
+        "Designed for routine supplement use.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -867,13 +906,15 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned as low-calorie meal replacement support.",
-        "Marketed for metabolism and fat-burning support.",
-        "Presented for cleansing/detox support."
+        "Positioned as low-calorie meal-replacement support.",
+        "Marketed for metabolism support.",
+        "Presented for detox and cleansing support."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -901,13 +942,15 @@
         "tablets"
       ],
       "benefits": [
-        "Positioned for circulation and heart-function support.",
-        "Marketed for oxygen-delivery and chest-comfort support.",
-        "Presented for cholesterol and clot-risk support."
+        "Positioned for circulation and cardiac support.",
+        "Marketed for oxygen-delivery support.",
+        "Presented for daily heart-support routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -937,7 +980,7 @@
       "benefits": [
         "Positioned for cartilage and flexibility support.",
         "Marketed to help reduce joint discomfort.",
-        "Presented as suitable for physically active users."
+        "Presented for active-lifestyle joint support."
       ],
       "ingredients": [
         "Glucosamine"
@@ -975,7 +1018,7 @@
       "benefits": [
         "Positioned for joint nourishment and movement comfort.",
         "Marketed for stiffness and swelling symptom support.",
-        "Presented as natural ingredient-based joint support."
+        "Presented for daily joint-care routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1008,13 +1051,15 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned as advanced joint-support formula.",
-        "Marketed for cartilage and mobility support.",
-        "Presented for sustained daily joint-care routines."
+        "Positioned for movement and flexibility support.",
+        "Designed for ongoing joint-care routines.",
+        "See packaging for full usage guidance."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1042,9 +1087,9 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for bone and teeth support.",
-        "Marketed for osteoporosis and tissue-repair support.",
-        "Presented for immune and skin collagen support."
+        "Positioned for bones and teeth support.",
+        "Marketed for osteoporosis and tissue support.",
+        "Presented for calcium/zinc daily routines."
       ],
       "ingredients": [
         "Calcium",
@@ -1080,9 +1125,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for children’s bone, teeth, and growth support.",
+        "Positioned for children bone and growth support.",
         "Marketed for appetite and immunity support.",
-        "Presented with milk-based calcium formulation."
+        "Presented as milk-calcium candy format."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1115,10 +1160,16 @@
         "bf-suma",
         "tablets"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for bone and mineral support.",
+        "Designed for daily calcium/mineral routines.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1144,7 +1195,11 @@
         "digestive-health",
         "bf-suma"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for gut and digestive support.",
+        "Designed for routine digestive wellness.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -1177,9 +1232,9 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for hemorrhoid symptom relief.",
+        "Positioned for hemorrhoid discomfort support.",
         "Marketed as non-surgical support option.",
-        "Presented for pain, irritation, and discomfort support."
+        "Presented for anal discomfort and irritation support."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1212,9 +1267,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for constipation relief.",
-        "Marketed for toxin elimination support.",
-        "Presented as safe and natural intestinal cleaner."
+        "Positioned for constipation relief support.",
+        "Marketed for intestinal-cleansing support.",
+        "Presented as natural formula support."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1247,9 +1302,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned for gut flora balance support.",
+        "Positioned for gut-bacteria balance support.",
         "Marketed for digestive and immune support.",
-        "Presented for reducing gastrointestinal discomfort."
+        "Presented for regular gut-health routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1281,7 +1336,11 @@
         "personal-care",
         "bf-suma"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for everyday personal-care use.",
+        "Designed for practical hygiene routines.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -1313,9 +1372,9 @@
         "bf-suma"
       ],
       "benefits": [
-        "Positioned as herbal 4D oral-care formula.",
-        "Marketed for enamel and gum protection.",
-        "Presented for cavity-prevention and sensitivity support."
+        "Positioned as herbal oral-care formula.",
+        "Marketed for gum/enamel support.",
+        "Presented for cavity-prevention support."
       ],
       "ingredients": [],
       "usageInstructions": "",
@@ -1348,7 +1407,11 @@
         "bf-suma",
         "capsules"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for weight-management support.",
+        "Designed for routine nutrition support.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
       "images": [
@@ -1381,12 +1444,14 @@
       ],
       "benefits": [
         "Positioned for weight-management support.",
-        "Marketed for reduced sugar/fat absorption.",
-        "Presented for blood-sugar and fat-storage control support."
+        "Marketed for sugar/fat absorption control support.",
+        "Presented for routine body-composition support."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1414,13 +1479,11 @@
         "personal-care"
       ],
       "benefits": [
-        "Positioned for feminine pH-balanced daily hygiene.",
-        "Marketed for infection-resistance support.",
-        "Presented for daily freshness and comfort."
+        "Positioned for feminine pH-balanced hygiene.",
+        "Marketed for freshness and comfort support.",
+        "Presented for daily feminine-care routines."
       ],
-      "ingredients": [
-        "pH-balanced cleanser base (exact composition not specified)"
-      ],
+      "ingredients": [],
       "usageInstructions": "",
       "images": [
         "/catalog-images/joshoppers.com/femicare-cleanser.webp"
@@ -1452,13 +1515,15 @@
         "capsules"
       ],
       "benefits": [
-        "Marketed for hormonal balance support in women.",
-        "Positioned for fatigue and menopause-symptom support.",
-        "Presented as an antioxidant-oriented formula."
+        "Positioned for women hormonal-balance support.",
+        "Marketed for fatigue and menopause-related support.",
+        "Presented as antioxidant support formula."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1484,10 +1549,16 @@
         "womens-health",
         "bf-suma"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for women-focused wellness support.",
+        "Designed for routine female-health support.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1513,10 +1584,16 @@
         "womens-health",
         "bf-suma"
       ],
-      "benefits": [],
+      "benefits": [
+        "Positioned for women-focused wellness support.",
+        "Designed for routine female-health support.",
+        "See packaging for full usage guidance."
+      ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1544,13 +1621,15 @@
         "capsules"
       ],
       "benefits": [
-        "Marketed for male vitality and stamina support.",
-        "Positioned to support libido and sexual performance.",
-        "Presented as herbal formula without highlighted side effects."
+        "Positioned for male vitality and stamina support.",
+        "Marketed for libido and sexual-performance support.",
+        "Presented as herbal-based support formula."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1578,13 +1657,15 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for prostate and urinary support.",
-        "Marketed for libido and sexual-performance support.",
-        "Presented for men’s vitality and testosterone support."
+        "Positioned for prostate and urinary-health support.",
+        "Marketed for libido and sexual-wellness support.",
+        "Presented for men vitality routines."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1613,7 +1694,7 @@
       ],
       "benefits": [
         "Positioned for memory and cognitive support.",
-        "Marketed for improved brain circulation.",
+        "Marketed for brain blood-flow support.",
         "Presented for nervous-system support."
       ],
       "ingredients": [
@@ -1650,13 +1731,11 @@
         "capsules"
       ],
       "benefits": [
-        "Positioned for liver detox and function support.",
-        "Marketed for cardiovascular and blood-flow support.",
-        "Presented for daily cleansing and wellness routines."
+        "Positioned for liver and detox support.",
+        "Marketed for blood-flow and cardiovascular support.",
+        "Presented for daily detox routines."
       ],
-      "ingredients": [
-        "Natural herbal blend (exact composition not specified)"
-      ],
+      "ingredients": [],
       "usageInstructions": "",
       "images": [
         "/catalog-images/joshoppers.com/detoxilive-capsules.webp"
@@ -1671,30 +1750,34 @@
       "name": "Dr Cow Smart Gummies",
       "slug": "dr-cow-smart-gummies",
       "brand": "BF Suma",
-      "category": "Suma Baby",
+      "category": "Supplements",
       "subcategory": "",
-      "shortDescription": "Gummy-format product positioned for brain and immunity support in children and adults.",
-      "description": "Catalog highlights support for immunity, eyesight, and brain function development.",
-      "price": null,
+      "shortDescription": "Omega-3 gummies for children's daily nutrition and wellness support.",
+      "description": "Dr Cow Smart Gummies (90 gummies) are positioned for children's nutrition support, including appetite, eyesight, and brain-development routines.",
+      "price": 3888,
       "compareAtPrice": null,
-      "currency": "",
+      "currency": "KES",
       "sku": "",
-      "stockStatus": "",
+      "stockStatus": "in_stock",
       "sizes": [],
       "variants": [],
       "tags": [
-        "suma-baby",
         "bf-suma",
-        "gummies"
+        "supplements",
+        "suma-baby",
+        "gummies",
+        "omega-3"
       ],
       "benefits": [
-        "Positioned to support immunity and allergy response.",
-        "Marketed for brain function support in adults and children.",
-        "Presented for eyesight and memory-support positioning."
+        "Positioned for children's nutrition and growth support.",
+        "Marketed for appetite, eyesight, and brain-development routines.",
+        "Gummy format designed for easy daily use."
       ],
       "ingredients": [],
       "usageInstructions": "",
-      "images": [],
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
@@ -1705,30 +1788,34 @@
       "name": "Purewell Water Purifier",
       "slug": "purewell-water-purifier",
       "brand": "BF Suma",
-      "category": "Suma Living",
+      "category": "Personal Care",
       "subcategory": "",
-      "shortDescription": "7-layer tap water purifier presented for cleaner household drinking water.",
-      "description": "Catalog positions this purifier for filtering rust, heavy metals, bacteria, chlorine, and unpleasant odor while preserving natural minerals.",
-      "price": null,
+      "shortDescription": "Seven-layer faucet water purifier for cleaner household drinking water.",
+      "description": "Purewell Water Purifier uses layered filtration to reduce common tap-water impurities. Mapped to Personal Care for storefront compatibility pending dedicated home/living taxonomy.",
+      "price": 6480,
       "compareAtPrice": null,
-      "currency": "",
+      "currency": "KES",
       "sku": "",
-      "stockStatus": "",
+      "stockStatus": "in_stock",
       "sizes": [],
       "variants": [],
       "tags": [
-        "suma-living",
         "bf-suma",
-        "water-purifier"
+        "personal-care",
+        "suma-living",
+        "water-purifier",
+        "future_category"
       ],
       "benefits": [
-        "Positioned for removing common tap-water impurities.",
-        "Marketed for improved drinking-water taste and freshness.",
-        "Presented as cleanable and replaceable cartridge system."
+        "Positioned for household tap-water filtration support.",
+        "Marketed for reducing rust, odor, and other common impurities.",
+        "Designed for cleanable and replaceable cartridge use."
       ],
       "ingredients": [],
-      "usageInstructions": "Install on compatible tap and replace filter cartridge periodically (exact replacement interval not specified in catalog).",
-      "images": [],
+      "usageInstructions": "",
+      "images": [
+        "/catalog-images/placeholder.webp"
+      ],
       "featured": false,
       "bestSeller": false,
       "newArrival": false,
