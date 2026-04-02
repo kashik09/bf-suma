@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
@@ -23,9 +24,14 @@ export function StoreHeader() {
       </div>
 
       <PageContainer className="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-6">
-        <Link className="flex items-center gap-2 text-lg font-bold text-slate-900" href="/">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-900 text-sm font-bold text-white">BF</span>
-          <span>BF Suma</span>
+        <Link href="/">
+          <Image
+            alt="BF Suma"
+            className="h-10 w-auto"
+            height={40}
+            src="/bf-suma-logo.png"
+            width={120}
+          />
         </Link>
 
         <div className="hidden lg:block">
