@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   title: "BF Suma",
   description: "Trusted wellness essentials with clear pricing and fast local support.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg"
+    icon: "/favicon.png",
+    shortcut: "/favicon.png"
   }
 };
 
