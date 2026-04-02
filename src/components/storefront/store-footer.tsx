@@ -4,7 +4,7 @@ import {
   APP_DESCRIPTION,
   STORE_NAV_LINKS,
   SUPPORT_EMAIL,
-  SUPPORT_PHONE,
+  SUPPORT_PHONES,
   SUPPORT_WHATSAPP_PHONE
 } from "@/lib/constants";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -45,7 +45,11 @@ export function StoreFooter() {
               WhatsApp
             </a>
             <a className="transition hover:text-white" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-            <a className="transition hover:text-white" href={`tel:${SUPPORT_PHONE}`}>{SUPPORT_PHONE}</a>
+            {SUPPORT_PHONES.map((phone) => (
+              <a className="transition hover:text-white" href={`tel:${phone}`} key={phone}>
+                {phone}
+              </a>
+            ))}
           </div>
         </div>
 
