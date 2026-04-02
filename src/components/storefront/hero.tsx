@@ -64,10 +64,7 @@ export function Hero() {
 
         <div className="space-y-3.5 md:space-y-4">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
-            <div
-              className="h-56 w-full bg-cover bg-center sm:h-64 md:h-72"
-              style={{ backgroundImage: "url('/catalog-images/joshoppers.com/youth-essence-facial-cream.webp')" }}
-            />
+            <div className="h-56 w-full bg-[linear-gradient(145deg,_#f1f5f9_0%,_#e2e8f0_45%,_#cbd5e1_100%)] sm:h-64 md:h-72" />
             <div className="space-y-2 p-4 sm:p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Built for decision confidence</p>
               <p className="text-sm text-slate-700">
