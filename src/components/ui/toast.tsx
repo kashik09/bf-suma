@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +50,12 @@ function makeId(): string {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const timersRef = useRef<Map<string, number>>(new Map());
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const dismiss = useCallback((id: string) => {
     setToasts((current) => current.filter((entry) => entry.id !== id));
@@ -95,7 +100,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(() => ({ toast, dismiss, clear }), [toast, dismiss, clear]);
-  const portalTarget = typeof document !== "undefined" ? document.body : null;
+  const portalTarget = isMounted ? document.body : null;
 
   return (
     <ToastContext.Provider value={value}>
