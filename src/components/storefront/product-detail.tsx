@@ -5,8 +5,9 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 import { useCart } from "@/hooks/use-cart";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatCurrency } from "@/lib/utils";
 import type { StorefrontProduct } from "@/types";
 import type { PdfCatalogProductContent } from "@/lib/catalog/pdf-catalog-content";
@@ -246,13 +247,9 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const ingredients = pdfContent?.ingredients.length ? pdfContent.ingredients : resolveIngredients(product);
   const usageInstructions = pdfContent?.usageInstructions || null;
   const warnings = pdfContent?.warnings || [];
-  const showPdfTrace = process.env.NEXT_PUBLIC_SHOW_PDF_TRACE === "true";
-  const sourcePageRefs = pdfContent?.sourcePageRefs || [];
-  const complianceNote = pdfContent?.complianceNote || null;
   const faqs = resolveFaqs(product);
   const availabilityStatus = availabilitySignal(product.availability);
-
-  const whatsappMessage = `Hello BF Suma, I would like to order ${product.name} (${quantity} item${quantity > 1 ? "s" : ""}).`;
+  const productWhatsAppInterestMessage = buildWhatsAppProductInterestMessage(product.name);
 
   function increment() {
     setQuantity((current) => Math.min(current + 1, maxQuantity));
@@ -343,16 +340,25 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
             </Button>
             <a
               className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 sm:flex-1"
-              href={buildWhatsAppUrl(whatsappMessage)}
+              href={buildWhatsAppUrl(productWhatsAppInterestMessage)}
               rel="noreferrer"
               target="_blank"
             >
               <MessageCircle className="mr-1 h-4 w-4" />
-              WhatsApp Support
+              Ask on WhatsApp
             </a>
           </div>
 
           <p className="text-xs text-slate-600">Need quick guidance before checkout? Tap WhatsApp for fast help.</p>
+
+          <NewsletterSignup
+            source="product_page"
+            context={product.slug}
+            compact
+            title="Get updates for products like this"
+            description="Receive concise restock and product update emails."
+            ctaLabel="Notify Me"
+          />
 
           <Link
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
@@ -448,10 +454,6 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
                       <li key={warning}>{warning}</li>
                     ))}
                   </ul>
-                  {showPdfTrace && sourcePageRefs.length > 0 ? (
-                    <p className="mt-2 text-xs text-amber-700">Source refs: {sourcePageRefs.join(", ")}</p>
-                  ) : null}
-                  {showPdfTrace && complianceNote ? <p className="mt-1 text-xs text-amber-700">{complianceNote}</p> : null}
                 </div>
               ) : null}
             </article>
