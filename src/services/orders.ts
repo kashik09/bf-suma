@@ -13,6 +13,15 @@ import { upsertCustomerByEmail } from "@/services/customers";
 
 const DELIVERY_FEE_AMOUNT = 5000;
 
+const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  PENDING: ["CONFIRMED", "CANCELED"],
+  CONFIRMED: ["PROCESSING", "CANCELED"],
+  PROCESSING: ["OUT_FOR_DELIVERY", "CANCELED"],
+  OUT_FOR_DELIVERY: ["DELIVERED", "CANCELED"],
+  DELIVERED: [],
+  CANCELED: []
+};
+
 interface AtomicOrderItemPayload {
   product_id: string;
   product_name_snapshot: string;
@@ -76,6 +85,41 @@ interface OrderStatusUpdateRpcRow {
 }
 
 export interface CreateOrderIntakeResult extends AtomicOrderWriteResultPayload {}
+
+export interface AdminOrderCustomer {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+}
+
+export interface AdminOrderListItem {
+  order: Order;
+  customer: AdminOrderCustomer | null;
+  totalUnits: number;
+}
+
+export interface AdminOrderListResult {
+  orders: AdminOrderListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface AdminOrderDetail {
+  order: Order;
+  customer: AdminOrderCustomer | null;
+  items: OrderItem[];
+  statusHistory: OrderStatusHistoryRow[];
+}
+
+export interface AdminOrderListFilters {
+  page?: number;
+  pageSize?: number;
+  status?: OrderStatus;
+  search?: string;
+}
 
 export class OrderIntakeRejectedError extends Error {
   fieldErrors: Record<string, string[]>;
@@ -377,10 +421,188 @@ export async function getOrderById(id: string): Promise<Order | null> {
   return (data as Order | null) || null;
 }
 
-export async function updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.from("orders").update({ status }).eq("id", id);
+export async function listOrdersForAdmin(filters: AdminOrderListFilters = {}): Promise<AdminOrderListResult> {
+  const supabase = createServiceRoleSupabaseClient();
+  const page = clampPage(filters.page);
+  const pageSize = clampPageSize(filters.pageSize);
+  const rangeStart = (page - 1) * pageSize;
+  const rangeEnd = rangeStart + pageSize - 1;
+  const search = filters.search?.trim();
+
+  let query = supabase
+    .from("orders")
+    .select(
+      "id, order_number, customer_id, status, payment_status, subtotal, delivery_fee, total, currency, delivery_address, notes, created_at, updated_at, customers:customer_id(id, first_name, last_name, email, phone)",
+      { count: "exact" }
+    )
+    .order("created_at", { ascending: false })
+    .range(rangeStart, rangeEnd);
+
+  if (filters.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  if (search) {
+    query = query.ilike("order_number", `%${search}%`);
+  }
+
+  const { data, error, count } = await query;
   if (error) throw error;
+
+  const rows = (data || []) as OrderWithCustomerRow[];
+  const orderIds = rows.map((row) => row.id);
+  const quantityByOrderId = new Map<string, number>();
+
+  if (orderIds.length > 0) {
+    const { data: orderItemRows, error: orderItemError } = await supabase
+      .from("order_items")
+      .select("order_id, quantity")
+      .in("order_id", orderIds);
+
+    if (orderItemError) throw orderItemError;
+
+    ((orderItemRows || []) as OrderItemCountRow[]).forEach((row) => {
+      const current = quantityByOrderId.get(row.order_id) || 0;
+      quantityByOrderId.set(row.order_id, current + toInt(row.quantity));
+    });
+  }
+
+  return {
+    orders: rows.map((row) => ({
+      order: {
+        id: row.id,
+        order_number: row.order_number,
+        customer_id: row.customer_id,
+        status: row.status,
+        payment_status: row.payment_status,
+        subtotal: toInt(row.subtotal),
+        delivery_fee: toInt(row.delivery_fee),
+        total: toInt(row.total),
+        currency: row.currency,
+        delivery_address: row.delivery_address,
+        notes: row.notes,
+        created_at: row.created_at,
+        updated_at: row.updated_at
+      },
+      customer: extractCustomer(row.customers),
+      totalUnits: quantityByOrderId.get(row.id) || 0
+    })),
+    totalCount: count || 0,
+    page,
+    pageSize
+  };
+}
+
+export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrderDetail | null> {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: orderRow, error: orderError } = await supabase
+    .from("orders")
+    .select(
+      "id, order_number, customer_id, status, payment_status, subtotal, delivery_fee, total, currency, delivery_address, notes, created_at, updated_at, customers:customer_id(id, first_name, last_name, email, phone)"
+    )
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (orderError) throw orderError;
+  if (!orderRow) return null;
+
+  const { data: orderItems, error: orderItemsError } = await supabase
+    .from("order_items")
+    .select("id, order_id, product_id, product_name_snapshot, unit_price, quantity, line_total, currency")
+    .eq("order_id", orderId)
+    .order("created_at", { ascending: true });
+
+  if (orderItemsError) throw orderItemsError;
+
+  const { data: statusHistory, error: statusHistoryError } = await supabase
+    .from("order_status_history")
+    .select("id, order_id, from_status, to_status, changed_by, note, changed_at, created_at")
+    .eq("order_id", orderId)
+    .order("changed_at", { ascending: false });
+
+  if (statusHistoryError) throw statusHistoryError;
+
+  const row = orderRow as OrderWithCustomerRow;
+  return {
+    order: {
+      id: row.id,
+      order_number: row.order_number,
+      customer_id: row.customer_id,
+      status: row.status,
+      payment_status: row.payment_status,
+      subtotal: toInt(row.subtotal),
+      delivery_fee: toInt(row.delivery_fee),
+      total: toInt(row.total),
+      currency: row.currency,
+      delivery_address: row.delivery_address,
+      notes: row.notes,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    },
+    customer: extractCustomer(row.customers),
+    items: ((orderItems || []) as OrderItem[]).map((item) => ({
+      ...item,
+      unit_price: toInt(item.unit_price),
+      quantity: toInt(item.quantity),
+      line_total: toInt(item.line_total)
+    })),
+    statusHistory: ((statusHistory || []) as OrderStatusHistoryRow[]).map((entry) => ({
+      ...entry,
+      changed_by: entry.changed_by || null,
+      note: entry.note || null
+    }))
+  };
+}
+
+export async function updateOrderStatus(
+  id: string,
+  status: OrderStatus,
+  options: { changedBy?: string | null; note?: string | null } = {}
+): Promise<{ order: Order; changed: boolean }> {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: existing, error: existingError } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existingError) throw existingError;
+  if (!existing) {
+    throw new OrderNotFoundError("Order not found.");
+  }
+
+  const currentOrder = existing as Order;
+  const currentStatus = currentOrder.status;
+  if (currentStatus === status) {
+    return { order: currentOrder, changed: false };
+  }
+
+  assertStatusTransition(currentStatus, status);
+
+  const { data: updated, error: updateError } = await supabase.rpc("update_order_status_with_history", {
+    p_order_id: id,
+    p_expected_status: currentStatus,
+    p_new_status: status,
+    p_changed_by: sanitizeOptionalText(options.changedBy, 120),
+    p_note: sanitizeOptionalText(options.note, 500)
+  });
+
+  if (updateError) {
+    if (updateError.message.includes("ORDER_NOT_FOUND")) {
+      throw new OrderNotFoundError("Order not found.");
+    }
+
+    if (updateError.message.includes("ORDER_STATUS_CONFLICT")) {
+      throw new OrderStatusConflictError("Order status changed before this update. Refresh and retry.");
+    }
+
+    throw updateError;
+  }
+
+  return {
+    order: normalizeOrderStatusUpdateRpcRow(updated),
+    changed: true
+  };
 }
 
 export function hashOrderIntakePayload(payload: OrderIntakeInput): string {
