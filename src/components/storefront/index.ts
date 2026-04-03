@@ -7,6 +7,7 @@ export * from "./home-confidence-section";
 export * from "./home-featured-products";
 export * from "./home-final-cta";
 export * from "./home-health-interests";
+export * from "./newsletter-signup";
 export * from "./home-story";
 export * from "./home-why-choose-us";
 export * from "./product-card";
