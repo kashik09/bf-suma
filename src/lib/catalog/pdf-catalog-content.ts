@@ -128,6 +128,8 @@ export interface PdfHomepageContent {
   companyFacts: string[];
 }
 
+const SHOW_PDF_TRACE = process.env.NEXT_PUBLIC_SHOW_PDF_TRACE === "true";
+
 const PDF_PRODUCT_BY_MAPPED_CATALOG_SLUG = new Map<string, PdfProduct>(
   PDF_CATALOG_CONTENT.products
     .filter((product) => Boolean(product.mappedCatalogSlug))
@@ -152,6 +154,24 @@ const STOREFRONT_TO_PDF_CATEGORY_SLUG: Record<string, string> = {
   supplements: "immune-booster"
 };
 
+const PUBLIC_CLAIM_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/anti-aging/gi, "healthy-aging"],
+  [/(dna|genetic)\s*-?\s*repair/gi, "cellular wellness support"],
+  [/sirtuin activation/gi, "cellular support"],
+  [/brain and heart health/gi, "daily wellness support"],
+  [/post-operation/gi, "recovery period"],
+  [/prevention-of-thrombosis/gi, "circulation support"],
+  [/blood glucose/gi, "metabolic wellness"],
+  [/blood sugar/gi, "metabolic balance"],
+  [/blood-pressure/gi, "cardiovascular wellness"],
+  [/cholesterol-level/gi, "cardiovascular wellness"],
+  [/positioning/gi, "support"],
+  [/not intended as substitute for drugs or medicines/gi, "Use as labeled and consult a professional if needed"],
+  [/not a substitute for drugs/gi, "Use as labeled and consult a professional if needed"]
+];
+
+const UNVERIFIED_CLAIM_PATTERN = /(cgmp|halal|factory|manufacturing|los angeles|established in the united states|investor|expansion into africa|from usa)/i;
+
 function cleanString(value: string | null | undefined): string | null {
   if (!value) return null;
   const cleaned = value.trim();
@@ -160,6 +180,24 @@ function cleanString(value: string | null | undefined): string | null {
 
 function uniqueStrings(values: string[]): string[] {
   return Array.from(new Set(values.map((value) => value.trim()).filter((value) => value.length > 0)));
+}
+
+function toNeutralPublicText(text: string): string {
+  let next = text;
+
+  for (const [pattern, replacement] of PUBLIC_CLAIM_REPLACEMENTS) {
+    next = next.replace(pattern, replacement);
+  }
+
+  return next.replace(/\s{2,}/g, " ").trim();
+}
+
+function sanitizeListForPublic(values: string[]): string[] {
+  return uniqueStrings(values.map((value) => toNeutralPublicText(value)));
+}
+
+export function isPdfTraceEnabled() {
+  return SHOW_PDF_TRACE;
 }
 
 export function listPdfFaqEntries(): PdfFaqEntry[] {
@@ -183,14 +221,16 @@ export function getPdfProductContentForCatalogSlug(catalogSlug: string): PdfCata
   if (!product) return null;
 
   return {
-    shortDescription: cleanString(product.shortDescription),
-    description: cleanString(product.description),
-    benefits: uniqueStrings(product.benefits || []),
+    shortDescription: cleanString(product.shortDescription ? toNeutralPublicText(product.shortDescription) : null),
+    description: cleanString(product.description ? toNeutralPublicText(product.description) : null),
+    benefits: sanitizeListForPublic(product.benefits || []),
     ingredients: uniqueStrings(product.ingredients || []),
     usageInstructions: cleanString(product.usageInstructions),
-    warnings: uniqueStrings(product.warnings || []),
-    sourcePageRefs: uniqueStrings(product.sourcePageRefs || []),
-    complianceNote: PDF_CATALOG_CONTENT.websiteContentMapping.productDetailPages.complianceNote
+    warnings: sanitizeListForPublic(product.warnings || []),
+    sourcePageRefs: SHOW_PDF_TRACE ? uniqueStrings(product.sourcePageRefs || []) : [],
+    complianceNote: SHOW_PDF_TRACE
+      ? PDF_CATALOG_CONTENT.websiteContentMapping.productDetailPages.complianceNote
+      : ""
   };
 }
 
@@ -207,18 +247,39 @@ export function getPdfCategoryContentForStorefrontSlug(storefrontCategorySlug: s
 
   return {
     description: `Explore products listed under ${category.name} in the BF Suma catalogue.`,
-    sourcePageRefs: uniqueStrings(category.sourcePageRefs || [])
+    sourcePageRefs: SHOW_PDF_TRACE ? uniqueStrings(category.sourcePageRefs || []) : []
   };
 }
 
 export function getPdfHomepageContent(): PdfHomepageContent {
+  const rawHeroHeadline = cleanString(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.headline);
+  const safeHeroHeadline = rawHeroHeadline && !UNVERIFIED_CLAIM_PATTERN.test(rawHeroHeadline)
+    ? toNeutralPublicText(rawHeroHeadline)
+    : "Trusted wellness essentials for your daily routine";
+
+  const rawTrustItems = sanitizeListForPublic(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.trustSection.items || []);
+  const trustItems = rawTrustItems.filter((item) => !UNVERIFIED_CLAIM_PATTERN.test(item));
+
+  const rawCompanyFacts = sanitizeListForPublic(PDF_CATALOG_CONTENT.brandProfile.companyFacts.map((item) => item.fact));
+  const companyFacts = rawCompanyFacts.filter((item) => !UNVERIFIED_CLAIM_PATTERN.test(item));
+
   return {
-    heroHeadline: PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.headline,
-    heroSupportingText: PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.supportingText,
-    heroSourcePageRefs: uniqueStrings(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.sourcePageRefs || []),
-    trustItems: uniqueStrings(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.trustSection.items || []),
-    trustSourcePageRefs: uniqueStrings(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.trustSection.sourcePageRefs || []),
-    companyFacts: uniqueStrings(PDF_CATALOG_CONTENT.brandProfile.companyFacts.map((item) => item.fact))
+    heroHeadline: safeHeroHeadline,
+    heroSupportingText: toNeutralPublicText(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.supportingText),
+    heroSourcePageRefs: SHOW_PDF_TRACE
+      ? uniqueStrings(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.hero.sourcePageRefs || [])
+      : [],
+    trustItems: trustItems.length > 0
+      ? trustItems
+      : [
+          "Wellness-focused products presented with clear guidance.",
+          "Simple product pages designed for faster decisions.",
+          "Direct checkout with optional support when needed."
+        ],
+    trustSourcePageRefs: SHOW_PDF_TRACE
+      ? uniqueStrings(PDF_CATALOG_CONTENT.websiteContentMapping.homepage.trustSection.sourcePageRefs || [])
+      : [],
+    companyFacts
   };
 }
 
