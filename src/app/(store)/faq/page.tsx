@@ -1,18 +1,10 @@
 import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import {
-  getPdfExtractionMetadata,
-  isPdfTraceEnabled,
-  listPdfComplianceFlags,
-  listPdfFaqEntries
-} from "@/lib/catalog/pdf-catalog-content";
+import { listPdfFaqEntries } from "@/lib/catalog/pdf-catalog-content";
 
 export default function FaqPage() {
   const faqEntries = listPdfFaqEntries();
-  const complianceFlags = listPdfComplianceFlags();
-  const extractionMeta = getPdfExtractionMetadata();
-  const showTrace = isPdfTraceEnabled();
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
@@ -21,11 +13,6 @@ export default function FaqPage() {
           title="FAQ"
           description="Answers below provide practical product-use guidance. Always follow package labeling and professional advice where needed."
         />
-        {showTrace ? (
-          <p className="mt-2 text-xs text-slate-500">
-            Source: {extractionMeta.sourceFile} • Extracted: {extractionMeta.extractedAt}
-          </p>
-        ) : null}
       </section>
 
       <div className="grid gap-4">
@@ -33,21 +20,9 @@ export default function FaqPage() {
           <Card className="space-y-2 rounded-2xl p-5" key={entry.question}>
             <h2 className="text-base font-semibold text-slate-900 sm:text-lg">{entry.question}</h2>
             <p className="text-sm leading-relaxed text-slate-700">{entry.answer}</p>
-            {showTrace ? <p className="text-xs text-slate-500">Source pages: {entry.sourcePageRefs.join(", ")}</p> : null}
           </Card>
         ))}
       </div>
-
-      {showTrace ? (
-        <Card className="rounded-2xl border-amber-200 bg-amber-50 p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-amber-900">Manual Compliance Review Required</h3>
-          <ul className="mt-2 space-y-1 text-sm text-amber-800">
-            {complianceFlags.map((flag) => (
-              <li key={flag}>• {flag}</li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
     </PageContainer>
   );
 }
