@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
 import { createHash, randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { ORDER_STATUSES } from "@/lib/constants";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
+import { enqueueOrderCreatedNotification } from "@/services/order-notifications";
 import {
   createOrderIntakeWithIdempotency,
-  hashOrderIntakePayload,
+  listOrdersForAdmin,
   OrderIdempotencyConflictError,
   OrderIdempotencyInProgressError,
-  OrderIntakeRejectedError
+  OrderIntakeRejectedError,
+  OrderTemporaryFailureError
 } from "@/services/orders";
+import type { OrderIntakeFieldErrors, OrderIntakeResultCode } from "@/types";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
@@ -45,6 +49,40 @@ function logEvent(level: LogLevel, event: string, payload: Record<string, unknow
   }
 
   console.log(line);
+}
+
+function jsonResponse(
+  payload: {
+    persisted: boolean;
+    resultCode: OrderIntakeResultCode;
+    message: string;
+    fieldErrors?: OrderIntakeFieldErrors;
+    retryAfterSeconds?: number;
+    orderNumber?: string;
+    receivedAt?: string;
+    subtotal?: number;
+    deliveryFee?: number;
+    total?: number;
+    currency?: string;
+    degraded?: boolean;
+    errorCode?: string;
+  },
+  status: number,
+  headers?: HeadersInit
+) {
+  return NextResponse.json(payload, { status, headers });
+}
+
+function normalizeFieldErrors(fieldErrors: Record<string, string[] | undefined>): OrderIntakeFieldErrors {
+  const normalized: OrderIntakeFieldErrors = {};
+
+  for (const [key, value] of Object.entries(fieldErrors)) {
+    if (Array.isArray(value) && value.length > 0) {
+      normalized[key] = value;
+    }
+  }
+
+  return normalized;
 }
 
 function getCorrelationId(request: Request): string {
@@ -89,6 +127,17 @@ function getRetryAfterSeconds(nowMs: number): number {
   return Math.max(1, Math.ceil(remainingMs / 1000));
 }
 
+function isAdminOrdersAccessEnabled(): boolean {
+  return process.env.ALLOW_ADMIN_ROUTES === "true";
+}
+
+function parsePositiveInteger(value: string | null, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(1, parsed);
+}
+
 async function enforcePostRateLimit(request: Request, endpoint: string): Promise<RateLimitDecision | null> {
   const fingerprint = buildClientFingerprint(request);
   const nowMs = Date.now();
@@ -115,7 +164,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
   };
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
     const windowStart = getWindowStartIso(nowMs);
     const retryAfterSeconds = getRetryAfterSeconds(nowMs);
     const nowIso = new Date(nowMs).toISOString();
@@ -180,8 +229,40 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
   }
 }
 
-export async function GET() {
-  return NextResponse.json({ message: "Method not allowed" }, { status: 405 });
+export async function GET(request: Request) {
+  if (!isAdminOrdersAccessEnabled()) {
+    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const page = parsePositiveInteger(searchParams.get("page"), 1);
+  const pageSize = parsePositiveInteger(searchParams.get("pageSize"), 20);
+  const statusParam = searchParams.get("status");
+  const search = searchParams.get("search") || undefined;
+
+  if (statusParam && !ORDER_STATUSES.includes(statusParam as (typeof ORDER_STATUSES)[number])) {
+    return NextResponse.json(
+      { message: "Invalid order status filter." },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const result = await listOrdersForAdmin({
+      page,
+      pageSize,
+      status: statusParam ? (statusParam as (typeof ORDER_STATUSES)[number]) : undefined,
+      search
+    });
+
+    return NextResponse.json(result, { status: 200 });
+  } catch (error) {
+    console.error("order.list_failed", error);
+    return NextResponse.json(
+      { message: "Order listing is temporarily unavailable." },
+      { status: 503 }
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -195,17 +276,16 @@ export async function POST(request: Request) {
       fingerprintPrefix: rateLimit.fingerprint.slice(0, 12)
     });
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         persisted: false,
-        message: "Too many requests. Please retry later.",
+        resultCode: "TEMPORARY_FAILURE",
+        message: "Too many checkout attempts. Please retry shortly.",
         retryAfterSeconds: rateLimit.retryAfterSeconds
       },
+      429,
       {
-        status: 429,
-        headers: {
-          "Retry-After": String(rateLimit.retryAfterSeconds)
-        }
+        "Retry-After": String(rateLimit.retryAfterSeconds)
       }
     );
   }
@@ -224,12 +304,13 @@ export async function POST(request: Request) {
       reason: "missing_idempotency_key"
     });
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         persisted: false,
+        resultCode: "REJECTED",
         message: "Missing idempotency key. Include 'Idempotency-Key' header on checkout requests."
       },
-      { status: 400 }
+      400
     );
   }
 
@@ -239,51 +320,77 @@ export async function POST(request: Request) {
       reason: "invalid_idempotency_key_length"
     });
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         persisted: false,
+        resultCode: "REJECTED",
         message: "Invalid idempotency key."
       },
-      { status: 400 }
+      400
     );
   }
 
   const parsed = orderIntakeSchema.safeParse(body);
 
   if (!parsed.success) {
+    const normalizedFieldErrors = normalizeFieldErrors(parsed.error.flatten().fieldErrors);
+
     logEvent("warn", "order.validation_failed", {
       correlationId,
-      fieldErrorKeys: Object.keys(parsed.error.flatten().fieldErrors).sort()
+      fieldErrorKeys: Object.keys(normalizedFieldErrors).sort()
     });
 
-    return NextResponse.json(
+    return jsonResponse(
       {
+        persisted: false,
+        resultCode: "REJECTED",
         message: "Invalid checkout payload",
-        fieldErrors: parsed.error.flatten().fieldErrors
+        fieldErrors: normalizedFieldErrors
       },
-      { status: 400 }
+      400
     );
   }
 
   try {
-    const requestHash = hashOrderIntakePayload(parsed.data);
-    const { result, replayed } = await createOrderIntakeWithIdempotency(parsed.data, idempotencyKey, requestHash);
+    const { result, resultCode } = await createOrderIntakeWithIdempotency(parsed.data, idempotencyKey);
     const isPickup = parsed.data.fulfillmentType === "pickup";
+    const replayed = resultCode === "REPLAYED";
+    const successPrefix = replayed ? "Order already received" : "Thanks";
     const successMessage = isPickup
-      ? `Thanks, your order ${result.orderNumber} has been received. You can pay at pickup.`
-      : `Thanks, your order ${result.orderNumber} has been received. You can pay on delivery.`;
+      ? `${successPrefix}, your order ${result.orderNumber} has been received. You can pay at pickup.`
+      : `${successPrefix}, your order ${result.orderNumber} has been received. You can pay on delivery.`;
 
     logEvent("info", "order.create_succeeded", {
       correlationId,
       orderId: result.orderId,
       orderNumber: result.orderNumber,
       total: result.total,
-      replayed
+      replayed,
+      resultCode
     });
 
-    return NextResponse.json(
+    if (resultCode === "CREATED") {
+      try {
+        await enqueueOrderCreatedNotification({
+          orderId: result.orderId,
+          orderNumber: result.orderNumber,
+          total: result.total,
+          currency: result.currency,
+          receivedAt: result.receivedAt
+        });
+      } catch (enqueueError) {
+        logEvent("warn", "order.notification_enqueue_failed", {
+          correlationId,
+          orderId: result.orderId,
+          message: enqueueError instanceof Error ? enqueueError.message : "Unknown error"
+        });
+      }
+    }
+
+    return jsonResponse(
       {
         persisted: true,
+        resultCode,
         orderNumber: result.orderNumber,
         receivedAt: result.receivedAt,
         subtotal: result.subtotal,
@@ -292,7 +399,7 @@ export async function POST(request: Request) {
         currency: result.currency,
         message: successMessage
       },
-      { status: replayed ? 200 : 201 }
+      replayed ? 200 : 201
     );
   } catch (error) {
     if (error instanceof OrderIntakeRejectedError) {
@@ -303,13 +410,14 @@ export async function POST(request: Request) {
         fieldErrorKeys: Object.keys(error.fieldErrors).sort()
       });
 
-      return NextResponse.json(
+      return jsonResponse(
         {
           persisted: false,
+          resultCode: "REJECTED",
           message: error.message,
           fieldErrors: error.fieldErrors
         },
-        { status: 400 }
+        422
       );
     }
 
@@ -320,12 +428,13 @@ export async function POST(request: Request) {
         message: error.message
       });
 
-      return NextResponse.json(
+      return jsonResponse(
         {
           persisted: false,
+          resultCode: "CONFLICT",
           message: error.message
         },
-        { status: 409 }
+        409
       );
     }
 
@@ -336,12 +445,36 @@ export async function POST(request: Request) {
         message: error.message
       });
 
-      return NextResponse.json(
+      return jsonResponse(
         {
           persisted: false,
-          message: error.message
+          resultCode: "IN_PROGRESS",
+          message: error.message,
+          retryAfterSeconds: 2
         },
-        { status: 409 }
+        409,
+        {
+          "Retry-After": "2"
+        }
+      );
+    }
+
+    if (error instanceof OrderTemporaryFailureError) {
+      logEvent("warn", "order.create_failed", {
+        correlationId,
+        reason: "temporary_failure",
+        message: error.message
+      });
+
+      return jsonResponse(
+        {
+          persisted: false,
+          resultCode: "TEMPORARY_FAILURE",
+          degraded: true,
+          errorCode: "COMMERCE_UNAVAILABLE",
+          message: error.message || "Order service is temporarily unavailable. Please try again shortly."
+        },
+        503
       );
     }
 
@@ -351,14 +484,15 @@ export async function POST(request: Request) {
       message: error instanceof Error ? error.message : "Unknown error"
     });
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         persisted: false,
+        resultCode: "TEMPORARY_FAILURE",
         degraded: true,
         errorCode: "COMMERCE_UNAVAILABLE",
         message: "We couldn't place your order right now. Please try again in a moment."
       },
-      { status: 503 }
+      503
     );
   }
 }
