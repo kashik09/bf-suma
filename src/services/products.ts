@@ -1,6 +1,10 @@
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
 import { BFSUMA_CATALOG } from "@/lib/catalog";
 import {
+  getPdfCategoryContentForStorefrontSlug,
+  getPdfShortDescriptionForCatalogSlug
+} from "@/lib/catalog/pdf-catalog-content";
+import {
   buildFallbackCatalogHealth,
   buildLiveCatalogHealth,
   coerceProductsToReadOnly,
@@ -105,8 +109,40 @@ function logCatalogFallback(scope: string, error: unknown, context: Record<strin
 const LOW_STOCK_THRESHOLD = 10;
 const FALLBACK_CATEGORIES = BFSUMA_CATALOG.categories;
 const FALLBACK_PRODUCTS = BFSUMA_CATALOG.products;
+const GENERIC_CATEGORY_DESCRIPTIONS = new Set(["", "Browse curated essentials in this category."]);
 
 const SORT_ORDER: ProductSort[] = ["featured", "price_asc", "price_desc", "name_asc"];
+
+function enrichStorefrontCategory(category: StorefrontCategory): StorefrontCategory {
+  const pdfCategoryContent = getPdfCategoryContentForStorefrontSlug(category.slug);
+  if (!pdfCategoryContent) return category;
+
+  const currentDescription = category.description.trim();
+  if (!GENERIC_CATEGORY_DESCRIPTIONS.has(currentDescription)) return category;
+
+  return {
+    ...category,
+    description: pdfCategoryContent.description
+  };
+}
+
+function enrichStorefrontProduct(product: StorefrontProduct): StorefrontProduct {
+  const pdfShortDescription = getPdfShortDescriptionForCatalogSlug(product.slug);
+  if (!pdfShortDescription) return product;
+
+  return {
+    ...product,
+    description: pdfShortDescription
+  };
+}
+
+function enrichCatalogData(catalog: CatalogData): CatalogData {
+  return {
+    ...catalog,
+    categories: catalog.categories.map(enrichStorefrontCategory),
+    products: catalog.products.map(enrichStorefrontProduct)
+  };
+}
 
 function normalizeStatus(status: unknown): ProductStatus {
   if (status === "DRAFT" || status === "ACTIVE" || status === "ARCHIVED" || status === "OUT_OF_STOCK") {
@@ -259,7 +295,8 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
 
 async function getCatalogData(): Promise<CatalogData> {
   try {
-    return await fetchCatalogFromSupabase();
+    const liveCatalog = await fetchCatalogFromSupabase();
+    return enrichCatalogData(liveCatalog);
   } catch (error) {
     logCatalogFallback("getCatalogData", error, {
       fallbackCategories: FALLBACK_CATEGORIES.length,
@@ -268,11 +305,11 @@ async function getCatalogData(): Promise<CatalogData> {
 
     const degradedReason = error instanceof Error ? error.message : "Unknown catalog error";
 
-    return {
+    return enrichCatalogData({
       categories: FALLBACK_CATEGORIES,
       products: coerceProductsToReadOnly(FALLBACK_PRODUCTS),
       health: buildFallbackCatalogHealth(degradedReason)
-    };
+    });
   }
 }
 
