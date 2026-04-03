@@ -1,5 +1,5 @@
 import type { Customer } from "@/types";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 
 export interface UpsertCustomerInput {
   firstName: string;
@@ -9,7 +9,7 @@ export interface UpsertCustomerInput {
 }
 
 export async function listCustomers(): Promise<Customer[]> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase
     .from("customers")
     .select("*")
@@ -20,7 +20,7 @@ export async function listCustomers(): Promise<Customer[]> {
 }
 
 export async function getCustomerById(id: string): Promise<Customer | null> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("customers").select("*").eq("id", id).single();
 
   if (error) return null;
@@ -37,7 +37,7 @@ function normalizePhone(phone: string): string | null {
 }
 
 export async function upsertCustomerByEmail(input: UpsertCustomerInput): Promise<Customer> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
   const email = normalizeEmail(input.email);
   const phone = normalizePhone(input.phone);
 

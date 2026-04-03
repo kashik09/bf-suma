@@ -94,6 +94,33 @@ export interface OrderItem {
   currency: CurrencyCode;
 }
 
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  from_status: OrderStatus | null;
+  to_status: OrderStatus;
+  changed_by: string | null;
+  note: string | null;
+  changed_at: string;
+  created_at: string;
+}
+
+export type OrderNotificationOutboxStatus = "PENDING" | "PROCESSING" | "SENT" | "FAILED";
+export type OrderNotificationOutboxEventType = "ORDER_CREATED";
+
+export interface OrderNotificationOutbox {
+  id: string;
+  order_id: string;
+  event_type: OrderNotificationOutboxEventType;
+  payload: Record<string, unknown>;
+  status: OrderNotificationOutboxStatus;
+  attempt_count: number;
+  available_at: string;
+  last_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Driver {
   id: string;
   name: string;
@@ -261,6 +288,8 @@ export interface Database {
       customers: { Row: Customer };
       orders: { Row: Order };
       order_items: { Row: OrderItem };
+      order_status_history: { Row: OrderStatusHistory };
+      order_notification_outbox: { Row: OrderNotificationOutbox };
       drivers: { Row: Driver };
       deliveries: { Row: Delivery };
       inquiries: { Row: Inquiry };
