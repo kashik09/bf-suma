@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
 import { SearchAutocomplete } from "@/components/storefront/search-autocomplete";
 
@@ -14,7 +14,7 @@ export function StoreHeader() {
           <p className="line-clamp-1 font-medium">Trusted wellness products. Direct checkout first. WhatsApp help when needed.</p>
           <a
             className="shrink-0 font-semibold text-brand-700 transition hover:text-brand-600"
-            href={buildWhatsAppUrl("Hello BF Suma, I need help with my order.", SUPPORT_WHATSAPP_PHONE)}
+            href={buildWhatsAppUrl(buildWhatsAppOrderSupportMessage(), SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
           >
