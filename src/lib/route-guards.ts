@@ -1,5 +1,4 @@
 const SCAFFOLD_ADMIN_PREFIXES = [
-  "/admin/orders",
   "/admin/customers",
   "/admin/products",
   "/admin/analytics",
@@ -8,8 +7,14 @@ const SCAFFOLD_ADMIN_PREFIXES = [
 
 const SCAFFOLD_API_PREFIXES = [
   "/api/customers",
-  "/api/analytics/overview",
-  "/api/orders/"
+  "/api/analytics/overview"
+] as const;
+
+const STOREFRONT_API_PREFIXES = [
+  "/api/orders",
+  "/api/contact",
+  "/api/newsletter",
+  "/api/products"
 ] as const;
 
 export function isAdminRoute(pathname: string): boolean {
@@ -25,6 +30,15 @@ export function isScaffoldAdminRoute(pathname: string): boolean {
 }
 
 export function isScaffoldApiRoute(pathname: string): boolean {
-  if (pathname === "/api/orders" || pathname === "/api/orders/") return false;
   return SCAFFOLD_API_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix));
+}
+
+export function isStorefrontApiRoute(pathname: string): boolean {
+  if (pathname === "/api/orders" || pathname === "/api/orders/") {
+    return true;
+  }
+
+  return STOREFRONT_API_PREFIXES
+    .filter((prefix) => prefix !== "/api/orders")
+    .some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }

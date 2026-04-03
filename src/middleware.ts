@@ -4,12 +4,14 @@ import {
   isAdminRoute,
   isFaqRoute,
   isScaffoldAdminRoute,
-  isScaffoldApiRoute
+  isScaffoldApiRoute,
+  isStorefrontApiRoute
 } from "@/lib/route-guards";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const method = request.method.toUpperCase();
   const allowAdminRoutes = process.env.ALLOW_ADMIN_ROUTES === "true";
   const allowAdminScaffoldRoutes = process.env.ALLOW_ADMIN_SCAFFOLD_ROUTES === "true";
   const allowScaffoldApis = process.env.ALLOW_SCAFFOLD_API_ROUTES === "true";
@@ -29,6 +31,15 @@ export async function middleware(request: NextRequest) {
 
   if (isScaffoldApiRoute(pathname) && !allowScaffoldApis) {
     return NextResponse.json({ message: "Not Found" }, { status: 404 });
+  }
+
+  const isCheckoutSubmitRoute = (pathname === "/api/orders" || pathname === "/api/orders/") && method === "POST";
+  if (isCheckoutSubmitRoute) {
+    return NextResponse.next({ request });
+  }
+
+  if (isStorefrontApiRoute(pathname) && pathname !== "/api/orders" && pathname !== "/api/orders/") {
+    return NextResponse.next({ request });
   }
 
   return updateSession(request);
