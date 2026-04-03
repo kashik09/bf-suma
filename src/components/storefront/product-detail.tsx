@@ -24,6 +24,12 @@ function availabilityVariant(availability: StorefrontProduct["availability"]) {
   return "danger" as const;
 }
 
+function availabilitySignal(availability: StorefrontProduct["availability"]) {
+  if (availability === "low_stock") return "Limited availability";
+  if (availability === "out_of_stock") return "Currently unavailable";
+  return "Ready for checkout";
+}
+
 const categoryProblemFrames: Record<string, string[]> = {
   "weight-management": [
     "Managing appetite and cravings consistently can feel difficult.",
@@ -244,6 +250,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const sourcePageRefs = pdfContent?.sourcePageRefs || [];
   const complianceNote = pdfContent?.complianceNote || null;
   const faqs = resolveFaqs(product);
+  const availabilityStatus = availabilitySignal(product.availability);
 
   const whatsappMessage = `Hello BF Suma, I would like to order ${product.name} (${quantity} item${quantity > 1 ? "s" : ""}).`;
 
@@ -284,6 +291,9 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={availabilityVariant(product.availability)}>{availabilityLabel(product.availability)}</Badge>
             <span className="text-xs font-medium text-slate-500">{product.category_name}</span>
+            <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+              {availabilityStatus}
+            </span>
           </div>
           <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
           <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{descriptionText}</p>
@@ -332,15 +342,17 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
               {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to cart"}
             </Button>
             <a
-              className="inline-flex h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:flex-1"
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 sm:flex-1"
               href={buildWhatsAppUrl(whatsappMessage)}
               rel="noreferrer"
               target="_blank"
             >
               <MessageCircle className="mr-1 h-4 w-4" />
-              Ask on WhatsApp
+              WhatsApp Support
             </a>
           </div>
+
+          <p className="text-xs text-slate-600">Need quick guidance before checkout? Tap WhatsApp for fast help.</p>
 
           <Link
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"

@@ -1,14 +1,22 @@
 import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
 function getAvailabilityBadge(availability: StorefrontProduct["availability"]) {
   if (availability === "in_stock") return { label: "In Stock", variant: "success" as const };
   if (availability === "low_stock") return { label: "Low Stock", variant: "warning" as const };
   return { label: "Out of Stock", variant: "danger" as const };
+}
+
+function getUrgencySignal(availability: StorefrontProduct["availability"]) {
+  if (availability === "low_stock") return "Limited availability";
+  if (availability === "out_of_stock") return "Currently unavailable";
+  return "Ready to order";
 }
 
 function getBenefitSnippet(product: StorefrontProduct) {
@@ -29,6 +37,8 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
   const badge = getAvailabilityBadge(product.availability);
   const benefitSnippet = getBenefitSnippet(product);
   const savingsLabel = getSavingsLabel(product);
+  const urgencySignal = getUrgencySignal(product.availability);
+  const whatsappMessage = `Hello BF Suma, I need help choosing ${product.name}.`;
 
   return (
     <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -40,8 +50,11 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           }}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/10 to-transparent" />
-        <div className="absolute left-3 top-3">
+        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           <Badge variant={badge.variant}>{badge.label}</Badge>
+          <span className="inline-flex w-fit rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-800">
+            {urgencySignal}
+          </span>
         </div>
         {savingsLabel ? (
           <div className="absolute right-3 top-3">
@@ -51,11 +64,11 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
       </div>
 
       <div className="flex h-full flex-col space-y-3 p-4">
-        <div>
+        <div className="space-y-1.5">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
           <h3 className="line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
-          <p className="mt-1 line-clamp-2 text-sm text-slate-600">{product.description}</p>
-          <p className="mt-1 text-xs font-semibold text-brand-700">{benefitSnippet}</p>
+          <p className="line-clamp-2 text-sm font-medium text-brand-700">{benefitSnippet}</p>
+          <p className="line-clamp-2 text-sm text-slate-600">{product.description}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -70,22 +83,25 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
             Transparent pricing and direct checkout flow
           </p>
-          <div className="flex gap-2">
+
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Link
+              aria-label={`View details for ${product.name}`}
               className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
               href={`/shop/${product.slug}`}
-              aria-label={`View details for ${product.name}`}
             >
-              View Details
+              View Product
               <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
-            <Link
-              className="inline-flex h-10 w-fit items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-              href={`/category/${product.category_slug}`}
-              aria-label={`Explore ${product.category_name} category`}
+            <a
+              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:w-auto"
+              href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
+              rel="noreferrer"
+              target="_blank"
             >
-              Category
-            </Link>
+              <MessageCircle className="mr-1 h-4 w-4" />
+              WhatsApp
+            </a>
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { MessageCircle } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import {
   Hero,
@@ -5,7 +7,9 @@ import {
   HomeFinalCta,
   HomeHealthInterests
 } from "@/components/storefront";
+import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
 
 export default async function HomePage() {
@@ -35,6 +39,24 @@ export default async function HomePage() {
               <li className="rounded-lg border border-slate-200 bg-slate-50/70 p-3" key={item}>{item}</li>
             ))}
           </ul>
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link
+              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800"
+              href="/shop"
+            >
+              Explore Products
+            </Link>
+            <a
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-5 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
+              href={buildWhatsAppUrl("Hello BF Suma, I need help choosing the right products.", SUPPORT_WHATSAPP_PHONE)}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <MessageCircle className="mr-1.5 h-4 w-4" />
+              WhatsApp Guidance
+            </a>
+          </div>
         </section>
 
         <HomeHealthInterests categories={categories} />
