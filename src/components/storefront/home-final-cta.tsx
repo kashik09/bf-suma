@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function HomeFinalCta() {
   return (
@@ -26,7 +26,7 @@ export function HomeFinalCta() {
         </Link>
         <a
           className="inline-flex h-11 items-center justify-center rounded-md border border-slate-500 bg-transparent px-5 text-sm font-semibold text-white transition hover:bg-white/10"
-          href={buildWhatsAppUrl("Hello BF Suma, I want to place an order.", SUPPORT_WHATSAPP_PHONE)}
+          href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("home_final_cta"), SUPPORT_WHATSAPP_PHONE)}
           rel="noreferrer"
           target="_blank"
         >
