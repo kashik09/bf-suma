@@ -28,7 +28,10 @@ function normalizeWhatsappPhone(value: string): string {
 
 const configuredSupportPhones = parseSupportPhones(process.env.NEXT_PUBLIC_SUPPORT_PHONES);
 const configuredSupportPhone = process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim();
-const configuredWhatsappPhone = process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP_PHONE?.trim();
+const configuredWhatsappPhone = (
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+  ?? process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP_PHONE
+)?.trim();
 
 const fallbackSupportPhone = configuredSupportPhone && configuredSupportPhone.length > 0
   ? configuredSupportPhone
