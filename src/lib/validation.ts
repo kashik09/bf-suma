@@ -104,11 +104,13 @@ export const cartItemSchema = z.object({
   availability: z.enum(["in_stock", "low_stock", "out_of_stock"])
 });
 
+export const orderIntakeItemSchema = z.object({
+  product_id: z.string().min(1),
+  quantity: z.number().int().min(1).max(99)
+});
+
 export const orderIntakeSchema = checkoutSchemaBase.extend({
-  items: z.array(cartItemSchema).min(1),
-  subtotal: z.number().int().nonnegative(),
-  deliveryFee: z.number().int().nonnegative(),
-  total: z.number().int().nonnegative()
+  items: z.array(orderIntakeItemSchema).min(1)
 }).superRefine(validateCheckoutRefinement);
 
 export const inquirySchema = z.object({
@@ -125,6 +127,26 @@ export const inquirySchema = z.object({
   source: z.string().default("contact_page")
 });
 
+export const newsletterSignupSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "Please enter your email")
+    .email("Please enter a valid email")
+    .max(320, "Email is too long"),
+  source: z
+    .string()
+    .trim()
+    .min(2, "Source is required")
+    .max(80, "Source is too long")
+    .default("unknown"),
+  context: z
+    .string()
+    .trim()
+    .max(120, "Context is too long")
+    .optional()
+});
+
 export const orderStatusUpdateSchema = z.object({
   status: z.enum([
     "PENDING",
@@ -139,6 +161,8 @@ export const orderStatusUpdateSchema = z.object({
 export type ProductInput = z.infer<typeof productSchema>;
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export type CartItemInput = z.infer<typeof cartItemSchema>;
+export type OrderIntakeItemInput = z.infer<typeof orderIntakeItemSchema>;
 export type OrderIntakeInput = z.infer<typeof orderIntakeSchema>;
 export type InquiryInput = z.infer<typeof inquirySchema>;
+export type NewsletterSignupInput = z.infer<typeof newsletterSignupSchema>;
 export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;

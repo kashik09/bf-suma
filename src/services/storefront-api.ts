@@ -1,5 +1,5 @@
-import type { InquiryInput, OrderIntakeInput } from "@/lib/validation";
-import type { Inquiry, OrderIntakeResponse } from "@/types";
+import type { InquiryInput, NewsletterSignupInput } from "@/lib/validation";
+import type { Inquiry, NewsletterSignupResponse, OrderIntakePayload, OrderIntakeResponse } from "@/types";
 
 export class ApiRequestError extends Error {
   status: number;
@@ -32,7 +32,7 @@ async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Pro
   return body as T;
 }
 
-export async function submitOrderIntake(payload: OrderIntakeInput, idempotencyKey: string): Promise<OrderIntakeResponse> {
+export async function submitOrderIntake(payload: OrderIntakePayload, idempotencyKey: string): Promise<OrderIntakeResponse> {
   return requestJson<OrderIntakeResponse>("/api/orders", {
     method: "POST",
     headers: {
@@ -44,6 +44,13 @@ export async function submitOrderIntake(payload: OrderIntakeInput, idempotencyKe
 
 export async function submitInquiry(payload: InquiryInput): Promise<Pick<Inquiry, "id" | "status">> {
   return requestJson<Pick<Inquiry, "id" | "status">>("/api/contact", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export async function submitNewsletterSignup(payload: NewsletterSignupInput): Promise<NewsletterSignupResponse> {
+  return requestJson<NewsletterSignupResponse>("/api/newsletter", {
     method: "POST",
     body: JSON.stringify(payload)
   });
