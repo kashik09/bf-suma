@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from "lucide-react";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const defaultHeroSlides = [
   {
@@ -154,12 +154,12 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
           </Link>
           <a
             className="inline-flex h-12 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-6 text-sm font-semibold text-emerald-900 shadow-soft transition hover:bg-emerald-100 sm:h-12 sm:px-7 sm:text-base"
-            href={buildWhatsAppUrl("Hello BF Suma, I need help choosing products.", SUPPORT_WHATSAPP_PHONE)}
+            href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("hero"), SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
           >
             <MessageCircle className="mr-2 h-5 w-5" />
-            WhatsApp Support
+            Ask on WhatsApp
           </a>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
 const productBenefitBySlug: Record<string, string> = {
@@ -59,7 +59,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
-          const whatsappMessage = `Hello BF Suma, I would like to order ${product.name}.`;
+          const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
           const savings = savingsLabel(product);
 
           return (
@@ -109,7 +109,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                     target="_blank"
                   >
                     <MessageCircle className="mr-1 h-4 w-4" />
-                    WhatsApp
+                    Ask on WhatsApp
                   </a>
                 </div>
               </div>
