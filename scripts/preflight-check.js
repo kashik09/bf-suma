@@ -62,7 +62,7 @@ async function checkSchema() {
 async function checkRPC() {
   console.log("\n=== RPC CHECK ===");
 
-  const { error } = await supabase.rpc("process_order_intake_atomic", {
+  const { error } = await supabase.rpc("process_order_intake_atomic_v2", {
     p_idempotency_key: "test",
     p_request_hash: "test",
     p_customer_id: null,
@@ -76,7 +76,7 @@ async function checkRPC() {
   });
 
   if (error && error.code === "PGRST202") {
-    fail("RPC process_order_intake_atomic is missing");
+    fail("RPC process_order_intake_atomic_v2 is missing");
   } else {
     pass("RPC present");
   }
