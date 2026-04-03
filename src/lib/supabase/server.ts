@@ -9,10 +9,18 @@ function resolveSupabaseUrl() {
   return url;
 }
 
-function resolveServiceRoleOrAnonKey() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function resolveAnonKey() {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!key) {
-    throw new Error("Missing Supabase server environment variables.");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+  return key;
+}
+
+function resolveServiceRoleKey() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) {
+    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY.");
   }
   return key;
 }
@@ -20,7 +28,7 @@ function resolveServiceRoleOrAnonKey() {
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
   const url = resolveSupabaseUrl();
-  const key = resolveServiceRoleOrAnonKey();
+  const key = resolveAnonKey();
 
   return createServerClient(url, key, {
     cookies: {
@@ -38,7 +46,7 @@ export async function createServerSupabaseClient() {
 
 export function createServiceRoleSupabaseClient() {
   const url = resolveSupabaseUrl();
-  const key = resolveServiceRoleOrAnonKey();
+  const key = resolveServiceRoleKey();
 
   return createServerClient(url, key, {
     cookies: {
