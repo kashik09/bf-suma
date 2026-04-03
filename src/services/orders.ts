@@ -198,7 +198,7 @@ async function executeAtomicOrderWrite(
     currency: item.currency
   }));
 
-  const { data, error } = await supabase.rpc("process_order_intake_atomic", {
+  const { data, error } = await supabase.rpc("process_order_intake_atomic_v2", {
     p_idempotency_key: idempotencyKey,
     p_request_hash: requestHash,
     p_customer_id: customer.id,

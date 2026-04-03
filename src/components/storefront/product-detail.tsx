@@ -95,7 +95,7 @@ const productIngredientSignals: Record<string, string[]> = {
   "cordyceps-coffee": ["Cordyceps extract", "Coffee blend", "Mushroom-derived compounds"],
   "quad-reishi-capsules": ["Yunzhi extract", "Ganoderma extract", "Chaga extract"],
   "zaminocal-plus-capsules": ["Calcium", "Zinc", "Magnesium", "Selenium"],
-  "youth-essence-facial-cream": ["Mitochondrial repair enzymes", "Skin-conditioning base", "Hydration support compounds"],
+  "youth-essence-facial-cream": ["Skin-support compounds", "Skin-conditioning base", "Hydration support compounds"],
   "xpower-coffee": ["Organic ginseng", "Tongkat Ali", "Coffee blend"]
 };
 
@@ -240,6 +240,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const ingredients = pdfContent?.ingredients.length ? pdfContent.ingredients : resolveIngredients(product);
   const usageInstructions = pdfContent?.usageInstructions || null;
   const warnings = pdfContent?.warnings || [];
+  const showPdfTrace = process.env.NEXT_PUBLIC_SHOW_PDF_TRACE === "true";
   const sourcePageRefs = pdfContent?.sourcePageRefs || [];
   const complianceNote = pdfContent?.complianceNote || null;
   const faqs = resolveFaqs(product);
@@ -371,7 +372,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid gap-4 lg:grid-cols-2 lg:items-start">
         <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Solution</p>
           <h2 className="mt-1 text-xl font-semibold text-slate-900">How this product helps</h2>
@@ -383,79 +384,69 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
               </li>
             ))}
           </ul>
-        </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Ingredients</p>
-          <h2 className="mt-1 text-xl font-semibold text-slate-900">Key actives and formula cues</h2>
-          <ul className="mt-3 space-y-2.5">
-            {ingredients.map((ingredient) => (
-              <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={ingredient}>
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
-                <span>{ingredient}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-xs text-slate-500">
-            Always verify complete ingredient and usage details on the package label.
-          </p>
-
-          {usageInstructions ? (
-            <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/40 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Suggested usage</p>
-              <p className="mt-1 text-sm leading-relaxed text-slate-700">{usageInstructions}</p>
-            </div>
-          ) : null}
-
-          {warnings.length > 0 ? (
-            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
-              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-800">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                Warnings from source
-              </p>
+          {problemFrame.length > 1 ? (
+            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Problem context</p>
               <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
-                {warnings.map((warning) => (
-                  <li key={warning}>{warning}</li>
+                {problemFrame.slice(1, 3).map((frame) => (
+                  <li key={frame}>{frame}</li>
                 ))}
               </ul>
-              {sourcePageRefs.length > 0 ? (
-                <p className="mt-2 text-xs text-amber-700">Source refs: {sourcePageRefs.join(", ")}</p>
-              ) : null}
-              {complianceNote ? <p className="mt-1 text-xs text-amber-700">{complianceNote}</p> : null}
             </div>
           ) : null}
         </article>
-      </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Proof</p>
-        <h2 className="mt-1 text-xl font-semibold text-slate-900">Customer feedback structure</h2>
-        <p className="mt-1 text-sm text-slate-600">Clear, practical feedback format buyers expect before making a decision.</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {testimonialFrames.map((feedback) => (
-            <article className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5" key={`${feedback.initials}-${feedback.location}`}>
-              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-600">
-                <Quote className="h-3.5 w-3.5 text-brand-700" />
-                {feedback.initials} • {feedback.location}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">{feedback.quote}</p>
+        <div className="space-y-4">
+          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Ingredients</p>
+            <h2 className="mt-1 text-xl font-semibold text-slate-900">Key actives and formula cues</h2>
+            <ul className="mt-3 space-y-2.5">
+              {ingredients.map((ingredient) => (
+                <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={ingredient}>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
+                  <span>{ingredient}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-xs text-slate-500">
+              Always verify complete ingredient and usage details on the package label.
+            </p>
+          </article>
+
+          {usageInstructions || warnings.length > 0 ? (
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Usage and cautions</p>
+
+              {usageInstructions ? (
+                <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/40 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Suggested usage</p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-700">{usageInstructions}</p>
+                </div>
+              ) : null}
+
+              {warnings.length > 0 ? (
+                <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
+                  <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-800">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    Important use notes
+                  </p>
+                  <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
+                    {warnings.map((warning) => (
+                      <li key={warning}>{warning}</li>
+                    ))}
+                  </ul>
+                  {showPdfTrace && sourcePageRefs.length > 0 ? (
+                    <p className="mt-2 text-xs text-amber-700">Source refs: {sourcePageRefs.join(", ")}</p>
+                  ) : null}
+                  {showPdfTrace && complianceNote ? <p className="mt-1 text-xs text-amber-700">{complianceNote}</p> : null}
+                </div>
+              ) : null}
             </article>
-          ))}
+          ) : null}
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">FAQs</p>
-        <h2 className="mt-1 text-xl font-semibold text-slate-900">Questions buyers ask before checkout</h2>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {faqs.map((item) => (
-            <article className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5" key={item.question}>
-              <h3 className="text-sm font-semibold text-slate-900">{item.question}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{item.answer}</p>
-            </article>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
