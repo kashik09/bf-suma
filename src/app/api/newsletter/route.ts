@@ -219,10 +219,51 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json(
-    {
-      message: "Newsletter signup is temporarily unavailable. Please try again later or use WhatsApp support."
-    },
-    { status: 503 }
-  );
+  try {
+    const signup = await subscribeNewsletter(parsed.data);
+
+    let emailDelivery: "sent" | "skipped" | "failed" = "skipped";
+    if (!signup.welcomeEmailAlreadySent) {
+      const delivery = await sendNewsletterWelcomeEmail({ email: parsed.data.email.trim().toLowerCase() });
+      emailDelivery = delivery.status;
+
+      if (delivery.status === "sent") {
+        await markNewsletterWelcomeEmailSent(signup.id, signup.storageMode);
+      }
+    }
+
+    logEvent("info", "newsletter.subscribe_succeeded", {
+      correlationId,
+      subscriberId: signup.id,
+      status: signup.status,
+      storageMode: signup.storageMode,
+      emailDelivery
+    });
+
+    return NextResponse.json(
+      {
+        id: signup.id,
+        status: signup.status,
+        message:
+          signup.status === "already_subscribed"
+            ? "You are already subscribed. We will keep you updated."
+            : "Thanks. You are subscribed to BF Suma updates.",
+        emailDelivery
+      },
+      { status: signup.status === "already_subscribed" ? 200 : 201 }
+    );
+  } catch (error) {
+    logEvent("error", "newsletter.subscribe_failed", {
+      correlationId,
+      reason: "unexpected_error",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
+
+    return NextResponse.json(
+      {
+        message: "Newsletter signup is temporarily unavailable. Please try again later or use WhatsApp support."
+      },
+      { status: 503 }
+    );
+  }
 }
