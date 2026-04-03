@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 
-const heroSlides = [
+const defaultHeroSlides = [
   {
     id: "partner",
     badge: "Premium Formulations",
@@ -35,7 +35,25 @@ const heroSlides = [
   }
 ];
 
-export function Hero() {
+interface HeroProps {
+  heroHeadline?: string;
+  heroSupportingText?: string;
+  heroSourcePageRefs?: string[];
+}
+
+export function Hero({ heroHeadline, heroSupportingText, heroSourcePageRefs = [] }: HeroProps) {
+  const heroSlides = useMemo(
+    () => [
+      {
+        ...defaultHeroSlides[0],
+        headline: heroHeadline || defaultHeroSlides[0].headline,
+        subhead: heroSupportingText || defaultHeroSlides[0].subhead
+      },
+      ...defaultHeroSlides.slice(1)
+    ],
+    [heroHeadline, heroSupportingText]
+  );
+
   const [activeSlide, setActiveSlide] = useState(0);
   const [heroFading, setHeroFading] = useState(false);
   const [pauseHero, setPauseHero] = useState(false);
@@ -78,7 +96,7 @@ export function Hero() {
     }, 5000);
 
     return () => window.clearInterval(timer);
-  }, [pauseHero]);
+  }, [pauseHero, heroSlides.length]);
 
   useEffect(() => {
     return () => {
@@ -124,6 +142,9 @@ export function Hero() {
         <p className="mb-8 max-w-xl text-sm font-medium text-white/80 sm:text-base md:text-lg">
           {slide.subhead}
         </p>
+        {activeSlide === 0 && heroSourcePageRefs.length > 0 ? (
+          <p className="mb-4 text-xs font-medium text-white/70">Source refs: {heroSourcePageRefs.join(", ")}</p>
+        ) : null}
         <Link
           className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-14 sm:px-8 sm:text-base"
           href="/shop"

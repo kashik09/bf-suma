@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
 import { ProductDetail, RelatedProducts } from "@/components/storefront";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
+import { getPdfProductContentForCatalogSlug } from "@/lib/catalog/pdf-catalog-content";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
 import { getStorefrontCatalogHealth, getStorefrontProductBySlug, listRelatedProducts } from "@/services/products";
 
@@ -17,6 +18,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   const relatedProducts = await listRelatedProducts(product, 3);
+  const pdfContent = getPdfProductContentForCatalogSlug(product.slug);
 
   return (
     <PageContainer className="space-y-8 py-10 sm:py-12">
@@ -46,6 +48,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <ProductDetail
         commerceReady={health.commerceReady}
         degradedReason={health.degradedReason}
+        pdfContent={pdfContent}
         product={product}
       />
       <RelatedProducts products={relatedProducts} />

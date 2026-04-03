@@ -4,7 +4,11 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { getStorefrontCatalogHealth } from "@/services/products";
 
 export default async function CartPage() {
-  const health = await getStorefrontCatalogHealth();
+  const health = await getStorefrontCatalogHealth().catch((error) => ({
+    source: "fallback" as const,
+    commerceReady: false,
+    degradedReason: error instanceof Error ? error.message : "Cart services are temporarily unavailable."
+  }));
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
