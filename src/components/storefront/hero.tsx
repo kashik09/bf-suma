@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from "lucide-react";
+import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const defaultHeroSlides = [
   {
@@ -138,16 +140,28 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
         <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
           {slide.headline}
         </h1>
-        <p className="mb-8 max-w-xl text-sm font-medium text-white/80 sm:text-base md:text-lg">
+        <p className="mb-6 max-w-xl text-sm font-medium text-white/80 sm:text-base md:text-lg">
           {slide.subhead}
         </p>
-        <Link
-          className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-14 sm:px-8 sm:text-base"
-          href="/shop"
-        >
-          <ShoppingBag className="mr-2 h-5 w-5" />
-          Shop Now
-        </Link>
+
+        <div className="flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center">
+          <Link
+            className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-7 sm:text-base"
+            href="/shop"
+          >
+            <ShoppingBag className="mr-2 h-5 w-5" />
+            Shop Now
+          </Link>
+          <a
+            className="inline-flex h-12 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-6 text-sm font-semibold text-emerald-900 shadow-soft transition hover:bg-emerald-100 sm:h-12 sm:px-7 sm:text-base"
+            href={buildWhatsAppUrl("Hello BF Suma, I need help choosing products.", SUPPORT_WHATSAPP_PHONE)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <MessageCircle className="mr-2 h-5 w-5" />
+            WhatsApp Support
+          </a>
+        </div>
       </div>
 
       <button
