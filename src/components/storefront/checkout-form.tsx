@@ -12,9 +12,10 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { useCart } from "@/hooks/use-cart";
-import { checkoutSchema, type CheckoutInput } from "@/lib/validation";
+import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib/validation";
 import { formatCurrency } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
+import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
 
 const DELIVERY_FEE = 5000;
 const PICKUP_LOCATIONS = [
@@ -29,6 +30,77 @@ function createIdempotencyKey() {
   }
 
   return `order-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof useCart>["items"]): OrderIntakeInput {
+  return {
+    firstName: values.firstName,
+    lastName: values.lastName,
+    email: values.email,
+    phone: values.phone,
+    fulfillmentType: values.fulfillmentType,
+    deliveryAddress: values.deliveryAddress,
+    pickupLocation: values.pickupLocation,
+    paymentMethod: values.paymentMethod,
+    notes: values.notes,
+    items: cartItems.map((item) => ({
+      product_id: item.product_id,
+      quantity: item.quantity
+    }))
+  };
+}
+
+function buildSubmissionFingerprint(payload: OrderIntakeInput): string {
+  const quantityByProduct = new Map<string, number>();
+  payload.items.forEach((item) => {
+    const current = quantityByProduct.get(item.product_id) || 0;
+    quantityByProduct.set(item.product_id, current + item.quantity);
+  });
+
+  const normalized = {
+    ...payload,
+    email: payload.email.trim().toLowerCase(),
+    notes: (payload.notes || "").trim(),
+    items: Array.from(quantityByProduct.entries())
+      .map(([product_id, quantity]) => ({ product_id, quantity }))
+      .sort((a, b) => a.product_id.localeCompare(b.product_id))
+  };
+
+  return JSON.stringify(normalized);
+}
+
+function parseOrderIntakeErrorBody(body: unknown): Partial<OrderIntakeResponse> | null {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return null;
+  }
+
+  return body as Partial<OrderIntakeResponse>;
+}
+
+function fallbackErrorMessageForCode(
+  resultCode: OrderIntakeResultCode | undefined,
+  retryAfterSeconds: number | undefined
+): string {
+  if (resultCode === "REJECTED") {
+    return "Some checkout details are invalid or inventory has changed. Review your cart and try again.";
+  }
+
+  if (resultCode === "CONFLICT") {
+    return "This checkout request conflicts with a previous submission. Review details and submit again.";
+  }
+
+  if (resultCode === "IN_PROGRESS") {
+    return "Your previous checkout attempt is still processing. Please wait a few seconds and retry.";
+  }
+
+  if (resultCode === "TEMPORARY_FAILURE") {
+    if (retryAfterSeconds && retryAfterSeconds > 0) {
+      return `Checkout is temporarily unavailable. Please retry in about ${retryAfterSeconds} seconds.`;
+    }
+    return "Checkout is temporarily unavailable. Please retry in a moment.";
+  }
+
+  return "We couldn't place your order right now. Please try again.";
 }
 
 interface CheckoutFormProps {
@@ -96,6 +168,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const hasAttention = attentionItems.length > 0;
 
   async function onSubmit(values: CheckoutInput) {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!commerceReady) {
       const message = degradedReason || "Live inventory validation is unavailable. Checkout is temporarily disabled.";
       setResultMessage(message);
@@ -124,14 +200,8 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       setResultMessage(null);
       setResultStatus(null);
 
-      const payload = {
-        ...values,
-        items,
-        subtotal,
-        deliveryFee,
-        total
-      };
-      const fingerprint = JSON.stringify(payload);
+      const payload = buildOrderPayload(values, items);
+      const fingerprint = buildSubmissionFingerprint(payload);
 
       const idempotencyKey =
         lastSubmissionRef.current && lastSubmissionRef.current.fingerprint === fingerprint
@@ -144,9 +214,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       };
 
       const response = await submitOrderIntake(payload, idempotencyKey);
+      const successCode = response.resultCode === "CREATED" || response.resultCode === "REPLAYED";
 
-      if (response.persisted !== true) {
-        const message = response.message || "We couldn't place your order right now. Your cart is still available.";
+      if (response.persisted !== true || !successCode) {
+        const message = response.message || fallbackErrorMessageForCode(response.resultCode, response.retryAfterSeconds);
         setResultMessage(message);
         setResultStatus("error");
         toast({
@@ -160,7 +231,11 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       clear();
       form.reset();
       lastSubmissionRef.current = null;
-      const successMessage = response.message || "Thanks, your order has been received.";
+      const successMessage =
+        response.message ||
+        (response.orderNumber
+          ? `Thanks, your order ${response.orderNumber} has been received.`
+          : "Thanks, your order has been received.");
       setResultMessage(successMessage);
       setResultStatus("success");
       toast({
@@ -171,7 +246,21 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
     } catch (error) {
       let message = "We couldn't place your order right now. Please try again.";
       if (error instanceof ApiRequestError) {
-        message = error.message;
+        const responseBody = parseOrderIntakeErrorBody(error.body);
+        const resultCode = responseBody?.resultCode;
+        const retryAfterSeconds =
+          typeof responseBody?.retryAfterSeconds === "number" ? responseBody.retryAfterSeconds : undefined;
+        const hasStockFailure =
+          resultCode === "REJECTED" &&
+          !!responseBody?.fieldErrors &&
+          Array.isArray(responseBody.fieldErrors.items) &&
+          responseBody.fieldErrors.items.length > 0;
+
+        if (hasStockFailure) {
+          message = "Some products in your cart are unavailable or low on stock. Review your cart and try again.";
+        } else {
+          message = responseBody?.message || fallbackErrorMessageForCode(resultCode, retryAfterSeconds);
+        }
       } else if (error instanceof Error) {
         message = error.message;
       }
