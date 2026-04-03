@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, MessageCircle, Quote, ShieldCheck, Star } from "lucide-react";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const confidenceBlocks = [
   {
@@ -96,7 +96,7 @@ export function HomeConfidenceSection() {
         <div className="mt-3 flex flex-wrap gap-2.5">
           <a
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
-            href={buildWhatsAppUrl("Hello BF Suma, I need help choosing products.", SUPPORT_WHATSAPP_PHONE)}
+            href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("confidence_section"), SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
           >

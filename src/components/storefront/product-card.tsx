@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
 function getAvailabilityBadge(availability: StorefrontProduct["availability"]) {
@@ -38,7 +38,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
   const benefitSnippet = getBenefitSnippet(product);
   const savingsLabel = getSavingsLabel(product);
   const urgencySignal = getUrgencySignal(product.availability);
-  const whatsappMessage = `Hello BF Suma, I need help choosing ${product.name}.`;
+  const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
 
   return (
     <Card className="group h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -100,7 +100,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
               target="_blank"
             >
               <MessageCircle className="mr-1 h-4 w-4" />
-              WhatsApp
+              Ask on WhatsApp
             </a>
           </div>
         </div>
