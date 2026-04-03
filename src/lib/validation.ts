@@ -158,6 +158,19 @@ export const orderStatusUpdateSchema = z.object({
   ])
 });
 
+export const orderStatusUpdateRequestSchema = orderStatusUpdateSchema.extend({
+  note: z
+    .string()
+    .trim()
+    .max(500, "Status note is too long")
+    .optional(),
+  changedBy: z
+    .string()
+    .trim()
+    .max(120, "Changed-by marker is too long")
+    .optional()
+});
+
 export type ProductInput = z.infer<typeof productSchema>;
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export type CartItemInput = z.infer<typeof cartItemSchema>;
@@ -166,3 +179,4 @@ export type OrderIntakeInput = z.infer<typeof orderIntakeSchema>;
 export type InquiryInput = z.infer<typeof inquirySchema>;
 export type NewsletterSignupInput = z.infer<typeof newsletterSignupSchema>;
 export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;
+export type OrderStatusUpdateRequestInput = z.infer<typeof orderStatusUpdateRequestSchema>;
