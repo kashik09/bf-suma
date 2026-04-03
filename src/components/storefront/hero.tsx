@@ -38,10 +38,9 @@ const defaultHeroSlides = [
 interface HeroProps {
   heroHeadline?: string;
   heroSupportingText?: string;
-  heroSourcePageRefs?: string[];
 }
 
-export function Hero({ heroHeadline, heroSupportingText, heroSourcePageRefs = [] }: HeroProps) {
+export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
   const heroSlides = useMemo(
     () => [
       {
@@ -142,9 +141,6 @@ export function Hero({ heroHeadline, heroSupportingText, heroSourcePageRefs = []
         <p className="mb-8 max-w-xl text-sm font-medium text-white/80 sm:text-base md:text-lg">
           {slide.subhead}
         </p>
-        {activeSlide === 0 && heroSourcePageRefs.length > 0 ? (
-          <p className="mb-4 text-xs font-medium text-white/70">Source refs: {heroSourcePageRefs.join(", ")}</p>
-        ) : null}
         <Link
           className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-14 sm:px-8 sm:text-base"
           href="/shop"

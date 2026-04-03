@@ -37,14 +37,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       ) : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-warm p-4 shadow-soft sm:p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{product.category_name}</p>
-        <h2 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">Problem, solution, proof, then checkout</h2>
-        <p className="mt-1 text-sm text-slate-700">
-          Compare quickly, verify trust cues, and place your order with fewer decision steps.
-        </p>
-      </section>
-
       <ProductDetail
         commerceReady={health.commerceReady}
         degradedReason={health.degradedReason}

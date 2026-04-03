@@ -120,13 +120,13 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
             style={{ transform: `translateX(-${(activeIndex * 100) / slidesPerView}%)` }}
           >
             {slides.map((slide) => (
-              <div className="h-full w-full shrink-0 px-1 sm:w-1/2 xl:w-1/3" key={slide.kind === "all" ? "all" : slide.category.id}>
+              <div className="w-full shrink-0 px-1 sm:w-1/2 xl:w-1/3" key={slide.kind === "all" ? "all" : slide.category.id}>
                 {slide.kind === "all" ? (
                   <Link
-                    className="group relative isolate block h-full overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-sky-700 p-5 shadow-soft"
+                    className="group relative isolate block h-[18rem] overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-sky-700 p-5 shadow-soft sm:h-[19rem]"
                     href="/shop"
                   >
-                    <div className="relative z-10 flex h-full min-h-64 flex-col justify-between">
+                    <div className="relative z-10 flex h-full flex-col justify-between">
                       <div>
                         <p className="inline-flex rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">
                           Start here
@@ -145,11 +145,11 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                   </Link>
                 ) : (
                   <Link
-                    className="group relative isolate block h-full min-h-64 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-soft ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-card hover:ring-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                    className="group relative isolate block h-[18rem] overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-soft ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-card hover:ring-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-[19rem]"
                     href={`/category/${slide.category.slug}`}
                   >
                     <div
-                      className="h-full min-h-64 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
+                      className="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
                       style={{
                         backgroundImage: `url(${slide.category.image_url || "/catalog-images/placeholder.webp"})`
                       }}
