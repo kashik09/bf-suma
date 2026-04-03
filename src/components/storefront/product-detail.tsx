@@ -9,7 +9,8 @@ import { useCart } from "@/hooks/use-cart";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatCurrency } from "@/lib/utils";
 import type { StorefrontProduct } from "@/types";
-import { CheckCircle2, MessageCircle, Quote, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import type { PdfCatalogProductContent } from "@/lib/catalog/pdf-catalog-content";
+import { AlertTriangle, CheckCircle2, MessageCircle, Quote, ShieldCheck, Sparkles, Truck } from "lucide-react";
 
 function availabilityLabel(availability: StorefrontProduct["availability"]) {
   if (availability === "in_stock") return "In stock";
@@ -223,9 +224,10 @@ interface ProductDetailProps {
   product: StorefrontProduct;
   commerceReady?: boolean;
   degradedReason?: string | null;
+  pdfContent?: PdfCatalogProductContent | null;
 }
 
-export function ProductDetail({ product, commerceReady = true, degradedReason = null }: ProductDetailProps) {
+export function ProductDetail({ product, commerceReady = true, degradedReason = null, pdfContent = null }: ProductDetailProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
@@ -233,8 +235,13 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const isUnavailable = product.availability === "out_of_stock" || !commerceReady;
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
   const problemFrame = resolveProblemFrame(product);
-  const benefits = resolveBenefits(product);
-  const ingredients = resolveIngredients(product);
+  const descriptionText = pdfContent?.description || product.description;
+  const benefits = pdfContent?.benefits.length ? pdfContent.benefits : resolveBenefits(product);
+  const ingredients = pdfContent?.ingredients.length ? pdfContent.ingredients : resolveIngredients(product);
+  const usageInstructions = pdfContent?.usageInstructions || null;
+  const warnings = pdfContent?.warnings || [];
+  const sourcePageRefs = pdfContent?.sourcePageRefs || [];
+  const complianceNote = pdfContent?.complianceNote || null;
   const faqs = resolveFaqs(product);
 
   const whatsappMessage = `Hello BF Suma, I would like to order ${product.name} (${quantity} item${quantity > 1 ? "s" : ""}).`;
@@ -278,7 +285,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
             <span className="text-xs font-medium text-slate-500">{product.category_name}</span>
           </div>
           <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{product.description}</p>
+          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{descriptionText}</p>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Problem Fit</p>
@@ -392,6 +399,31 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
           <p className="mt-3 text-xs text-slate-500">
             Always verify complete ingredient and usage details on the package label.
           </p>
+
+          {usageInstructions ? (
+            <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/40 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Suggested usage</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-700">{usageInstructions}</p>
+            </div>
+          ) : null}
+
+          {warnings.length > 0 ? (
+            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-800">
+                <AlertTriangle className="h-3.5 w-3.5" />
+                Warnings from source
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
+                {warnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+              {sourcePageRefs.length > 0 ? (
+                <p className="mt-2 text-xs text-amber-700">Source refs: {sourcePageRefs.join(", ")}</p>
+              ) : null}
+              {complianceNote ? <p className="mt-1 text-xs text-amber-700">{complianceNote}</p> : null}
+            </div>
+          ) : null}
         </article>
       </section>
 
