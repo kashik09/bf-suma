@@ -16,6 +16,7 @@ export type DeliveryStatus =
   | "DELIVERED"
   | "FAILED";
 export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+export type NewsletterSubscriberStatus = "ACTIVE" | "UNSUBSCRIBED";
 export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "SUPPORT";
 
 export interface Category {
@@ -126,6 +127,17 @@ export interface Inquiry {
   updated_at: string;
 }
 
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  source: string;
+  context: string | null;
+  status: NewsletterSubscriberStatus;
+  welcome_email_sent_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AdminUser {
   id: string;
   name: string;
@@ -199,23 +211,45 @@ export interface OrderIntakePayload {
   pickupLocation?: string;
   paymentMethod: "pay_on_delivery";
   notes?: string;
-  items: CartItem[];
-  subtotal: number;
-  deliveryFee: number;
-  total: number;
+  items: Array<{
+    product_id: string;
+    quantity: number;
+  }>;
+}
+
+export type OrderIntakeResultCode =
+  | "CREATED"
+  | "REPLAYED"
+  | "REJECTED"
+  | "CONFLICT"
+  | "IN_PROGRESS"
+  | "TEMPORARY_FAILURE";
+
+export interface OrderIntakeFieldErrors {
+  [key: string]: string[];
 }
 
 export interface OrderIntakeResponse {
   persisted: boolean;
+  resultCode: OrderIntakeResultCode;
   orderNumber?: string;
   receivedAt?: string;
   subtotal?: number;
   deliveryFee?: number;
   total?: number;
   currency?: CurrencyCode;
+  fieldErrors?: OrderIntakeFieldErrors;
+  retryAfterSeconds?: number;
   degraded?: boolean;
   errorCode?: string;
   message: string;
+}
+
+export interface NewsletterSignupResponse {
+  id: string;
+  status: "subscribed" | "already_subscribed";
+  message: string;
+  emailDelivery: "sent" | "skipped" | "failed";
 }
 
 export interface Database {
@@ -230,6 +264,7 @@ export interface Database {
       drivers: { Row: Driver };
       deliveries: { Row: Delivery };
       inquiries: { Row: Inquiry };
+      newsletter_subscribers: { Row: NewsletterSubscriber };
       admin_users: { Row: AdminUser };
     };
   };
