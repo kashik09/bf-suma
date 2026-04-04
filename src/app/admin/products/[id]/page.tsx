@@ -1,12 +1,16 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { fromMinorUnits, toMinorUnits } from "@/lib/utils";
 import {
+  deleteAdminProduct,
   getAdminProductById,
   listAdminCategoryOptions,
+  ProductDeleteRestrictedError,
+  ProductSlugConflictError,
   updateAdminProduct
 } from "@/services/admin-products";
 import type { ProductStatus } from "@/types";
@@ -29,10 +33,26 @@ const updateProductSchema = z.object({
 });
 
 function parseErrorMessage(error: unknown): string {
+  if (error instanceof ProductSlugConflictError) {
+    return error.message;
+  }
+  if (error instanceof ProductDeleteRestrictedError) {
+    return error.message;
+  }
   if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
     return error.message;
   }
   return "Could not update product.";
+}
+
+function normalizeSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export default async function AdminProductDetailPage({
@@ -77,10 +97,15 @@ export default async function AdminProductDetailPage({
       redirect(`/admin/products/${id}?error=Invalid%20product%20payload.`);
     }
 
+    const normalizedSlug = normalizeSlug(parsed.data.slug);
+    if (normalizedSlug.length < 2) {
+      redirect(`/admin/products/${id}?error=Slug%20must%20include%20letters%20or%20numbers.`);
+    }
+
     try {
       await updateAdminProduct(id, {
         name: parsed.data.name,
-        slug: parsed.data.slug,
+        slug: normalizedSlug,
         description: parsed.data.description?.trim() || null,
         sku: parsed.data.sku,
         price: toMinorUnits(parsed.data.priceMajor),
@@ -93,7 +118,26 @@ export default async function AdminProductDetailPage({
         status: parsed.data.status as ProductStatus,
         category_id: parsed.data.categoryId
       });
+      revalidatePath("/admin/products");
+      revalidatePath(`/admin/products/${id}`);
+      revalidatePath("/shop");
       redirect(`/admin/products/${id}?updated=1`);
+    } catch (error) {
+      redirect(`/admin/products/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
+    }
+  }
+
+  async function deleteProductAction() {
+    "use server";
+
+    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+
+    try {
+      await deleteAdminProduct(id);
+      revalidatePath("/admin/products");
+      revalidatePath(`/admin/products/${id}`);
+      revalidatePath("/shop");
+      redirect("/admin/products?deleted=1");
     } catch (error) {
       redirect(`/admin/products/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
@@ -181,6 +225,17 @@ export default async function AdminProductDetailPage({
               Save Changes
             </button>
           </div>
+        </form>
+      </Card>
+
+      <Card>
+        <form action={deleteProductAction}>
+          <p className="text-sm text-slate-600">
+            Delete this product if it was created by mistake and has no order history.
+          </p>
+          <button className="mt-3 inline-flex h-10 items-center justify-center rounded-md border border-rose-300 bg-rose-50 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
+            Delete Product
+          </button>
         </form>
       </Card>
     </div>

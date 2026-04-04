@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { toMinorUnits } from "@/lib/utils";
-import { createAdminProduct, listAdminCategoryOptions } from "@/services/admin-products";
+import {
+  createAdminProduct,
+  listAdminCategoryOptions,
+  ProductSlugConflictError
+} from "@/services/admin-products";
 import type { ProductStatus } from "@/types";
 
 const PRODUCT_STATUS_VALUES = ["DRAFT", "ACTIVE", "ARCHIVED", "OUT_OF_STOCK"] as const;
@@ -25,10 +30,23 @@ const createProductSchema = z.object({
 });
 
 function parseErrorMessage(error: unknown): string {
+  if (error instanceof ProductSlugConflictError) {
+    return error.message;
+  }
   if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
     return error.message;
   }
   return "Could not create product.";
+}
+
+function normalizeSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export default async function AdminNewProductPage({
@@ -61,10 +79,15 @@ export default async function AdminNewProductPage({
       redirect("/admin/products/new?error=Invalid%20product%20payload.");
     }
 
+    const normalizedSlug = normalizeSlug(parsed.data.slug);
+    if (normalizedSlug.length < 2) {
+      redirect("/admin/products/new?error=Slug%20must%20include%20letters%20or%20numbers.");
+    }
+
     try {
       const created = await createAdminProduct({
         name: parsed.data.name,
-        slug: parsed.data.slug,
+        slug: normalizedSlug,
         description: parsed.data.description?.trim() || null,
         sku: parsed.data.sku,
         price: toMinorUnits(parsed.data.priceMajor),
@@ -78,6 +101,8 @@ export default async function AdminNewProductPage({
         category_id: parsed.data.categoryId
       });
 
+      revalidatePath("/admin/products");
+      revalidatePath("/shop");
       redirect(`/admin/products/${created.id}?updated=1`);
     } catch (error) {
       redirect(`/admin/products/new?error=${encodeURIComponent(parseErrorMessage(error))}`);
