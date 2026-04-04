@@ -5,7 +5,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
   return (
     <AppShell>
       <StoreHeader />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <StoreFooter />
       <WhatsAppFloatingCTA />
     </AppShell>

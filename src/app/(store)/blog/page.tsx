@@ -5,6 +5,8 @@ import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { getBlogReadiness, listPublishedBlogPosts } from "@/services/blog";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Blog | BF Suma",
   description: "Wellness guides, product education, and practical health insights from BF Suma."
@@ -38,6 +40,14 @@ export default async function BlogIndexPage() {
         <SectionHeader
           title="Blog"
           description="Wellness insights, practical guides, and product education from the BF Suma team."
+          action={
+            <Link
+              className="inline-flex h-9 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700"
+              href="/blog/submit"
+            >
+              Submit an Article
+            </Link>
+          }
         />
       </section>
 

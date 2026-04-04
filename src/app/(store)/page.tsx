@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+
+// Revalidate every 60 seconds for fast subsequent loads
+export const revalidate = 60;
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
 import {
