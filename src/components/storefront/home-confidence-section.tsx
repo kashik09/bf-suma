@@ -87,7 +87,7 @@ export function HomeConfidenceSection() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-brand-100/40 p-4 sm:p-5">
+      <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 sm:p-5">
         <p className="flex items-start gap-2 text-sm leading-relaxed text-slate-800">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
           Need extra confidence before payment? Start checkout first, then tap WhatsApp for quick clarification without

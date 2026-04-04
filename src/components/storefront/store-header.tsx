@@ -9,19 +9,6 @@ import { SearchAutocomplete } from "@/components/storefront/search-autocomplete"
 export function StoreHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="border-b border-slate-100 bg-logo-spectrum-cool py-2 text-xs text-slate-700">
-        <PageContainer className="flex items-center justify-between gap-4">
-          <p className="line-clamp-1 font-medium">Trusted wellness products. Direct checkout first. WhatsApp help when needed.</p>
-          <a
-            className="shrink-0 font-semibold text-brand-700 transition hover:text-brand-600"
-            href={buildWhatsAppUrl(buildWhatsAppOrderSupportMessage(), SUPPORT_WHATSAPP_PHONE)}
-            rel="noreferrer"
-            target="_blank"
-          >
-            Ask on WhatsApp
-          </a>
-        </PageContainer>
-      </div>
 
       <PageContainer className="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-6">
         <Link href="/">
