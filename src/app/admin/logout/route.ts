@@ -1,0 +1,17 @@
+import { NextResponse } from "next/server";
+import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/admin-session";
+
+export async function GET(request: Request) {
+  const redirectUrl = new URL("/admin/login", request.url);
+  const response = NextResponse.redirect(redirectUrl);
+
+  response.cookies.set(ADMIN_SESSION_COOKIE_NAME, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0,
+    path: "/"
+  });
+
+  return response;
+}
