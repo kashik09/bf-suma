@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { assertAdminRequest } from "@/lib/admin-request";
 import { orderStatusUpdateRequestSchema } from "@/lib/validation";
 import {
   getOrderDetailForAdmin,
@@ -13,10 +14,6 @@ const paramsSchema = z.object({
   id: z.string().uuid("Invalid order id.")
 });
 
-function isAdminOrdersAccessEnabled(): boolean {
-  return process.env.ALLOW_ADMIN_ROUTES === "true";
-}
-
 async function parseOrderId(params: Promise<{ id: string }>): Promise<{ id: string } | null> {
   const resolved = await params;
   const parsed = paramsSchema.safeParse(resolved);
@@ -24,9 +21,10 @@ async function parseOrderId(params: Promise<{ id: string }>): Promise<{ id: stri
   return parsed.data;
 }
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminOrdersAccessEnabled()) {
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const adminAccess = await assertAdminRequest(request);
+  if (!adminAccess.ok) {
+    return NextResponse.json({ message: adminAccess.message }, { status: adminAccess.status });
   }
 
   const parsedParams = await parseOrderId(params);
@@ -51,8 +49,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminOrdersAccessEnabled()) {
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+  const adminAccess = await assertAdminRequest(request);
+  if (!adminAccess.ok) {
+    return NextResponse.json({ message: adminAccess.message }, { status: adminAccess.status });
   }
 
   const parsedParams = await parseOrderId(params);
