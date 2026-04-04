@@ -438,3 +438,53 @@ export async function listRelatedProducts(
     .filter((entry) => entry.category_slug === product.category_slug && entry.id !== product.id)
     .slice(0, limit);
 }
+
+function extractContentKeywords(tags: string[], title: string): string[] {
+  const fromTags = tags.map((tag) => tag.toLowerCase().trim()).filter(Boolean);
+  const fromTitle = title
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 3);
+
+  const keywords = new Set<string>([...fromTags, ...fromTitle]);
+  return [...keywords];
+}
+
+function getKeywordScore(product: StorefrontProduct, keywords: string[]): number {
+  if (keywords.length === 0) return 0;
+  const searchable = `${product.name} ${product.description} ${product.category_name} ${product.slug}`.toLowerCase();
+  return keywords.reduce((score, keyword) => (searchable.includes(keyword) ? score + 1 : score), 0);
+}
+
+export async function listProductsRelatedToContent(
+  tags: string[],
+  title: string,
+  limit: number = 3
+): Promise<StorefrontProduct[]> {
+  const products = await listStorefrontProducts({
+    sort: "featured",
+    availability: "in_stock"
+  });
+  const keywords = extractContentKeywords(tags, title);
+
+  const scored = products
+    .map((product) => ({
+      product,
+      score: getKeywordScore(product, keywords)
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
+    .slice(0, limit)
+    .map((entry) => entry.product);
+
+  if (scored.length >= limit || keywords.length === 0) {
+    return scored;
+  }
+
+  const additional = products
+    .filter((product) => !scored.some((existing) => existing.id === product.id))
+    .slice(0, limit - scored.length);
+
+  return [...scored, ...additional];
+}
