@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import type { InquiryStatus, OrderStatus } from "@/types";
 
@@ -87,7 +88,7 @@ function toRoundedPercent(delta: number, base: number): number {
   return Math.round((delta / base) * 100);
 }
 
-export async function getAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
+async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
   const supabase = createServiceRoleSupabaseClient();
   const warnings: string[] = [];
   const nowMs = Date.now();
@@ -425,3 +426,10 @@ export async function getAdminDashboardSnapshot(): Promise<AdminDashboardSnapsho
     warnings
   };
 }
+
+// Cache dashboard data for 10 seconds to reduce database load on refreshes
+export const getAdminDashboardSnapshot = unstable_cache(
+  fetchAdminDashboardSnapshot,
+  ["admin-dashboard-snapshot"],
+  { revalidate: 10, tags: ["admin-dashboard"] }
+);
