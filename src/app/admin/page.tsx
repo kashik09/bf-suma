@@ -8,12 +8,13 @@ import {
 } from "lucide-react";
 import { SectionHeader } from "@/components/ui";
 import { StatsCard, QuickActions, RecentOrders } from "@/components/admin";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { requireAdminSession } from "@/lib/admin-server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils";
 
 async function getDashboardStats() {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
 
     const [ordersRes, productsRes, customersRes, recentOrdersRes] = await Promise.all([
       supabase.from("orders").select("id, total, status", { count: "exact" }),
@@ -108,6 +109,7 @@ const quickActions = [
 ];
 
 export default async function AdminDashboardPage() {
+  await requireAdminSession();
   const stats = await getDashboardStats();
 
   return (
