@@ -1,5 +1,3 @@
-set search_path = public;
-
 create table if not exists public.order_request_replays (
   request_hash text primary key,
   idempotency_key text not null,

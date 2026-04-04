@@ -1,5 +1,3 @@
-set search_path = public;
-
 alter table if exists public.products
   add column if not exists currency text;
 update public.products set currency = 'KES' where currency is null;

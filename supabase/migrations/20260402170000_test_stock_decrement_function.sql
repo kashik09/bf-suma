@@ -1,5 +1,3 @@
-set search_path = public;
-
 drop function if exists public.test_decrement_product_stock(uuid, integer);
 
 create or replace function public.test_decrement_product_stock(
