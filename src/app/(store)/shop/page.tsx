@@ -4,6 +4,8 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
 import { getStorefrontCatalogSnapshot } from "@/services/products";
 
+export const revalidate = 60;
+
 type ShopSearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 function getSingleSearchParam(value: string | string[] | undefined): string | undefined {
