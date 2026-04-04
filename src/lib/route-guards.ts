@@ -1,4 +1,5 @@
 const SCAFFOLD_ADMIN_PREFIXES = [
+  "/admin/orders",
   "/admin/customers",
   "/admin/products",
   "/admin/analytics",
@@ -30,6 +31,10 @@ export function isScaffoldAdminRoute(pathname: string): boolean {
 }
 
 export function isScaffoldApiRoute(pathname: string): boolean {
+  if (/^\/api\/orders\/[^/]+\/?$/.test(pathname)) {
+    return true;
+  }
+
   return SCAFFOLD_API_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix));
 }
 
