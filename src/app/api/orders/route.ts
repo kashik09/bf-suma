@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHash, randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
 import { ORDER_STATUSES } from "@/lib/constants";
+import { assertAdminRequest } from "@/lib/admin-request";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { enqueueOrderCreatedNotification } from "@/services/order-notifications";
 import {
@@ -127,10 +128,6 @@ function getRetryAfterSeconds(nowMs: number): number {
   return Math.max(1, Math.ceil(remainingMs / 1000));
 }
 
-function isAdminOrdersAccessEnabled(): boolean {
-  return process.env.ALLOW_ADMIN_ROUTES === "true";
-}
-
 function parsePositiveInteger(value: string | null, fallback: number): number {
   if (!value) return fallback;
   const parsed = Number.parseInt(value, 10);
@@ -230,8 +227,9 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
 }
 
 export async function GET(request: Request) {
-  if (!isAdminOrdersAccessEnabled()) {
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+  const adminAccess = await assertAdminRequest(request);
+  if (!adminAccess.ok) {
+    return NextResponse.json({ message: adminAccess.message }, { status: adminAccess.status });
   }
 
   const { searchParams } = new URL(request.url);
