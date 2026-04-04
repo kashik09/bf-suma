@@ -1,18 +1,3 @@
-set search_path = public;
-
-drop function if exists public.process_order_intake_atomic_v2(
-  text,
-  text,
-  uuid,
-  text,
-  text,
-  integer,
-  integer,
-  integer,
-  text,
-  jsonb
-);
-
 create or replace function public.process_order_intake_atomic_v2(
   p_idempotency_key text,
   p_request_hash text,
