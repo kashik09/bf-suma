@@ -10,6 +10,5 @@ export * from "./modal";
 export * from "./pagination";
 export * from "./section-header";
 export * from "./select";
-export * from "./status-pill";
 export * from "./textarea";
 export * from "./toast";
