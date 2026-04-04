@@ -33,6 +33,10 @@ function createIdempotencyKey() {
 }
 
 function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof useCart>["items"]): OrderIntakeInput {
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const deliveryFee = values.fulfillmentType === "pickup" ? 0 : DELIVERY_FEE;
+  const total = subtotal + deliveryFee;
+
   return {
     firstName: values.firstName,
     lastName: values.lastName,
@@ -45,8 +49,12 @@ function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof u
     notes: values.notes,
     items: cartItems.map((item) => ({
       product_id: item.product_id,
+      price: item.price,
       quantity: item.quantity
-    }))
+    })),
+    subtotal,
+    deliveryFee,
+    total
   };
 }
 
@@ -62,8 +70,18 @@ function buildSubmissionFingerprint(payload: OrderIntakeInput): string {
     email: payload.email.trim().toLowerCase(),
     notes: (payload.notes || "").trim(),
     items: Array.from(quantityByProduct.entries())
-      .map(([product_id, quantity]) => ({ product_id, quantity }))
-      .sort((a, b) => a.product_id.localeCompare(b.product_id))
+      .map(([product_id, quantity]) => {
+        const item = payload.items.find((entry) => entry.product_id === product_id);
+        return {
+          product_id,
+          quantity,
+          price: item?.price
+        };
+      })
+      .sort((a, b) => a.product_id.localeCompare(b.product_id)),
+    subtotal: payload.subtotal,
+    deliveryFee: payload.deliveryFee,
+    total: payload.total
   };
 
   return JSON.stringify(normalized);
