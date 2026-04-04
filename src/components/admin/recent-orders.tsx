@@ -1,4 +1,5 @@
 import { Clock, Package } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
@@ -55,7 +56,9 @@ export function RecentOrders({ orders, title = "Recent Orders" }: RecentOrdersPr
     <div className="rounded-xl border border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
         <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-        <span className="text-sm font-medium text-slate-500">Read-only preview</span>
+        <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/admin/orders">
+          View all
+        </Link>
       </div>
 
       {orders.length === 0 ? (
@@ -79,7 +82,9 @@ export function RecentOrders({ orders, title = "Recent Orders" }: RecentOrdersPr
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-900">
-                    {order.orderNumber}
+                    <Link className="hover:text-brand-700" href={`/admin/orders/${order.id}`}>
+                      {order.orderNumber}
+                    </Link>
                   </p>
                   <p className="text-xs text-slate-500">{order.customerName}</p>
                 </div>

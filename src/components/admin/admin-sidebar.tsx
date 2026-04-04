@@ -6,6 +6,8 @@ import {
   LayoutDashboard,
   ShoppingBag,
   Boxes,
+  FileText,
+  MessagesSquare,
   Package,
   Store
 } from "lucide-react";
@@ -14,7 +16,9 @@ import { cn } from "@/lib/utils";
 const adminNav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag, exact: false },
-  { href: "/admin/products", label: "Products", icon: Boxes, exact: false }
+  { href: "/admin/products", label: "Products", icon: Boxes, exact: false },
+  { href: "/admin/blog", label: "Blog", icon: FileText, exact: false },
+  { href: "/admin/contacts", label: "Contacts", icon: MessagesSquare, exact: false }
 ];
 
 const bottomNav = [
