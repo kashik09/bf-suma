@@ -1,0 +1,229 @@
+import { revalidatePath } from "next/cache";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
+import { Card, SectionHeader } from "@/components/ui";
+import { requireAdminSession } from "@/lib/admin-server";
+import {
+  BlogSlugConflictError,
+  deleteAdminBlogPost,
+  getAdminBlogPostById,
+  updateAdminBlogPost
+} from "@/services/admin-blog";
+import type { BlogPostStatus } from "@/types";
+
+const BLOG_STATUS_VALUES = ["DRAFT", "PUBLISHED"] as const;
+
+const updateBlogPostSchema = z.object({
+  title: z.string().trim().min(2).max(180),
+  slug: z.string().trim().min(2).max(160),
+  author: z.string().trim().min(2).max(120),
+  excerpt: z.string().trim().max(320).optional(),
+  coverImageUrl: z.preprocess(
+    (value) => (value === "" || value === null || value === undefined ? undefined : value),
+    z.string().url().optional()
+  ),
+  status: z.enum(BLOG_STATUS_VALUES),
+  tags: z.string().trim().max(400).optional(),
+  content: z.string().trim().min(20).max(50000)
+});
+
+function normalizeSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function parseTags(value: string | undefined): string[] {
+  if (!value) return [];
+  const unique = new Set<string>();
+  for (const part of value.split(",")) {
+    const cleaned = part.trim();
+    if (!cleaned) continue;
+    unique.add(cleaned);
+  }
+  return [...unique];
+}
+
+function parseErrorMessage(error: unknown): string {
+  if (error instanceof BlogSlugConflictError) return error.message;
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "Could not update blog post.";
+}
+
+export default async function AdminBlogDetailPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ error?: string; updated?: string }>;
+}) {
+  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  const { id } = await params;
+  const post = await getAdminBlogPostById(id);
+  if (!post) {
+    notFound();
+  }
+
+  const query = searchParams ? await searchParams : {};
+  const previousSlug = post.slug;
+
+  async function updateBlogPostAction(formData: FormData) {
+    "use server";
+
+    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+
+    const parsed = updateBlogPostSchema.safeParse({
+      title: formData.get("title"),
+      slug: formData.get("slug"),
+      author: formData.get("author"),
+      excerpt: formData.get("excerpt"),
+      coverImageUrl: formData.get("coverImageUrl"),
+      status: formData.get("status"),
+      tags: formData.get("tags"),
+      content: formData.get("content")
+    });
+
+    if (!parsed.success) {
+      redirect(`/admin/blog/${id}?error=Invalid%20blog%20payload.`);
+    }
+
+    const normalizedSlug = normalizeSlug(parsed.data.slug);
+    if (normalizedSlug.length < 2) {
+      redirect(`/admin/blog/${id}?error=Slug%20must%20include%20letters%20or%20numbers.`);
+    }
+
+    try {
+      const updated = await updateAdminBlogPost(id, {
+        title: parsed.data.title,
+        slug: normalizedSlug,
+        author: parsed.data.author,
+        excerpt: parsed.data.excerpt?.trim() || null,
+        content: parsed.data.content,
+        cover_image_url: parsed.data.coverImageUrl ?? null,
+        status: parsed.data.status as BlogPostStatus,
+        tags: parseTags(parsed.data.tags)
+      });
+
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${previousSlug}`);
+      revalidatePath(`/blog/${updated.slug}`);
+      revalidatePath("/admin/blog");
+      revalidatePath(`/admin/blog/${id}`);
+      redirect(`/admin/blog/${id}?updated=1`);
+    } catch (error) {
+      redirect(`/admin/blog/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
+    }
+  }
+
+  async function deleteBlogPostAction() {
+    "use server";
+
+    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+
+    try {
+      await deleteAdminBlogPost(id);
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${previousSlug}`);
+      revalidatePath("/admin/blog");
+      redirect("/admin/blog?deleted=1");
+    } catch {
+      redirect(`/admin/blog/${id}?error=${encodeURIComponent("Could not delete blog post.")}`);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader
+        title={`Edit ${post.title}`}
+        description="Update content, publishing status, and metadata."
+        action={
+          <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/admin/blog">
+            Back to Blog Posts
+          </Link>
+        }
+      />
+
+      {query.updated === "1" ? (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+          Blog post updated successfully.
+        </div>
+      ) : null}
+
+      {query.error ? (
+        <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+          {query.error}
+        </div>
+      ) : null}
+
+      <Card>
+        <form action={updateBlogPostAction} className="grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="title">Title</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.title} id="title" name="title" required />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="slug">Slug</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.slug} id="slug" name="slug" required />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="author">Author</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.author} id="author" name="author" required />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="status">Status</label>
+            <select className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.status} id="status" name="status">
+              {BLOG_STATUS_VALUES.map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="coverImageUrl">Cover Image URL</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.cover_image_url || ""} id="coverImageUrl" name="coverImageUrl" placeholder="https://..." type="url" />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="excerpt">Excerpt</label>
+            <textarea className="min-h-20 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" defaultValue={post.excerpt || ""} id="excerpt" maxLength={320} name="excerpt" />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="tags">Tags (comma separated)</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" defaultValue={post.tags.join(", ")} id="tags" name="tags" />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="content">Content</label>
+            <textarea className="min-h-72 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" defaultValue={post.content} id="content" name="content" required />
+          </div>
+
+          <div className="md:col-span-2 flex flex-wrap items-center gap-3">
+            <button className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700" type="submit">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </Card>
+
+      <Card>
+        <form action={deleteBlogPostAction}>
+          <p className="text-sm text-slate-600">Delete this post permanently if it is no longer needed.</p>
+          <button className="mt-3 inline-flex h-10 items-center justify-center rounded-md border border-rose-300 bg-rose-50 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
+            Delete Post
+          </button>
+        </form>
+      </Card>
+    </div>
+  );
+}
