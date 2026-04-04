@@ -6,7 +6,7 @@ export function FeaturedInsight() {
   const { text, cta } = dynamicContent.featuredInsight;
 
   return (
-    <section className="rounded-2xl border border-brand-200/60 bg-gradient-to-r from-brand-50 via-white to-slate-50 p-5 shadow-soft sm:p-6">
+    <section className="rounded-2xl border border-brand-200/60 bg-brand-50/50 p-5 shadow-soft sm:p-6">
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">Featured Insight</p>
       <p className="mt-2 text-base leading-relaxed text-slate-800 sm:text-lg">{text}</p>
       <Link
