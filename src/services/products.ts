@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
 import { BFSUMA_CATALOG } from "@/lib/catalog";
 import {
@@ -293,7 +294,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
   };
 }
 
-async function getCatalogData(): Promise<CatalogData> {
+async function fetchCatalogData(): Promise<CatalogData> {
   try {
     const liveCatalog = await fetchCatalogFromSupabase();
     return enrichCatalogData(liveCatalog);
@@ -312,6 +313,13 @@ async function getCatalogData(): Promise<CatalogData> {
     });
   }
 }
+
+// Cache catalog data for 60 seconds to reduce database calls
+const getCatalogData = unstable_cache(
+  fetchCatalogData,
+  ["storefront-catalog"],
+  { revalidate: 60, tags: ["catalog"] }
+);
 
 export async function listProducts(filters: ProductFilters = {}): Promise<Product[]> {
   try {

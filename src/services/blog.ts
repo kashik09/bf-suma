@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 
 type BlogPostStatus = "DRAFT" | "PUBLISHED";
@@ -81,7 +82,7 @@ function toBlogListItem(row: BlogPostRow): BlogPostListItem {
   };
 }
 
-export async function listPublishedBlogPosts(limit?: number): Promise<BlogPostListItem[]> {
+async function fetchPublishedBlogPosts(limit?: number): Promise<BlogPostListItem[]> {
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase
     .from("blog_posts")
@@ -106,6 +107,12 @@ export async function listPublishedBlogPosts(limit?: number): Promise<BlogPostLi
 
   return ((data ?? []) as BlogPostRow[]).map(toBlogListItem);
 }
+
+export const listPublishedBlogPosts = unstable_cache(
+  fetchPublishedBlogPosts,
+  ["blog-posts-list"],
+  { revalidate: 60, tags: ["blog"] }
+);
 
 export async function getPublishedBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
   const supabase = createServiceRoleSupabaseClient();
