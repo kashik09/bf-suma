@@ -49,7 +49,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const adminAccess = await assertAdminRequest(request);
+  const adminAccess = await assertAdminRequest(request, ["SUPER_ADMIN", "OPERATIONS"]);
   if (!adminAccess.ok) {
     return NextResponse.json({ message: adminAccess.message }, { status: adminAccess.status });
   }
