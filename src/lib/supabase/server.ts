@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -44,18 +45,21 @@ export async function createServerSupabaseClient() {
   });
 }
 
+// Singleton service role client - reused across requests
+let serviceRoleClient: ReturnType<typeof createClient> | null = null;
+
 export function createServiceRoleSupabaseClient() {
+  if (serviceRoleClient) return serviceRoleClient;
+
   const url = resolveSupabaseUrl();
   const key = resolveServiceRoleKey();
 
-  return createServerClient(url, key, {
-    cookies: {
-      getAll() {
-        return [];
-      },
-      setAll(_: { name: string; value: string; options: CookieOptions }[]) {
-        // Service-role queries do not depend on request cookies.
-      }
+  serviceRoleClient = createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
     }
   });
+
+  return serviceRoleClient;
 }
