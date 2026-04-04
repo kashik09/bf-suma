@@ -12,7 +12,7 @@ import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 
 export function StoreFooter() {
   return (
-    <footer className="mt-14 border-t border-white/10 bg-logo-spectrum-footer py-8 text-slate-100">
+    <footer className="mt-auto border-t border-white/10 bg-logo-spectrum-footer py-8 text-slate-100">
       <PageContainer className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_repeat(3,minmax(0,1fr))]">
         <div className="space-y-2.5">
           <h3 className="text-lg font-bold text-white">BF Suma</h3>
@@ -54,35 +54,27 @@ export function StoreFooter() {
           </div>
         </div>
 
-        <div className="md:justify-self-start">
+        <div>
           <NewsletterSignup
             source="footer"
             context="footer_newsletter"
             compact
             onDark
-            title="Get new product updates"
-            description="One concise email stream. No spam."
+            title="Newsletter"
+            description="Get new product updates and wellness tips. No spam."
             ctaLabel="Subscribe"
-            className="max-w-sm"
+            className="max-w-xs"
           />
         </div>
       </PageContainer>
 
-      <PageContainer className="mt-6 flex flex-col gap-2.5 border-t border-white/10 pt-3 text-xs text-slate-100/80 sm:flex-row sm:items-center sm:justify-between">
+      <PageContainer className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-4 text-xs text-slate-100/80 sm:flex-row sm:items-center sm:justify-between">
         <p>&copy; {new Date().getFullYear()} BF Suma. All rights reserved.</p>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            className="inline-flex items-center rounded-md border border-white/25 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-white/90 transition hover:border-accent-sun/60 hover:text-accent-sun"
-            href="/shop"
-          >
-            Shop Catalog
-          </Link>
-          <Link
-            className="inline-flex items-center rounded-md border border-white/25 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-white/90 transition hover:border-accent-sun/60 hover:text-accent-sun"
-            href="/contact"
-          >
-            Contact Support
-          </Link>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <Link className="transition hover:text-white" href="/privacy">Privacy</Link>
+          <Link className="transition hover:text-white" href="/terms">Terms</Link>
+          <Link className="transition hover:text-white" href="/refund-policy">Refunds</Link>
+          <Link className="transition hover:text-white" href="/shipping">Shipping</Link>
         </div>
       </PageContainer>
     </footer>

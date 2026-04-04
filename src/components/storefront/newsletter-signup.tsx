@@ -73,28 +73,30 @@ export function NewsletterSignup({
       className={`${
         compact
           ? onDark
-            ? "rounded-xl border border-white/20 bg-transparent p-3 shadow-none space-y-2.5 sm:p-3.5"
+            ? "space-y-3"
             : "rounded-xl border border-slate-200 bg-white p-3 shadow-soft space-y-2.5 sm:p-3.5"
           : "rounded-2xl border border-slate-200 bg-white p-4 shadow-soft space-y-4 sm:p-5"
       } ${className || ""}`.trim()}
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <div className={compact ? "space-y-1" : "space-y-1.5"}>
-        <p className={`inline-flex w-fit items-center gap-1 rounded-full bg-brand-50 font-semibold uppercase tracking-wide text-brand-700 ${compact ? "px-2 py-0.5 text-[10px]" : "px-2 py-0.5 text-[11px]"}`}>
-          <Mail className="h-3 w-3" />
-          Newsletter
-        </p>
-        <h3 className={compact
+        {!onDark && (
+          <p className={`inline-flex w-fit items-center gap-1 rounded-full bg-brand-50 font-semibold uppercase tracking-wide text-brand-700 ${compact ? "px-2 py-0.5 text-[10px]" : "px-2 py-0.5 text-[11px]"}`}>
+            <Mail className="h-3 w-3" />
+            Newsletter
+          </p>
+        )}
+        <h4 className={compact
           ? onDark
-            ? "text-base font-semibold leading-tight text-white"
+            ? "text-sm font-semibold uppercase tracking-wide text-white"
             : "text-base font-semibold leading-tight text-slate-900"
           : "text-lg font-semibold leading-tight text-slate-900"}
         >
           {title}
-        </h3>
+        </h4>
         <p className={compact
           ? onDark
-            ? "text-xs leading-snug text-slate-200"
+            ? "text-sm leading-snug text-slate-100/85"
             : "text-xs leading-snug text-slate-600"
           : "text-sm text-slate-600"}
         >
@@ -103,22 +105,22 @@ export function NewsletterSignup({
       </div>
 
       {compact ? (
-        <div className="space-y-2">
+        <div className={onDark ? "mt-3 space-y-2" : "space-y-2"}>
           <div className="space-y-1">
             <label className="sr-only" htmlFor={`newsletter-email-${source}`}>Email</label>
             <Input
               autoComplete="email"
-              className="h-10"
+              className={onDark ? "h-9 border-white/20 bg-white/10 text-white placeholder:text-slate-300 focus:border-white/40 focus:ring-white/20" : "h-10"}
               id={`newsletter-email-${source}`}
               placeholder="you@example.com"
               type="email"
               {...form.register("email")}
             />
-            {emailError ? <p className="text-xs font-medium text-rose-700">{emailError}</p> : null}
+            {emailError ? <p className={onDark ? "text-xs font-medium text-rose-300" : "text-xs font-medium text-rose-700"}>{emailError}</p> : null}
           </div>
 
           <Button
-            className="w-full"
+            className={onDark ? "w-full bg-white text-slate-900 hover:bg-slate-100" : "w-full"}
             disabled={isSubmitting}
             size="sm"
             type="submit"
@@ -152,8 +154,12 @@ export function NewsletterSignup({
         <p
           className={`rounded-lg px-3 py-2 text-sm ${
             isSuccess
-              ? "border border-emerald-200 bg-emerald-50 text-emerald-800"
-              : "border border-rose-200 bg-rose-50 text-rose-800"
+              ? onDark
+                ? "border border-emerald-400/30 bg-emerald-500/20 text-emerald-200"
+                : "border border-emerald-200 bg-emerald-50 text-emerald-800"
+              : onDark
+                ? "border border-rose-400/30 bg-rose-500/20 text-rose-200"
+                : "border border-rose-200 bg-rose-50 text-rose-800"
           }`}
         >
           {responseMessage}
