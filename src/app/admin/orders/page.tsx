@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, SectionHeader } from "@/components/ui";
+import { requireAdminSession } from "@/lib/admin-server";
 import { formatCurrency } from "@/lib/utils";
 import { listOrdersForAdmin } from "@/services/orders";
 
@@ -12,6 +13,8 @@ function formatDateTime(value: string) {
 }
 
 export default async function AdminOrdersPage() {
+  await requireAdminSession();
+
   try {
     const data = await listOrdersForAdmin({ page: 1, pageSize: 50 });
 

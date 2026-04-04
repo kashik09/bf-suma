@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Card, SectionHeader } from "@/components/ui";
+import { requireAdminSession } from "@/lib/admin-server";
 import { ORDER_STATUSES } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -29,6 +30,7 @@ export default async function AdminOrderDetailPage({
   searchParams?: Promise<{ updated?: string; error?: string }>;
 }) {
   const { id } = await params;
+  await requireAdminSession();
   const query = searchParams ? await searchParams : {};
   const detail = await getOrderDetailForAdmin(id);
 
@@ -38,6 +40,8 @@ export default async function AdminOrderDetailPage({
 
   async function updateStatusAction(formData: FormData) {
     "use server";
+
+    await requireAdminSession();
 
     const rawStatus = String(formData.get("status") || "").trim();
     const note = String(formData.get("note") || "").trim();
