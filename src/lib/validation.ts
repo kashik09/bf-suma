@@ -106,8 +106,10 @@ export const cartItemSchema = z.object({
 
 export const orderIntakeItemSchema = z.object({
   product_id: z.string().min(1),
-  quantity: z.number().int().min(1).max(99)
-});
+  quantity: z.number().int().min(1).max(99),
+  currency: z.literal("KES").optional(),
+  image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]).optional()
+}).passthrough();
 
 export const orderIntakeSchema = checkoutSchemaBase.extend({
   items: z.array(orderIntakeItemSchema).min(1)

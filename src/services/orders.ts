@@ -520,7 +520,14 @@ export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrde
     .eq("order_id", orderId)
     .order("changed_at", { ascending: false });
 
-  if (statusHistoryError) throw statusHistoryError;
+  const normalizedStatusHistory = (() => {
+    if (!statusHistoryError) return statusHistory || [];
+    if (statusHistoryError.code === "PGRST205") {
+      // Safe fallback while schema cache catches up; order detail remains readable.
+      return [];
+    }
+    throw statusHistoryError;
+  })();
 
   const row = orderRow as OrderWithCustomerRow;
   return {
@@ -546,7 +553,7 @@ export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrde
       quantity: toInt(item.quantity),
       line_total: toInt(item.line_total)
     })),
-    statusHistory: ((statusHistory || []) as OrderStatusHistoryRow[]).map((entry) => ({
+    statusHistory: (normalizedStatusHistory as OrderStatusHistoryRow[]).map((entry) => ({
       ...entry,
       changed_by: entry.changed_by || null,
       note: entry.note || null
@@ -594,6 +601,10 @@ export async function updateOrderStatus(
 
     if (updateError.message.includes("ORDER_STATUS_CONFLICT")) {
       throw new OrderStatusConflictError("Order status changed before this update. Refresh and retry.");
+    }
+
+    if (updateError.code === "PGRST202" && updateError.message.includes("update_order_status_with_history")) {
+      throw new Error("Order status update function is missing. Apply database migrations and reload schema cache.");
     }
 
     throw updateError;
