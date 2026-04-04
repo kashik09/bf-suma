@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createHash, randomUUID } from "node:crypto";
 import { inquirySchema } from "@/lib/validation";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { createInquiry } from "@/services/inquiries";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -109,7 +109,7 @@ async function enforcePostRateLimit(request: Request, endpoint: string): Promise
   };
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
     const windowStart = getWindowStartIso(nowMs);
     const retryAfterSeconds = getRetryAfterSeconds(nowMs);
     const nowIso = new Date(nowMs).toISOString();

@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import type { NewsletterSignupInput } from "@/lib/validation";
 
 interface NewsletterUpsertResult {
@@ -74,7 +74,7 @@ export async function subscribeNewsletter(input: NewsletterSignupInput): Promise
   const context = normalizeContext(input.context);
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
 
     const { data: existingRows, error: existingError } = await supabase
       .from("newsletter_subscribers")
@@ -153,7 +153,7 @@ export async function markNewsletterWelcomeEmailSent(id: string, storageMode: "d
   }
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
     await supabase
       .from("newsletter_subscribers")
       .update({
