@@ -205,15 +205,39 @@ function clampPageSize(value: number | undefined): number {
   return Math.max(1, Math.min(100, Math.floor(value as number)));
 }
 
-function normalizeRequestedItems(items: OrderIntakeItemInput[]): Array<{ product_id: string; quantity: number }> {
-  const quantityByProduct = new Map<string, number>();
+function normalizeRequestedItems(
+  items: OrderIntakeItemInput[]
+): Array<{ product_id: string; quantity: number; submittedPrice: number; priceMismatch: boolean }> {
+  const itemByProduct = new Map<string, { quantity: number; submittedPrice: number; priceMismatch: boolean }>();
+
   items.forEach((item) => {
-    const current = quantityByProduct.get(item.product_id) || 0;
-    quantityByProduct.set(item.product_id, current + item.quantity);
+    const submittedPrice = toInt(Number(item.price));
+    const current = itemByProduct.get(item.product_id);
+
+    if (!current) {
+      itemByProduct.set(item.product_id, {
+        quantity: item.quantity,
+        submittedPrice,
+        priceMismatch: false
+      });
+      return;
+    }
+
+    const hasPriceMismatch = current.submittedPrice !== submittedPrice;
+    itemByProduct.set(item.product_id, {
+      quantity: current.quantity + item.quantity,
+      submittedPrice: current.submittedPrice,
+      priceMismatch: current.priceMismatch || hasPriceMismatch
+    });
   });
 
-  return Array.from(quantityByProduct.entries())
-    .map(([product_id, quantity]) => ({ product_id, quantity }))
+  return Array.from(itemByProduct.entries())
+    .map(([product_id, data]) => ({
+      product_id,
+      quantity: data.quantity,
+      submittedPrice: data.submittedPrice,
+      priceMismatch: data.priceMismatch
+    }))
     .sort((a, b) => a.product_id.localeCompare(b.product_id));
 }
 
@@ -228,7 +252,14 @@ function normalizePayloadForHash(payload: OrderIntakeInput) {
     pickupLocation: payload.fulfillmentType === "pickup" ? (payload.pickupLocation || "").trim() : undefined,
     paymentMethod: payload.paymentMethod,
     notes: (payload.notes || "").trim(),
-    items: normalizeRequestedItems(payload.items)
+    items: normalizeRequestedItems(payload.items).map((item) => ({
+      product_id: item.product_id,
+      quantity: item.quantity,
+      submittedPrice: item.submittedPrice
+    })),
+    subtotal: toInt(payload.subtotal),
+    deliveryFee: toInt(payload.deliveryFee),
+    total: toInt(payload.total)
   };
 }
 
@@ -287,6 +318,13 @@ function mapAtomicResult(payload: AtomicOrderWriteResultPayload): CreateOrderInt
 
 function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductSnapshotRow[]): AuthoritativeOrderComputation {
   const requestedItems = normalizeRequestedItems(payload.items);
+  if (requestedItems.some((item) => item.priceMismatch)) {
+    throw new OrderIntakeRejectedError(
+      "One or more item prices changed. Please review your cart and try again.",
+      { items: ["Submitted item pricing does not match current catalog pricing."] }
+    );
+  }
+
   const productsById = new Map(products.map((product) => [product.id, product]));
   const missingProductIds = requestedItems
     .map((item) => item.product_id)
@@ -326,6 +364,13 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
       throw new Error(`Invalid product price for ${product.id}`);
     }
 
+    if (!Number.isFinite(item.submittedPrice) || item.submittedPrice !== unitPrice) {
+      throw new OrderIntakeRejectedError(
+        "One or more item prices changed. Please review your cart and try again.",
+        { items: ["Submitted item pricing does not match current catalog pricing."] }
+      );
+    }
+
     const currency = String(product.currency || STORE_CURRENCY).trim().toUpperCase() || STORE_CURRENCY;
     if (currency !== STORE_CURRENCY) {
       throw new OrderIntakeRejectedError(
@@ -350,6 +395,17 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
 
   const deliveryFee = payload.fulfillmentType === "pickup" ? 0 : DELIVERY_FEE_AMOUNT;
   const total = subtotal + deliveryFee;
+
+  if (
+    toInt(payload.subtotal) !== subtotal ||
+    toInt(payload.deliveryFee) !== deliveryFee ||
+    toInt(payload.total) !== total
+  ) {
+    throw new OrderIntakeRejectedError(
+      "Order totals do not match current pricing. Please refresh your cart and try again.",
+      { total: ["Submitted totals do not match current server pricing."] }
+    );
+  }
 
   return {
     items: authoritativeItems,
