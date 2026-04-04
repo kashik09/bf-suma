@@ -17,6 +17,7 @@ import type { OrderIntakeFieldErrors, OrderIntakeResultCode } from "@/types";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
+const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9._:-]{8,120}$/;
 
 interface RateLimitDecision {
   retryAfterSeconds: number;
@@ -296,6 +297,22 @@ export async function POST(request: Request) {
       : null;
   const idempotencyKey = (idempotencyHeader || idempotencyFromBody || "").trim();
 
+  if (idempotencyHeader && idempotencyFromBody && idempotencyHeader.trim() !== idempotencyFromBody.trim()) {
+    logEvent("warn", "order.validation_failed", {
+      correlationId,
+      reason: "conflicting_idempotency_key_sources"
+    });
+
+    return jsonResponse(
+      {
+        persisted: false,
+        resultCode: "REJECTED",
+        message: "Conflicting idempotency keys supplied in header and body."
+      },
+      400
+    );
+  }
+
   if (!idempotencyKey) {
     logEvent("warn", "order.validation_failed", {
       correlationId,
@@ -323,6 +340,22 @@ export async function POST(request: Request) {
         persisted: false,
         resultCode: "REJECTED",
         message: "Invalid idempotency key."
+      },
+      400
+    );
+  }
+
+  if (!IDEMPOTENCY_KEY_PATTERN.test(idempotencyKey)) {
+    logEvent("warn", "order.validation_failed", {
+      correlationId,
+      reason: "invalid_idempotency_key_format"
+    });
+
+    return jsonResponse(
+      {
+        persisted: false,
+        resultCode: "REJECTED",
+        message: "Invalid idempotency key format."
       },
       400
     );
