@@ -30,7 +30,8 @@ export default async function AdminOrderDetailPage({
   searchParams?: Promise<{ updated?: string; error?: string }>;
 }) {
   const { id } = await params;
-  await requireAdminSession();
+  const session = await requireAdminSession();
+  const canManageOrders = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
   const query = searchParams ? await searchParams : {};
   const detail = await getOrderDetailForAdmin(id);
 
@@ -41,7 +42,7 @@ export default async function AdminOrderDetailPage({
   async function updateStatusAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession();
+    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
 
     const rawStatus = String(formData.get("status") || "").trim();
     const note = String(formData.get("note") || "").trim();
@@ -117,42 +118,48 @@ export default async function AdminOrderDetailPage({
 
         <Card className="space-y-3">
           <h3 className="text-base font-semibold text-slate-900">Update Status</h3>
-          <form action={updateStatusAction} className="space-y-3">
-            <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status">
-                Next Status
-              </label>
-              <select
-                className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900"
-                defaultValue={detail.order.status}
-                id="status"
-                name="status"
+          {canManageOrders ? (
+            <form action={updateStatusAction} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status">
+                  Next Status
+                </label>
+                <select
+                  className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900"
+                  defaultValue={detail.order.status}
+                  id="status"
+                  name="status"
+                >
+                  {ORDER_STATUSES.map((status) => (
+                    <option key={status} value={status}>
+                      {formatStatus(status)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="note">
+                  Note (Optional)
+                </label>
+                <textarea
+                  className="min-h-24 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                  id="note"
+                  name="note"
+                  placeholder="Reason for this status change"
+                />
+              </div>
+              <button
+                className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
+                type="submit"
               >
-                {ORDER_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {formatStatus(status)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="note">
-                Note (Optional)
-              </label>
-              <textarea
-                className="min-h-24 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-                id="note"
-                name="note"
-                placeholder="Reason for this status change"
-              />
-            </div>
-            <button
-              className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
-              type="submit"
-            >
-              Save Status
-            </button>
-          </form>
+                Save Status
+              </button>
+            </form>
+          ) : (
+            <p className="text-sm text-slate-600">
+              Your role has read-only access for orders. Contact Operations or Super Admin to change status.
+            </p>
+          )}
         </Card>
       </div>
 
