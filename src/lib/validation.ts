@@ -106,13 +106,17 @@ export const cartItemSchema = z.object({
 
 export const orderIntakeItemSchema = z.object({
   product_id: z.string().min(1),
+  price: z.number().int().nonnegative(),
   quantity: z.number().int().min(1).max(99),
   currency: z.literal("KES").optional(),
   image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]).optional()
 }).passthrough();
 
 export const orderIntakeSchema = checkoutSchemaBase.extend({
-  items: z.array(orderIntakeItemSchema).min(1)
+  items: z.array(orderIntakeItemSchema).min(1),
+  subtotal: z.number().int().nonnegative(),
+  deliveryFee: z.number().int().nonnegative(),
+  total: z.number().int().nonnegative()
 }).superRefine(validateCheckoutRefinement);
 
 export const inquirySchema = z.object({

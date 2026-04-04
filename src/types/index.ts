@@ -18,6 +18,7 @@ export type DeliveryStatus =
 export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 export type NewsletterSubscriberStatus = "ACTIVE" | "UNSUBSCRIBED";
 export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "SUPPORT";
+export type BlogPostStatus = "DRAFT" | "PUBLISHED";
 
 export interface Category {
   id: string;
@@ -178,6 +179,21 @@ export interface AdminUser {
   updated_at: string;
 }
 
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  cover_image_url: string | null;
+  status: BlogPostStatus;
+  author: string;
+  tags: string[];
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AnalyticsOverview {
   totalRevenue: number;
   totalOrders: number;
@@ -240,8 +256,12 @@ export interface OrderIntakePayload {
   notes?: string;
   items: Array<{
     product_id: string;
+    price: number;
     quantity: number;
   }>;
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
 }
 
 export type OrderIntakeResultCode =
@@ -295,6 +315,7 @@ export interface Database {
       inquiries: { Row: Inquiry };
       newsletter_subscribers: { Row: NewsletterSubscriber };
       admin_users: { Row: AdminUser };
+      blog_posts: { Row: BlogPost };
     };
   };
 }
