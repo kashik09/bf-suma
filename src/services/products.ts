@@ -10,7 +10,7 @@ import {
   coerceProductsToReadOnly,
   type CatalogHealth
 } from "@/lib/catalog-health";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { STORE_CURRENCY } from "@/lib/utils";
 import type {
   AvailabilityState,
@@ -214,7 +214,7 @@ function withStorefrontFilters(
 }
 
 async function fetchCatalogFromSupabase(): Promise<CatalogData> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
 
   const [categoriesRes, productsRes, imagesRes] = await Promise.all([
     supabase.from("categories").select("*").eq("is_active", true),
@@ -315,7 +315,7 @@ async function getCatalogData(): Promise<CatalogData> {
 
 export async function listProducts(filters: ProductFilters = {}): Promise<Product[]> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
     let query = supabase.from("products").select("*").order("created_at", { ascending: false });
 
     if (filters.status) query = query.eq("status", filters.status);
@@ -351,7 +351,7 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleSupabaseClient();
     const { data, error } = await supabase.from("products").select("*").eq("slug", slug).single();
 
     if (error) return null;

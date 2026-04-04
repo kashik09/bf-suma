@@ -1,9 +1,9 @@
 import type { InquiryInput } from "@/lib/validation";
 import type { Inquiry } from "@/types";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 
 export async function createInquiry(input: InquiryInput): Promise<Pick<Inquiry, "id" | "status">> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
 
   const { data, error } = await supabase
     .from("inquiries")
