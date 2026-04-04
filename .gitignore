@@ -27,3 +27,4 @@ pnpm-debug.log*
 .claude-preferences
 .vercel
 .env*.local
+tests/.tmp/
