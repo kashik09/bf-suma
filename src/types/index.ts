@@ -18,7 +18,8 @@ export type DeliveryStatus =
 export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 export type NewsletterSubscriberStatus = "ACTIVE" | "UNSUBSCRIBED";
 export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "SUPPORT";
-export type BlogPostStatus = "DRAFT" | "PUBLISHED";
+export type BlogPostStatus = "DRAFT" | "REVIEW" | "PUBLISHED";
+export type BlogChannelTarget = "SHOP" | "WHATSAPP" | "NEWSLETTER" | "SOCIAL";
 
 export interface Category {
   id: string;
@@ -189,6 +190,8 @@ export interface BlogPost {
   status: BlogPostStatus;
   author: string;
   tags: string[];
+  internal_tags: string[];
+  channel_targets: BlogChannelTarget[];
   published_at: string | null;
   created_at: string;
   updated_at: string;
