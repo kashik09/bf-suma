@@ -36,7 +36,7 @@ export default async function BlogIndexPage() {
         ]}
       />
 
-      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-5 shadow-soft sm:p-6">
+      <section className="rounded-2xl border border-amber-200/60 bg-logo-spectrum-warm p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Blog"
           description="Wellness insights, practical guides, and product education from the BF Suma team."

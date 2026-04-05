@@ -33,7 +33,7 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
-      <section className="rounded-2xl border border-slate-200 bg-logo-spectrum-soft p-5 shadow-soft sm:p-6">
+      <section className="rounded-2xl border border-sky-200/60 bg-logo-spectrum-cool p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Shop"
           description="Browse a clean, mobile-first catalog with clear pricing, clear availability, and low-friction checkout paths."
