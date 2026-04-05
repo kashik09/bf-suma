@@ -12,6 +12,7 @@ type BlogSearchParams = Promise<{
 
 const STATUS_LABELS: Record<BlogPostStatus, string> = {
   DRAFT: "Draft",
+  REVIEW: "In Review",
   PUBLISHED: "Published"
 };
 
@@ -35,7 +36,7 @@ export default async function AdminBlogPage({
   const query = searchParams ? await searchParams : {};
   const searchTerm = typeof query.search === "string" ? query.search : "";
   const statusFilter =
-    query.status === "DRAFT" || query.status === "PUBLISHED" ? query.status : "all";
+    query.status === "DRAFT" || query.status === "REVIEW" || query.status === "PUBLISHED" ? query.status : "all";
 
   let posts: Awaited<ReturnType<typeof listAdminBlogPosts>> = [];
   let loadError: string | null = null;
@@ -104,6 +105,7 @@ export default async function AdminBlogPage({
             >
               <option value="all">All</option>
               <option value="DRAFT">Draft</option>
+              <option value="REVIEW">Review</option>
               <option value="PUBLISHED">Published</option>
             </select>
           </div>
@@ -148,10 +150,18 @@ export default async function AdminBlogPage({
                     {post.tags.length > 0 ? (
                       <p className="text-xs text-slate-500">{post.tags.slice(0, 4).map((tag) => `#${tag}`).join(" ")}</p>
                     ) : null}
+                    {post.internal_tags.length > 0 ? (
+                      <p className="text-xs text-sky-700">{post.internal_tags.slice(0, 3).map((tag) => `@${tag}`).join(" ")}</p>
+                    ) : null}
+                    {post.channel_targets.length > 0 ? (
+                      <p className="text-xs text-slate-500">Channels: {post.channel_targets.join(", ")}</p>
+                    ) : (
+                      <p className="text-xs text-amber-700">Channels: none selected</p>
+                    )}
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <Badge variant={post.status === "PUBLISHED" ? "success" : "warning"}>
+                  <Badge variant={post.status === "PUBLISHED" ? "success" : post.status === "REVIEW" ? "info" : "warning"}>
                     {STATUS_LABELS[post.status]}
                   </Badge>
                 </td>

@@ -5,9 +5,10 @@ import { z } from "zod";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { BlogSlugConflictError, createAdminBlogPost } from "@/services/admin-blog";
-import type { BlogPostStatus } from "@/types";
+import type { BlogChannelTarget, BlogPostStatus } from "@/types";
 
-const BLOG_STATUS_VALUES = ["DRAFT", "PUBLISHED"] as const;
+const BLOG_STATUS_VALUES = ["DRAFT", "REVIEW", "PUBLISHED"] as const;
+const BLOG_CHANNEL_TARGETS = ["SHOP", "WHATSAPP", "NEWSLETTER", "SOCIAL"] as const;
 
 const createBlogPostSchema = z.object({
   title: z.string().trim().min(2).max(180),
@@ -20,6 +21,7 @@ const createBlogPostSchema = z.object({
   ),
   status: z.enum(BLOG_STATUS_VALUES),
   tags: z.string().trim().max(400).optional(),
+  internalTags: z.string().trim().max(500).optional(),
   content: z.string().trim().min(20).max(50000)
 });
 
@@ -52,6 +54,20 @@ function parseTags(value: string | undefined): string[] {
   return [...unique];
 }
 
+function parseChannelTargets(values: FormDataEntryValue[]): BlogChannelTarget[] {
+  const allowed = new Set<string>(BLOG_CHANNEL_TARGETS);
+  const deduped = new Set<BlogChannelTarget>();
+
+  values.forEach((value) => {
+    if (typeof value !== "string") return;
+    const cleaned = value.trim().toUpperCase();
+    if (!allowed.has(cleaned)) return;
+    deduped.add(cleaned as BlogChannelTarget);
+  });
+
+  return [...deduped];
+}
+
 export default async function AdminNewBlogPostPage({
   searchParams
 }: {
@@ -73,8 +89,10 @@ export default async function AdminNewBlogPostPage({
       coverImageUrl: formData.get("coverImageUrl"),
       status: formData.get("status"),
       tags: formData.get("tags"),
+      internalTags: formData.get("internalTags"),
       content: formData.get("content")
     });
+    const channelTargets = parseChannelTargets(formData.getAll("channelTargets"));
 
     if (!parsed.success) {
       redirect("/admin/blog/new?error=Invalid%20blog%20payload.");
@@ -94,7 +112,9 @@ export default async function AdminNewBlogPostPage({
         content: parsed.data.content,
         cover_image_url: parsed.data.coverImageUrl ?? null,
         status: parsed.data.status as BlogPostStatus,
-        tags: parseTags(parsed.data.tags)
+        tags: parseTags(parsed.data.tags),
+        internal_tags: parseTags(parsed.data.internalTags),
+        channel_targets: channelTargets
       });
 
       revalidatePath("/blog");
@@ -110,7 +130,7 @@ export default async function AdminNewBlogPostPage({
     <div className="space-y-6">
       <SectionHeader
         title="Create Blog Post"
-        description="Draft or publish a new article for the storefront blog."
+        description="Create content with a Draft -> Review -> Publish workflow and channel-ready metadata."
         action={
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/admin/blog">
             Back to Blog Posts
@@ -163,6 +183,23 @@ export default async function AdminNewBlogPostPage({
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="tags">Tags (comma separated)</label>
             <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="tags" name="tags" placeholder="nutrition, gut-health, daily-routine" />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="internalTags">Internal Tags (for reuse)</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="internalTags" name="internalTags" placeholder="campaign-q2, immunity-series, promo-asset" />
+          </div>
+
+          <div className="md:col-span-2">
+            <p className="mb-2 text-sm font-medium text-slate-700">Channel Targets</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {BLOG_CHANNEL_TARGETS.map((target) => (
+                <label className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700" key={target}>
+                  <input defaultChecked={target === "SHOP" || target === "WHATSAPP"} name="channelTargets" type="checkbox" value={target} />
+                  {target}
+                </label>
+              ))}
+            </div>
           </div>
 
           <div className="md:col-span-2">
