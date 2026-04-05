@@ -30,8 +30,12 @@ export default async function HomePage() {
         heroHeadline={pdfHomepage.heroHeadline}
         heroSupportingText={pdfHomepage.heroSupportingText}
       />
-
+      
       <PageContainer className="space-y-10 py-10 sm:space-y-12 md:space-y-14 md:py-12 lg:py-14">
+        
+        <HomeHealthInterests categories={categories} />
+        <HomeFeaturedProducts products={products} />
+
         <FeaturedInsight />
 
         <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
@@ -68,33 +72,10 @@ export default async function HomePage() {
 
         <WeeklyFeed />
 
-        <HomeHealthInterests categories={categories} />
-        <HomeFeaturedProducts products={products} />
+
 
         <MiniArticle />
 
-        <section className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4 sm:p-5">
-          <NewsletterSignup
-            className="border-0 bg-transparent p-0 shadow-none"
-            compact
-            context="homepage_bridge"
-            ctaLabel="Get Weekly Insights"
-            description="Simple product insights and practical offers you can use each week."
-            source="homepage"
-            title="Get insights like this weekly"
-          />
-          <a
-            className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
-            href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("homepage_newsletter_bridge"), SUPPORT_WHATSAPP_PHONE)}
-            rel="noreferrer"
-            target="_blank"
-          >
-            <MessageCircle className="mr-1.5 h-4 w-4" />
-            Prefer WhatsApp Updates
-          </a>
-        </section>
-
-        <StoryBlock />
         <HomeFinalCta />
       </PageContainer>
     </>
