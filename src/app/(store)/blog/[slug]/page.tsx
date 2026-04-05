@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlogProse } from "@/components/content/blog-prose";
 import { PageContainer } from "@/components/layout/page-container";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge } from "@/components/ui";
@@ -27,36 +28,6 @@ function formatPublishedDate(value: string | null, fallback: string) {
   });
 }
 
-function renderContentBlocks(content: string) {
-  const blocks = content
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
-
-  return blocks.map((block, index) => {
-    const lines = block
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    const isListBlock = lines.length > 1 && lines.every((line) => line.startsWith("- ") || line.startsWith("* "));
-    if (isListBlock) {
-      return (
-        <ul className="list-disc space-y-2 pl-5 text-slate-700" key={`${index}-${block.slice(0, 20)}`}>
-          {lines.map((line) => (
-            <li key={line}>{line.slice(2).trim()}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    return (
-      <p className="leading-8 text-slate-700" key={`${index}-${block.slice(0, 20)}`}>
-        {block}
-      </p>
-    );
-  });
-}
 
 export async function generateMetadata({
   params
@@ -181,7 +152,7 @@ export default async function BlogDetailPage({
             ) : null}
           </header>
 
-          <div className="space-y-5">{renderContentBlocks(post.content)}</div>
+          <BlogProse content={post.content} />
 
           <section className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
             <h2 className="text-lg font-semibold text-slate-900">Ready to take the next step?</h2>
