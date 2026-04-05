@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 
-type BlogPostStatus = "DRAFT" | "PUBLISHED";
+type BlogPostStatus = "DRAFT" | "REVIEW" | "PUBLISHED";
 
 interface BlogPostRow {
   id: string;

@@ -75,8 +75,8 @@ export async function approveSubmission(id: string, reviewerName: string): Promi
   const { error } = await supabase
     .from("blog_posts")
     .update({
-      status: "PUBLISHED",
-      published_at: new Date().toISOString(),
+      status: "REVIEW",
+      published_at: null,
       reviewed_by: reviewerName,
       reviewed_at: new Date().toISOString()
     })
