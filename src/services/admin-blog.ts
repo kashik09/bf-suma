@@ -1,5 +1,5 @@
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
-import type { BlogPostStatus } from "@/types";
+import type { BlogChannelTarget, BlogPostStatus } from "@/types";
 
 interface BlogPostRow {
   id: string;
@@ -11,6 +11,8 @@ interface BlogPostRow {
   status: BlogPostStatus;
   author: string;
   tags: string[] | null;
+  internal_tags: string[] | null;
+  channel_targets: BlogChannelTarget[] | null;
   published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -24,6 +26,8 @@ export interface AdminBlogPostListItem {
   status: BlogPostStatus;
   author: string;
   tags: string[];
+  internal_tags: string[];
+  channel_targets: BlogChannelTarget[];
   published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -43,6 +47,8 @@ export interface UpsertAdminBlogPostInput {
   status: BlogPostStatus;
   author: string;
   tags: string[];
+  internal_tags: string[];
+  channel_targets: BlogChannelTarget[];
 }
 
 export interface ListAdminBlogPostsInput {
@@ -84,6 +90,23 @@ function normalizeTags(tags: unknown): string[] {
   return [...unique];
 }
 
+function normalizeChannelTargets(value: unknown): BlogChannelTarget[] {
+  if (!Array.isArray(value)) return [];
+
+  const allowed: BlogChannelTarget[] = ["SHOP", "WHATSAPP", "NEWSLETTER", "SOCIAL"];
+  const allowedSet = new Set<string>(allowed);
+  const deduped = new Set<BlogChannelTarget>();
+
+  for (const entry of value) {
+    if (typeof entry !== "string") continue;
+    const cleaned = entry.trim().toUpperCase();
+    if (!allowedSet.has(cleaned)) continue;
+    deduped.add(cleaned as BlogChannelTarget);
+  }
+
+  return [...deduped];
+}
+
 function toListItem(row: BlogPostRow): AdminBlogPostListItem {
   return {
     id: row.id,
@@ -93,6 +116,8 @@ function toListItem(row: BlogPostRow): AdminBlogPostListItem {
     status: row.status,
     author: row.author,
     tags: normalizeTags(row.tags),
+    internal_tags: normalizeTags(row.internal_tags),
+    channel_targets: normalizeChannelTargets(row.channel_targets),
     published_at: row.published_at,
     created_at: row.created_at,
     updated_at: row.updated_at
@@ -121,7 +146,7 @@ export async function listAdminBlogPosts(
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase
     .from("blog_posts")
-    .select("id, title, slug, excerpt, status, author, tags, published_at, created_at, updated_at")
+    .select("id, title, slug, excerpt, status, author, tags, internal_tags, channel_targets, published_at, created_at, updated_at")
     .order("created_at", { ascending: false });
 
   if (input.status && input.status !== "all") {
@@ -154,7 +179,7 @@ export async function getAdminBlogPostById(id: string): Promise<AdminBlogPostDet
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase
     .from("blog_posts")
-    .select("id, title, slug, excerpt, content, cover_image_url, status, author, tags, published_at, created_at, updated_at")
+    .select("id, title, slug, excerpt, content, cover_image_url, status, author, tags, internal_tags, channel_targets, published_at, created_at, updated_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -185,6 +210,8 @@ export async function createAdminBlogPost(input: UpsertAdminBlogPostInput): Prom
     status: input.status,
     author: input.author,
     tags: input.tags,
+    internal_tags: input.internal_tags,
+    channel_targets: input.channel_targets,
     published_at: input.status === "PUBLISHED" ? nowIso : null
   };
 
@@ -229,6 +256,8 @@ export async function updateAdminBlogPost(id: string, input: UpsertAdminBlogPost
     status: input.status,
     author: input.author,
     tags: input.tags,
+    internal_tags: input.internal_tags,
+    channel_targets: input.channel_targets,
     published_at: publishedAt,
     updated_at: new Date().toISOString()
   };
