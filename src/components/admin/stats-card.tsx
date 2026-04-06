@@ -21,10 +21,10 @@ const variantStyles = {
     value: "text-slate-900"
   },
   success: {
-    card: "bg-emerald-50 border-emerald-200",
-    iconWrap: "bg-emerald-100",
-    icon: "text-emerald-600",
-    value: "text-emerald-700"
+    card: "bg-brand-50 border-brand-200",
+    iconWrap: "bg-brand-100",
+    icon: "text-brand-600",
+    value: "text-brand-700"
   },
   warning: {
     card: "bg-amber-50 border-amber-200",
@@ -74,7 +74,7 @@ export function StatsCard({
             <p
               className={cn(
                 "text-xs font-medium",
-                trend.isPositive ? "text-emerald-600" : "text-rose-600"
+                trend.isPositive ? "text-brand-600" : "text-rose-600"
               )}
             >
               {trend.isPositive ? "+" : ""}
