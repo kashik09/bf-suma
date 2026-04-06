@@ -167,12 +167,12 @@ export default async function AdminDashboardPage() {
         />
       </div>
 
-      <Card className={snapshot.systemHealth.overallStatus === "critical" ? "border-rose-300 bg-rose-50" : snapshot.systemHealth.overallStatus === "warning" ? "border-amber-300 bg-amber-50" : "border-emerald-300 bg-emerald-50"}>
+      <Card className={snapshot.systemHealth.overallStatus === "critical" ? "border-rose-300 bg-rose-50" : snapshot.systemHealth.overallStatus === "warning" ? "border-amber-300 bg-amber-50" : "border-brand-200 bg-brand-50"}>
         <div className="mb-3 flex items-center gap-2">
           {snapshot.systemHealth.overallStatus === "critical" ? (
             <ShieldAlert className="h-5 w-5 text-rose-700" />
           ) : (
-            <ShieldCheck className="h-5 w-5 text-emerald-700" />
+            <ShieldCheck className="h-5 w-5 text-brand-700" />
           )}
           <h3 className="text-base font-semibold text-slate-900">System Health</h3>
           <Badge variant={healthBadgeVariant(snapshot.systemHealth.overallStatus)}>
