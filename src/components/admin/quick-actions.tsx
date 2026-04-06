@@ -18,14 +18,14 @@ interface QuickActionsProps {
 const variantStyles = {
   default: "bg-slate-50 hover:bg-slate-100 border-slate-200",
   primary: "bg-brand-50 hover:bg-brand-100 border-brand-200",
-  success: "bg-emerald-50 hover:bg-emerald-100 border-emerald-200",
+  success: "bg-brand-50 hover:bg-brand-100 border-brand-200",
   warning: "bg-amber-50 hover:bg-amber-100 border-amber-200"
 };
 
 const iconVariantStyles = {
   default: "text-slate-600",
   primary: "text-brand-600",
-  success: "text-emerald-600",
+  success: "text-brand-600",
   warning: "text-amber-600"
 };
 
