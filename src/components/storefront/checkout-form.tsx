@@ -429,7 +429,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       </div>
 
       <aside className="space-y-3 lg:sticky lg:top-24 lg:h-fit">
-        <div className={`rounded-xl border p-3 text-sm shadow-soft ${hasAttention ? "border-amber-300 bg-amber-50" : "border-emerald-200 bg-emerald-50"}`}>
+        <div className={`rounded-xl border p-3 text-sm shadow-soft ${hasAttention ? "border-amber-300 bg-amber-50" : "border-brand-200 bg-brand-50"}`}>
           <p className="font-semibold text-slate-900">{hasAttention ? "Needs attention" : "Ready for submission"}</p>
           <p className="mt-1 text-xs text-slate-700">
             {hasAttention
@@ -494,7 +494,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           </Button>
 
           {resultMessage ? (
-            <p className={`mt-3 text-sm ${resultStatus === "success" ? "text-emerald-700" : "text-rose-700"}`}>
+            <p className={`mt-3 text-sm ${resultStatus === "success" ? "text-brand-700" : "text-rose-700"}`}>
               {resultMessage}
             </p>
           ) : null}

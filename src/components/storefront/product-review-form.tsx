@@ -72,7 +72,7 @@ export function ProductReviewForm({ productId, productName }: ProductReviewFormP
         <div
           className={`rounded-md p-3 text-sm ${
             message.type === "success"
-              ? "border border-emerald-200 bg-emerald-50 text-emerald-800"
+              ? "border border-brand-200 bg-brand-50 text-brand-800"
               : "border border-rose-200 bg-rose-50 text-rose-800"
           }`}
         >

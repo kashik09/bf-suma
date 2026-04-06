@@ -60,7 +60,7 @@ export function ProductReviewsList({ reviews, averageRating, reviewCount }: Prod
                 <div className="flex items-center gap-2">
                   <StarRating rating={review.rating} />
                   {review.is_verified_purchase && (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">
                       Verified Purchase
                     </span>
                   )}
