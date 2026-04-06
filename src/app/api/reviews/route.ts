@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
 import { submitProductReview } from "@/services/product-reviews";
+import { buildRateLimitKey } from "@/lib/request-ip";
 
 const RATE_LIMIT_MAX_REQUESTS = 3;
 const RATE_LIMIT_WINDOW_SECONDS = 300; // 5 minutes - stricter for reviews
@@ -13,23 +13,8 @@ interface InMemoryRateLimitState {
 
 const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
 
-function resolveClientIp(request: Request): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const firstIp = forwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp?.trim()) return realIp.trim();
-  const cfIp = request.headers.get("cf-connecting-ip");
-  if (cfIp?.trim()) return cfIp.trim();
-  return "unknown";
-}
-
 function buildClientFingerprint(request: Request): string {
-  const ip = resolveClientIp(request);
-  const userAgent = request.headers.get("user-agent") || "unknown";
-  return createHash("sha256").update(`${ip}|${userAgent}`).digest("hex");
+  return buildRateLimitKey(request.headers, "reviews");
 }
 
 function enforceRateLimit(request: Request): { blocked: boolean; retryAfterSeconds: number } {

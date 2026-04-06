@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
 import { ORDER_STATUSES } from "@/lib/constants";
 import { assertAdminRequest } from "@/lib/admin-request";
@@ -13,6 +13,7 @@ import {
   OrderIntakeRejectedError,
   OrderTemporaryFailureError
 } from "@/services/orders";
+import { buildRateLimitKey } from "@/lib/request-ip";
 import type { OrderIntakeFieldErrors, OrderIntakeResultCode } from "@/types";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -94,26 +95,8 @@ function getCorrelationId(request: Request): string {
   return randomUUID();
 }
 
-function resolveClientIp(request: Request): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const firstIp = forwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp?.trim()) return realIp.trim();
-
-  const cfIp = request.headers.get("cf-connecting-ip");
-  if (cfIp?.trim()) return cfIp.trim();
-
-  return "unknown";
-}
-
 function buildClientFingerprint(request: Request): string {
-  const ip = resolveClientIp(request);
-  const userAgent = request.headers.get("user-agent") || "unknown";
-  return createHash("sha256").update(`${ip}|${userAgent}`).digest("hex");
+  return buildRateLimitKey(request.headers, "orders");
 }
 
 function getWindowStartIso(nowMs: number): string {
