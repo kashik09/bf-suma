@@ -1,4 +1,5 @@
 import type { Customer, Order, OrderItem, OrderStatus } from "@/types";
+import type { Json } from "@/types/database";
 import { createHash } from "node:crypto";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import type { OrderIntakeInput, OrderIntakeItemInput } from "@/lib/validation";
@@ -448,10 +449,10 @@ function normalizeOrderStatusUpdateRpcRow(data: unknown): Order {
   };
 }
 
-function sanitizeOptionalText(value: string | null | undefined, maxLength: number): string | null {
-  if (!value) return null;
+function sanitizeOptionalText(value: string | null | undefined, maxLength: number): string | undefined {
+  if (!value) return undefined;
   const trimmed = value.trim();
-  if (trimmed.length === 0) return null;
+  if (trimmed.length === 0) return undefined;
   return trimmed.slice(0, maxLength);
 }
 
@@ -719,7 +720,7 @@ async function executeAtomicOrderWrite(
     p_delivery_fee: computed.deliveryFee,
     p_total: computed.total,
     p_currency: computed.currency,
-    p_items: orderItemsPayload
+    p_items: orderItemsPayload as unknown as Json
   });
 
   if (error) throw error;
