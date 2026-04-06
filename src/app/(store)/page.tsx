@@ -59,7 +59,7 @@ export default async function HomePage() {
               Explore Products
             </Link>
             <a
-              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-5 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
+              className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-5 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
               href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("homepage_cta"), SUPPORT_WHATSAPP_PHONE)}
               rel="noreferrer"
               target="_blank"
