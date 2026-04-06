@@ -7,7 +7,7 @@ export type OrderStatus =
   | "DELIVERED"
   | "CANCELED";
 export type PaymentStatus = "UNPAID" | "PAID" | "FAILED" | "REFUNDED";
-export type CurrencyCode = "KES";
+export type CurrencyCode = "KES" | "UGX";
 export type DeliveryStatus =
   | "UNASSIGNED"
   | "ASSIGNED"
