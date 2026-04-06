@@ -59,7 +59,7 @@ export function HomeStory() {
         <ul className="space-y-2">
           {proofBullets.map((point) => (
             <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={point}>
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
               <span>{point}</span>
             </li>
           ))}

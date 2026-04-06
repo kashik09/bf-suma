@@ -123,6 +123,8 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${s.image})` }}
+            role="img"
+            aria-label={`${s.badge} - ${s.headline}`}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-slate-900/40 to-slate-900/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/30" />
@@ -153,7 +155,7 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
             Shop Now
           </Link>
           <a
-            className="inline-flex h-12 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-6 text-sm font-semibold text-emerald-900 shadow-soft transition hover:bg-emerald-100 sm:h-12 sm:px-7 sm:text-base"
+            className="inline-flex h-12 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-6 text-sm font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-7 sm:text-base"
             href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("hero"), SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
