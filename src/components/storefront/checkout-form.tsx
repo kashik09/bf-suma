@@ -338,11 +338,11 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField error={form.formState.errors.firstName?.message} htmlFor="firstName" label="First Name">
-              <Input id="firstName" placeholder="Ashanti" {...form.register("firstName")} />
+              <Input id="firstName" placeholder="First name" {...form.register("firstName")} />
             </FormField>
 
             <FormField error={form.formState.errors.lastName?.message} htmlFor="lastName" label="Last Name">
-              <Input id="lastName" placeholder="Kweyu" {...form.register("lastName")} />
+              <Input id="lastName" placeholder="Last name" {...form.register("lastName")} />
             </FormField>
           </div>
 

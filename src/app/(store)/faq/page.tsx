@@ -76,7 +76,7 @@ const additionalFaqs: FaqItem[] = [
   // Returns & Support
   {
     question: "What is your return policy?",
-    answer: "We accept returns of unopened products within 14 days of delivery. Products must be in original packaging. Contact us via WhatsApp or email to initiate a return. See our full refund policy for details.",
+    answer: "We accept returns of unopened products within 7 days of delivery. Products must be in original packaging. Contact us via WhatsApp or email to initiate a return. See our full refund policy for details.",
     category: "Support"
   },
   {
