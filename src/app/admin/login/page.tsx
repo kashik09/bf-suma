@@ -19,6 +19,7 @@ function getErrorMessage(error?: string) {
   if (error === "invalid_credentials") return "Invalid email or password.";
   if (error === "auth_unavailable") return "Admin auth is not available yet. Apply database migrations.";
   if (error === "forbidden") return "You do not have permission for that admin action.";
+  if (error === "password_reset_required") return "Password reset required. Please set a new password.";
   return "Unable to sign in. Please try again.";
 }
 
@@ -58,10 +59,35 @@ export default async function AdminLoginPage({
         redirect(`/admin/login?error=invalid_credentials&next=${encodeURIComponent(submittedNext)}`);
       }
 
+      // Check if password reset is required
+      if (user.mustResetPassword) {
+        // Create a temporary session for password reset only
+        const resetToken = await createAdminSessionToken({
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+          passwordVersion: user.passwordVersion,
+          mustResetPassword: true
+        });
+
+        const cookieStore = await cookies();
+        cookieStore.set(ADMIN_SESSION_COOKIE_NAME, resetToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 60 * 15, // 15 minutes for password reset
+          path: "/"
+        });
+
+        redirect(`/admin/reset-password?next=${encodeURIComponent(submittedNext)}`);
+      }
+
       const token = await createAdminSessionToken({
         userId: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        passwordVersion: user.passwordVersion,
+        mustResetPassword: false
       });
 
       const cookieStore = await cookies();
