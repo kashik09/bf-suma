@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { sendNewsletterWelcomeEmail } from "@/lib/email/resend";
 import { newsletterSignupSchema } from "@/lib/validation";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { markNewsletterWelcomeEmailSent, subscribeNewsletter } from "@/services/newsletter";
+import { buildRateLimitKey } from "@/lib/request-ip";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
@@ -49,26 +50,8 @@ function getCorrelationId(request: Request): string {
   return randomUUID();
 }
 
-function resolveClientIp(request: Request): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const firstIp = forwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp?.trim()) return realIp.trim();
-
-  const cfIp = request.headers.get("cf-connecting-ip");
-  if (cfIp?.trim()) return cfIp.trim();
-
-  return "unknown";
-}
-
 function buildClientFingerprint(request: Request): string {
-  const ip = resolveClientIp(request);
-  const userAgent = request.headers.get("user-agent") || "unknown";
-  return createHash("sha256").update(`${ip}|${userAgent}`).digest("hex");
+  return buildRateLimitKey(request.headers, "newsletter");
 }
 
 function getWindowStartIso(nowMs: number): string {
