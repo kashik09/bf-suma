@@ -152,7 +152,7 @@ export default async function AdminProductDetailPage({
       />
 
       {query.updated === "1" ? (
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+        <div className="rounded-md border border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
           Product updated successfully.
         </div>
       ) : null}
