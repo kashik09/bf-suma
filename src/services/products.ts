@@ -16,6 +16,7 @@ import { STORE_CURRENCY } from "@/lib/utils";
 import type {
   AvailabilityState,
   Category,
+  CurrencyCode,
   Product,
   ProductImage,
   ProductStatus,
@@ -250,7 +251,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
       FALLBACK_CATEGORIES[0].image_url
   }));
 
-  const mappedProducts: StorefrontProduct[] = products
+  const mappedProducts = products
     .map((product) => {
       const category = categoriesById.get(product.category_id);
       if (!category) return null;
@@ -266,7 +267,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
         description: product.description || "",
         price: Number(product.price),
         compare_at_price: product.compare_at_price ? Number(product.compare_at_price) : null,
-        currency: (product.currency || STORE_CURRENCY) as "KES",
+        currency: (product.currency || STORE_CURRENCY) as CurrencyCode,
         sku: product.sku,
         stock_qty: Number(product.stock_qty),
         status,
@@ -332,7 +333,11 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
     const { data, error } = await query;
     if (error) throw error;
 
-    return data ?? [];
+    return (data ?? []).map((p) => ({
+      ...p,
+      status: p.status as ProductStatus,
+      currency: p.currency as CurrencyCode
+    }));
   } catch (error) {
     logCatalogFallback("listProducts", error, {
       hasStatusFilter: Boolean(filters.status),
@@ -362,8 +367,12 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     const supabase = createServiceRoleSupabaseClient();
     const { data, error } = await supabase.from("products").select("*").eq("slug", slug).single();
 
-    if (error) return null;
-    return data;
+    if (error || !data) return null;
+    return {
+      ...data,
+      status: data.status as ProductStatus,
+      currency: data.currency as CurrencyCode
+    };
   } catch (error) {
     logCatalogFallback("getProductBySlug", error, { slug });
 

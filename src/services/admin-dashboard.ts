@@ -2,8 +2,10 @@ import { unstable_cache } from "next/cache";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { getBlogReadiness } from "@/services/blog";
 import { getStorefrontCatalogHealth } from "@/services/products";
-import type { InquiryStatus, OrderStatus } from "@/types";
+import type { BlogPostStatus, InquiryStatus, OrderStatus } from "@/types";
+import type { Database } from "@/types/database";
 
+type TableName = keyof Database["public"]["Tables"];
 type HealthStatus = "healthy" | "warning" | "critical";
 
 interface DashboardRecentOrder {
@@ -18,7 +20,7 @@ interface DashboardRecentOrder {
 interface DashboardRecentBlogPost {
   id: string;
   title: string;
-  status: "DRAFT" | "REVIEW" | "PUBLISHED";
+  status: BlogPostStatus;
   slug: string;
   updatedAt: string;
 }
@@ -166,7 +168,7 @@ function pushUniqueWarning(warnings: string[], value: string) {
 
 async function probeTableSchema(
   supabase: ReturnType<typeof createServiceRoleSupabaseClient>,
-  table: string,
+  table: TableName,
   selectColumns: string
 ): Promise<{ status: HealthStatus; message: string }> {
   const { error } = await supabase.from(table).select(selectColumns).limit(1);
@@ -297,7 +299,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     recentBlogPosts = (recentBlogRes.data || []).map((row) => ({
       id: row.id,
       title: row.title,
-      status: row.status,
+      status: row.status as BlogPostStatus,
       slug: row.slug,
       updatedAt: row.updated_at
     }));
@@ -329,7 +331,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     recentInquiries = (recentInquiriesRes.data || []).map((row) => ({
       id: row.id,
       name: row.name,
-      status: row.status,
+      status: row.status as InquiryStatus,
       createdAt: row.created_at
     }));
   } catch (error) {

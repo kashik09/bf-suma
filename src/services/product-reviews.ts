@@ -20,9 +20,11 @@ export interface CreateReviewInput {
   comment: string;
 }
 
+type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 export interface AdminReview extends ProductReview {
   reviewer_email: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: ReviewStatus;
   admin_notes: string | null;
   product_name?: string;
 }
@@ -129,6 +131,7 @@ export async function getAdminReviews(status?: "PENDING" | "APPROVED" | "REJECTE
 
   return (data ?? []).map(r => ({
     ...r,
+    status: r.status as ReviewStatus,
     product_name: productNameById.get(r.product_id)
   }));
 }
