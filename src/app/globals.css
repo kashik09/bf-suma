@@ -51,6 +51,18 @@ a {
   color: #1a2b18;
 }
 
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   /* Single-color gradients based on favicon brand colors */
   .bg-logo-spectrum-soft {
@@ -63,6 +75,14 @@ a {
 
   .bg-logo-spectrum-cool {
     background: linear-gradient(135deg, rgba(0, 170, 219, 0.08) 0%, rgba(0, 170, 219, 0.02) 100%);
+  }
+
+  .bg-logo-spectrum-pink {
+    background: linear-gradient(135deg, rgba(236, 41, 123, 0.08) 0%, rgba(236, 41, 123, 0.02) 100%);
+  }
+
+  .bg-logo-spectrum-orange {
+    background: linear-gradient(135deg, rgba(244, 129, 61, 0.08) 0%, rgba(244, 129, 61, 0.02) 100%);
   }
 
   .bg-logo-spectrum-footer {
