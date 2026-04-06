@@ -29,13 +29,13 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const DEFAULT_DURATION = 3600;
 
 const variantStyles: Record<ToastVariant, string> = {
-  success: "border-emerald-700/90 bg-emerald-950 text-emerald-50",
+  success: "border-brand-700/90 bg-brand-800 text-brand-50",
   error: "border-rose-700/80 bg-rose-950 text-rose-50",
   info: "border-slate-700 bg-slate-900 text-slate-50"
 };
 
 const variantBadgeStyles: Record<ToastVariant, string> = {
-  success: "bg-emerald-700/80 text-emerald-50",
+  success: "bg-brand-700/80 text-brand-50",
   error: "bg-rose-700/80 text-rose-50",
   info: "bg-slate-700 text-slate-50"
 };

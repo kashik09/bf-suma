@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useEffect, useId, useRef } from "react";
+
 export function Drawer({
   open,
   title,
@@ -11,21 +13,57 @@ export function Drawer({
   children: React.ReactNode;
   onClose: () => void;
 }) {
+  const titleId = useId();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+      closeButtonRef.current?.focus();
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [open, handleKeyDown]);
+
+  if (!open) return null;
+
   return (
-    <div
-      className={`fixed inset-0 z-50 transition ${open ? "pointer-events-auto" : "pointer-events-none"}`}
-      aria-hidden={!open}
-    >
+    <div className="fixed inset-0 z-50">
       <div
-        className={`absolute inset-0 bg-slate-900/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+        className="absolute inset-0 bg-slate-900/40 transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
       <aside
-        className={`absolute right-0 top-0 h-full w-full max-w-md bg-white p-5 shadow-card transition-transform ${open ? "translate-x-0" : "translate-x-full"}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-5 shadow-card"
       >
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          <button className="text-sm text-slate-500" onClick={onClose} type="button">
+          <h3 id={titleId} className="text-lg font-semibold">{title}</h3>
+          <button
+            ref={closeButtonRef}
+            className="text-sm text-slate-500 hover:text-slate-700"
+            onClick={onClose}
+            type="button"
+            aria-label="Close drawer"
+          >
             Close
           </button>
         </div>
