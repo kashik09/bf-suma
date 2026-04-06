@@ -94,7 +94,7 @@ export default async function BlogDetailPage({
                 Shop Products
               </Link>
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
                 href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("blog_unavailable"), SUPPORT_WHATSAPP_PHONE)}
                 rel="noreferrer"
                 target="_blank"
@@ -167,7 +167,7 @@ export default async function BlogDetailPage({
                 Shop Now
               </Link>
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
                 href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage(`blog:${post.slug}`), SUPPORT_WHATSAPP_PHONE)}
                 rel="noreferrer"
                 target="_blank"

@@ -84,9 +84,9 @@ export default async function BlogSubmitPage({
       />
 
       {query.success === "1" && (
-        <Card className="border-emerald-200 bg-emerald-50">
-          <p className="font-medium text-emerald-800">Your article has been submitted!</p>
-          <p className="mt-1 text-sm text-emerald-700">
+        <Card className="border-brand-200 bg-brand-50">
+          <p className="font-medium text-brand-800">Your article has been submitted!</p>
+          <p className="mt-1 text-sm text-brand-700">
             We'll review it and notify you when it's published. Thank you for contributing!
           </p>
         </Card>
