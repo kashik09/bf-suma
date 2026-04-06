@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -131,6 +131,7 @@ export default async function AdminBlogDetailPage({
         channel_targets: channelTargets
       });
 
+      revalidateTag("blog");
       revalidatePath("/blog");
       revalidatePath(`/blog/${previousSlug}`);
       revalidatePath(`/blog/${updated.slug}`);
@@ -149,6 +150,7 @@ export default async function AdminBlogDetailPage({
 
     try {
       await deleteAdminBlogPost(id);
+      revalidateTag("blog");
       revalidatePath("/blog");
       revalidatePath(`/blog/${previousSlug}`);
       revalidatePath("/admin/blog");

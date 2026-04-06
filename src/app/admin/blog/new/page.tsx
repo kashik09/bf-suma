@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -117,6 +117,7 @@ export default async function AdminNewBlogPostPage({
         channel_targets: channelTargets
       });
 
+      revalidateTag("blog");
       revalidatePath("/blog");
       revalidatePath(`/blog/${normalizedSlug}`);
       revalidatePath("/admin/blog");
