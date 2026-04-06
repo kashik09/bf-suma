@@ -8,12 +8,20 @@ export interface AdminSessionClaims {
   role: AdminRole;
   email: string;
   exp: number;
+  passwordVersion?: number;
+  mustResetPassword?: boolean;
 }
 
 function resolveAdminSessionSecret(): string {
-  const secret = process.env.ADMIN_SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
-    throw new Error("Missing ADMIN_SESSION_SECRET (or SUPABASE_SERVICE_ROLE_KEY fallback).");
+    throw new Error(
+      "ADMIN_SESSION_SECRET environment variable is required. " +
+      "Generate a secure random string (32+ characters) and set it in your .env file."
+    );
+  }
+  if (secret.length < 32) {
+    throw new Error("ADMIN_SESSION_SECRET must be at least 32 characters long.");
   }
   return secret;
 }
