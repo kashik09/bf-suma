@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "@/types/database";
 
 function resolveSupabaseUrl() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -31,7 +32,7 @@ export async function createServerSupabaseClient() {
   const url = resolveSupabaseUrl();
   const key = resolveAnonKey();
 
-  return createServerClient(url, key, {
+  return createServerClient<Database>(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -46,7 +47,7 @@ export async function createServerSupabaseClient() {
 }
 
 // Singleton service role client - reused across requests
-let serviceRoleClient: ReturnType<typeof createClient> | null = null;
+let serviceRoleClient: ReturnType<typeof createClient<Database>> | null = null;
 
 export function createServiceRoleSupabaseClient() {
   if (serviceRoleClient) return serviceRoleClient;
@@ -54,7 +55,7 @@ export function createServiceRoleSupabaseClient() {
   const url = resolveSupabaseUrl();
   const key = resolveServiceRoleKey();
 
-  serviceRoleClient = createClient(url, key, {
+  serviceRoleClient = createClient<Database>(url, key, {
     auth: {
       autoRefreshToken: false,
       persistSession: false

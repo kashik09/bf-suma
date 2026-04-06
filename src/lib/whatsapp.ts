@@ -4,21 +4,57 @@ export function buildWhatsAppUrl(message: string, phone: string = WHATSAPP_PHONE
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-export function buildWhatsAppGeneralHelpMessage(context?: string) {
-  if (context?.trim()) {
-    return `Hello BF Suma, I need help choosing products. Context: ${context.trim()}.`;
+/**
+ * Clean context (especially blog slugs → readable text)
+ */
+function formatContext(context?: string) {
+  if (!context) return "";
+
+  let clean = context.trim();
+
+  // convert blog:slug → readable title
+  if (clean.startsWith("blog:")) {
+    clean = clean.replace("blog:", "");
   }
-  return "Hello BF Suma, I need help choosing the right product.";
+
+  // slug → sentence
+  clean = clean
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  return clean;
 }
 
+/**
+ * GENERAL HELP (from anywhere, incl. blog)
+ */
+export function buildWhatsAppGeneralHelpMessage(context?: string) {
+  const formatted = formatContext(context);
+
+  if (formatted) {
+    return `Hi! I was reading about "${formatted}" and I’d like help choosing the right product. What would you recommend?`;
+  }
+
+  return `Hi! I’m looking for help choosing the right product. What would you recommend?`;
+}
+
+/**
+ * PRODUCT INTEREST (soft intent)
+ */
 export function buildWhatsAppProductInterestMessage(productName: string) {
-  return `Hello BF Suma, I am interested in ${productName}. Please guide me before I order.`;
+  return `Hi! I came across "${productName}" and I’m interested. Could you explain how it works and if it’s right for me?`;
 }
 
+/**
+ * ORDER INTENT (strong intent)
+ */
 export function buildWhatsAppProductOrderMessage(productName: string, quantity: number) {
-  return `Hello BF Suma, I want to order ${productName} (${quantity} item${quantity > 1 ? "s" : ""}). Please confirm availability.`;
+  return `Hi! I’d like to order ${quantity} × "${productName}". Is it available, and how do I proceed?`;
 }
 
+/**
+ * ORDER SUPPORT
+ */
 export function buildWhatsAppOrderSupportMessage() {
-  return "Hello BF Suma, I need help with my order.";
+  return `Hi! I need help with my order.`;
 }
