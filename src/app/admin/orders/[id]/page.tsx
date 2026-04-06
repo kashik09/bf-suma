@@ -84,7 +84,7 @@ export default async function AdminOrderDetailPage({
       />
 
       {query.updated === "1" ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+        <div className="rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-brand-800">
           Order status updated successfully.
         </div>
       ) : null}
