@@ -69,8 +69,8 @@ export default async function AdminReviewsPage({
       />
 
       {query.updated === "1" && (
-        <Card className="border-emerald-200 bg-emerald-50">
-          <p className="text-sm text-emerald-800">Review updated successfully.</p>
+        <Card className="border-brand-200 bg-brand-50">
+          <p className="text-sm text-brand-800">Review updated successfully.</p>
         </Card>
       )}
 
@@ -148,7 +148,7 @@ export default async function AdminReviewsPage({
                     <form action={approveAction}>
                       <input type="hidden" name="reviewId" value={review.id} />
                       <button
-                        className="w-full rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+                        className="w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
                         type="submit"
                       >
                         Approve
