@@ -72,8 +72,8 @@ export default function ShippingPolicyPage() {
       <h2>Delivery Fees</h2>
       <p>Delivery fees are calculated based on your location and order size:</p>
       <ul>
-        <li><strong>Kampala City:</strong> From KES 500</li>
-        <li><strong>Greater Kampala:</strong> From KES 800</li>
+        <li><strong>Kampala City:</strong> From UGX 5,000</li>
+        <li><strong>Greater Kampala:</strong> From UGX 8,000</li>
         <li><strong>Other areas:</strong> Calculated at checkout based on distance</li>
       </ul>
       <p>

@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
 
       <h3>Pricing</h3>
       <p>
-        All prices are displayed in Kenyan Shillings (KES) and include applicable taxes unless otherwise stated.
+        All prices are displayed in Ugandan Shillings (UGX) and include applicable taxes unless otherwise stated.
         We reserve the right to modify prices at any time without prior notice. The price at the time of order
         placement will apply to your purchase.
       </p>
