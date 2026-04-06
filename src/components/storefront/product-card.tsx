@@ -94,7 +94,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
               <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
             <a
-              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:w-auto"
               href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
               rel="noreferrer"
               target="_blank"

@@ -339,7 +339,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
               {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to cart"}
             </Button>
             <a
-              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 sm:flex-1"
+              className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 sm:flex-1"
               href={buildWhatsAppUrl(productWhatsAppInterestMessage)}
               rel="noreferrer"
               target="_blank"
@@ -397,7 +397,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
           <ul className="mt-3 space-y-2.5">
             {benefits.map((benefit) => (
               <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={benefit}>
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
                 <span>{benefit}</span>
               </li>
             ))}

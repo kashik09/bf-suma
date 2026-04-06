@@ -155,8 +155,8 @@ export function NewsletterSignup({
           className={`rounded-lg px-3 py-2 text-sm ${
             isSuccess
               ? onDark
-                ? "border border-emerald-400/30 bg-emerald-500/20 text-emerald-200"
-                : "border border-emerald-200 bg-emerald-50 text-emerald-800"
+                ? "border border-brand-200/30 bg-brand-500/20 text-brand-200"
+                : "border border-brand-200 bg-brand-50 text-brand-800"
               : onDark
                 ? "border border-rose-400/30 bg-rose-500/20 text-rose-200"
                 : "border border-rose-200 bg-rose-50 text-rose-800"

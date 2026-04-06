@@ -86,7 +86,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                   {product.compare_at_price ? (
                     <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
                   ) : null}
-                  {savings ? <span className="text-xs font-semibold text-emerald-700">{savings}</span> : null}
+                  {savings ? <span className="text-xs font-semibold text-brand-700">{savings}</span> : null}
                 </div>
 
                 <p className="flex items-center gap-1.5 text-xs text-slate-600">
