@@ -105,7 +105,7 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
     price: row.price,
     currency: row.currency,
     stock_qty: row.stock_qty,
-    status: row.status,
+    status: row.status as ProductStatus,
     image_url: imageUrlByProductId.get(row.id) ?? null,
     created_at: row.created_at
   }));
@@ -165,7 +165,12 @@ export async function getAdminProductById(id: string): Promise<AdminProductDetai
     .maybeSingle();
 
   if (error) throw error;
-  return data ?? null;
+  if (!data) return null;
+
+  return {
+    ...data,
+    status: data.status as ProductStatus
+  };
 }
 
 export async function createAdminProduct(input: UpsertAdminProductInput): Promise<{ id: string }> {
