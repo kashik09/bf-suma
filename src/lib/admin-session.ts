@@ -121,7 +121,9 @@ export async function verifyAdminSessionToken(token: string | null | undefined):
     userId: candidate.userId,
     email: candidate.email,
     role: candidate.role,
-    exp: candidate.exp
+    exp: candidate.exp,
+    passwordVersion: typeof candidate.passwordVersion === "number" ? candidate.passwordVersion : 1,
+    mustResetPassword: candidate.mustResetPassword === true
   };
 }
 
