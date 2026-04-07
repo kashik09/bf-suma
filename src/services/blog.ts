@@ -96,6 +96,14 @@ async function fetchPublishedBlogPosts(limit?: number): Promise<BlogPostListItem
   }
 
   const { data, error } = await query;
+
+  // DEBUG: Log the query result
+  console.log("[blog] fetchPublishedBlogPosts result:", {
+    dataLength: data?.length ?? 0,
+    error: error ? { message: error.message, code: (error as { code?: string }).code } : null,
+    firstPost: data?.[0]?.title ?? null
+  });
+
   if (error) {
     if (hasErrorCode(error, "PGRST205")) {
       console.warn("blog list unavailable: blog_posts missing in schema cache");
