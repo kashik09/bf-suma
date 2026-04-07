@@ -7,11 +7,12 @@ import {
   verifyAdminSessionToken
 } from "@/lib/admin-session";
 import {
-  consumeFlashError,
-  consumeFlashRedirect,
+  readFlashError,
+  readFlashRedirect,
   normalizeAdminRedirect,
   setFlashError,
-  setFlashRedirect,
+  clearFlashError,
+  clearFlashRedirect,
   type FlashErrorCode
 } from "@/lib/admin-flash";
 import { forceResetAdminPassword } from "@/services/admin-auth";
