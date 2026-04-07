@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
-import { getBlogReadiness, listPublishedBlogPosts } from "@/services/blog";
+import { listPublishedBlogPosts } from "@/services/blog";
 
 export const revalidate = 60;
 
@@ -22,10 +22,7 @@ function formatPublishedDate(value: string | null, fallback: string) {
 }
 
 export default async function BlogIndexPage() {
-  const [posts, readiness] = await Promise.all([
-    listPublishedBlogPosts(),
-    getBlogReadiness()
-  ]);
+  const posts = await listPublishedBlogPosts();
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
@@ -50,15 +47,6 @@ export default async function BlogIndexPage() {
           }
         />
       </section>
-
-      {!readiness.ready ? (
-        <Card className="border-amber-300 bg-amber-50">
-          <h3 className="text-base font-semibold text-amber-900">Blog is in maintenance mode</h3>
-          <p className="mt-1 text-sm text-amber-800">
-            {readiness.message || "Some blog data is currently unavailable. Please check back shortly."}
-          </p>
-        </Card>
-      ) : null}
 
       {posts.length === 0 ? (
         <Card className="p-8 text-center">
