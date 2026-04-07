@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 /**
@@ -8,11 +8,16 @@ import { NextResponse } from "next/server";
  * Usage: GET /api/revalidate-blog
  */
 export async function GET() {
+  // Invalidate the unstable_cache data
   revalidateTag("blog");
+
+  // Invalidate the ISR page cache
+  revalidatePath("/blog");
+  revalidatePath("/blog/[slug]", "page");
 
   return NextResponse.json({
     revalidated: true,
     timestamp: new Date().toISOString(),
-    message: "Blog cache invalidated. Delete this route now."
+    message: "Blog data + page caches invalidated. Delete this route after verifying."
   });
 }
