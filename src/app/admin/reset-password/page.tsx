@@ -7,11 +7,9 @@ import {
   verifyAdminSessionToken
 } from "@/lib/admin-session";
 import {
-  clearFlashError,
-  clearFlashRedirect,
+  consumeFlashError,
+  consumeFlashRedirect,
   normalizeAdminRedirect,
-  readFlashError,
-  readFlashRedirect,
   setFlashError,
   setFlashRedirect,
   type FlashErrorCode
