@@ -49,7 +49,7 @@ export function CategoryGrid({ categories }: { categories: StorefrontCategory[] 
               <div
                 className="h-36 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
                 style={{
-                  backgroundImage: `url(${category.image_url || "/catalog-images/placeholder.webp"})`
+                  backgroundImage: `url(${category.image_url || "/catalog-images/placeholder.svg"})`
                 }}
               />
               <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />

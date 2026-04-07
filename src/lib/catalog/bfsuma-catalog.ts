@@ -27,23 +27,28 @@ interface ManifestProduct {
   image_url: string | null;
 }
 
-const DEFAULT_PRODUCT_IMAGE = "/catalog-images/placeholder.webp";
+const DEFAULT_PRODUCT_IMAGE = "/catalog-images/placeholder.svg";
 const DEFAULT_STOCK_QTY = 50;
 
+// Category images - only HIGH/MEDIUM confidence matches using owned assets
+// LOW confidence categories use placeholder until manual sourcing
 const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
-  skincare: "/catalog-images/joshoppers.com/youth-essence-facial-cream.webp",
-  "anti-aging": "/catalog-images/joshoppers.com/nmn-duo-release.webp",
-  beverages: "/catalog-images/joshoppers.com/ginseng-coffee.png",
-  supplements: "/catalog-images/joshoppers.com/quad-reishi-capsules.webp",
-  "joint-health": "/catalog-images/joshoppers.com/arthro-xtra-tablets.webp",
-  "bone-health": "/catalog-images/joshoppers.com/zaminocal-plus-capsules.webp",
-  "digestive-health": "/catalog-images/joshoppers.com/probio-3-plus.webp",
-  "personal-care": "/catalog-images/joshoppers.com/dr-ts-toothpaste.webp",
-  "weight-management": "/catalog-images/joshoppers.com/gym-effect-capsules.webp",
-  "womens-health": "/catalog-images/joshoppers.com/femicare-cleanser.webp",
-  "mens-health": "/catalog-images/joshoppers.com/xpower-coffee.webp",
-  "brain-health": "/catalog-images/joshoppers.com/cerebrain-tablets.webp",
-  detox: "/catalog-images/joshoppers.com/detoxilive-capsules.webp"
+  // HIGH confidence - exact thematic match with owned hero images
+  "joint-health": "/hero-images/joint-health.jpg",
+  supplements: "/hero-images/supplements.jpg",
+  // MEDIUM confidence - lifestyle imagery fits anti-aging theme
+  "anti-aging": "/hero-images/lifestyle.jpg",
+  // LOW confidence - all others need manual sourcing, use placeholder
+  skincare: "/catalog-images/placeholder.svg",
+  beverages: "/catalog-images/placeholder.svg",
+  "bone-health": "/catalog-images/placeholder.svg",
+  "digestive-health": "/catalog-images/placeholder.svg",
+  "personal-care": "/catalog-images/placeholder.svg",
+  "weight-management": "/hero-images/vegetables.jpg", // MEDIUM - health/fitness theme
+  "womens-health": "/catalog-images/placeholder.svg",
+  "mens-health": "/catalog-images/placeholder.svg",
+  "brain-health": "/catalog-images/placeholder.svg",
+  detox: "/hero-images/vegetables.jpg" // MEDIUM - natural/cleanse theme
 };
 
 function generateSku(slug: string, index: number): string {

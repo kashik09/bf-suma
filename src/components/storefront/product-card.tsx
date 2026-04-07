@@ -46,7 +46,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <div
           className="h-48 w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
           style={{
-            backgroundImage: `url(${product.image_url || "/catalog-images/placeholder.webp"})`
+            backgroundImage: `url(${product.image_url || "/catalog-images/placeholder.svg"})`
           }}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/10 to-transparent" />
