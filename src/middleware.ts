@@ -8,6 +8,29 @@ import {
 } from "@/lib/route-guards";
 import { updateSession } from "@/lib/supabase/middleware";
 
+const FLASH_REDIRECT_COOKIE = "admin_flash_redirect";
+const FLASH_MAX_AGE = 60;
+
+function setFlashRedirectCookie(response: NextResponse, path: string): void {
+  // Validate path - only allow internal /admin paths
+  let normalized = "/admin";
+  if (path && typeof path === "string") {
+    const cleaned = path.split("?")[0].split("#")[0];
+    if (cleaned.startsWith("/admin") && !cleaned.includes("://") && !cleaned.includes("//")) {
+      normalized = cleaned.replace(/\/+/g, "/").replace(/\.\./g, "");
+      if (!normalized.startsWith("/admin")) normalized = "/admin";
+    }
+  }
+
+  response.cookies.set(FLASH_REDIRECT_COOKIE, normalized, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: FLASH_MAX_AGE,
+    path: "/admin"
+  });
+}
+
 // Security headers applied to all responses
 const securityHeaders = {
   "X-Frame-Options": "DENY",
@@ -64,15 +87,17 @@ export async function middleware(request: NextRequest) {
 
     if (!adminSession) {
       const loginUrl = new URL("/admin/login", request.url);
-      loginUrl.searchParams.set("next", pathname);
-      return applySecurityHeaders(NextResponse.redirect(loginUrl));
+      const response = NextResponse.redirect(loginUrl);
+      setFlashRedirectCookie(response, pathname);
+      return applySecurityHeaders(response);
     }
 
     // Force password reset if required
     if (adminSession.mustResetPassword) {
       const resetUrl = new URL("/admin/reset-password", request.url);
-      resetUrl.searchParams.set("next", pathname);
-      return applySecurityHeaders(NextResponse.redirect(resetUrl));
+      const response = NextResponse.redirect(resetUrl);
+      setFlashRedirectCookie(response, pathname);
+      return applySecurityHeaders(response);
     }
   }
 

@@ -6,57 +6,56 @@ import {
   ADMIN_SESSION_MAX_AGE_SECONDS,
   createAdminSessionToken
 } from "@/lib/admin-session";
+import {
+  consumeFlashError,
+  consumeFlashRedirect,
+  normalizeAdminRedirect,
+  setFlashError,
+  setFlashRedirect
+} from "@/lib/admin-flash";
 import { getAdminSessionFromCookies } from "@/lib/admin-server";
 import { AdminAuthUnavailableError, authenticateAdminUser } from "@/services/admin-auth";
+import { PasswordInput } from "@/components/forms/password-input";
 
-interface LoginPageSearchParams {
-  error?: string;
-  next?: string;
-}
-
-function getErrorMessage(error?: string) {
+function getErrorMessage(error: string | null) {
   if (!error) return null;
   if (error === "invalid_credentials") return "Invalid email or password.";
   if (error === "auth_unavailable") return "Admin auth is not available yet. Apply database migrations.";
   if (error === "forbidden") return "You do not have permission for that admin action.";
   if (error === "password_reset_required") return "Password reset required. Please set a new password.";
+  if (error === "session_expired") return "Session expired. Please log in again.";
   return "Unable to sign in. Please try again.";
 }
 
-function normalizeNextPath(next: string | null | undefined) {
-  if (!next || typeof next !== "string") return "/admin";
-  if (!next.startsWith("/admin")) return "/admin";
-  return next;
-}
-
-export default async function AdminLoginPage({
-  searchParams
-}: {
-  searchParams?: Promise<LoginPageSearchParams>;
-}) {
+export default async function AdminLoginPage() {
   const existingSession = await getAdminSessionFromCookies();
   if (existingSession) {
     redirect("/admin");
   }
 
-  const query = searchParams ? await searchParams : {};
-  const nextPath = normalizeNextPath(query.next);
+  // Consume flash cookies (one-time read)
+  const flashError = await consumeFlashError();
+  const redirectTarget = await consumeFlashRedirect();
 
   async function loginAction(formData: FormData) {
     "use server";
 
     const email = String(formData.get("email") || "").trim().toLowerCase();
     const password = String(formData.get("password") || "");
-    const submittedNext = normalizeNextPath(String(formData.get("next") || ""));
+    const submittedNext = normalizeAdminRedirect(String(formData.get("next") || ""));
 
     if (!email || !password) {
-      redirect(`/admin/login?error=invalid_credentials&next=${encodeURIComponent(submittedNext)}`);
+      await setFlashError("invalid_credentials");
+      await setFlashRedirect(submittedNext);
+      redirect("/admin/login");
     }
 
     try {
       const user = await authenticateAdminUser(email, password);
       if (!user) {
-        redirect(`/admin/login?error=invalid_credentials&next=${encodeURIComponent(submittedNext)}`);
+        await setFlashError("invalid_credentials");
+        await setFlashRedirect(submittedNext);
+        redirect("/admin/login");
       }
 
       // Check if password reset is required
@@ -79,7 +78,8 @@ export default async function AdminLoginPage({
           path: "/"
         });
 
-        redirect(`/admin/reset-password?next=${encodeURIComponent(submittedNext)}`);
+        await setFlashRedirect(submittedNext);
+        redirect("/admin/reset-password");
       }
 
       const token = await createAdminSessionToken({
@@ -102,14 +102,18 @@ export default async function AdminLoginPage({
       redirect(submittedNext);
     } catch (error) {
       if (error instanceof AdminAuthUnavailableError) {
-        redirect(`/admin/login?error=auth_unavailable&next=${encodeURIComponent(submittedNext)}`);
+        await setFlashError("auth_unavailable");
+        await setFlashRedirect(submittedNext);
+        redirect("/admin/login");
       }
 
-      redirect(`/admin/login?error=invalid_credentials&next=${encodeURIComponent(submittedNext)}`);
+      await setFlashError("invalid_credentials");
+      await setFlashRedirect(submittedNext);
+      redirect("/admin/login");
     }
   }
 
-  const errorMessage = getErrorMessage(query.error);
+  const errorMessage = getErrorMessage(flashError);
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-md items-center px-4 py-12">
@@ -126,7 +130,7 @@ export default async function AdminLoginPage({
         ) : null}
 
         <form action={loginAction} className="mt-5 space-y-4">
-          <input name="next" type="hidden" value={nextPath} />
+          <input name="next" type="hidden" value={redirectTarget} />
 
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="email">
@@ -146,13 +150,11 @@ export default async function AdminLoginPage({
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="password">
               Password
             </label>
-            <input
-              autoComplete="current-password"
-              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+            <PasswordInput
               id="password"
               name="password"
+              autoComplete="current-password"
               required
-              type="password"
             />
           </div>
 

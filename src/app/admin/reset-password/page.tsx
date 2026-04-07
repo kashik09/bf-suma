@@ -6,14 +6,17 @@ import {
   createAdminSessionToken,
   verifyAdminSessionToken
 } from "@/lib/admin-session";
+import {
+  consumeFlashError,
+  consumeFlashRedirect,
+  normalizeAdminRedirect,
+  setFlashError,
+  setFlashRedirect,
+  type FlashErrorCode
+} from "@/lib/admin-flash";
 import { forceResetAdminPassword } from "@/services/admin-auth";
 
-interface ResetPasswordSearchParams {
-  error?: string;
-  next?: string;
-}
-
-function getErrorMessage(error?: string) {
+function getErrorMessage(error: FlashErrorCode | null) {
   if (!error) return null;
   if (error === "weak_password") return "Password does not meet security requirements.";
   if (error === "mismatch") return "Passwords do not match.";
@@ -22,24 +25,15 @@ function getErrorMessage(error?: string) {
   return "An error occurred. Please try again.";
 }
 
-function normalizeNextPath(next: string | null | undefined) {
-  if (!next || typeof next !== "string") return "/admin";
-  if (!next.startsWith("/admin")) return "/admin";
-  return next;
-}
-
-export default async function AdminResetPasswordPage({
-  searchParams
-}: {
-  searchParams?: Promise<ResetPasswordSearchParams>;
-}) {
+export default async function AdminResetPasswordPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value;
   const session = await verifyAdminSessionToken(token);
 
   // Must have a valid session with mustResetPassword flag
   if (!session) {
-    redirect("/admin/login?error=session_expired");
+    await setFlashError("session_expired");
+    redirect("/admin/login");
   }
 
   if (!session.mustResetPassword) {
@@ -47,15 +41,16 @@ export default async function AdminResetPasswordPage({
     redirect("/admin");
   }
 
-  const query = searchParams ? await searchParams : {};
-  const nextPath = normalizeNextPath(query.next);
+  // Consume flash cookies (one-time read)
+  const flashError = await consumeFlashError();
+  const redirectTarget = await consumeFlashRedirect();
 
   async function resetPasswordAction(formData: FormData) {
     "use server";
 
     const newPassword = String(formData.get("newPassword") || "");
     const confirmPassword = String(formData.get("confirmPassword") || "");
-    const submittedNext = normalizeNextPath(String(formData.get("next") || ""));
+    const submittedNext = normalizeAdminRedirect(String(formData.get("next") || ""));
 
     // Re-verify session
     const cookieStore = await cookies();
@@ -63,17 +58,22 @@ export default async function AdminResetPasswordPage({
     const session = await verifyAdminSessionToken(token);
 
     if (!session || !session.mustResetPassword) {
-      redirect("/admin/login?error=session_expired");
+      await setFlashError("session_expired");
+      redirect("/admin/login");
     }
 
     if (newPassword !== confirmPassword) {
-      redirect(`/admin/reset-password?error=mismatch&next=${encodeURIComponent(submittedNext)}`);
+      await setFlashError("mismatch");
+      await setFlashRedirect(submittedNext);
+      redirect("/admin/reset-password");
     }
 
     const result = await forceResetAdminPassword(session.userId, newPassword);
 
     if (!result.success) {
-      redirect(`/admin/reset-password?error=weak_password&next=${encodeURIComponent(submittedNext)}`);
+      await setFlashError("weak_password");
+      await setFlashRedirect(submittedNext);
+      redirect("/admin/reset-password");
     }
 
     // Create a new session without mustResetPassword
@@ -96,7 +96,7 @@ export default async function AdminResetPasswordPage({
     redirect(submittedNext);
   }
 
-  const errorMessage = getErrorMessage(query.error);
+  const errorMessage = getErrorMessage(flashError);
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-md items-center px-4 py-12">
@@ -124,7 +124,7 @@ export default async function AdminResetPasswordPage({
         ) : null}
 
         <form action={resetPasswordAction} className="mt-5 space-y-4">
-          <input name="next" type="hidden" value={nextPath} />
+          <input name="next" type="hidden" value={redirectTarget} />
 
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="newPassword">
