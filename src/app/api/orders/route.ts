@@ -14,6 +14,7 @@ import {
   OrderTemporaryFailureError
 } from "@/services/orders";
 import { buildRateLimitKey } from "@/lib/request-ip";
+import { logEvent } from "@/lib/logger";
 import type { OrderIntakeFieldErrors, OrderIntakeResultCode } from "@/types";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -31,28 +32,6 @@ interface InMemoryRateLimitState {
 }
 
 const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
-
-type LogLevel = "info" | "warn" | "error";
-
-function logEvent(level: LogLevel, event: string, payload: Record<string, unknown>) {
-  const line = JSON.stringify({
-    event,
-    timestamp: new Date().toISOString(),
-    ...payload
-  });
-
-  if (level === "error") {
-    console.error(line);
-    return;
-  }
-
-  if (level === "warn") {
-    console.warn(line);
-    return;
-  }
-
-  console.log(line);
-}
 
 function jsonResponse(
   payload: {
@@ -239,7 +218,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error("order.list_failed", error);
+    logEvent("error", "order.list_failed", {
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
     return NextResponse.json(
       { message: "Order listing is temporarily unavailable." },
       { status: 503 }
