@@ -7,9 +7,11 @@ import {
   verifyAdminSessionToken
 } from "@/lib/admin-session";
 import {
-  consumeFlashError,
-  consumeFlashRedirect,
+  clearFlashError,
+  clearFlashRedirect,
   normalizeAdminRedirect,
+  readFlashError,
+  readFlashRedirect,
   setFlashError,
   setFlashRedirect,
   type FlashErrorCode
@@ -41,9 +43,9 @@ export default async function AdminResetPasswordPage() {
     redirect("/admin");
   }
 
-  // Consume flash cookies (one-time read)
-  const flashError = await consumeFlashError();
-  const redirectTarget = await consumeFlashRedirect();
+  // Read flash cookies (cleared by server action on success)
+  const flashError = await readFlashError();
+  const redirectTarget = await readFlashRedirect();
 
   async function resetPasswordAction(formData: FormData) {
     "use server";
@@ -92,6 +94,10 @@ export default async function AdminResetPasswordPage() {
       maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
       path: "/"
     });
+
+    // Clear flash cookies on successful password reset
+    await clearFlashError();
+    await clearFlashRedirect();
 
     redirect(submittedNext);
   }

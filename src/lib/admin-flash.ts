@@ -56,17 +56,20 @@ export async function setFlashError(code: FlashErrorCode): Promise<void> {
 }
 
 /**
- * Gets and clears the flash error cookie.
+ * Reads the flash error cookie (does not delete - use clearFlashError in Server Actions).
  */
-export async function consumeFlashError(): Promise<FlashErrorCode | null> {
+export async function readFlashError(): Promise<FlashErrorCode | null> {
   const cookieStore = await cookies();
   const value = cookieStore.get(FLASH_ERROR_COOKIE)?.value as FlashErrorCode | undefined;
-
-  if (value) {
-    cookieStore.delete(FLASH_ERROR_COOKIE);
-  }
-
   return value || null;
+}
+
+/**
+ * Clears the flash error cookie. Call this in Server Actions only.
+ */
+export async function clearFlashError(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(FLASH_ERROR_COOKIE);
 }
 
 /**
@@ -85,24 +88,18 @@ export async function setFlashRedirect(path: string): Promise<void> {
 }
 
 /**
- * Gets and clears the redirect target cookie.
+ * Reads the redirect target cookie (does not delete - use clearFlashRedirect in Server Actions).
  */
-export async function consumeFlashRedirect(): Promise<string> {
+export async function readFlashRedirect(): Promise<string> {
   const cookieStore = await cookies();
   const value = cookieStore.get(FLASH_REDIRECT_COOKIE)?.value;
-
-  if (value) {
-    cookieStore.delete(FLASH_REDIRECT_COOKIE);
-  }
-
   return normalizeAdminRedirect(value);
 }
 
 /**
- * Gets the redirect target without consuming it (for form hidden fields).
+ * Clears the flash redirect cookie. Call this in Server Actions only.
  */
-export async function peekFlashRedirect(): Promise<string> {
+export async function clearFlashRedirect(): Promise<void> {
   const cookieStore = await cookies();
-  const value = cookieStore.get(FLASH_REDIRECT_COOKIE)?.value;
-  return normalizeAdminRedirect(value);
+  cookieStore.delete(FLASH_REDIRECT_COOKIE);
 }
