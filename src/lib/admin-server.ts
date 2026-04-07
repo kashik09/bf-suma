@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ADMIN_SESSION_COOKIE_NAME, hasAdminRole, verifyAdminSessionToken } from "@/lib/admin-session";
+import { setFlashError } from "@/lib/admin-flash";
 import type { AdminRole } from "@/types";
 
 export async function getAdminSessionFromCookies() {
@@ -16,7 +17,8 @@ export async function requireAdminSession(allowedRoles?: AdminRole[]) {
   }
 
   if (allowedRoles && !hasAdminRole(session.role, allowedRoles)) {
-    redirect("/admin/login?error=forbidden");
+    await setFlashError("forbidden");
+    redirect("/admin/login");
   }
 
   return session;
