@@ -5,7 +5,8 @@ import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { listPublishedBlogPosts } from "@/services/blog";
 
-export const revalidate = 60;
+// Force dynamic rendering to avoid build-time fetch failures
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blog | BF Suma",
