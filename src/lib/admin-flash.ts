@@ -56,7 +56,8 @@ export async function setFlashError(code: FlashErrorCode): Promise<void> {
 }
 
 /**
- * Reads the flash error cookie (does not delete - use clearFlashError in Server Actions).
+ * Reads the flash error cookie WITHOUT deleting.
+ * Safe to use in any async context (pages, server actions).
  */
 export async function readFlashError(): Promise<FlashErrorCode | null> {
   const cookieStore = await cookies();
@@ -65,11 +66,22 @@ export async function readFlashError(): Promise<FlashErrorCode | null> {
 }
 
 /**
- * Clears the flash error cookie. Call this in Server Actions only.
+ * Reads the redirect target cookie WITHOUT deleting.
+ * Safe to use in any async context (pages, server actions).
+ */
+export async function readFlashRedirect(): Promise<string> {
+  const cookieStore = await cookies();
+  const value = cookieStore.get(FLASH_REDIRECT_COOKIE)?.value;
+  return normalizeAdminRedirect(value);
+}
+
+/**
+ * Clears the flash error cookie by expiring it.
+ * Call this in Server Actions only.
  */
 export async function clearFlashError(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(FLASH_ERROR_COOKIE);
+  cookieStore.set(FLASH_ERROR_COOKIE, "", { maxAge: 0, path: "/admin" });
 }
 
 /**
@@ -88,18 +100,10 @@ export async function setFlashRedirect(path: string): Promise<void> {
 }
 
 /**
- * Reads the redirect target cookie (does not delete - use clearFlashRedirect in Server Actions).
- */
-export async function readFlashRedirect(): Promise<string> {
-  const cookieStore = await cookies();
-  const value = cookieStore.get(FLASH_REDIRECT_COOKIE)?.value;
-  return normalizeAdminRedirect(value);
-}
-
-/**
- * Clears the flash redirect cookie. Call this in Server Actions only.
+ * Clears the flash redirect cookie by expiring it.
+ * Call this in Server Actions only.
  */
 export async function clearFlashRedirect(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(FLASH_REDIRECT_COOKIE);
+  cookieStore.set(FLASH_REDIRECT_COOKIE, "", { maxAge: 0, path: "/admin" });
 }
