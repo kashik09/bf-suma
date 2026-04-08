@@ -30,25 +30,21 @@ interface ManifestProduct {
 const DEFAULT_PRODUCT_IMAGE = "/catalog-images/placeholder.svg";
 const DEFAULT_STOCK_QTY = 50;
 
-// Category images - only HIGH/MEDIUM confidence matches using owned assets
-// LOW confidence categories use placeholder until manual sourcing
+// Category images - mapped to category-images folder
 const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
-  // HIGH confidence - exact thematic match with owned hero images
-  "joint-health": "/hero-images/joint-health.jpg",
-  supplements: "/hero-images/supplements.jpg",
-  // MEDIUM confidence - lifestyle imagery fits anti-aging theme
-  "anti-aging": "/hero-images/lifestyle.jpg",
-  // LOW confidence - all others need manual sourcing, use placeholder
-  skincare: "/catalog-images/placeholder.svg",
-  beverages: "/catalog-images/placeholder.svg",
-  "bone-health": "/catalog-images/placeholder.svg",
-  "digestive-health": "/catalog-images/placeholder.svg",
-  "personal-care": "/catalog-images/placeholder.svg",
-  "weight-management": "/hero-images/vegetables.jpg", // MEDIUM - health/fitness theme
-  "womens-health": "/catalog-images/placeholder.svg",
-  "mens-health": "/catalog-images/placeholder.svg",
-  "brain-health": "/catalog-images/placeholder.svg",
-  detox: "/hero-images/vegetables.jpg" // MEDIUM - natural/cleanse theme
+  "anti-aging": "/category-images/anti-aging.jpg",
+  beverages: "/category-images/beverages.jpg",
+  "bone-health": "/category-images/bone-health.jpg",
+  "brain-health": "/category-images/brain-health.jpg",
+  detox: "/category-images/detox.jpg",
+  "digestive-health": "/category-images/digestive-health.jpg",
+  "joint-health": "/category-images/joint-health.jpg",
+  "mens-health": "/category-images/mens-health.jpg",
+  "personal-care": "/category-images/personal-care.jpg",
+  skincare: "/category-images/skincare.jpg",
+  supplements: "/category-images/supplements.jpg",
+  "weight-management": "/category-images/weight-management.jpg",
+  "womens-health": "/category-images/womens-health.jpg"
 };
 
 function generateSku(slug: string, index: number): string {
