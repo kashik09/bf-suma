@@ -5,6 +5,7 @@ import { newsletterSignupSchema } from "@/lib/validation";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { markNewsletterWelcomeEmailSent, subscribeNewsletter } from "@/services/newsletter";
 import { buildRateLimitKey } from "@/lib/request-ip";
+import { logEvent } from "@/lib/logger";
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
@@ -20,28 +21,6 @@ interface InMemoryRateLimitState {
 }
 
 const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
-
-type LogLevel = "info" | "warn" | "error";
-
-function logEvent(level: LogLevel, event: string, payload: Record<string, unknown>) {
-  const line = JSON.stringify({
-    event,
-    timestamp: new Date().toISOString(),
-    ...payload
-  });
-
-  if (level === "error") {
-    console.error(line);
-    return;
-  }
-
-  if (level === "warn") {
-    console.warn(line);
-    return;
-  }
-
-  console.log(line);
-}
 
 function getCorrelationId(request: Request): string {
   const requestId = request.headers.get("x-correlation-id") || request.headers.get("x-request-id");

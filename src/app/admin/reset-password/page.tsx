@@ -89,8 +89,8 @@ export default async function AdminResetPasswordPage() {
 
     cookieStore.set(ADMIN_SESSION_COOKIE_NAME, newToken, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      secure: true,
       maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
       path: "/"
     });

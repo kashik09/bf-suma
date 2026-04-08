@@ -74,8 +74,8 @@ export default async function AdminLoginPage() {
         const cookieStore = await cookies();
         cookieStore.set(ADMIN_SESSION_COOKIE_NAME, resetToken, {
           httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          secure: true,
           maxAge: 60 * 15, // 15 minutes for password reset
           path: "/"
         });
@@ -95,8 +95,8 @@ export default async function AdminLoginPage() {
       const cookieStore = await cookies();
       cookieStore.set(ADMIN_SESSION_COOKIE_NAME, token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        secure: true,
         maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
         path: "/"
       });

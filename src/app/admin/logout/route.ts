@@ -7,8 +7,8 @@ export async function GET(request: Request) {
 
   response.cookies.set(ADMIN_SESSION_COOKIE_NAME, "", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    secure: true,
     maxAge: 0,
     path: "/"
   });

@@ -24,8 +24,8 @@ function setFlashRedirectCookie(response: NextResponse, path: string): void {
 
   response.cookies.set(FLASH_REDIRECT_COOKIE, normalized, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    secure: true,
     maxAge: FLASH_MAX_AGE,
     path: "/admin"
   });
