@@ -147,11 +147,40 @@ function toRoundedPercent(delta: number, base: number): number {
 }
 
 function normalizeErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (!error || typeof error !== "object") return "Unknown error";
+  if (!error || typeof error !== "object") return "A system request failed.";
 
-  const candidate = error as { message?: string; details?: string; hint?: string };
-  return candidate.message || candidate.details || candidate.hint || "Unknown error";
+  const raw = (() => {
+    if (error instanceof Error) return error.message;
+    const candidate = error as { message?: string; details?: string; hint?: string };
+    return candidate.message || candidate.details || candidate.hint || "";
+  })();
+
+  const message = raw.trim();
+  if (!message) return "A system request failed.";
+
+  const lower = message.toLowerCase();
+  if (
+    lower.includes("pgrst205") ||
+    lower.includes("does not exist") ||
+    lower.includes("relation")
+  ) {
+    return "A required database table is missing. Run the latest migrations and retry.";
+  }
+
+  if (lower.includes("pgrst204") || lower.includes("column")) {
+    return "The database schema is out of date. Run the latest migrations and retry.";
+  }
+
+  if (
+    lower.includes("fetch") ||
+    lower.includes("network") ||
+    lower.includes("connection") ||
+    lower.includes("timeout")
+  ) {
+    return "The server could not reach a required service. Check your connection and service status.";
+  }
+
+  return "A system request failed. Please try again.";
 }
 
 function getTodayStartUtcIso(nowMs: number): string {
@@ -176,30 +205,42 @@ async function probeTableSchema(
   if (!error) {
     return {
       status: "healthy",
-      message: `${table} schema is available.`
+      message: `${table} is available.`
     };
   }
-
-  const message = normalizeErrorMessage(error);
 
   if (hasErrorCode(error, "PGRST205")) {
     return {
       status: "critical",
-      message: `${table} table is missing in schema cache.`
+      message: `${table} table is missing. Run migrations and reload the API schema cache.`
     };
   }
 
-  if (hasErrorCode(error, "PGRST204") || message.toLowerCase().includes("column")) {
+  if (hasErrorCode(error, "PGRST204")) {
     return {
       status: "critical",
-      message: `${table} schema mismatch: ${message}`
+      message: `${table} columns do not match expected structure. Run the latest migrations.`
     };
   }
 
   return {
     status: "warning",
-    message: `${table} health probe failed: ${message}`
+    message: `Could not verify ${table}. Check database connectivity and permissions.`
   };
+}
+
+const ENV_VAR_EXPLANATIONS: Record<string, string> = {
+  NEXT_PUBLIC_SUPABASE_URL: "Supabase URL is missing, so the app cannot connect to your database.",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "Supabase public key is missing, so browser requests cannot authenticate.",
+  SUPABASE_SERVICE_ROLE_KEY: "Supabase service key is missing, so admin data operations cannot run.",
+  RESEND_API_KEY: "Resend API key is missing, so welcome/newsletter emails cannot be sent.",
+  RESEND_FROM_EMAIL: "Resend sender email is missing, so outgoing email has no verified sender."
+};
+
+function formatMissingEnvDescriptions(variableNames: string[]): string {
+  return variableNames
+    .map((name) => ENV_VAR_EXPLANATIONS[name] || `${name} is missing.`)
+    .join(" ");
 }
 
 function getOverallHealthStatus(checks: DashboardSystemHealthItem[]): HealthStatus {
@@ -305,7 +346,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     }));
   } catch (error) {
     if (hasErrorCode(error, "PGRST205")) {
-      pushUniqueWarning(warnings, "Blog table missing in schema cache. Apply latest migrations and reload PostgREST.");
+      pushUniqueWarning(warnings, "Blog data is unavailable because the blog table is missing. Run migrations and retry.");
     } else {
       pushUniqueWarning(warnings, `Blog metrics unavailable: ${normalizeErrorMessage(error)}`);
     }
@@ -358,7 +399,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     stalledNotifications = stalledNotificationRes.count || 0;
   } catch (error) {
     if (hasErrorCode(error, "PGRST205")) {
-      pushUniqueWarning(warnings, "Notification outbox table missing in schema cache. Apply latest migrations.");
+      pushUniqueWarning(warnings, "Notification queue data is unavailable because the outbox table is missing.");
     } else {
       pushUniqueWarning(warnings, `Notification queue metrics unavailable: ${normalizeErrorMessage(error)}`);
     }
@@ -385,7 +426,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     failedCheckoutAttempts24h = failedAttemptsRes.count || 0;
   } catch (error) {
     if (hasErrorCode(error, "PGRST205")) {
-      pushUniqueWarning(warnings, "Order idempotency table missing in schema cache. Apply latest migrations.");
+      pushUniqueWarning(warnings, "Checkout reliability data is unavailable because the idempotency table is missing.");
     } else {
       pushUniqueWarning(warnings, `Order idempotency metrics unavailable: ${normalizeErrorMessage(error)}`);
     }
@@ -436,7 +477,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
         .in("id", customerIds);
 
       if (customerError) {
-        pushUniqueWarning(warnings, `Customer name lookup failed: ${customerError.message}`);
+        pushUniqueWarning(warnings, `Customer name lookup failed: ${normalizeErrorMessage(customerError)}`);
       } else {
         for (const customer of customerRows || []) {
           customerNameById.set(customer.id, `${customer.first_name} ${customer.last_name}`.trim());
@@ -628,7 +669,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
       id: "env-critical",
       title: "Critical Environment Config",
       status: "critical",
-      message: `Missing env vars: ${missingCriticalEnv.join(", ")}`,
+      message: formatMissingEnvDescriptions(missingCriticalEnv),
       actionLabel: "Fix Environment",
       href: "/admin"
     });
@@ -647,9 +688,9 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     systemHealthChecks.push({
       id: "env-admin-secret",
       title: "Admin Session Secret",
-      status: "warning",
-      message: "ADMIN_SESSION_SECRET is missing. Session signing falls back to service role key.",
-      actionLabel: "Harden",
+      status: "critical",
+      message: "Admin session secret is missing, so secure admin login sessions cannot be verified.",
+      actionLabel: "Fix Secret",
       href: "/admin"
     });
   } else {
@@ -673,7 +714,7 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
       title: "Newsletter Delivery Config",
       status: missingNewsletterVars.length > 0 ? "warning" : "healthy",
       message: missingNewsletterVars.length > 0
-        ? `Missing email env vars: ${missingNewsletterVars.join(", ")}`
+        ? formatMissingEnvDescriptions(missingNewsletterVars)
         : "Newsletter email config is ready.",
       actionLabel: "Review",
       href: "/admin"
@@ -731,7 +772,9 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
         id: "api-commerce",
         title: "Commerce API State",
         status: "critical",
-        message: catalogHealth.degradedReason || "Commerce catalog is in fallback mode.",
+        message: catalogHealth.degradedReason
+          ? normalizeErrorMessage({ message: catalogHealth.degradedReason })
+          : "Commerce catalog is in fallback mode.",
         actionLabel: "Review Catalog",
         href: "/admin/products"
       });
