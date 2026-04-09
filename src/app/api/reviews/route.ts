@@ -173,9 +173,11 @@ export async function POST(request: Request) {
     const parsed = submitReviewSchema.safeParse(body);
 
     if (!parsed.success) {
-      const errors = parsed.error.errors.map(e => e.message).join(", ");
       return NextResponse.json(
-        { success: false, message: `Please check your review: ${errors}` },
+        {
+          success: false,
+          message: "Please check your rating, name, email, and review message, then try again."
+        },
         { status: 400 }
       );
     }

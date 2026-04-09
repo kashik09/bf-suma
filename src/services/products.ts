@@ -456,6 +456,53 @@ export async function listRelatedProducts(
     .slice(0, limit);
 }
 
+interface OrderItemQuantityRow {
+  order_id: string;
+  quantity: number | string;
+}
+
+interface OrderStatusRow {
+  id: string;
+}
+
+export async function getProductUnitsSoldThisWeek(productId: string): Promise<number | null> {
+  try {
+    const supabase = createServiceRoleSupabaseClient();
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - 7);
+
+    const { data: itemRows, error: itemError } = await supabase
+      .from("order_items")
+      .select("order_id, quantity")
+      .eq("product_id", productId);
+
+    if (itemError) throw itemError;
+    const items = (itemRows || []) as OrderItemQuantityRow[];
+    if (items.length === 0) return 0;
+
+    const orderIds = [...new Set(items.map((row) => row.order_id))];
+    const { data: orderRows, error: orderError } = await supabase
+      .from("orders")
+      .select("id")
+      .in("id", orderIds)
+      .neq("status", "CANCELED")
+      .gte("created_at", weekStart.toISOString());
+
+    if (orderError) throw orderError;
+    const validOrderIds = new Set(((orderRows || []) as OrderStatusRow[]).map((row) => row.id));
+
+    return items.reduce((sum, item) => {
+      if (!validOrderIds.has(item.order_id)) return sum;
+      const quantity = Number(item.quantity);
+      if (!Number.isFinite(quantity)) return sum;
+      return sum + Math.max(0, Math.round(quantity));
+    }, 0);
+  } catch (error) {
+    logCatalogFallback("getProductUnitsSoldThisWeek", error, { productId });
+    return null;
+  }
+}
+
 function extractContentKeywords(tags: string[], title: string): string[] {
   const fromTags = tags.map((tag) => tag.toLowerCase().trim()).filter(Boolean);
   const fromTitle = title

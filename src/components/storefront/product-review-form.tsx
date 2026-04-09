@@ -57,7 +57,7 @@ export function ProductReviewForm({ productId, productName }: ProductReviewFormP
         setMessage({ type: "error", text: result.message });
       }
     } catch {
-      setMessage({ type: "error", text: "Something went wrong. Please try again." });
+      setMessage({ type: "error", text: "We couldn't submit your review right now. Check your connection and try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -85,6 +85,7 @@ export function ProductReviewForm({ productId, productName }: ProductReviewFormP
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
               key={star}
               type="button"
               className="focus:outline-none"
