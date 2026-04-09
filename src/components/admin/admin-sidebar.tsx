@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import {
+  BookOpen,
   LayoutDashboard,
   ShoppingBag,
   Boxes,
@@ -26,6 +27,7 @@ const adminNav = [
 ];
 
 const bottomNav = [
+  { href: "/admin/guide", label: "Admin Guide", icon: BookOpen, external: false },
   { href: "/shop", label: "View Store", icon: Store, external: true }
 ];
 
@@ -95,6 +97,7 @@ function SidebarContent({ onLinkClick }: SidebarContentProps) {
               key={item.href}
               href={item.href}
               target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noreferrer noopener" : undefined}
               onClick={onLinkClick}
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
             >
@@ -124,11 +127,48 @@ interface MobileSidebarProps {
 export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const container = sidebarRef.current;
+      if (!container) return;
+
+      const focusable = container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const isInside = active ? container.contains(active) : false;
+
+      if (event.shiftKey) {
+        if (!isInside || active === first) {
+          event.preventDefault();
+          last.focus();
+        }
+        return;
+      }
+
+      if (!isInside || active === last) {
+        event.preventDefault();
+        first.focus();
       }
     },
     [onClose]
@@ -136,11 +176,15 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
 
   useEffect(() => {
     if (isOpen) {
+      previousFocusedElementRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
       document.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
       closeButtonRef.current?.focus();
     } else {
       document.body.style.overflow = "";
+      previousFocusedElementRef.current?.focus();
+      previousFocusedElementRef.current = null;
     }
 
     return () => {

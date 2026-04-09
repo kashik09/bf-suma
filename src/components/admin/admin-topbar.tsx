@@ -12,8 +12,11 @@ interface AdminTopbarProps {
 function getSectionLabel(pathname: string): string {
   if (pathname.startsWith("/admin/orders")) return "Orders";
   if (pathname.startsWith("/admin/products")) return "Products";
+  if (pathname.startsWith("/admin/reviews")) return "Reviews";
   if (pathname.startsWith("/admin/blog")) return "Blog";
   if (pathname.startsWith("/admin/contacts")) return "Contacts";
+  if (pathname.startsWith("/admin/guide")) return "Guide";
+  if (pathname.startsWith("/admin/reset-password")) return "Reset Password";
   if (pathname.startsWith("/admin/login")) return "Login";
   return "Dashboard";
 }
@@ -29,6 +32,7 @@ export function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
           <button
             onClick={onMenuClick}
             className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
+            aria-label="Open navigation menu"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -70,6 +74,12 @@ export function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
               </Link>
             </div>
           </div>
+          <Link
+            className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 sm:hidden"
+            href="/admin/logout"
+          >
+            Logout
+          </Link>
         </div>
       </div>
     </div>
