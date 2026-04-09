@@ -2,6 +2,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import {
@@ -67,10 +68,7 @@ function parseChannelTargets(values: FormDataEntryValue[]): BlogChannelTarget[] 
 
 function parseErrorMessage(error: unknown): string {
   if (error instanceof BlogSlugConflictError) return error.message;
-  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
-    return error.message;
-  }
-  return "Could not update blog post.";
+  return "We couldn't save your blog post changes. Check your connection and try again.";
 }
 
 export default async function AdminBlogDetailPage({
@@ -156,7 +154,7 @@ export default async function AdminBlogDetailPage({
       revalidatePath("/admin/blog");
       redirect("/admin/blog?deleted=1");
     } catch {
-      redirect(`/admin/blog/${id}?error=${encodeURIComponent("Could not delete blog post.")}`);
+      redirect(`/admin/blog/${id}?error=${encodeURIComponent("We couldn't delete this blog post. Please try again.")}`);
     }
   }
 
@@ -256,12 +254,13 @@ export default async function AdminBlogDetailPage({
       </Card>
 
       <Card>
-        <form action={deleteBlogPostAction}>
-          <p className="text-sm text-slate-600">Delete this post permanently if it is no longer needed.</p>
-          <button className="mt-3 inline-flex h-10 items-center justify-center rounded-md border border-rose-300 bg-rose-50 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
-            Delete Post
-          </button>
-        </form>
+        <p className="text-sm text-slate-600">Delete this post permanently if it is no longer needed.</p>
+        <ConfirmDeleteForm
+          action={deleteBlogPostAction}
+          triggerLabel="Delete Post"
+          title="Delete Post"
+          message="Delete this post? This cannot be undone."
+        />
       </Card>
     </div>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { fromMinorUnits, toMinorUnits } from "@/lib/utils";
@@ -41,10 +42,7 @@ function parseErrorMessage(error: unknown): string {
   if (error instanceof ProductDeleteRestrictedError) {
     return error.message;
   }
-  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
-    return error.message;
-  }
-  return "Could not update product.";
+  return "We couldn't complete this product action. Check your connection and try again.";
 }
 
 function normalizeSlug(value: string): string {
@@ -254,14 +252,15 @@ export default async function AdminProductDetailPage({
       </Card>
 
       <Card>
-        <form action={deleteProductAction}>
-          <p className="text-sm text-slate-600">
-            Delete this product if it was created by mistake and has no order history.
-          </p>
-          <button className="mt-3 inline-flex h-10 items-center justify-center rounded-md border border-rose-300 bg-rose-50 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
-            Delete Product
-          </button>
-        </form>
+        <p className="text-sm text-slate-600">
+          Delete this product if it was created by mistake and has no order history.
+        </p>
+        <ConfirmDeleteForm
+          action={deleteProductAction}
+          triggerLabel="Delete Product"
+          title="Delete Product"
+          message="Delete this product? This cannot be undone."
+        />
       </Card>
     </div>
   );
