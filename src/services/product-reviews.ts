@@ -29,6 +29,30 @@ export interface AdminReview extends ProductReview {
   product_name?: string;
 }
 
+export interface AdminReviewListFilters {
+  status?: ReviewStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface AdminReviewListResult {
+  reviews: AdminReview[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  error: string | null;
+}
+
+function clampPage(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 1;
+  return Math.max(1, Math.floor(value as number));
+}
+
+function clampPageSize(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 20;
+  return Math.max(1, Math.min(100, Math.floor(value as number)));
+}
+
 export async function getApprovedReviewsForProduct(productId: string): Promise<ProductReview[]> {
   const supabase = createServiceRoleSupabaseClient();
 
@@ -92,26 +116,37 @@ export async function submitProductReview(input: CreateReviewInput): Promise<{ s
 }
 
 // Admin functions
-export async function getAdminReviews(status?: "PENDING" | "APPROVED" | "REJECTED"): Promise<AdminReview[]> {
+export async function getAdminReviews(filters: AdminReviewListFilters = {}): Promise<AdminReviewListResult> {
   const supabase = createServiceRoleSupabaseClient();
+  const page = clampPage(filters.page);
+  const pageSize = clampPageSize(filters.pageSize);
+  const rangeStart = (page - 1) * pageSize;
+  const rangeEnd = rangeStart + pageSize - 1;
 
   let query = supabase
     .from("product_reviews")
     .select(`
       id, product_id, reviewer_name, reviewer_email, rating, title, comment,
       is_verified_purchase, status, admin_notes, created_at
-    `)
-    .order("created_at", { ascending: false });
+    `, { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(rangeStart, rangeEnd);
 
-  if (status) {
-    query = query.eq("status", status);
+  if (filters.status) {
+    query = query.eq("status", filters.status);
   }
 
-  const { data, error } = await query.limit(50);
+  const { data, error, count } = await query;
 
   if (error) {
     console.error("Failed to fetch admin reviews:", error);
-    return [];
+    return {
+      reviews: [],
+      totalCount: 0,
+      page,
+      pageSize,
+      error: "We couldn't load reviews right now. Please try again."
+    };
   }
 
   // Fetch product names
@@ -129,11 +164,17 @@ export async function getAdminReviews(status?: "PENDING" | "APPROVED" | "REJECTE
     }
   }
 
-  return (data ?? []).map(r => ({
-    ...r,
-    status: r.status as ReviewStatus,
-    product_name: productNameById.get(r.product_id)
-  }));
+  return {
+    reviews: (data ?? []).map(r => ({
+      ...r,
+      status: r.status as ReviewStatus,
+      product_name: productNameById.get(r.product_id)
+    })),
+    totalCount: count ?? 0,
+    page,
+    pageSize,
+    error: null
+  };
 }
 
 export async function updateReviewStatus(

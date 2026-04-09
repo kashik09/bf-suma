@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Star } from "lucide-react";
 import { Badge, Card, SectionHeader } from "@/components/ui";
@@ -6,6 +7,7 @@ import { requireAdminSession } from "@/lib/admin-server";
 import { getAdminReviews, updateReviewStatus } from "@/services/product-reviews";
 
 type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
+type ReviewStatusFilter = ReviewStatus | "all";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("en-UG", {
@@ -32,40 +34,89 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+function isReviewStatus(value: string): value is ReviewStatus {
+  return value === "PENDING" || value === "APPROVED" || value === "REJECTED";
+}
+
+function getSafePage(value: string | undefined): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.max(1, Math.floor(parsed));
+}
+
+function buildReturnUrl(page: number, statusFilter: ReviewStatusFilter, extra?: "updated" | "error"): string {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  if (statusFilter !== "all") {
+    params.set("status", statusFilter);
+  }
+  if (extra) {
+    params.set(extra, "1");
+  }
+  return `/admin/reviews?${params.toString()}`;
+}
+
 export default async function AdminReviewsPage({
   searchParams
 }: {
-  searchParams?: Promise<{ status?: string; updated?: string }>;
+  searchParams?: Promise<{ status?: string; updated?: string; error?: string; page?: string }>;
 }) {
   await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
   const query = searchParams ? await searchParams : {};
-  const statusFilter = (query.status as ReviewStatus) || undefined;
-  const reviews = await getAdminReviews(statusFilter);
+  const statusFilter: ReviewStatusFilter =
+    typeof query.status === "string" && isReviewStatus(query.status) ? query.status : "all";
+  const page = getSafePage(query.page);
+  const reviewsResult = await getAdminReviews({
+    status: statusFilter === "all" ? undefined : statusFilter,
+    page,
+    pageSize: 20
+  });
+  const totalPages = Math.max(1, Math.ceil(reviewsResult.totalCount / reviewsResult.pageSize));
+  const hasPrev = reviewsResult.page > 1;
+  const hasNext = reviewsResult.page < totalPages;
 
   async function approveAction(formData: FormData) {
     "use server";
     await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
-    const reviewId = formData.get("reviewId") as string;
-    await updateReviewStatus(reviewId, "APPROVED");
+    const reviewId = String(formData.get("reviewId") || "").trim();
+    const returnPage = getSafePage(String(formData.get("page") || "1"));
+    const returnStatusRaw = String(formData.get("statusFilter") || "all");
+    const returnStatus: ReviewStatusFilter = isReviewStatus(returnStatusRaw) ? returnStatusRaw : "all";
+    if (!reviewId) {
+      redirect(buildReturnUrl(returnPage, returnStatus, "error"));
+    }
+    const result = await updateReviewStatus(reviewId, "APPROVED");
     revalidatePath("/admin/reviews");
-    redirect("/admin/reviews?updated=1");
+    if (!result.success) {
+      redirect(buildReturnUrl(returnPage, returnStatus, "error"));
+    }
+    redirect(buildReturnUrl(returnPage, returnStatus, "updated"));
   }
 
   async function rejectAction(formData: FormData) {
     "use server";
     await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
-    const reviewId = formData.get("reviewId") as string;
-    const notes = formData.get("notes") as string;
-    await updateReviewStatus(reviewId, "REJECTED", notes);
+    const reviewId = String(formData.get("reviewId") || "").trim();
+    const notes = String(formData.get("notes") || "");
+    const returnPage = getSafePage(String(formData.get("page") || "1"));
+    const returnStatusRaw = String(formData.get("statusFilter") || "all");
+    const returnStatus: ReviewStatusFilter = isReviewStatus(returnStatusRaw) ? returnStatusRaw : "all";
+    if (!reviewId) {
+      redirect(buildReturnUrl(returnPage, returnStatus, "error"));
+    }
+    const result = await updateReviewStatus(reviewId, "REJECTED", notes);
     revalidatePath("/admin/reviews");
-    redirect("/admin/reviews?updated=1");
+    if (!result.success) {
+      redirect(buildReturnUrl(returnPage, returnStatus, "error"));
+    }
+    redirect(buildReturnUrl(returnPage, returnStatus, "updated"));
   }
 
   return (
     <div className="space-y-6">
       <SectionHeader
         title="Product Reviews"
-        description="Moderate customer reviews before they appear on product pages."
+        description={`Moderate customer reviews before they appear on product pages. Showing ${reviewsResult.reviews.length} of ${reviewsResult.totalCount} review(s).`}
       />
 
       {query.updated === "1" && (
@@ -74,16 +125,30 @@ export default async function AdminReviewsPage({
         </Card>
       )}
 
+      {query.error === "1" && (
+        <Card className="border-rose-200 bg-rose-50">
+          <p className="text-sm text-rose-800">We couldn't update this review. Please try again.</p>
+        </Card>
+      )}
+
+      {reviewsResult.error ? (
+        <Card className="border-rose-200 bg-rose-50">
+          <p className="text-sm font-semibold text-rose-900">Reviews are temporarily unavailable</p>
+          <p className="mt-1 text-sm text-rose-800">{reviewsResult.error}</p>
+        </Card>
+      ) : null}
+
       <Card>
-        <form className="flex items-end gap-3">
+        <form action="/admin/reviews" className="flex items-end gap-3">
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status-filter">
               Status
             </label>
             <select
+              id="status-filter"
               className="h-10 rounded-md border border-slate-300 px-3 text-sm"
               name="status"
-              defaultValue={statusFilter || ""}
+              defaultValue={statusFilter === "all" ? "" : statusFilter}
             >
               <option value="">All</option>
               <option value="PENDING">Pending</option>
@@ -101,12 +166,12 @@ export default async function AdminReviewsPage({
       </Card>
 
       <div className="space-y-4">
-        {reviews.length === 0 ? (
+        {!reviewsResult.error && reviewsResult.reviews.length === 0 ? (
           <Card>
             <p className="text-center text-slate-600">No reviews found.</p>
           </Card>
         ) : (
-          reviews.map((review) => (
+          reviewsResult.reviews.map((review) => (
             <Card key={review.id}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -147,6 +212,8 @@ export default async function AdminReviewsPage({
                   <div className="flex shrink-0 flex-col gap-2">
                     <form action={approveAction}>
                       <input type="hidden" name="reviewId" value={review.id} />
+                      <input type="hidden" name="page" value={String(reviewsResult.page)} />
+                      <input type="hidden" name="statusFilter" value={statusFilter} />
                       <button
                         className="w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
                         type="submit"
@@ -157,6 +224,8 @@ export default async function AdminReviewsPage({
                     <form action={rejectAction}>
                       <input type="hidden" name="reviewId" value={review.id} />
                       <input type="hidden" name="notes" value="Rejected by admin" />
+                      <input type="hidden" name="page" value={String(reviewsResult.page)} />
+                      <input type="hidden" name="statusFilter" value={statusFilter} />
                       <button
                         className="w-full rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
                         type="submit"
@@ -171,6 +240,41 @@ export default async function AdminReviewsPage({
           ))
         )}
       </div>
+
+      {!reviewsResult.error ? (
+        <Card className="flex items-center justify-between">
+          <p className="text-sm text-slate-600">
+            Page {reviewsResult.page} of {totalPages}
+          </p>
+          <div className="flex items-center gap-2">
+            {hasPrev ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={buildReturnUrl(reviewsResult.page - 1, statusFilter)}
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Previous
+              </span>
+            )}
+
+            {hasNext ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={buildReturnUrl(reviewsResult.page + 1, statusFilter)}
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Next
+              </span>
+            )}
+          </div>
+        </Card>
+      ) : null}
     </div>
   );
 }
