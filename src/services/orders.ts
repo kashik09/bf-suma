@@ -9,10 +9,9 @@ import {
   type AtomicOrderWriteResultPayload,
   type AtomicOrderWriteRpcRow
 } from "@/lib/order-write-result";
+import { DELIVERY_FEE_AMOUNT_MINOR, FREE_SHIPPING_THRESHOLD_MINOR } from "@/lib/constants";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
-
-const DELIVERY_FEE_AMOUNT = 5000;
 
 const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELED"],
@@ -394,7 +393,10 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
     });
   }
 
-  const deliveryFee = payload.fulfillmentType === "pickup" ? 0 : DELIVERY_FEE_AMOUNT;
+  const deliveryFee =
+    payload.fulfillmentType === "pickup" || subtotal >= FREE_SHIPPING_THRESHOLD_MINOR
+      ? 0
+      : DELIVERY_FEE_AMOUNT_MINOR;
   const total = subtotal + deliveryFee;
 
   if (
