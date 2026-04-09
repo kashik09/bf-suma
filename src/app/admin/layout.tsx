@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const handleMenuOpen = useCallback(() => setIsMobileMenuOpen(true), []);
   const handleMenuClose = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  if (pathname === "/admin/login") {
+  if (pathname === "/admin/login" || pathname === "/admin/reset-password") {
     return <>{children}</>;
   }
 

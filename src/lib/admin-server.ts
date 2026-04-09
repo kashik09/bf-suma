@@ -16,6 +16,10 @@ export async function requireAdminSession(allowedRoles?: AdminRole[]) {
     redirect("/admin/login");
   }
 
+  if (session.mustResetPassword) {
+    redirect("/admin/reset-password");
+  }
+
   if (allowedRoles && !hasAdminRole(session.role, allowedRoles)) {
     await setFlashError("forbidden");
     redirect("/admin/login");

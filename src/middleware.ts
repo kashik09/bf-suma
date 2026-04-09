@@ -120,7 +120,8 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get(ADMIN_SESSION_COOKIE_NAME)?.value;
     const adminSession = await verifyAdminSessionToken(token);
     if (adminSession) {
-      return applySecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)));
+      const destination = adminSession.mustResetPassword ? "/admin/reset-password" : "/admin";
+      return applySecurityHeaders(NextResponse.redirect(new URL(destination, request.url)));
     }
   }
 

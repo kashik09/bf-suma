@@ -32,6 +32,9 @@ function getErrorMessage(error: string | null) {
 export default async function AdminLoginPage() {
   const existingSession = await getAdminSessionFromCookies();
   if (existingSession) {
+    if (existingSession.mustResetPassword) {
+      redirect("/admin/reset-password");
+    }
     redirect("/admin");
   }
 
