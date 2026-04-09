@@ -1,17 +1,21 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
+import { buildStorefrontMetadata, getBlogSeoTitle } from "@/lib/seo";
 import { listPublishedBlogPosts } from "@/services/blog";
+import { listFeaturedProducts } from "@/services/products";
 
 // Force dynamic rendering to avoid build-time fetch failures
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Blog | BF Suma",
-  description: "Wellness guides, product education, and practical health insights from BF Suma."
-};
+export const metadata = buildStorefrontMetadata({
+  title: "Wellness Blog",
+  description:
+    "Read practical wellness guides in Kenya, product education, and daily health insights from BF Suma to make faster, more confident buying decisions.",
+  path: "/blog"
+});
 
 function formatPublishedDate(value: string | null, fallback: string) {
   const resolved = value || fallback;
@@ -23,10 +27,14 @@ function formatPublishedDate(value: string | null, fallback: string) {
 }
 
 export default async function BlogIndexPage() {
-  const posts = await listPublishedBlogPosts();
+  const [posts, featuredProducts] = await Promise.all([
+    listPublishedBlogPosts(),
+    listFeaturedProducts(6)
+  ]);
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <h1 className="sr-only">BF Suma wellness blog</h1>
       <StoreBreadcrumbs
         items={[
           { label: "Home", href: "/" },
@@ -56,53 +64,81 @@ export default async function BlogIndexPage() {
         </Card>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {posts.map((post) => (
-            <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft" key={post.id}>
-              {post.cover_image_url ? (
-                <img
-                  alt={post.title}
+          {posts.map((post) => {
+            const seoTitle = getBlogSeoTitle(post.slug, post.title);
+            return (
+              <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft" key={post.id}>
+                {post.cover_image_url ? (
+                  <Image
+                  alt={`${seoTitle} article cover image`}
                   className="h-48 w-full object-cover"
-                  loading="lazy"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                   src={post.cover_image_url}
-                />
-              ) : (
-                <div className="h-48 w-full bg-gradient-to-r from-brand-100 via-brand-50 to-slate-100" />
-              )}
+                  unoptimized
+                    width={1200}
+                    height={720}
+                  />
+                ) : (
+                  <div className="h-48 w-full bg-gradient-to-r from-brand-100 via-brand-50 to-slate-100" />
+                )}
 
-              <div className="space-y-3 p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs text-slate-500">
-                    {post.author} • {formatPublishedDate(post.published_at, post.created_at)}
-                  </span>
-                </div>
-
-                <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">
-                  <Link className="transition hover:text-brand-700" href={`/blog/${post.slug}`}>
-                    {post.title}
-                  </Link>
-                </h3>
-
-                <p className="line-clamp-3 text-sm text-slate-600">{post.excerpt}</p>
-
-                {post.tags.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="neutral">#{tag}</Badge>
-                    ))}
+                <div className="space-y-3 p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs text-slate-500">
+                      {post.author} • {formatPublishedDate(post.published_at, post.created_at)}
+                    </span>
                   </div>
-                ) : null}
 
-                <Link
-                  className="inline-flex text-sm font-semibold text-brand-700 transition hover:text-brand-800"
-                  href={`/blog/${post.slug}`}
-                >
-                  Read article
-                </Link>
-              </div>
-            </article>
-          ))}
+                  <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">
+                    <Link className="transition hover:text-brand-700" href={`/blog/${post.slug}`}>
+                      {seoTitle}
+                    </Link>
+                  </h3>
+
+                  <p className="line-clamp-3 text-sm text-slate-600">{post.excerpt}</p>
+
+                  {post.tags.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="neutral">#{tag}</Badge>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <Link
+                    aria-label={`Read article: ${seoTitle}`}
+                    className="inline-flex text-sm font-semibold text-brand-700 transition hover:text-brand-800"
+                    href={`/blog/${post.slug}`}
+                  >
+                    Read article
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
+
+      {featuredProducts.length > 0 ? (
+        <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
+          <h2 className="text-lg font-semibold text-slate-900">Explore related BF Suma products</h2>
+          <p className="text-sm text-slate-600">
+            Looking for practical next steps? Start with these products and continue to the full shop for more options.
+          </p>
+          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredProducts.map((product) => (
+              <li key={product.id}>
+                <Link
+                  className="inline-flex w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800"
+                  href={`/shop/${product.slug}`}
+                >
+                  {product.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </PageContainer>
   );
 }

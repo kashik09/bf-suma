@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { PageContainer } from "@/components/layout/page-container";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Card, SectionHeader } from "@/components/ui";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import { submitBlogPost } from "@/services/blog-submissions";
 
-export const metadata: Metadata = {
-  title: "Submit an Article | BF Suma Blog",
-  description: "Share your wellness knowledge with the BF Suma community."
-};
+export const metadata = buildStorefrontMetadata({
+  title: "Submit a Wellness Article",
+  description:
+    "Share your practical wellness insights with BF Suma readers. Submit your article for editorial review and help more customers make informed choices.",
+  path: "/blog/submit"
+});
 
 const submitSchema = z.object({
   title: z.string().trim().min(10).max(200),
@@ -70,6 +72,7 @@ export default async function BlogSubmitPage({
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <h1 className="sr-only">Submit a wellness article</h1>
       <StoreBreadcrumbs
         items={[
           { label: "Home", href: "/" },
