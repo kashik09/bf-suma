@@ -15,10 +15,7 @@ values
   ('10000000-0000-0000-0000-000000000011', 'Men''s Health', 'mens-health', 'Targeted solutions for men''s vitality and wellness.', true),
   ('10000000-0000-0000-0000-000000000012', 'Brain Health', 'brain-health', 'Cognitive support for memory and mental clarity.', true),
   ('10000000-0000-0000-0000-000000000013', 'Detox', 'detox', 'Natural cleansing and detoxification support.', true)
-on conflict (id) do update set
-  name = excluded.name, slug = excluded.slug,
-  description = excluded.description, is_active = excluded.is_active,
-  updated_at = now();
+on conflict (slug) do nothing;
 
 insert into public.products (
   id, name, slug, description, price, compare_at_price,
@@ -125,13 +122,7 @@ values
    394900, 438800, 'KES', 'BFS-BRN-001', 50, 'ACTIVE', '10000000-0000-0000-0000-000000000012'),
   ('20000000-0000-0000-0000-000000000050', 'Detoxilive Capsules', 'detoxilive-capsules', '100% natural, absorbable ingredients promoting liver detoxification and cleansing.',
    315900, 351000, 'KES', 'BFS-DTX-001', 50, 'ACTIVE', '10000000-0000-0000-0000-000000000013')
-on conflict (id) do update set
-  name = excluded.name, slug = excluded.slug,
-  description = excluded.description, price = excluded.price,
-  compare_at_price = excluded.compare_at_price, currency = excluded.currency,
-  sku = excluded.sku, stock_qty = excluded.stock_qty,
-  status = excluded.status, category_id = excluded.category_id,
-  updated_at = now();
+on conflict (slug) do nothing;
 
 insert into public.product_images (id, product_id, url, alt_text, sort_order)
 values
@@ -177,7 +168,4 @@ values
   ('30000000-0000-0000-0000-000000000040', '20000000-0000-0000-0000-000000000048', 'https://www.bfsumaproducts.co.ke/web/image/product.template/32/image_512', 'ProstatRelax Capsules', 0),
   ('30000000-0000-0000-0000-000000000041', '20000000-0000-0000-0000-000000000049', 'https://www.bfsumaproducts.co.ke/web/image/product.template/36/image_512', 'CereBrain Tablets', 0),
   ('30000000-0000-0000-0000-000000000042', '20000000-0000-0000-0000-000000000050', 'https://www.bfsumaproducts.co.ke/web/image/product.template/42/image_512', 'Detoxilive Capsules', 0)
-on conflict (id) do update set
-  product_id = excluded.product_id, url = excluded.url,
-  alt_text = excluded.alt_text, sort_order = excluded.sort_order,
-  updated_at = now();
+on conflict (product_id, sort_order) do nothing;
