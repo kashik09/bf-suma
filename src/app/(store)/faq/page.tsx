@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
@@ -6,12 +5,15 @@ import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { listPdfFaqEntries } from "@/lib/catalog/pdf-catalog-content";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  title: "FAQ | BF Suma",
-  description: "Frequently asked questions about BF Suma products, ordering, shipping, and wellness guidance."
-};
+export const metadata = buildStorefrontMetadata({
+  title: "Frequently Asked Questions",
+  description:
+    "Get quick answers about BF Suma products, delivery, payment, and support. Resolve common questions fast before placing your next order.",
+  path: "/faq"
+});
 
 interface FaqItem {
   question: string;
@@ -119,6 +121,7 @@ export default function FaqPage() {
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <h1 className="sr-only">Frequently asked questions</h1>
       <StoreBreadcrumbs
         items={[
           { label: "Home", href: "/" },

@@ -3,11 +3,20 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_EMAIL, SUPPORT_PHONES, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+
+export const metadata = buildStorefrontMetadata({
+  title: "Contact Support",
+  description:
+    "Contact BF Suma for product guidance, order help, and delivery questions. Reach us by form, phone, email, or quick WhatsApp support.",
+  path: "/contact"
+});
 
 export default function ContactPage() {
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <h1 className="sr-only">Contact BF Suma support</h1>
       <section className="rounded-2xl border border-pink-200/60 bg-logo-spectrum-pink p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Contact"
