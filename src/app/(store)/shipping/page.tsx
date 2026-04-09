@@ -1,14 +1,16 @@
-import { Metadata } from "next";
 import { LegalPage } from "@/components/layout/legal-page";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
+export const metadata = buildStorefrontMetadata({
   title: `Shipping Policy | ${APP_NAME}`,
-  description: "Learn about BF Suma's shipping methods, delivery times, and fees."
-};
+  description:
+    "Understand BF Suma delivery zones, shipping timelines, fees, and tracking expectations so you can plan your order with confidence.",
+  path: "/shipping"
+});
 
 export default function ShippingPolicyPage() {
   const whatsappLink = buildWhatsAppUrl("Hello, I have a question about shipping.", SUPPORT_WHATSAPP_PHONE);

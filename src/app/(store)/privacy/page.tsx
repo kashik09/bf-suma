@@ -1,13 +1,15 @@
-import { Metadata } from "next";
 import { LegalPage } from "@/components/layout/legal-page";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
+import { buildStorefrontMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
+export const metadata = buildStorefrontMetadata({
   title: `Privacy Policy | ${APP_NAME}`,
-  description: "Learn how BF Suma collects, uses, and protects your personal information."
-};
+  description:
+    "Learn how BF Suma collects, uses, and protects your personal information when you browse, order, or contact support through our storefront.",
+  path: "/privacy"
+});
 
 export default function PrivacyPolicyPage() {
   return (

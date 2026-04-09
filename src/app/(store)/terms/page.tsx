@@ -1,13 +1,15 @@
-import { Metadata } from "next";
 import { LegalPage } from "@/components/layout/legal-page";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
+import { buildStorefrontMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
+export const metadata = buildStorefrontMetadata({
   title: `Terms of Service | ${APP_NAME}`,
-  description: "Read the terms and conditions for using BF Suma's website and services."
-};
+  description:
+    "Read BF Suma terms for product purchases, fulfillment, payments, and customer responsibilities so you can shop with clear expectations.",
+  path: "/terms"
+});
 
 export default function TermsOfServicePage() {
   return (

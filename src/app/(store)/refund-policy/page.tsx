@@ -1,14 +1,16 @@
-import { Metadata } from "next";
 import { LegalPage } from "@/components/layout/legal-page";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
+export const metadata = buildStorefrontMetadata({
   title: `Refund Policy | ${APP_NAME}`,
-  description: "Learn about BF Suma's return, exchange, and refund policies."
-};
+  description:
+    "Review BF Suma return, exchange, and refund steps so you know eligibility, timelines, and what to expect if an order issue occurs.",
+  path: "/refund-policy"
+});
 
 export default function RefundPolicyPage() {
   const whatsappLink = buildWhatsAppUrl("Hello, I have a question about a refund.", SUPPORT_WHATSAPP_PHONE);
