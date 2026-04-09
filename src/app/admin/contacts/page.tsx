@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { FormSubmitButton } from "@/components/forms";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { INQUIRY_STATUSES } from "@/lib/constants";
@@ -88,12 +89,93 @@ export default async function AdminContactsPage({
     }
   }
 
-  const data = await listAdminInquiries({
-    page,
-    pageSize: 25,
-    search: searchTerm || undefined,
-    status: statusFilter
-  });
+  let data: Awaited<ReturnType<typeof listAdminInquiries>> | null = null;
+  let loadError: string | null = null;
+
+  try {
+    data = await listAdminInquiries({
+      page,
+      pageSize: 25,
+      search: searchTerm || undefined,
+      status: statusFilter
+    });
+  } catch {
+    loadError = "We couldn't load contacts right now. Please refresh and try again.";
+  }
+
+  if (!data) {
+    return (
+      <div className="space-y-6">
+        <SectionHeader
+          title="Contacts"
+          description="Inbound contact queue from the website."
+        />
+
+        {query.updated === "1" ? (
+          <div className="rounded-md border border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
+            Inquiry status updated.
+          </div>
+        ) : null}
+
+        {query.error === "1" ? (
+          <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+            We couldn't update this contact status. Please try again.
+          </div>
+        ) : null}
+
+        <Card>
+          <form action="/admin/contacts" className="grid gap-3 md:grid-cols-[1fr_180px_auto]">
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="search">
+                Search
+              </label>
+              <input
+                className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+                defaultValue={searchTerm}
+                id="search"
+                name="search"
+                placeholder="Search name, email, phone, or message"
+                type="search"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status">
+                Status
+              </label>
+              <select
+                className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+                defaultValue={statusFilter}
+                id="status"
+                name="status"
+              >
+                <option value="all">All</option>
+                {INQUIRY_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status.replace(/_/g, " ")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                type="submit"
+              >
+                Filter
+              </button>
+            </div>
+          </form>
+        </Card>
+
+        <Card className="border-rose-200 bg-rose-50">
+          <p className="text-sm font-semibold text-rose-900">Contacts are temporarily unavailable</p>
+          <p className="mt-1 text-sm text-rose-800">{loadError}</p>
+        </Card>
+      </div>
+    );
+  }
 
   const totalPages = Math.max(1, Math.ceil(data.totalCount / data.pageSize));
   const hasPrev = data.page > 1;
@@ -114,7 +196,7 @@ export default async function AdminContactsPage({
 
       {query.error === "1" ? (
         <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-          Could not update inquiry status.
+          We couldn't update this contact status. Please try again.
         </div>
       ) : null}
 
@@ -199,9 +281,14 @@ export default async function AdminContactsPage({
                     <input type="hidden" name="page" value={String(data.page)} />
                     <input type="hidden" name="search" value={searchTerm} />
                     <input type="hidden" name="statusFilter" value={statusFilter} />
+                    <label className="sr-only" htmlFor={`inquiry-status-${entry.id}`}>
+                      Status for {entry.name}
+                    </label>
                     <select
+                      aria-label={`Status for ${entry.name}`}
                       className="h-9 rounded-md border border-slate-300 bg-white px-2.5 text-xs"
                       defaultValue={entry.status}
+                      id={`inquiry-status-${entry.id}`}
                       name="status"
                     >
                       {INQUIRY_STATUSES.map((status) => (
@@ -210,12 +297,12 @@ export default async function AdminContactsPage({
                         </option>
                       ))}
                     </select>
-                    <button
+                    <FormSubmitButton
                       className="inline-flex h-9 items-center justify-center rounded-md bg-brand-600 px-3 text-xs font-semibold text-white transition hover:bg-brand-700"
-                      type="submit"
+                      pendingLabel="Saving..."
                     >
                       Save
-                    </button>
+                    </FormSubmitButton>
                   </form>
                 </td>
               </tr>

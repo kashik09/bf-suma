@@ -27,10 +27,7 @@ const createBlogPostSchema = z.object({
 
 function parseErrorMessage(error: unknown): string {
   if (error instanceof BlogSlugConflictError) return error.message;
-  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
-    return error.message;
-  }
-  return "Could not create blog post.";
+  return "We couldn't save this blog post. Check your connection and try again.";
 }
 
 function normalizeSlug(value: string): string {
