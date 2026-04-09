@@ -3,8 +3,10 @@ import { LoadingState } from "@/components/ui/loading-state";
 
 export default function ProductLoading() {
   return (
-    <PageContainer className="py-10 sm:py-12">
-      <LoadingState label="Loading product details..." />
+    <PageContainer className="min-h-[60vh] py-10 sm:py-12">
+      <div className="flex min-h-[40vh] items-center">
+        <LoadingState label="Loading product details..." />
+      </div>
     </PageContainer>
   );
 }
