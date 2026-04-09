@@ -19,5 +19,6 @@ export * from "./store-cart-button";
 export * from "./shop-catalog";
 export * from "./store-footer";
 export * from "./store-header";
+export * from "./store-trust-badges";
 export * from "./trust-strip";
 export * from "./whatsapp-floating-cta";

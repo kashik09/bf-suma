@@ -9,6 +9,7 @@ import {
 } from "@/lib/constants";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
+import { StoreTrustBadges } from "@/components/storefront/store-trust-badges";
 
 export function StoreFooter() {
   return (
@@ -25,6 +26,7 @@ export function StoreFooter() {
           >
             WhatsApp Support
           </a>
+          <StoreTrustBadges className="pt-1" onDark />
         </div>
 
         <div>
@@ -46,6 +48,7 @@ export function StoreFooter() {
               WhatsApp
             </a>
             <a className="transition hover:text-accent-sun" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            <p className="text-slate-200">Kampala, Uganda</p>
             {SUPPORT_PHONES.map((phone) => (
               <a className="transition hover:text-accent-sun" href={`tel:${phone}`} key={phone}>
                 {phone}

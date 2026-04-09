@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 import { FormField } from "@/components/forms";
@@ -11,18 +11,45 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { StoreTrustBadges } from "@/components/storefront/store-trust-badges";
 import { useCart } from "@/hooks/use-cart";
+import { trackEvent } from "@/lib/analytics";
+import { setStoredCustomerProfile } from "@/lib/customer-profile";
+import { DELIVERY_FEE_AMOUNT_MINOR, FREE_SHIPPING_THRESHOLD_MINOR } from "@/lib/constants";
 import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib/validation";
 import { formatCurrency } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
-
-const DELIVERY_FEE = 5000;
 const PICKUP_LOCATIONS = [
   "Main Store - Lubowa",
   "Main Store - Kampala",
   "Main Store - Entebbe"
 ];
+
+function computeDeliveryFee(subtotal: number, isPickup: boolean) {
+  if (isPickup || subtotal >= FREE_SHIPPING_THRESHOLD_MINOR) return 0;
+  return DELIVERY_FEE_AMOUNT_MINOR;
+}
+
+function computeFreeShippingRemaining(subtotal: number) {
+  return Math.max(0, FREE_SHIPPING_THRESHOLD_MINOR - subtotal);
+}
+
+function getEstimatedDeliveryWindow(isPickup: boolean) {
+  if (isPickup) {
+    return "Ready for pickup today or the next business day.";
+  }
+
+  const etaDate = new Date();
+  etaDate.setDate(etaDate.getDate() + 2);
+  const etaLabel = etaDate.toLocaleDateString("en-UG", {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  });
+
+  return `Arrives by ${etaLabel}`;
+}
 
 function createIdempotencyKey() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -32,9 +59,13 @@ function createIdempotencyKey() {
   return `order-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
+function toMajorCurrency(minor: number): number {
+  return Number((minor / 100).toFixed(2));
+}
+
 function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof useCart>["items"]): OrderIntakeInput {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = values.fulfillmentType === "pickup" ? 0 : DELIVERY_FEE;
+  const deliveryFee = computeDeliveryFee(subtotal, values.fulfillmentType === "pickup");
   const total = subtotal + deliveryFee;
 
   return {
@@ -133,9 +164,12 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const lastSubmissionRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
+  const beginCheckoutTrackedRef = useRef(false);
 
   const form = useForm<CheckoutInput>({
     resolver: zodResolver(checkoutSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -157,9 +191,37 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const watchedDeliveryAddress = form.watch("deliveryAddress");
   const watchedPickupLocation = form.watch("pickupLocation");
   const isPickup = watchedFulfillmentType === "pickup";
-  const deliveryFee = items.length > 0 && !isPickup ? DELIVERY_FEE : 0;
+  const deliveryFee = items.length > 0 ? computeDeliveryFee(subtotal, isPickup) : 0;
+  const freeShippingRemaining = computeFreeShippingRemaining(subtotal);
+  const hasFreeShipping = !isPickup && subtotal >= FREE_SHIPPING_THRESHOLD_MINOR;
+  const estimatedDeliveryWindow = getEstimatedDeliveryWindow(isPickup);
 
   const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
+
+  useEffect(() => {
+    if (!watchedEmail?.trim() || !watchedFirstName?.trim()) return;
+    setStoredCustomerProfile({
+      email: watchedEmail.trim(),
+      firstName: watchedFirstName.trim(),
+      lastName: watchedLastName?.trim() || ""
+    });
+  }, [watchedEmail, watchedFirstName, watchedLastName]);
+
+  useEffect(() => {
+    if (beginCheckoutTrackedRef.current) return;
+    beginCheckoutTrackedRef.current = true;
+
+    trackEvent("begin_checkout", {
+      currency: items[0]?.currency || "KES",
+      value: toMajorCurrency(total),
+      items: items.map((item) => ({
+        item_id: item.product_id,
+        item_name: item.name,
+        price: toMajorCurrency(item.price),
+        quantity: item.quantity
+      }))
+    });
+  }, [items, total]);
 
   const attentionItems = useMemo(() => {
     const itemsToFix: string[] = [];
@@ -246,6 +308,18 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
         return;
       }
 
+      trackEvent("purchase", {
+        transaction_id: response.orderNumber || idempotencyKey,
+        currency: response.currency || "KES",
+        value: toMajorCurrency(response.total ?? payload.total),
+        items: items.map((item) => ({
+          item_id: item.product_id,
+          item_name: item.name,
+          price: toMajorCurrency(item.price),
+          quantity: item.quantity
+        }))
+      });
+
       clear();
       form.reset();
       lastSubmissionRef.current = null;
@@ -280,7 +354,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           message = responseBody?.message || fallbackErrorMessageForCode(resultCode, retryAfterSeconds);
         }
       } else if (error instanceof Error) {
-        message = error.message;
+        message = "We couldn't place your order right now. Check your connection and try again.";
       }
 
       setResultMessage(message);
@@ -474,6 +548,16 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               : "You can pay when your order is delivered."}
           </p>
 
+          {!isPickup ? (
+            <p className="mt-1 text-xs text-slate-600">
+              {hasFreeShipping
+                ? `Free shipping unlocked (orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}).`
+                : `Free shipping on orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}. Add ${formatCurrency(freeShippingRemaining, items[0]?.currency)} more to unlock it.`}
+            </p>
+          ) : null}
+
+          <p className="mt-1 text-xs font-medium text-slate-700">{estimatedDeliveryWindow}</p>
+
           <ul className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
             <li className="flex items-start gap-1.5">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-700" />
@@ -489,8 +573,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
             </li>
           </ul>
 
+          <StoreTrustBadges className="mt-3" />
+
           <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
-            {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
+            {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order - Pay on Delivery"}
           </Button>
 
           {resultMessage ? (
