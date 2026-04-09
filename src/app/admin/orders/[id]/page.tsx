@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { ORDER_STATUSES } from "@/lib/constants";
@@ -148,12 +149,12 @@ export default async function AdminOrderDetailPage({
                   placeholder="Reason for this status change"
                 />
               </div>
-              <button
+              <FormSubmitButton
                 className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
-                type="submit"
+                pendingLabel="Saving..."
               >
                 Save Status
-              </button>
+              </FormSubmitButton>
             </form>
           ) : (
             <p className="text-sm text-slate-600">

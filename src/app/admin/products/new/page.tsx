@@ -2,6 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { toMinorUnits } from "@/lib/utils";
@@ -35,10 +36,7 @@ function parseErrorMessage(error: unknown): string {
   if (error instanceof ProductSlugConflictError) {
     return error.message;
   }
-  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
-    return error.message;
-  }
-  return "Could not create product.";
+  return "We couldn't save this product. Check your connection and try again.";
 }
 
 function normalizeSlug(value: string): string {
@@ -201,9 +199,9 @@ export default async function AdminNewProductPage({
           </div>
 
           <div className="md:col-span-2">
-            <button className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700" type="submit">
+            <FormSubmitButton className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700" pendingLabel="Saving...">
               Create Product
-            </button>
+            </FormSubmitButton>
           </div>
         </form>
       </Card>
