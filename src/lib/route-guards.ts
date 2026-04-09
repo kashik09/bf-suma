@@ -15,7 +15,8 @@ const STOREFRONT_API_PREFIXES = [
   "/api/orders",
   "/api/contact",
   "/api/newsletter",
-  "/api/products"
+  "/api/products",
+  "/api/abandoned-cart"
 ] as const;
 
 export function isAdminRoute(pathname: string): boolean {
