@@ -1,204 +1,187 @@
 #!/usr/bin/env python3
 """
 BF Suma Catalog Image Downloader
-
-Downloads product images from catalog_manifest.json into organized local folders.
+Downloads product images from bfsumaproducts.co.ke and organizes them by category.
 
 Usage:
-    cd /home/kashi-kweyu/projects/complete-projects/bf-suma
-    python3 scripts/download-catalog-images.py
+    python3 scripts/download-catalog-images.py [--output-dir PATH] [--dry-run]
 
 Output Structure:
     public/catalog-images/
-    ├── joshoppers.com/
-    │   ├── youth-essence-facial-cream.webp
-    │   ├── ginseng-coffee.png
+    ├── immune-booster/
+    │   ├── 2_bf-suma-pure-broken-ganoderma-spores-30s.jpg
     │   └── ...
-    ├── wellthessentials.co.ke/
-    │   └── cordyceps-coffee.png
-    └── placeholder.webp
+    ├── mens-power/
+    ├── womens-beauty/
+    └── ...
 
 Requirements:
-    - Python 3.6+
-    - requests library (pip install requests)
-
-Assumptions:
-    - catalog_manifest.json exists at data/catalog/catalog_manifest.json
-    - Products without image_url are skipped
-    - Duplicate product names get numeric suffixes
-    - File extensions are preserved from URLs
+    Python 3.6+ and requests (pip install requests)
 """
 
-import json
-import os
+import argparse
 import re
 import sys
 from pathlib import Path
-from urllib.parse import urlparse
 
 try:
     import requests
 except ImportError:
-    print("Error: 'requests' library not found. Install with: pip install requests")
+    print("Error: 'requests' not found. Run: pip install requests")
     sys.exit(1)
 
-# Configuration
-PROJECT_ROOT = Path(__file__).parent.parent
-MANIFEST_PATH = PROJECT_ROOT / "data" / "catalog" / "catalog_manifest.json"
-OUTPUT_DIR = PROJECT_ROOT / "public" / "catalog-images"
-REQUEST_TIMEOUT = 30  # seconds
+# ---------------------------------------------------------------------------
+# Product catalogue — (id, name, category_slug)
+# ---------------------------------------------------------------------------
+PRODUCTS = [
+    # Immune Booster
+    (2,  "BF Suma Pure & Broken Ganoderma Spores 30s",     "immune-booster"),
+    (3,  "Pure & Broken Ganoderma Spores 60s",             "immune-booster"),
+    (13, "Pure Broken Ganoderma Spores Oil Capsules 60s",  "immune-booster"),
+    (20, "4 in 1 Cordyceps Coffee",                        "immune-booster"),
+    (22, "4-in-1 Reishi Coffee",                           "immune-booster"),
+    (24, "Quad-Reishi Capsules",                           "immune-booster"),
+    # Sport Fit
+    (25, "GymEffect",                                      "sport-fit"),
+    # Heart & Blood Fit
+    (21, "4-in-1 Ginseng Coffee",                          "heart-and-blood-fit"),
+    (31, "ArthroXtra Tablets",                             "heart-and-blood-fit"),
+    (34, "GluzoJoint-F Capsules",                          "heart-and-blood-fit"),
+    (36, "CereBrain",                                      "heart-and-blood-fit"),
+    (45, "MicrO2 Cycle Tablets",                           "heart-and-blood-fit"),
+    (59, "GluzoJoint-Ultra Pro",                           "heart-and-blood-fit"),
+    # Suma Fit
+    (5,  "Ez-Xlim",                                        "suma-fit"),
+    (8,  "Veggie Veggie",                                  "suma-fit"),
+    (23, "Probio3 Strawberry Flavor 30s",                  "suma-fit"),
+    (38, "ZaminoCal Plus Capsules",                        "suma-fit"),
+    (40, "Relivin Tea",                                    "suma-fit"),
+    (42, "Detoxilive Pro Oil Capsules",                    "suma-fit"),
+    (43, "NTDiarr Pills 1 Dozen",                          "suma-fit"),
+    (44, "ConstiRelax Oral Solution",                      "suma-fit"),
+    (62, "Elements",                                       "suma-fit"),
+    # Men's Power
+    (7,  "X Power Coffee",                                 "mens-power"),
+    (32, "ProstatRelax Capsules",                          "mens-power"),
+    (37, "X Power Man Plus Capsules",                      "mens-power"),
+    # Smart Kids
+    (10, "Blueberry Chewable Tablets",                     "smart-kids"),
+    (11, "Calcium & Vitamin D3 Milk Tablets",              "smart-kids"),
+    (12, "Vitamin C Chewable Tablets",                     "smart-kids"),
+    # Women's Beauty
+    (14, "Youth Essence Facial Cream",                     "womens-beauty"),
+    (15, "Youth Essence Facial Mask",                      "womens-beauty"),
+    (16, "Youth Essence Toner",                            "womens-beauty"),
+    (17, "Youth Essence Lotion",                           "womens-beauty"),
+    (18, "Youth Refreshing Facial Cleanser",               "womens-beauty"),
+    (19, "Refined Yunzhi Essence",                         "womens-beauty"),
+    (30, "Feminergy Capsules",                             "womens-beauty"),
+    (33, "Novel Depile Capsules",                          "womens-beauty"),
+    (35, "FemiCare (Feminine Cleanser)",                   "womens-beauty"),
+    (60, "Femicalcium D3",                                 "womens-beauty"),
+    (61, "FemiBiotics",                                    "womens-beauty"),
+    # Suma Living
+    (27, "Coolroll 1 Dozen",                               "suma-living"),
+    (39, "Anatic Herbal Essence Soap",                     "suma-living"),
+    (41, "Dr. Ts Toothpaste",                              "suma-living"),
+    # Others
+    (57, "Own Your Own Business",                          "others"),
+]
 
-# Stats
-stats = {
-    "downloaded": 0,
-    "skipped_no_url": 0,
-    "failed": 0,
-    "already_exists": 0,
-}
+BASE_URL = "https://www.bfsumaproducts.co.ke/web/image/product.template/{id}/image_512"
+REQUEST_TIMEOUT = 30
+HEADERS = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"}
 
 
 def slugify(text: str) -> str:
-    """Convert text to safe filename slug."""
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[-\s]+", "-", text)
     return text.strip("-")
 
 
-def get_extension(url: str) -> str:
-    """Extract file extension from URL."""
-    parsed = urlparse(url)
-    path = parsed.path
-    ext = os.path.splitext(path)[1].lower()
-    if ext in [".webp", ".png", ".jpg", ".jpeg", ".gif", ".svg"]:
-        return ext
-    return ".webp"  # Default
+def image_url(product_id: int) -> str:
+    return BASE_URL.format(id=product_id)
 
 
-def get_domain(url: str) -> str:
-    """Extract domain from URL."""
-    parsed = urlparse(url)
-    domain = parsed.netloc
-    # Remove 'www.' prefix if present
-    if domain.startswith("www."):
-        domain = domain[4:]
-    return domain
-
-
-def download_image(url: str, output_path: Path) -> bool:
-    """Download image from URL to output path."""
+def download(url: str, dest: Path) -> bool:
     try:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
-        }
-        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT, stream=True)
-        response.raise_for_status()
-
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(output_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
+        r = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT, stream=True)
+        r.raise_for_status()
+        # Determine extension from Content-Type
+        ct = r.headers.get("Content-Type", "")
+        ext = ".jpg"
+        if "png" in ct:
+            ext = ".png"
+        elif "webp" in ct:
+            ext = ".webp"
+        # Rename dest with correct extension if needed
+        if dest.suffix != ext:
+            dest = dest.with_suffix(ext)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with open(dest, "wb") as f:
+            for chunk in r.iter_content(8192):
                 f.write(chunk)
-
         return True
     except requests.RequestException as e:
-        print(f"    Failed: {e}")
+        print(f"    FAILED: {e}")
         return False
 
 
 def main():
-    """Main download routine."""
-    print("BF Suma Catalog Image Downloader")
-    print("=" * 50)
+    parser = argparse.ArgumentParser(description="Download BF Suma product images")
+    parser.add_argument(
+        "--output-dir",
+        default=str(Path(__file__).parent.parent / "public" / "catalog-images"),
+        help="Root output directory (default: public/catalog-images)",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print paths without downloading"
+    )
+    args = parser.parse_args()
 
-    # Check manifest exists
-    if not MANIFEST_PATH.exists():
-        print(f"Error: Manifest not found at {MANIFEST_PATH}")
-        sys.exit(1)
+    output_root = Path(args.output_dir)
+    print(f"BF Suma Image Downloader — {'DRY RUN' if args.dry_run else 'LIVE'}")
+    print(f"Output: {output_root}")
+    print("=" * 60)
 
-    # Load manifest
-    print(f"Loading manifest: {MANIFEST_PATH}")
-    with open(MANIFEST_PATH, "r") as f:
-        manifest = json.load(f)
+    counts = {"downloaded": 0, "exists": 0, "failed": 0}
 
-    products = manifest.get("products", [])
-    print(f"Found {len(products)} products in manifest\n")
+    for pid, name, category in PRODUCTS:
+        slug = slugify(name)
+        # Placeholder filename — extension may be corrected after HEAD detection
+        dest = output_root / category / f"{pid}_{slug}.jpg"
+        url = image_url(pid)
 
-    # Track used filenames to handle duplicates
-    used_filenames: dict[str, int] = {}
-
-    # Create output directory
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    # Process each product
-    for product in products:
-        name = product.get("name", "unknown")
-        image_url = product.get("image_url")
-        slug = product.get("slug") or slugify(name)
-
-        if not image_url:
-            print(f"[SKIP] {name} - no image URL")
-            stats["skipped_no_url"] += 1
+        # Check for any existing file with same stem (any extension)
+        existing = list(dest.parent.glob(f"{pid}_{slug}.*"))
+        if existing:
+            print(f"[EXISTS] {category}/{existing[0].name}")
+            counts["exists"] += 1
             continue
 
-        # Determine domain folder and filename
-        domain = get_domain(image_url)
-        ext = get_extension(image_url)
-
-        # Handle duplicate filenames
-        base_filename = slug
-        if base_filename in used_filenames:
-            used_filenames[base_filename] += 1
-            filename = f"{base_filename}-{used_filenames[base_filename]}{ext}"
-        else:
-            used_filenames[base_filename] = 0
-            filename = f"{base_filename}{ext}"
-
-        output_path = OUTPUT_DIR / domain / filename
-
-        # Check if already exists
-        if output_path.exists():
-            print(f"[EXISTS] {name} -> {output_path.relative_to(PROJECT_ROOT)}")
-            stats["already_exists"] += 1
+        if args.dry_run:
+            print(f"[DRY-RUN] {url}")
+            print(f"       -> {dest.relative_to(output_root.parent.parent)}")
             continue
 
-        # Download
-        print(f"[DOWNLOADING] {name}")
-        print(f"    URL: {image_url}")
-        print(f"    To: {output_path.relative_to(PROJECT_ROOT)}")
-
-        if download_image(image_url, output_path):
-            print(f"    Done!")
-            stats["downloaded"] += 1
+        print(f"[GET] {name}  ({category})")
+        if download(url, dest):
+            # Find the actual saved file (extension may have changed)
+            saved = next(dest.parent.glob(f"{pid}_{slug}.*"), dest)
+            print(f"   -> {saved.relative_to(output_root.parent.parent)}")
+            counts["downloaded"] += 1
         else:
-            stats["failed"] += 1
+            counts["failed"] += 1
 
-    # Create placeholder image
-    placeholder_path = OUTPUT_DIR / "placeholder.webp"
-    if not placeholder_path.exists():
-        print("\n[INFO] Creating placeholder image...")
-        # Create a simple placeholder (1x1 transparent pixel as minimal webp)
-        # In production, you'd want a proper placeholder image
-        placeholder_path.touch()
-        print(f"    Created: {placeholder_path.relative_to(PROJECT_ROOT)}")
-        print("    Note: Replace with actual placeholder image")
-
-    # Summary
-    print("\n" + "=" * 50)
-    print("SUMMARY")
-    print("=" * 50)
-    print(f"Downloaded:      {stats['downloaded']}")
-    print(f"Already existed: {stats['already_exists']}")
-    print(f"Skipped (no URL): {stats['skipped_no_url']}")
-    print(f"Failed:          {stats['failed']}")
-    print(f"\nOutput folder: {OUTPUT_DIR.relative_to(PROJECT_ROOT)}")
-
-    # List folder structure
-    print("\nFolder structure:")
-    for domain_dir in sorted(OUTPUT_DIR.iterdir()):
-        if domain_dir.is_dir():
-            file_count = len(list(domain_dir.iterdir()))
-            print(f"  {domain_dir.name}/ ({file_count} files)")
+    if not args.dry_run:
+        print()
+        print("=" * 60)
+        print(f"Downloaded : {counts['downloaded']}")
+        print(f"Already had: {counts['exists']}")
+        print(f"Failed     : {counts['failed']}")
+        if counts["failed"]:
+            print("\nTip: Re-run the script to retry failed downloads.")
 
 
 if __name__ == "__main__":
