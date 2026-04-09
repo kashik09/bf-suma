@@ -1,8 +1,5 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-
-// Revalidate every 60 seconds for fast subsequent loads
-export const revalidate = 60;
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
 import {
@@ -14,18 +11,36 @@ import {
 } from "@/components/storefront";
 import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getStorefrontCustomerCount } from "@/services/customers";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
 
+// Revalidate every 60 seconds for fast subsequent loads
+export const revalidate = 60;
+
+export const metadata = buildStorefrontMetadata({
+  title: "Premium Wellness Store",
+  description:
+    "Shop trusted wellness essentials with clear pricing, fast support, and mobile-first checkout. Discover products designed for daily vitality and confidence.",
+  path: "/"
+});
+
 export default async function HomePage() {
-  const [categories, products] = await Promise.all([
+  const [categories, products, customerCount] = await Promise.all([
     listFeaturedCategories(4),
-    listFeaturedProducts(6)
+    listFeaturedProducts(6),
+    getStorefrontCustomerCount()
   ]);
   const pdfHomepage = getPdfHomepageContent();
+  const organizationJsonLd = buildOrganizationJsonLd();
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <Hero
         heroHeadline={pdfHomepage.heroHeadline}
         heroSupportingText={pdfHomepage.heroSupportingText}
@@ -43,6 +58,11 @@ export default async function HomePage() {
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Shop with Confidence</p>
             <h2 className="text-2xl font-semibold leading-tight text-slate-900 sm:text-3xl">Clear product info and a direct path to checkout</h2>
             <p className="text-sm leading-relaxed text-slate-600">Explore products with concise guidance, transparent pricing, and support available when needed.</p>
+            {typeof customerCount === "number" && customerCount > 0 ? (
+              <p className="text-sm font-semibold text-slate-800">
+                Trusted by {customerCount.toLocaleString("en-UG")} customers
+              </p>
+            ) : null}
           </div>
 
           <ul className="grid gap-2 text-sm text-slate-700 md:grid-cols-3">

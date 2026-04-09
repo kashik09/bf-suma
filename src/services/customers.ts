@@ -19,6 +19,20 @@ export async function listCustomers(): Promise<Customer[]> {
   return data ?? [];
 }
 
+export async function getStorefrontCustomerCount(): Promise<number | null> {
+  try {
+    const supabase = createServiceRoleSupabaseClient();
+    const { count, error } = await supabase
+      .from("customers")
+      .select("id", { count: "exact", head: true });
+
+    if (error) return null;
+    return count ?? 0;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCustomerById(id: string): Promise<Customer | null> {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("customers").select("*").eq("id", id).single();
