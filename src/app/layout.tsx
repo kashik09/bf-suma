@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
+import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
+import { getSiteMetadataBase } from "@/lib/seo";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -11,13 +13,30 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "BF Suma",
-  description: "Trusted wellness essentials with clear pricing and fast local support.",
+  metadataBase: getSiteMetadataBase(),
+  title: APP_NAME,
+  description: APP_DESCRIPTION,
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png"
+  },
+  openGraph: {
+    siteName: APP_NAME,
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
+    type: "website",
+    url: "/",
+    images: [{ url: "/bf-suma-logo.png", alt: APP_NAME }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
+    images: ["/bf-suma-logo.png"]
   }
 };
+
+const gscVerificationToken = process.env.NEXT_PUBLIC_GSC_VERIFICATION_TOKEN?.trim() || "";
 
 export default function RootLayout({
   children
@@ -26,6 +45,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={ubuntu.variable}>
+      <head>
+        {gscVerificationToken ? (
+          <meta content={gscVerificationToken} name="google-site-verification" />
+        ) : null}
+      </head>
       <body>
         <ToastProvider>{children}</ToastProvider>
       </body>
