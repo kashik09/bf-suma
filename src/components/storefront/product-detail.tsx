@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 import { useCart } from "@/hooks/use-cart";
+import { trackEvent } from "@/lib/analytics";
+import { buildProductLeadDescription } from "@/lib/seo";
 import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatCurrency } from "@/lib/utils";
 import type { StorefrontProduct } from "@/types";
@@ -29,6 +32,10 @@ function availabilitySignal(availability: StorefrontProduct["availability"]) {
   if (availability === "low_stock") return "Limited availability";
   if (availability === "out_of_stock") return "Currently unavailable";
   return "Ready for checkout";
+}
+
+function toMajorCurrency(minor: number): number {
+  return Number((minor / 100).toFixed(2));
 }
 
 const categoryProblemFrames: Record<string, string[]> = {
@@ -124,68 +131,7 @@ const ingredientKeywordPairs: Array<{ label: string; match: RegExp }> = [
   { label: "NMN", match: /\bnmn\b/i }
 ];
 
-const categoryFaqs: Record<string, Array<{ question: string; answer: string }>> = {
-  default: [
-    {
-      question: "How do I know this product is right for me?",
-      answer: "Start with the product purpose and ingredient section, then use WhatsApp support if you need personalized guidance."
-    },
-    {
-      question: "Can I order without creating an account?",
-      answer: "Yes. Checkout is designed to work without a forced account sign-up."
-    },
-    {
-      question: "When do I pay?",
-      answer: "Payment is handled on delivery or pickup, with total costs shown before order confirmation."
-    }
-  ],
-  skincare: [
-    {
-      question: "How should I introduce this into my routine?",
-      answer: "Start with consistent daily use and pair with complementary skincare steps where applicable."
-    },
-    {
-      question: "Where can I verify ingredients?",
-      answer: "Use the ingredients section on this page and confirm full label details on product packaging."
-    },
-    {
-      question: "Can I ask for support before checkout?",
-      answer: "Yes. WhatsApp support is available for product-fit questions before you place your order."
-    }
-  ],
-  beverages: [
-    {
-      question: "Is this a daily-use product?",
-      answer: "Most beverage products are intended for routine use. Follow serving guidance on the package."
-    },
-    {
-      question: "Can I combine this with other products?",
-      answer: "Many customers stack categories, but support can help you choose a practical sequence."
-    },
-    {
-      question: "How fast is fulfillment?",
-      answer: "Delivery and pickup options are shown at checkout, with clear next steps before submission."
-    }
-  ]
-};
-
-const testimonialFrames = [
-  {
-    initials: "AK",
-    location: "Kampala",
-    quote: "The product page made the decision easy. I could compare quickly and checkout without confusion."
-  },
-  {
-    initials: "FN",
-    location: "Entebbe",
-    quote: "I liked seeing details and total cost clearly before paying. It felt more trustworthy than typical stores."
-  },
-  {
-    initials: "JM",
-    location: "Wakiso",
-    quote: "I used WhatsApp for one question, then finished checkout directly. The flow stayed simple."
-  }
-];
+const PRODUCT_IMAGE_BLUR_DATA_URL = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
 function resolveProblemFrame(product: StorefrontProduct) {
   return categoryProblemFrames[product.category_slug] || [
@@ -223,18 +169,32 @@ function resolveIngredients(product: StorefrontProduct) {
   ];
 }
 
-function resolveFaqs(product: StorefrontProduct) {
-  return categoryFaqs[product.category_slug] || categoryFaqs.default;
-}
-
 interface ProductDetailProps {
   product: StorefrontProduct;
   commerceReady?: boolean;
   degradedReason?: string | null;
   pdfContent?: PdfCatalogProductContent | null;
+  averageRating?: number;
+  reviewCount?: number;
+  soldThisWeek?: number | null;
+  featuredReview?: {
+    reviewer_name: string;
+    comment: string;
+    rating: number;
+    is_verified_purchase: boolean;
+  } | null;
 }
 
-export function ProductDetail({ product, commerceReady = true, degradedReason = null, pdfContent = null }: ProductDetailProps) {
+export function ProductDetail({
+  product,
+  commerceReady = true,
+  degradedReason = null,
+  pdfContent = null,
+  averageRating = 0,
+  reviewCount = 0,
+  soldThisWeek = null,
+  featuredReview = null
+}: ProductDetailProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
@@ -243,13 +203,19 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
   const problemFrame = resolveProblemFrame(product);
   const descriptionText = pdfContent?.description || product.description;
+  const seoLeadDescription = buildProductLeadDescription({
+    name: product.name,
+    categoryName: product.category_name,
+    description: descriptionText
+  });
   const benefits = pdfContent?.benefits.length ? pdfContent.benefits : resolveBenefits(product);
   const ingredients = pdfContent?.ingredients.length ? pdfContent.ingredients : resolveIngredients(product);
   const usageInstructions = pdfContent?.usageInstructions || null;
   const warnings = pdfContent?.warnings || [];
-  const faqs = resolveFaqs(product);
   const availabilityStatus = availabilitySignal(product.availability);
   const productWhatsAppInterestMessage = buildWhatsAppProductInterestMessage(product.name);
+  const lowStockCount = product.stock_qty > 0 && product.stock_qty < 10 ? product.stock_qty : null;
+  const hasReviewData = reviewCount > 0;
 
   function increment() {
     setQuantity((current) => Math.min(current + 1, maxQuantity));
@@ -270,6 +236,19 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
     }
 
     addItem(product, quantity);
+    trackEvent("add_to_cart", {
+      currency: product.currency,
+      value: toMajorCurrency(product.price * quantity),
+      items: [
+        {
+          item_id: product.id,
+          item_name: product.name,
+          item_category: product.category_name,
+          price: toMajorCurrency(product.price),
+          quantity
+        }
+      ]
+    });
     toast({
       title: "Added to cart",
       description: `${product.name} x${quantity}`,
@@ -281,7 +260,19 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
     <div className="space-y-6">
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         <div className="space-y-3">
-          <div className="h-72 w-full rounded-2xl border border-slate-200 bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_50%,_#cbd5e1_100%)] shadow-soft sm:h-96" />
+          <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-slate-200 bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_50%,_#cbd5e1_100%)] shadow-soft sm:h-96">
+            <Image
+              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
+              blurDataURL={PRODUCT_IMAGE_BLUR_DATA_URL}
+              className="object-cover"
+              fill
+              placeholder="blur"
+              priority
+              sizes="(max-width: 1024px) 100vw, 52vw"
+              src={product.image_url || "/catalog-images/placeholder.svg"}
+              unoptimized
+            />
+          </div>
         </div>
 
         <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
@@ -293,7 +284,37 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
             </span>
           </div>
           <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{descriptionText}</p>
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            {hasReviewData ? (
+              <p className="font-semibold text-slate-900">
+                {averageRating.toFixed(1)} / 5 ({reviewCount} review{reviewCount !== 1 ? "s" : ""})
+              </p>
+            ) : (
+              <Link className="font-semibold text-brand-700 hover:text-brand-800" href="#reviews">
+                Be the first to review
+              </Link>
+            )}
+            {typeof soldThisWeek === "number" && soldThisWeek > 1 ? (
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                {soldThisWeek} sold this week
+              </span>
+            ) : null}
+          </div>
+          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{seoLeadDescription}</p>
+
+          {featuredReview ? (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-800">
+                <Quote className="h-3.5 w-3.5" />
+                Customer highlight
+              </p>
+              <p className="mt-1 text-sm text-slate-700">&ldquo;{featuredReview.comment}&rdquo;</p>
+              <p className="mt-1 text-xs font-medium text-slate-600">
+                {featuredReview.reviewer_name} • {featuredReview.rating}/5
+                {featuredReview.is_verified_purchase ? " • Verified purchase" : ""}
+              </p>
+            </div>
+          ) : null}
 
           <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Problem Fit</p>
@@ -309,12 +330,21 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
 
           <div className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Quantity</p>
+            {lowStockCount ? (
+              <p className="text-sm font-semibold text-amber-700">Only {lowStockCount} left in stock</p>
+            ) : null}
             <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white p-1">
-              <button className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200" onClick={decrement} type="button">
+              <button
+                aria-label={`Decrease quantity for ${product.name}`}
+                className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200"
+                onClick={decrement}
+                type="button"
+              >
                 -
               </button>
               <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
               <button
+                aria-label={`Increase quantity for ${product.name}`}
                 className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-200"
                 disabled={quantity >= maxQuantity}
                 onClick={increment}
@@ -336,7 +366,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
               onClick={handleAddToCart}
               title={isUnavailable ? "Product is out of stock" : "Add item to cart"}
             >
-              {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to cart"}
+              {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to Cart - Fast Checkout"}
             </Button>
             <a
               className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 sm:flex-1"
@@ -364,7 +394,7 @@ export function ProductDetail({ product, commerceReady = true, degradedReason = 
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
             href="/checkout"
           >
-            Continue to checkout
+            Continue to Checkout
           </Link>
 
           <ul className="space-y-1.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
