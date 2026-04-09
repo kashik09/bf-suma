@@ -3,7 +3,9 @@ import { randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
 import { ORDER_STATUSES } from "@/lib/constants";
 import { assertAdminRequest } from "@/lib/admin-request";
+import { sendOrderConfirmationEmail, sendStorefrontWelcomeEmail } from "@/lib/email/resend";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
+import { deleteAbandonedCartByEmail } from "@/services/abandoned-carts";
 import { enqueueOrderCreatedNotification } from "@/services/order-notifications";
 import {
   createOrderIntakeWithIdempotency,
@@ -364,6 +366,16 @@ export async function POST(request: Request) {
       resultCode
     });
 
+    try {
+      await deleteAbandonedCartByEmail(parsed.data.email.trim().toLowerCase());
+    } catch (cleanupError) {
+      logEvent("warn", "order.abandoned_cart_cleanup_failed", {
+        correlationId,
+        orderId: result.orderId,
+        message: cleanupError instanceof Error ? cleanupError.message : "Unknown error"
+      });
+    }
+
     if (resultCode === "CREATED") {
       try {
         await enqueueOrderCreatedNotification({
@@ -378,6 +390,74 @@ export async function POST(request: Request) {
           correlationId,
           orderId: result.orderId,
           message: enqueueError instanceof Error ? enqueueError.message : "Unknown error"
+        });
+      }
+
+      try {
+        const estimatedDeliveryWindow = isPickup
+          ? "Ready for pickup today or next business day."
+          : "Arrives in 1-2 business days.";
+        const normalizedEmail = parsed.data.email.trim().toLowerCase();
+        const emailDelivery = await sendOrderConfirmationEmail({
+          email: normalizedEmail,
+          firstName: parsed.data.firstName.trim(),
+          orderNumber: result.orderNumber,
+          subtotal: result.subtotal,
+          deliveryFee: result.deliveryFee,
+          total: result.total,
+          currency: result.currency,
+          estimatedDeliveryWindow
+        });
+
+        if (emailDelivery.status === "failed") {
+          logEvent("warn", "order.confirmation_email_failed", {
+            correlationId,
+            orderId: result.orderId,
+            reason: emailDelivery.reason || "unknown"
+          });
+        }
+
+        try {
+          const supabase = createServiceRoleSupabaseClient();
+          const { data: customerRow } = await supabase
+            .from("customers")
+            .select("id")
+            .eq("email", normalizedEmail)
+            .maybeSingle();
+
+          if (customerRow?.id) {
+            const { count: orderCount } = await supabase
+              .from("orders")
+              .select("id", { count: "exact", head: true })
+              .eq("customer_id", customerRow.id);
+
+            if ((orderCount || 0) === 1) {
+              const welcomeDelivery = await sendStorefrontWelcomeEmail({
+                email: normalizedEmail,
+                firstName: parsed.data.firstName.trim()
+              });
+
+              if (welcomeDelivery.status === "failed") {
+                logEvent("warn", "order.welcome_email_failed", {
+                  correlationId,
+                  orderId: result.orderId,
+                  reason: welcomeDelivery.reason || "unknown"
+                });
+              }
+            }
+          }
+        } catch (welcomeError) {
+          logEvent("warn", "order.welcome_email_error", {
+            correlationId,
+            orderId: result.orderId,
+            message: welcomeError instanceof Error ? welcomeError.message : "Unknown error"
+          });
+        }
+      } catch (emailError) {
+        logEvent("warn", "order.confirmation_email_error", {
+          correlationId,
+          orderId: result.orderId,
+          message: emailError instanceof Error ? emailError.message : "Unknown error"
         });
       }
     }
