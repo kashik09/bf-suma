@@ -129,6 +129,7 @@ export interface AdminProductDetail {
   stock_qty: number;
   status: ProductStatus;
   category_id: string;
+  image_url: string | null;
 }
 
 export interface UpsertAdminProductInput {
@@ -158,19 +159,58 @@ export async function listAdminCategoryOptions(): Promise<AdminCategoryOption[]>
 
 export async function getAdminProductById(id: string): Promise<AdminProductDetail | null> {
   const supabase = createServiceRoleSupabaseClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select("id, name, slug, description, sku, price, compare_at_price, currency, stock_qty, status, category_id")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data, error }, { data: imageRows, error: imageError }] = await Promise.all([
+    supabase
+      .from("products")
+      .select("id, name, slug, description, sku, price, compare_at_price, currency, stock_qty, status, category_id")
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("product_images")
+      .select("url")
+      .eq("product_id", id)
+      .order("sort_order", { ascending: true })
+      .limit(1)
+  ]);
 
   if (error) throw error;
   if (!data) return null;
+  if (imageError) throw imageError;
 
   return {
     ...data,
-    status: data.status as ProductStatus
+    status: data.status as ProductStatus,
+    image_url: imageRows?.[0]?.url ?? null
   };
+}
+
+export async function upsertProductImageUrl(productId: string, imageUrl: string | null): Promise<void> {
+  const supabase = createServiceRoleSupabaseClient();
+  const trimmed = imageUrl?.trim() || null;
+
+  if (!trimmed) {
+    await supabase.from("product_images").delete().eq("product_id", productId);
+    return;
+  }
+
+  const { data: existing } = await supabase
+    .from("product_images")
+    .select("id")
+    .eq("product_id", productId)
+    .order("sort_order", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase
+      .from("product_images")
+      .update({ url: trimmed, updated_at: new Date().toISOString() })
+      .eq("id", existing.id);
+  } else {
+    await supabase
+      .from("product_images")
+      .insert({ product_id: productId, url: trimmed, alt_text: null, sort_order: 0 });
+  }
 }
 
 export async function createAdminProduct(input: UpsertAdminProductInput): Promise<{ id: string }> {

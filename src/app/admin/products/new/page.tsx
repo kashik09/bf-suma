@@ -8,7 +8,8 @@ import { toMinorUnits } from "@/lib/utils";
 import {
   createAdminProduct,
   listAdminCategoryOptions,
-  ProductSlugConflictError
+  ProductSlugConflictError,
+  upsertProductImageUrl
 } from "@/services/admin-products";
 import type { ProductStatus } from "@/types";
 
@@ -26,7 +27,8 @@ const createProductSchema = z.object({
   ),
   stockQty: z.coerce.number().int().nonnegative(),
   categoryId: z.string().uuid(),
-  status: z.enum(PRODUCT_STATUS_VALUES)
+  status: z.enum(PRODUCT_STATUS_VALUES),
+  imageUrl: z.string().trim().max(2048).optional()
 });
 
 function parseErrorMessage(error: unknown): string {
@@ -72,7 +74,8 @@ export default async function AdminNewProductPage({
       compareAtPriceMajor: formData.get("compareAtPriceMajor"),
       stockQty: formData.get("stockQty"),
       categoryId: formData.get("categoryId"),
-      status: formData.get("status")
+      status: formData.get("status"),
+      imageUrl: formData.get("imageUrl")
     });
 
     if (!parsed.success) {
@@ -100,6 +103,10 @@ export default async function AdminNewProductPage({
         status: parsed.data.status as ProductStatus,
         category_id: parsed.data.categoryId
       });
+
+      if (parsed.data.imageUrl?.trim()) {
+        await upsertProductImageUrl(created.id, parsed.data.imageUrl);
+      }
 
       revalidatePath("/admin/products");
       revalidatePath("/shop");
@@ -174,6 +181,18 @@ export default async function AdminNewProductPage({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="imageUrl">Image URL</label>
+            <input
+              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
+              id="imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+              type="url"
+            />
+            <p className="mt-1 text-xs text-slate-500">Paste a direct image URL</p>
           </div>
 
           <div className="md:col-span-2">
