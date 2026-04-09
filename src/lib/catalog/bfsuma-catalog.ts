@@ -59,6 +59,10 @@ function toLocalImagePath(imageUrl: string | null, slug: string): string {
     return imageUrl;
   }
 
+  if (imageUrl.startsWith("https://") || imageUrl.startsWith("http://")) {
+    return imageUrl;
+  }
+
   try {
     const parsed = new URL(imageUrl);
     const domain = parsed.hostname.replace(/^www\./, "");
