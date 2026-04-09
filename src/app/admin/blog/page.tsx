@@ -8,6 +8,7 @@ type BlogSearchParams = Promise<{
   search?: string;
   status?: "all" | BlogPostStatus;
   deleted?: string;
+  page?: string;
 }>;
 
 const STATUS_LABELS: Record<BlogPostStatus, string> = {
@@ -25,6 +26,12 @@ function formatDate(value: string | null) {
   });
 }
 
+function getSafePage(value: string | undefined): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.max(1, Math.floor(parsed));
+}
+
 export default async function AdminBlogPage({
   searchParams
 }: {
@@ -37,14 +44,22 @@ export default async function AdminBlogPage({
   const searchTerm = typeof query.search === "string" ? query.search : "";
   const statusFilter =
     query.status === "DRAFT" || query.status === "REVIEW" || query.status === "PUBLISHED" ? query.status : "all";
+  const page = getSafePage(query.page);
 
-  let posts: Awaited<ReturnType<typeof listAdminBlogPosts>> = [];
+  let postResult: Awaited<ReturnType<typeof listAdminBlogPosts>> = {
+    posts: [],
+    totalCount: 0,
+    page,
+    pageSize: 25
+  };
   let loadError: string | null = null;
 
   try {
-    posts = await listAdminBlogPosts({
+    postResult = await listAdminBlogPosts({
       search: searchTerm,
-      status: statusFilter
+      status: statusFilter,
+      page,
+      pageSize: 25
     });
   } catch (error) {
     loadError =
@@ -52,6 +67,9 @@ export default async function AdminBlogPage({
         ? error.message
         : "Could not load blog posts right now. Please retry shortly.";
   }
+  const totalPages = Math.max(1, Math.ceil(postResult.totalCount / postResult.pageSize));
+  const hasPrev = postResult.page > 1;
+  const hasNext = postResult.page < totalPages;
 
   return (
     <div className="space-y-6">
@@ -60,7 +78,7 @@ export default async function AdminBlogPage({
         description={
           loadError
             ? "Blog management is degraded right now. Resolve the warning below to restore content operations."
-            : "Create, draft, publish, and manage storefront blog content."
+            : `Create, draft, publish, and manage storefront blog content. Showing ${postResult.posts.length} of ${postResult.totalCount} post(s).`
         }
       />
 
@@ -141,7 +159,7 @@ export default async function AdminBlogPage({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 bg-white">
-            {posts.map((post) => (
+            {postResult.posts.map((post) => (
               <tr className="text-sm text-slate-700" key={post.id}>
                 <td className="px-4 py-3">
                   <div className="space-y-1">
@@ -182,7 +200,7 @@ export default async function AdminBlogPage({
               </tr>
             ))}
 
-            {posts.length === 0 ? (
+            {postResult.posts.length === 0 ? (
               <tr>
                 <td className="px-4 py-8 text-center text-sm text-slate-500" colSpan={5}>
                   No blog posts found. Create your first post to start publishing.
@@ -192,6 +210,41 @@ export default async function AdminBlogPage({
           </tbody>
         </table>
       </Card>
+
+      {!loadError ? (
+        <Card className="flex items-center justify-between">
+          <p className="text-sm text-slate-600">
+            Page {postResult.page} of {totalPages}
+          </p>
+          <div className="flex items-center gap-2">
+            {hasPrev ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={`/admin/blog?page=${postResult.page - 1}&status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`}
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Previous
+              </span>
+            )}
+
+            {hasNext ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={`/admin/blog?page=${postResult.page + 1}&status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`}
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Next
+              </span>
+            )}
+          </div>
+        </Card>
+      ) : null}
     </div>
   );
 }

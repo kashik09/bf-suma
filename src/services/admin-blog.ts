@@ -54,6 +54,15 @@ export interface UpsertAdminBlogPostInput {
 export interface ListAdminBlogPostsInput {
   search?: string;
   status?: "all" | BlogPostStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface AdminBlogPostListResult {
+  posts: AdminBlogPostListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 
 export class BlogSlugConflictError extends Error {
@@ -74,6 +83,16 @@ function hasErrorCode(error: unknown, code: string): boolean {
   if (!error || typeof error !== "object") return false;
   const candidate = error as { code?: string | null };
   return candidate.code === code;
+}
+
+function clampPage(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 1;
+  return Math.max(1, Math.floor(value as number));
+}
+
+function clampPageSize(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 20;
+  return Math.max(1, Math.min(100, Math.floor(value as number)));
 }
 
 function normalizeTags(tags: unknown): string[] {
@@ -142,12 +161,17 @@ async function assertUniqueSlug(slug: string, excludeId?: string): Promise<void>
 
 export async function listAdminBlogPosts(
   input: ListAdminBlogPostsInput = {}
-): Promise<AdminBlogPostListItem[]> {
+): Promise<AdminBlogPostListResult> {
   const supabase = createServiceRoleSupabaseClient();
+  const page = clampPage(input.page);
+  const pageSize = clampPageSize(input.pageSize);
+  const rangeStart = (page - 1) * pageSize;
+  const rangeEnd = rangeStart + pageSize - 1;
   let query = supabase
     .from("blog_posts")
-    .select("id, title, slug, excerpt, status, author, tags, internal_tags, channel_targets, published_at, created_at, updated_at")
-    .order("created_at", { ascending: false });
+    .select("id, title, slug, excerpt, status, author, tags, internal_tags, channel_targets, published_at, created_at, updated_at", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(rangeStart, rangeEnd);
 
   if (input.status && input.status !== "all") {
     query = query.eq("status", input.status);
@@ -159,7 +183,7 @@ export async function listAdminBlogPosts(
     query = query.or(`title.ilike.%${escaped}%,slug.ilike.%${escaped}%,author.ilike.%${escaped}%`);
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
   if (error) {
     if (hasErrorCode(error, "PGRST205")) {
       throw new AdminBlogUnavailableError(
@@ -168,11 +192,16 @@ export async function listAdminBlogPosts(
     }
 
     throw new AdminBlogUnavailableError(
-      `Could not load blog posts right now: ${error.message || "Unknown data error"}`
+      "We couldn't load blog posts right now. Please check your database connection and try again."
     );
   }
 
-  return ((data ?? []) as BlogPostRow[]).map(toListItem);
+  return {
+    posts: ((data ?? []) as BlogPostRow[]).map(toListItem),
+    totalCount: count || 0,
+    page,
+    pageSize
+  };
 }
 
 export async function getAdminBlogPostById(id: string): Promise<AdminBlogPostDetail | null> {

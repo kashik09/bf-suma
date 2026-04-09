@@ -17,6 +17,15 @@ export interface AdminProductListItem {
 export interface GetAdminProductsInput {
   search?: string;
   status?: ProductStatus | "all";
+  page?: number;
+  pageSize?: number;
+}
+
+export interface AdminProductListResult {
+  products: AdminProductListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 
 export class ProductDeleteRestrictedError extends Error {
@@ -46,13 +55,28 @@ function hasErrorCode(error: unknown, code: string): boolean {
   return candidate.code === code;
 }
 
-export async function getAdminProducts(input: GetAdminProductsInput = {}): Promise<AdminProductListItem[]> {
+function clampPage(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 1;
+  return Math.max(1, Math.floor(value as number));
+}
+
+function clampPageSize(value: number | undefined): number {
+  if (!Number.isFinite(value)) return 20;
+  return Math.max(1, Math.min(100, Math.floor(value as number)));
+}
+
+export async function getAdminProducts(input: GetAdminProductsInput = {}): Promise<AdminProductListResult> {
   const supabase = createServiceRoleSupabaseClient();
+  const page = clampPage(input.page);
+  const pageSize = clampPageSize(input.pageSize);
+  const rangeStart = (page - 1) * pageSize;
+  const rangeEnd = rangeStart + pageSize - 1;
 
   let query = supabase
     .from("products")
-    .select("id, name, slug, sku, price, currency, stock_qty, status, created_at")
-    .order("created_at", { ascending: false });
+    .select("id, name, slug, sku, price, currency, stock_qty, status, created_at", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(rangeStart, rangeEnd);
 
   if (input.status && input.status !== "all") {
     query = query.eq("status", input.status);
@@ -63,7 +87,7 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
     query = query.or(`name.ilike.%${normalizedSearch}%,slug.ilike.%${normalizedSearch}%,sku.ilike.%${normalizedSearch}%`);
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     if (hasErrorCode(error, "PGRST205")) {
@@ -73,7 +97,7 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
     }
 
     throw new AdminProductsUnavailableError(
-      `Could not load products right now: ${error.message || "Unknown data error"}`
+      "We couldn't load products right now. Please check your database connection and try again."
     );
   }
 
@@ -97,18 +121,23 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
     }
   }
 
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    sku: row.sku,
-    price: row.price,
-    currency: row.currency,
-    stock_qty: row.stock_qty,
-    status: row.status as ProductStatus,
-    image_url: imageUrlByProductId.get(row.id) ?? null,
-    created_at: row.created_at
-  }));
+  return {
+    products: rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      slug: row.slug,
+      sku: row.sku,
+      price: row.price,
+      currency: row.currency,
+      stock_qty: row.stock_qty,
+      status: row.status as ProductStatus,
+      image_url: imageUrlByProductId.get(row.id) ?? null,
+      created_at: row.created_at
+    })),
+    totalCount: count || 0,
+    page,
+    pageSize
+  };
 }
 
 export interface AdminCategoryOption {

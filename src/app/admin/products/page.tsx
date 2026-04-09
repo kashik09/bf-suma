@@ -23,6 +23,7 @@ type ProductsSearchParams = Promise<{
   search?: string;
   status?: ProductStatus | "all";
   deleted?: string;
+  page?: string;
 }>;
 
 function formatDate(value: string) {
@@ -31,6 +32,12 @@ function formatDate(value: string) {
     month: "short",
     year: "numeric"
   });
+}
+
+function getSafePage(value: string | undefined): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.max(1, Math.floor(parsed));
 }
 
 export default async function AdminProductsPage({
@@ -46,13 +53,21 @@ export default async function AdminProductsPage({
     query.status === "ACTIVE" || query.status === "DRAFT" || query.status === "ARCHIVED" || query.status === "OUT_OF_STOCK"
       ? query.status
       : "all";
-  let products: Awaited<ReturnType<typeof getAdminProducts>> = [];
+  const page = getSafePage(query.page);
+  let productResult: Awaited<ReturnType<typeof getAdminProducts>> = {
+    products: [],
+    totalCount: 0,
+    page,
+    pageSize: 25
+  };
   let loadError: string | null = null;
 
   try {
-    products = await getAdminProducts({
+    productResult = await getAdminProducts({
       search: searchTerm,
-      status: statusFilter
+      status: statusFilter,
+      page,
+      pageSize: 25
     });
   } catch (error) {
     loadError =
@@ -60,6 +75,9 @@ export default async function AdminProductsPage({
         ? error.message
         : "Could not load products right now. Please retry shortly.";
   }
+  const totalPages = Math.max(1, Math.ceil(productResult.totalCount / productResult.pageSize));
+  const hasPrev = productResult.page > 1;
+  const hasNext = productResult.page < totalPages;
 
   return (
     <div className="space-y-6">
@@ -68,7 +86,7 @@ export default async function AdminProductsPage({
         description={
           loadError
             ? "Inventory control is degraded right now. Resolve the warning below to restore full product operations."
-            : `Inventory control with status, pricing, stock visibility, and quick edit actions. ${products.length} result(s).`
+            : `Inventory control with status, pricing, stock visibility, and quick edit actions. Showing ${productResult.products.length} of ${productResult.totalCount} result(s).`
         }
       />
 
@@ -152,7 +170,7 @@ export default async function AdminProductsPage({
           </thead>
 
           <tbody>
-            {products.map((p) => (
+            {productResult.products.map((p) => (
               <tr key={p.id} className="border-b">
                 <td className="p-3">
                   <div className="flex items-center gap-3">
@@ -195,7 +213,7 @@ export default async function AdminProductsPage({
               </tr>
             ))}
 
-            {products.length === 0 && (
+            {productResult.products.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-6 text-center text-gray-500">
                   No products match this filter.
@@ -205,6 +223,41 @@ export default async function AdminProductsPage({
           </tbody>
         </table>
       </Card>
+
+      {!loadError ? (
+        <Card className="flex items-center justify-between">
+          <p className="text-sm text-slate-600">
+            Page {productResult.page} of {totalPages}
+          </p>
+          <div className="flex items-center gap-2">
+            {hasPrev ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={`/admin/products?page=${productResult.page - 1}&status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`}
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Previous
+              </span>
+            )}
+
+            {hasNext ? (
+              <Link
+                className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                href={`/admin/products?page=${productResult.page + 1}&status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`}
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-400">
+                Next
+              </span>
+            )}
+          </div>
+        </Card>
+      ) : null}
     </div>
   );
 }
