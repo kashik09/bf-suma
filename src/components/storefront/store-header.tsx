@@ -1,10 +1,23 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
-import { SearchAutocomplete } from "@/components/storefront/search-autocomplete";
+
+const SearchAutocomplete = dynamic(
+  () => import("@/components/storefront/search-autocomplete").then((mod) => mod.SearchAutocomplete),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden
+        className="h-10 w-full rounded-md border border-slate-200 bg-slate-50"
+      />
+    )
+  }
+);
 
 export function StoreHeader() {
   return (
@@ -13,7 +26,7 @@ export function StoreHeader() {
       <PageContainer className="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-6">
         <Link href="/">
           <Image
-            alt="BF Suma"
+            alt="BF Suma wellness store logo"
             className="h-10 w-auto"
             height={40}
             src="/bf-suma-logo.png"
@@ -26,7 +39,7 @@ export function StoreHeader() {
         </div>
 
         <div className="flex items-center justify-end gap-2 sm:gap-4">
-          <nav className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 md:flex">
+          <nav aria-label="Main navigation" className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 md:flex">
             {STORE_NAV_LINKS.map((item) => (
               <Link className="transition hover:text-slate-900" href={item.href} key={item.href}>
                 {item.label}
@@ -52,11 +65,13 @@ export function StoreHeader() {
 
       <div className="border-t border-slate-100 bg-white md:hidden lg:hidden">
         <PageContainer className="flex items-center gap-4 overflow-x-auto pb-2 pt-0 text-sm font-semibold text-slate-700">
-          {STORE_NAV_LINKS.map((item) => (
-            <Link className="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-slate-100" href={item.href} key={item.href}>
-              {item.label}
-            </Link>
-          ))}
+          <nav aria-label="Mobile quick links" className="flex items-center gap-4">
+            {STORE_NAV_LINKS.map((item) => (
+              <Link className="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-slate-100" href={item.href} key={item.href}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </PageContainer>
       </div>
     </header>

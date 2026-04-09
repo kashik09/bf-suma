@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -148,11 +149,13 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                     className="group relative isolate block h-[18rem] overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-soft ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-card hover:ring-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-[19rem]"
                     href={`/category/${slide.category.slug}`}
                   >
-                    <div
-                      className="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
-                      style={{
-                        backgroundImage: `url(${slide.category.image_url || "/catalog-images/placeholder.webp"})`
-                      }}
+                    <Image
+                      alt={`${slide.category.name} category image`}
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      src={slide.category.image_url || "/catalog-images/placeholder.webp"}
+                      unoptimized
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/92 via-slate-900/55 to-slate-900/10" />
 

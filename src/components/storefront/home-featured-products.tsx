@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -67,7 +68,16 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
-              <div className="h-40 w-full bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)] sm:h-44" />
+              <div className="relative h-40 w-full bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)] sm:h-44">
+                <Image
+                  alt={`BF Suma ${product.name} featured ${product.category_name.toLowerCase()} product`}
+                  className="object-cover"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  src={product.image_url || "/catalog-images/placeholder.svg"}
+                  unoptimized
+                />
+              </div>
               <div className="flex flex-1 flex-col space-y-2.5 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
