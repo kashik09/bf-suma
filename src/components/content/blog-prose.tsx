@@ -1,5 +1,4 @@
-"use client";
-
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 
@@ -9,9 +8,9 @@ interface BlogProseProps {
 
 const markdownComponents: Components = {
   h1: ({ children }) => (
-    <h1 className="mb-3 mt-8 text-2xl font-bold tracking-tight text-slate-900 first:mt-0 sm:text-3xl">
+    <h2 className="mb-3 mt-8 text-2xl font-bold tracking-tight text-slate-900 first:mt-0 sm:text-3xl">
       {children}
-    </h1>
+    </h2>
   ),
   h2: ({ children }) => (
     <h2 className="mb-3 mt-8 border-b border-slate-200 pb-2 text-xl font-semibold tracking-tight text-slate-900 first:mt-0 sm:text-2xl">
@@ -92,12 +91,17 @@ const markdownComponents: Components = {
   ),
   img: ({ src, alt }) => (
     <figure className="my-6">
-      <img
-        alt={alt || ""}
-        className="w-full rounded-xl shadow-soft"
-        loading="lazy"
-        src={src}
-      />
+      {typeof src === "string" ? (
+        <Image
+          alt={alt || "BF Suma blog article image"}
+          sizes="(max-width: 768px) 100vw, 760px"
+          className="h-auto w-full rounded-xl shadow-soft"
+          src={src}
+          unoptimized
+          width={1200}
+          height={720}
+        />
+      ) : null}
       {alt ? (
         <figcaption className="mt-2 text-center text-sm text-slate-500">
           {alt}
