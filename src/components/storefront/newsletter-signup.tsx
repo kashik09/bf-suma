@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { trackEvent } from "@/lib/analytics";
 import { newsletterSignupSchema, type NewsletterSignupInput } from "@/lib/validation";
 import { submitNewsletterSignup } from "@/services/storefront-api";
 
@@ -37,6 +38,8 @@ export function NewsletterSignup({
 
   const form = useForm<NewsletterSignupInput>({
     resolver: zodResolver(newsletterSignupSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       email: "",
       source,
@@ -60,9 +63,18 @@ export function NewsletterSignup({
       form.reset({ email: "", source, context });
       setIsSuccess(true);
       setResponseMessage(response.message || "Subscribed successfully.");
+      trackEvent("sign_up", {
+        method: "newsletter",
+        source,
+        context: context || "storefront"
+      });
     } catch (error) {
       setIsSuccess(false);
-      setResponseMessage(error instanceof Error ? error.message : "Unable to subscribe right now.");
+      setResponseMessage(
+        error instanceof Error && error.message
+          ? error.message
+          : "We couldn't subscribe you right now. Check your connection and try again."
+      );
     } finally {
       setIsSubmitting(false);
     }

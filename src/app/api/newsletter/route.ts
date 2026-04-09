@@ -174,7 +174,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Invalid newsletter payload",
+        message: "Please enter a valid email address and try again.",
         fieldErrors: parsed.error.flatten().fieldErrors
       },
       { status: 400 }

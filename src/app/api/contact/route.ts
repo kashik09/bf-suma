@@ -172,7 +172,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Invalid inquiry payload",
+        message: "Please check your contact details and message, then try again.",
         fieldErrors: parsed.error.flatten().fieldErrors
       },
       { status: 400 }

@@ -7,8 +7,9 @@ import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { trackEvent } from "@/lib/analytics";
 import { inquirySchema, type InquiryInput } from "@/lib/validation";
-import { submitInquiry } from "@/services/storefront-api";
+import { ApiRequestError, submitInquiry } from "@/services/storefront-api";
 
 export function ContactForm() {
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -16,6 +17,8 @@ export function ContactForm() {
 
   const form = useForm<InquiryInput>({
     resolver: zodResolver(inquirySchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       name: "",
       email: "",
@@ -33,10 +36,22 @@ export function ContactForm() {
         ...values,
         source: "contact_page"
       });
+      trackEvent("generate_lead", {
+        method: "contact_form",
+        source: "contact_page"
+      });
       form.reset({ name: "", email: "", phone: "", message: "", source: "contact_page" });
       setResponseMessage("Thanks. Your inquiry has been received. Our team will respond shortly.");
     } catch (error) {
-      setResponseMessage(error instanceof Error ? error.message : "Failed to submit inquiry.");
+      if (error instanceof ApiRequestError) {
+        if (error.status === 429) {
+          setResponseMessage("You have sent several messages quickly. Please wait a moment and try again.");
+        } else {
+          setResponseMessage("We couldn't send your message right now. Check your connection and try again.");
+        }
+      } else {
+        setResponseMessage("We couldn't send your message right now. Check your connection and try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
