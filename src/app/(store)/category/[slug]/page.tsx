@@ -5,11 +5,31 @@ import { ProductGrid } from "@/components/storefront";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
+import { buildStorefrontMetadata } from "@/lib/seo";
 import {
   getStorefrontCatalogHealth,
   getStorefrontCategoryBySlug,
   listStorefrontProducts
 } from "@/services/products";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const category = await getStorefrontCategoryBySlug(slug);
+
+  if (!category) {
+    return buildStorefrontMetadata({
+      title: "Category not found",
+      description: "The requested category is unavailable. Browse all BF Suma wellness products in the full shop catalog.",
+      path: "/shop"
+    });
+  }
+
+  return buildStorefrontMetadata({
+    title: `${category.name} Products`,
+    description: category.description,
+    path: `/category/${category.slug}`
+  });
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -29,6 +49,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <h1 className="sr-only">{category.name} products</h1>
       <StoreBreadcrumbs
         items={[
           { label: "Home", href: "/" },
