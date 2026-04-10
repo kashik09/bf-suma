@@ -2,7 +2,7 @@
   "metadata": {
     "extracted_at": "2026-03-31",
     "sources": [
-      "https://joshoppers.com/products",
+      "https://www.bfsumaproducts.co.ke/shop",
       "https://www.bfsumaproducts.co.ke/shop",
       "https://wellthessentials.co.ke/shop-2/",
       "/home/kashi-kweyu/Downloads/PRODUCT CATALOGUE.pdf",
@@ -100,8 +100,8 @@
       "compare_at_price": 5967,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/14/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Youth Essence Lotion",
@@ -111,8 +111,8 @@
       "compare_at_price": 4387,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/17/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Youth Essence Toner",
@@ -122,8 +122,8 @@
       "compare_at_price": 4738,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/16/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Youth Refreshing Facial Cleanser",
@@ -133,8 +133,8 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/18/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Youth Essence Facial Mask",
@@ -144,8 +144,8 @@
       "compare_at_price": 3159,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/15/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Anatic Herbal Essence Soap",
@@ -155,8 +155,8 @@
       "compare_at_price": 386,
       "currency": "KES",
       "category_slug": "skincare",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/39/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Derma Repair Body Lotion 150ml",
@@ -167,7 +167,7 @@
       "currency": "KES",
       "category_slug": "skincare",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "NMN DUO Release",
@@ -178,7 +178,7 @@
       "currency": "KES",
       "category_slug": "anti-aging",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "NMN Sharp Mind",
@@ -189,7 +189,7 @@
       "currency": "KES",
       "category_slug": "anti-aging",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Youth Ever",
@@ -200,7 +200,7 @@
       "currency": "KES",
       "category_slug": "anti-aging",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Xpower Coffee",
@@ -210,8 +210,8 @@
       "compare_at_price": 2633,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/7/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "4 in 1 Ginseng Coffee",
@@ -221,8 +221,8 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/21/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "4 in 1 Reishi Coffee",
@@ -232,8 +232,8 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/22/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "4 in 1 Cordyceps Coffee",
@@ -243,7 +243,7 @@
       "compare_at_price": 2282,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/20/image_512",
+      "image_url": null,
       "source": "wellthessentials.co.ke"
     },
     {
@@ -254,8 +254,8 @@
       "compare_at_price": 3159,
       "currency": "KES",
       "category_slug": "beverages",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/40/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Gym Ease Tea",
@@ -266,7 +266,7 @@
       "currency": "KES",
       "category_slug": "beverages",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "4 IN 1 Quad Reishi Capsules",
@@ -276,8 +276,8 @@
       "compare_at_price": 6143,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/24/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Pure & Broken Ganoderma Spores (30s)",
@@ -287,7 +287,7 @@
       "compare_at_price": 10179,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/2/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -298,7 +298,7 @@
       "compare_at_price": 19305,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/3/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -309,7 +309,7 @@
       "compare_at_price": 22464,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/13/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -320,7 +320,7 @@
       "compare_at_price": 5090,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/19/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -331,7 +331,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/8/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -342,7 +342,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/10/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -353,7 +353,7 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/12/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -364,7 +364,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/62/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -375,7 +375,7 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "supplements",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/45/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -386,8 +386,8 @@
       "compare_at_price": 4914,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/34/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Arthro Xtra Tablets",
@@ -397,8 +397,8 @@
       "compare_at_price": 7020,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/31/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "GluzoJoint-Ultra Pro",
@@ -408,7 +408,7 @@
       "compare_at_price": 9828,
       "currency": "KES",
       "category_slug": "joint-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/59/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -419,8 +419,8 @@
       "compare_at_price": 4036,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/38/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Dr Cow Calcium Milk Candy",
@@ -431,7 +431,7 @@
       "currency": "KES",
       "category_slug": "bone-health",
       "image_url": null,
-      "source": "joshoppers.com"
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Calcium & Vitamin D3 Milk Tablets",
@@ -441,7 +441,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "bone-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/11/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -452,8 +452,8 @@
       "compare_at_price": 2106,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/43/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Novel Depile Capsules",
@@ -463,8 +463,8 @@
       "compare_at_price": 3861,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/33/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Consti Relax Solution",
@@ -474,8 +474,8 @@
       "compare_at_price": 5090,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/44/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Probio 3 Plus",
@@ -485,8 +485,8 @@
       "compare_at_price": 5350,
       "currency": "KES",
       "category_slug": "digestive-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/23/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Cool Roll",
@@ -496,8 +496,8 @@
       "compare_at_price": 2106,
       "currency": "KES",
       "category_slug": "personal-care",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/27/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Dr. Ts Toothpaste",
@@ -507,8 +507,8 @@
       "compare_at_price": 965,
       "currency": "KES",
       "category_slug": "personal-care",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/41/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Gym Effect Capsules",
@@ -518,8 +518,8 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "weight-management",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/25/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Ez-Xlim",
@@ -529,7 +529,7 @@
       "compare_at_price": 9126,
       "currency": "KES",
       "category_slug": "weight-management",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/5/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -540,8 +540,8 @@
       "compare_at_price": 1931,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/35/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Feminergy Capsules",
@@ -551,7 +551,7 @@
       "compare_at_price": 5265,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/30/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -562,7 +562,7 @@
       "compare_at_price": 5616,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/60/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -573,7 +573,7 @@
       "compare_at_price": 7020,
       "currency": "KES",
       "category_slug": "womens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/61/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -584,7 +584,7 @@
       "compare_at_price": 7371,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/37/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -595,7 +595,7 @@
       "compare_at_price": 4212,
       "currency": "KES",
       "category_slug": "mens-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/32/image_512",
+      "image_url": null,
       "source": "bfsumaproducts.co.ke"
     },
     {
@@ -606,8 +606,8 @@
       "compare_at_price": 4388,
       "currency": "KES",
       "category_slug": "brain-health",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/36/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Detoxilive Capsules",
@@ -617,8 +617,8 @@
       "compare_at_price": 3510,
       "currency": "KES",
       "category_slug": "detox",
-      "image_url": "https://www.bfsumaproducts.co.ke/web/image/product.template/42/image_512",
-      "source": "joshoppers.com"
+      "image_url": null,
+      "source": "bfsumaproducts.co.ke"
     },
     {
       "name": "Dr Cow Smart Gummies",
