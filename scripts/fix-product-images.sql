@@ -218,3 +218,165 @@ where p.slug = 'prostat-relax'
     select 1 from product_images pi
     where pi.product_id = p.id and pi.sort_order = 0
   );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/37/image_512', 0
+from products p
+where p.slug = 'xpower-man-plus'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/10/image_512', 0
+from products p
+where p.slug = 'blueberry-chewable'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/11/image_512', 0
+from products p
+where p.slug = 'calcium-vitamin-d3-milk'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/12/image_512', 0
+from products p
+where p.slug = 'vitamin-c-chewable'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/14/image_512', 0
+from products p
+where p.slug = 'youth-essence-facial-cream'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/15/image_512', 0
+from products p
+where p.slug = 'youth-essence-facial-mask'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/16/image_512', 0
+from products p
+where p.slug = 'youth-essence-toner'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/17/image_512', 0
+from products p
+where p.slug = 'youth-essence-lotion'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/18/image_512', 0
+from products p
+where p.slug = 'youth-refreshing-facial-cleanser'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/19/image_512', 0
+from products p
+where p.slug = 'refined-yunzhi-essence'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/30/image_512', 0
+from products p
+where p.slug = 'feminergy-capsules'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/33/image_512', 0
+from products p
+where p.slug = 'novel-depile-capsules'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/35/image_512', 0
+from products p
+where p.slug = 'femicare-cleanser'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/60/image_512', 0
+from products p
+where p.slug = 'femicalcium-d3'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/61/image_512', 0
+from products p
+where p.slug = 'femibiotics'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/27/image_512', 0
+from products p
+where p.slug = 'cool-roll'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/39/image_512', 0
+from products p
+where p.slug = 'anatic-herbal-soap'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
+
+insert into product_images (product_id, url, sort_order)
+select p.id, 'https://www.bfsumaproducts.co.ke/web/image/product.template/41/image_512', 0
+from products p
+where p.slug = 'dr-ts-toothpaste'
+  and not exists (
+    select 1 from product_images pi
+    where pi.product_id = p.id and pi.sort_order = 0
+  );
