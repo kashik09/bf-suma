@@ -9,14 +9,23 @@ const ENV_FILE = path.join(PROJECT_ROOT, ".env.local");
 const CATALOG_DIR = path.join(PROJECT_ROOT, "public", "catalog-images");
 const BUCKET = "product-images";
 const LEGACY_HOST_FRAGMENT = "bfsumaproducts.co.ke";
-// templateId: number  → image sourced from bfsumaproducts.co.ke Odoo URL
-// templateId: null    → image is a slug-named flat file in public/catalog-images/
+// templateId: number  → image sourced from bfsumaproducts.co.ke Odoo URL; local file is {id}_{slug}.{ext}
+// templateId: null    → image is a slug-named flat file in public/catalog-images/{slug}.{ext}
 const EXTRA_UPLOADS = [
+  // Seeded products (local {id}_ prefixed files, not in product_images legacy URL rows)
+  { slug: "youth-essence-facial-cream", templateId: 14 },
+  { slug: "youth-essence-toner",        templateId: 16 },
+  { slug: "quad-reishi-capsules",        templateId: 24 },
+  { slug: "zaminocal-plus-capsules",     templateId: 38 },
+  { slug: "xpower-coffee",               templateId: 7  },
+  { slug: "ginseng-coffee",              templateId: 21 },
+  // Detox product (local {id}_ prefixed file, not in legacy URL rows)
   { slug: "detoxilive-pro-oil-capsules", templateId: 42 },
-  { slug: "nmn-coffee", templateId: null },
-  { slug: "nmn-duo-release", templateId: null },
-  { slug: "nmn-sharp-mind", templateId: null },
-  { slug: "derma-repair-lotion", templateId: null },
+  // Slug-named flat files (no template URL, looked up by slug)
+  { slug: "nmn-coffee",              templateId: null },
+  { slug: "nmn-duo-release",         templateId: null },
+  { slug: "nmn-sharp-mind",          templateId: null },
+  { slug: "derma-repair-lotion",     templateId: null },
   { slug: "purewell-water-purifier", templateId: null },
 ];
 

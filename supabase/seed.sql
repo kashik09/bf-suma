@@ -124,42 +124,42 @@ values
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd1',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
-    '/catalog-images/joshoppers.com/youth-essence-facial-cream.webp',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/youth-essence-facial-cream.jpg',
     'Youth Essence Facial Cream',
     0
   ),
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd2',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2',
-    '/catalog-images/joshoppers.com/youth-essence-toner.webp',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/youth-essence-toner.jpg',
     'Youth Essence Toner',
     0
   ),
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd3',
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1',
-    '/catalog-images/joshoppers.com/quad-reishi-capsules.webp',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/quad-reishi-capsules.jpg',
     'Quad Reishi Capsules',
     0
   ),
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd4',
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
-    '/catalog-images/joshoppers.com/zaminocal-plus-capsules.webp',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/zaminocal-plus-capsules.jpg',
     'ZaminoCal Plus Capsules',
     0
   ),
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd5',
     'cccccccc-cccc-cccc-cccc-ccccccccccc1',
-    '/catalog-images/joshoppers.com/xpower-coffee.webp',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/xpower-coffee.jpg',
     'Xpower Coffee',
     0
   ),
   (
     'dddddddd-dddd-dddd-dddd-ddddddddddd6',
     'cccccccc-cccc-cccc-cccc-ccccccccccc2',
-    '/catalog-images/joshoppers.com/ginseng-coffee.png',
+    'https://uhhjnszgxfwmddvxdafj.supabase.co/storage/v1/object/public/product-images/ginseng-coffee.jpg',
     'Ginseng Coffee',
     0
   )
