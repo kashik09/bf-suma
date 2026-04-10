@@ -218,3 +218,60 @@ async function main() {
         url: `https://www.bfsumaproducts.co.ke/web/image/product.template/${extra.templateId}/image_512`,
       });
     }
+  }
+
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const row of uploadRowsBySlug.values()) {
+    const slug = row.slug;
+    if (!slug) {
+      console.error(`[FAIL] product_images.id=${row.id}: missing product slug relation`);
+      failCount += 1;
+      continue;
+    }
+
+    const templateId = extractTemplateIdFromLegacyUrl(row.url ?? "");
+    if (!templateId) {
+      console.error(`[FAIL] ${slug}: could not parse product.template id from URL '${row.url}'`);
+      failCount += 1;
+      continue;
+    }
+
+    const localImage = localByTemplateId.get(templateId);
+    if (!localImage) {
+      console.error(`[FAIL] ${slug}: no local image found for template id ${templateId}`);
+      failCount += 1;
+      continue;
+    }
+
+    const objectPath = `${slug}.${localImage.ext}`;
+    const fileBuffer = fs.readFileSync(localImage.filePath);
+
+    const uploadResult = await supabase.storage
+      .from(BUCKET)
+      .upload(objectPath, fileBuffer, {
+        contentType: localImage.contentType,
+        upsert: true,
+      });
+
+    if (uploadResult.error) {
+      console.error(`[FAIL] ${slug}: ${uploadResult.error.message}`);
+      failCount += 1;
+      continue;
+    }
+
+    const { data: publicData } = supabase.storage.from(BUCKET).getPublicUrl(objectPath);
+    console.log(`[OK] ${slug} -> ${publicData.publicUrl}`);
+    successCount += 1;
+  }
+
+  console.log("\nUpload complete.");
+  console.log(`Success: ${successCount}`);
+  console.log(`Failed: ${failCount}`);
+}
+
+main().catch((error) => {
+  console.error("Fatal error:", error instanceof Error ? error.message : error);
+  process.exit(1);
+});
