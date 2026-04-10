@@ -9,11 +9,15 @@ const ENV_FILE = path.join(PROJECT_ROOT, ".env.local");
 const CATALOG_DIR = path.join(PROJECT_ROOT, "public", "catalog-images");
 const BUCKET = "product-images";
 const LEGACY_HOST_FRAGMENT = "bfsumaproducts.co.ke";
+// templateId: number  → image sourced from bfsumaproducts.co.ke Odoo URL
+// templateId: null    → image is a slug-named flat file in public/catalog-images/
 const EXTRA_UPLOADS = [
-  {
-    slug: "detoxilive-pro-oil-capsules",
-    templateId: 42,
-  },
+  { slug: "detoxilive-pro-oil-capsules", templateId: 42 },
+  { slug: "nmn-coffee", templateId: null },
+  { slug: "nmn-duo-release", templateId: null },
+  { slug: "nmn-sharp-mind", templateId: null },
+  { slug: "derma-repair-lotion", templateId: null },
+  { slug: "purewell-water-purifier", templateId: null },
 ];
 
 function loadEnvFile(filePath) {
@@ -182,24 +186,28 @@ async function main() {
   const localFiles = allFiles.filter((filePath) => path.basename(filePath) !== "placeholder.svg");
 
   const localByTemplateId = new Map();
-  for (const filePath of localFiles) {
-    const templateId = extractTemplateIdFromFilename(filePath);
-    if (!templateId) {
-      continue;
-    }
+  const localBySlug = new Map();
 
+  for (const filePath of localFiles) {
+    const base = path.basename(filePath);
     const ext = normalizeExt(filePath);
     const contentType = contentTypeFromExt(ext);
     if (!contentType) {
       continue;
     }
 
-    if (!localByTemplateId.has(templateId)) {
-      localByTemplateId.set(templateId, {
-        filePath,
-        ext,
-        contentType,
-      });
+    const templateId = extractTemplateIdFromFilename(filePath);
+    if (templateId) {
+      if (!localByTemplateId.has(templateId)) {
+        localByTemplateId.set(templateId, { filePath, ext, contentType });
+      }
+    } else {
+      // Flat slug-named file: e.g. "nmn-coffee.webp" → slug "nmn-coffee"
+      const extWithDot = path.extname(base);
+      const slug = base.slice(0, base.length - extWithDot.length);
+      if (slug && !localBySlug.has(slug)) {
+        localBySlug.set(slug, { filePath, ext, contentType });
+      }
     }
   }
 
@@ -232,15 +240,15 @@ async function main() {
     }
 
     const templateId = extractTemplateIdFromLegacyUrl(row.url ?? "");
-    if (!templateId) {
-      console.error(`[FAIL] ${slug}: could not parse product.template id from URL '${row.url}'`);
-      failCount += 1;
-      continue;
-    }
+    const localImage =
+      (templateId ? localByTemplateId.get(templateId) : null) ?? localBySlug.get(slug);
 
-    const localImage = localByTemplateId.get(templateId);
     if (!localImage) {
-      console.error(`[FAIL] ${slug}: no local image found for template id ${templateId}`);
+      if (!templateId) {
+        console.error(`[FAIL] ${slug}: no local image found (no template id in URL and no slug-named file)`);
+      } else {
+        console.error(`[FAIL] ${slug}: no local image found for template id ${templateId}`);
+      }
       failCount += 1;
       continue;
     }
