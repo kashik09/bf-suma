@@ -9,7 +9,7 @@ import {
   type AtomicOrderWriteResultPayload,
   type AtomicOrderWriteRpcRow
 } from "@/lib/order-write-result";
-import { DELIVERY_FEE_AMOUNT_MINOR, FREE_SHIPPING_THRESHOLD_MINOR } from "@/lib/constants";
+import { DELIVERY_FEE_AMOUNT_MINOR } from "@/lib/constants";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
 
@@ -21,6 +21,7 @@ const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   DELIVERED: [],
   CANCELED: []
 };
+const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
 
 interface AtomicOrderItemPayload {
   product_id: string;
@@ -394,7 +395,7 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
   }
 
   const deliveryFee =
-    payload.fulfillmentType === "pickup" || subtotal >= FREE_SHIPPING_THRESHOLD_MINOR
+    payload.fulfillmentType === "pickup" || subtotal >= DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR
       ? 0
       : DELIVERY_FEE_AMOUNT_MINOR;
   const total = subtotal + deliveryFee;

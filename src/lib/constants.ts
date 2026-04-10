@@ -89,7 +89,6 @@ export const TRUST_STRIP_ITEMS = [
 ] as const;
 
 export const DELIVERY_FEE_AMOUNT_MINOR = 5000;
-export const FREE_SHIPPING_THRESHOLD_MINOR = 50000;
 
 export const SHOP_SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

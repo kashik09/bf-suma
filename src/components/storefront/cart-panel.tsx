@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/hooks/use-cart";
-import { DELIVERY_ESTIMATE_TEXT, FREE_SHIPPING_THRESHOLD_MINOR } from "@/lib/constants";
+import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -15,8 +15,6 @@ interface CartPanelProps {
 
 export function CartPanel({ commerceReady = true, degradedReason = null }: CartPanelProps) {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
-  const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD_MINOR - subtotal);
-  const hasFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD_MINOR;
 
   const getAvailabilityMeta = (availability: "in_stock" | "low_stock" | "out_of_stock") => {
     if (availability === "in_stock") {
@@ -113,11 +111,6 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
           <span className="font-semibold text-slate-900">{formatCurrency(subtotal, items[0]?.currency)}</span>
         </div>
         <p className="text-xs text-slate-500">{DELIVERY_ESTIMATE_TEXT}</p>
-        <p className="text-xs text-slate-700">
-          {hasFreeShipping
-            ? `Free shipping unlocked (orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}).`
-            : `Free shipping on orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}. Add ${formatCurrency(freeShippingRemaining, items[0]?.currency)} more.`}
-        </p>
 
         {commerceReady ? (
           <Link

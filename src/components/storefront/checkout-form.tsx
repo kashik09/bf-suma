@@ -15,7 +15,7 @@ import { StoreTrustBadges } from "@/components/storefront/store-trust-badges";
 import { useCart } from "@/hooks/use-cart";
 import { trackEvent } from "@/lib/analytics";
 import { setStoredCustomerProfile } from "@/lib/customer-profile";
-import { DELIVERY_FEE_AMOUNT_MINOR, FREE_SHIPPING_THRESHOLD_MINOR } from "@/lib/constants";
+import { DELIVERY_FEE_AMOUNT_MINOR } from "@/lib/constants";
 import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib/validation";
 import { formatCurrency } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
@@ -25,14 +25,11 @@ const PICKUP_LOCATIONS = [
   "Main Store - Kampala",
   "Main Store - Entebbe"
 ];
+const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
 
 function computeDeliveryFee(subtotal: number, isPickup: boolean) {
-  if (isPickup || subtotal >= FREE_SHIPPING_THRESHOLD_MINOR) return 0;
+  if (isPickup || subtotal >= DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR) return 0;
   return DELIVERY_FEE_AMOUNT_MINOR;
-}
-
-function computeFreeShippingRemaining(subtotal: number) {
-  return Math.max(0, FREE_SHIPPING_THRESHOLD_MINOR - subtotal);
 }
 
 function getEstimatedDeliveryWindow(isPickup: boolean) {
@@ -192,8 +189,6 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const watchedPickupLocation = form.watch("pickupLocation");
   const isPickup = watchedFulfillmentType === "pickup";
   const deliveryFee = items.length > 0 ? computeDeliveryFee(subtotal, isPickup) : 0;
-  const freeShippingRemaining = computeFreeShippingRemaining(subtotal);
-  const hasFreeShipping = !isPickup && subtotal >= FREE_SHIPPING_THRESHOLD_MINOR;
   const estimatedDeliveryWindow = getEstimatedDeliveryWindow(isPickup);
 
   const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
@@ -547,14 +542,6 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               ? "You can pay when you collect your order."
               : "You can pay when your order is delivered."}
           </p>
-
-          {!isPickup ? (
-            <p className="mt-1 text-xs text-slate-600">
-              {hasFreeShipping
-                ? `Free shipping unlocked (orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}).`
-                : `Free shipping on orders over ${formatCurrency(FREE_SHIPPING_THRESHOLD_MINOR, items[0]?.currency)}. Add ${formatCurrency(freeShippingRemaining, items[0]?.currency)} more to unlock it.`}
-            </p>
-          ) : null}
 
           <p className="mt-1 text-xs font-medium text-slate-700">{estimatedDeliveryWindow}</p>
 
