@@ -4,7 +4,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
-import { SearchAutocomplete } from "@/components/storefront/search-autocomplete";
+import { SearchAutocompleteLazy as SearchAutocomplete } from "@/components/storefront/search-autocomplete-lazy";
 
 export function StoreHeader() {
   return (
