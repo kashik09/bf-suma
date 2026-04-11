@@ -29,6 +29,50 @@ interface ManifestProduct {
 
 const DEFAULT_PRODUCT_IMAGE = "/catalog-images/placeholder.svg";
 const DEFAULT_STOCK_QTY = 50;
+const STORAGE_IMAGE_EXT_BY_SLUG: Record<string, string> = {
+  "anatic-herbal-soap": "jpg",
+  "arthro-xtra-tablets": "jpg",
+  "blueberry-chewable": "jpg",
+  "calcium-vitamin-d3-milk": "jpg",
+  "cerebrain-tablets": "jpg",
+  "consti-relax-solution": "jpg",
+  "cool-roll": "jpg",
+  "cordyceps-coffee": "jpg",
+  "detoxilive-pro-oil-capsules": "png",
+  "dr-ts-toothpaste": "jpg",
+  elements: "webp",
+  "ez-xlim": "jpg",
+  femibiotics: "webp",
+  "femicalcium-d3": "webp",
+  "femicare-cleanser": "jpg",
+  "feminergy-capsules": "jpg",
+  "ganoderma-spores-oil-60": "jpg",
+  "ginseng-coffee": "jpg",
+  "gluzo-joint-capsules": "jpg",
+  "gluzo-joint-ultra-pro": "webp",
+  "gym-effect-capsules": "jpg",
+  "micro2-cycle": "jpg",
+  "novel-depile-capsules": "jpg",
+  "nt-diarr-pills": "jpg",
+  "probio-3-plus": "webp",
+  "prostat-relax": "jpg",
+  "pure-ganoderma-spores-30": "jpg",
+  "pure-ganoderma-spores-60": "jpg",
+  "quad-reishi-capsules": "jpg",
+  "refined-yunzhi-essence": "jpg",
+  "reishi-coffee": "jpg",
+  "relivin-tea": "jpg",
+  "veggie-veggie": "jpg",
+  "vitamin-c-chewable": "jpg",
+  "xpower-coffee": "jpg",
+  "xpower-man-plus": "jpg",
+  "youth-essence-facial-cream": "jpg",
+  "youth-essence-facial-mask": "jpg",
+  "youth-essence-lotion": "jpg",
+  "youth-essence-toner": "jpg",
+  "youth-refreshing-facial-cleanser": "jpg",
+  "zaminocal-plus-capsules": "jpg"
+};
 
 // Category images - mapped to category-images folder
 const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
@@ -52,11 +96,27 @@ function generateSku(slug: string, index: number): string {
   return `BFS-${prefix}-${String(index + 1).padStart(3, "0")}`;
 }
 
+function getStorageBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "") || "";
+}
+
+function resolveStorageImageBySlug(slug: string): string | null {
+  const storageBaseUrl = getStorageBaseUrl();
+  const ext = STORAGE_IMAGE_EXT_BY_SLUG[slug];
+  if (!ext || !storageBaseUrl) return null;
+  return `${storageBaseUrl}/storage/v1/object/public/product-images/${slug}.${ext}`;
+}
+
 function toLocalImagePath(imageUrl: string | null, slug: string): string {
-  if (!imageUrl) return DEFAULT_PRODUCT_IMAGE;
+  const storageFallback = resolveStorageImageBySlug(slug);
+  if (!imageUrl) return storageFallback || DEFAULT_PRODUCT_IMAGE;
 
   if (imageUrl.startsWith("/catalog-images/")) {
     return imageUrl;
+  }
+
+  if (/bfsumaproducts\.co\.ke\/web\/image\/product\.template\/\d+\/image_512/i.test(imageUrl)) {
+    return storageFallback || imageUrl;
   }
 
   if (imageUrl.startsWith("https://") || imageUrl.startsWith("http://")) {
@@ -70,7 +130,7 @@ function toLocalImagePath(imageUrl: string | null, slug: string): string {
     const extension = extMatch ? extMatch[0] : ".webp";
     return `/catalog-images/${domain}/${slug}${extension}`;
   } catch {
-    return DEFAULT_PRODUCT_IMAGE;
+    return storageFallback || DEFAULT_PRODUCT_IMAGE;
   }
 }
 

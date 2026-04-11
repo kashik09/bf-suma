@@ -238,3 +238,5 @@ export function SearchAutocomplete({
     </div>
   );
 }
+
+export default SearchAutocomplete;

@@ -1,23 +1,12 @@
+import SearchAutocomplete from "@/components/storefront/search-autocomplete-lazy";
 import Image from "next/image";
-import dynamic from "next/dynamic";
+
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
 
-const SearchAutocomplete = dynamic(
-  () => import("@/components/storefront/search-autocomplete").then((mod) => mod.SearchAutocomplete),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        aria-hidden
-        className="h-10 w-full rounded-md border border-slate-200 bg-slate-50"
-      />
-    )
-  }
-);
 
 export function StoreHeader() {
   return (
