@@ -231,7 +231,7 @@ export default async function AdminProductDetailPage({
             {product.image_url ? (
               <img
                 alt={product.name}
-                className="mt-2 h-24 w-24 rounded-md border border-slate-200 object-cover"
+                className="mt-2 h-24 w-24 rounded-md border border-slate-200 bg-white object-contain p-1"
                 loading="lazy"
                 src={product.image_url}
               />
