@@ -220,7 +220,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
 
   const [categoriesRes, productsRes, imagesRes] = await Promise.all([
     supabase.from("categories").select("*").eq("is_active", true),
-    supabase.from("products").select("*").in("status", ["ACTIVE", "OUT_OF_STOCK"]),
+    supabase.from("products").select("*").eq("status", "ACTIVE"),
     supabase.from("product_images").select("*").order("sort_order", { ascending: true })
   ]);
 

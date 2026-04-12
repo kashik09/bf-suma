@@ -51,3 +51,12 @@
 | **Suma Living** | AP024E | Anatic Herbal Essence Soap | $2.20 | 9,821 | 1.0 |
 | | AP101E | Dr.Ts Toothpaste | $5.50 | 24,552 | 2.8 |
 | | AP131A | Cool Roll (1 Dozen) | $1 | 4,464 | 2.4 |
+
+## Archived Products (pricing TBD)
+| Product | Slug | Reason |
+|---------|------|--------|
+| Derma Repair Body Lotion 150ml | derma-repair-lotion | No price in April 2026 list |
+| Dr Cow Calcium Milk Candy | dr-cow-calcium-candy | No price in April 2026 list |
+| Dr Cow Smart Gummies | dr-cow-smart-gummies | No price in April 2026 list |
+| Gym Ease Tea | gym-ease-tea | No price in April 2026 list |
+| Purewell Water Purifier | purewell-water-purifier | No price in April 2026 list |
