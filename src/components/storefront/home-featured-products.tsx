@@ -68,10 +68,10 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
-              <div className="relative h-40 w-full bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_100%)] sm:h-44">
+              <div className="relative aspect-[4/3] w-full bg-slate-50 p-3">
                 <Image
                   alt={`BF Suma ${product.name} featured ${product.category_name.toLowerCase()} product`}
-                  className="object-cover"
+                  className="object-contain"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src={product.image_url || "/catalog-images/placeholder.svg"}

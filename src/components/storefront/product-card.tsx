@@ -51,10 +51,10 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <span className="sr-only">View product details for {product.name}</span>
       </Link>
       <div className="relative overflow-hidden">
-        <div className="relative h-48 w-full">
+        <div className="relative aspect-[4/3] w-full bg-slate-50 p-3">
           <Image
             alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
-            className="object-cover transition duration-500 group-hover:scale-105"
+            className="object-contain transition duration-500 group-hover:scale-105"
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
             src={product.image_url || "/catalog-images/placeholder.svg"}

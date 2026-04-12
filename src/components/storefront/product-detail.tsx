@@ -260,11 +260,11 @@ export function ProductDetail({
     <div className="space-y-6">
       <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         <div className="space-y-3">
-          <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-slate-200 bg-[linear-gradient(145deg,_#f8fafc_0%,_#e2e8f0_50%,_#cbd5e1_100%)] shadow-soft sm:h-96">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
             <Image
               alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
               blurDataURL={PRODUCT_IMAGE_BLUR_DATA_URL}
-              className="object-cover"
+              className="object-contain"
               fill
               placeholder="blur"
               priority
