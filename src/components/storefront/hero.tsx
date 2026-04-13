@@ -110,7 +110,7 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
 
   return (
     <section
-      className="group relative h-[400px] w-full overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 md:h-[600px] md:min-h-[70vh]"
+      className="group relative h-[85vh] min-h-[500px] w-full overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900"
       onMouseEnter={() => setPauseHero(true)}
       onMouseLeave={() => setPauseHero(false)}
     >

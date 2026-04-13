@@ -118,27 +118,6 @@ export default async function BlogIndexPage() {
           })}
         </div>
       )}
-
-      {featuredProducts.length > 0 ? (
-        <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
-          <h2 className="text-lg font-semibold text-slate-900">Explore related BF Suma products</h2>
-          <p className="text-sm text-slate-600">
-            Looking for practical next steps? Start with these products and continue to the full shop for more options.
-          </p>
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredProducts.map((product) => (
-              <li key={product.id}>
-                <Link
-                  className="inline-flex w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800"
-                  href={`/shop/${product.slug}`}
-                >
-                  {product.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
     </PageContainer>
   );
 }
