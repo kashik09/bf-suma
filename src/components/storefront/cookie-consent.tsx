@@ -30,7 +30,7 @@ export function CookieConsent() {
         <div
           aria-labelledby="cookie-preferences-title"
           aria-modal="true"
-          className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+          className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-8 shadow-xl"
           role="dialog"
         >
           <h2 className="text-2xl font-bold text-slate-900" id="cookie-preferences-title">
@@ -40,7 +40,7 @@ export function CookieConsent() {
             We use cookies to improve your experience and track analytics. Choose your preference below.
           </p>
 
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 space-y-4">
             <section className="rounded-lg border border-slate-200 bg-slate-50 p-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -49,7 +49,7 @@ export function CookieConsent() {
                     Always active. Required for the site to function.
                   </p>
                 </div>
-                <span className="inline-flex h-7 items-center rounded-full bg-emerald-100 px-2.5 text-xs font-semibold text-emerald-700">
+                <span className="inline-flex h-7 items-center whitespace-nowrap rounded-full bg-emerald-100 px-2.5 text-xs font-semibold text-emerald-700">
                   Always On
                 </span>
               </div>
@@ -64,7 +64,7 @@ export function CookieConsent() {
                 <button
                   className={`inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-semibold transition ${
                     analyticsChoice === "accept"
-                      ? "bg-emerald-600 text-white"
+                      ? "border border-slate-700 bg-slate-100 text-slate-900"
                       : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
                   }`}
                   onClick={() => setAnalyticsChoice("accept")}
@@ -75,7 +75,7 @@ export function CookieConsent() {
                 <button
                   className={`inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-semibold transition ${
                     analyticsChoice === "decline"
-                      ? "bg-slate-900 text-white"
+                      ? "border border-rose-300 bg-rose-50 text-rose-700"
                       : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
                   }`}
                   onClick={() => setAnalyticsChoice("decline")}
