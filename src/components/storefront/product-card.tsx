@@ -59,7 +59,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <span className="sr-only">View product details for {product.name}</span>
       </Link>
       <div className="relative overflow-hidden">
-        <div className="relative h-36 w-full bg-white p-2">
+        <div className="relative h-44 w-full bg-white p-2">
           <Image
             alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
             className="object-contain transition duration-500 group-hover:scale-105"
