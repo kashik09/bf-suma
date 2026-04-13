@@ -41,7 +41,6 @@ export function StoreFooter() {
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Support</h4>
           <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-100/85">
-            <Link className="transition hover:text-accent-sun" href="/contact">Contact Form</Link>
             <a className="transition hover:text-accent-sun" href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("footer_support"), SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
               WhatsApp
             </a>
