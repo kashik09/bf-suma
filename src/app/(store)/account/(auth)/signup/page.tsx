@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { signUp } from "@/lib/auth/customer-auth";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,8 @@ export default function AccountSignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -106,28 +109,48 @@ export default function AccountSignupPage() {
 
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="password">Password</label>
-            <input
-              autoComplete="new-password"
-              className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm"
-              id="password"
-              required
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
+            <div className="relative">
+              <input
+                autoComplete="new-password"
+                className="h-11 w-full rounded-md border border-slate-300 px-3 pr-10 text-sm"
+                id="password"
+                required
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <button
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                onClick={() => setShowPassword((current) => !current)}
+                type="button"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="confirm_password">Confirm password</label>
-            <input
-              autoComplete="new-password"
-              className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm"
-              id="confirm_password"
-              required
-              type="password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-            />
+            <div className="relative">
+              <input
+                autoComplete="new-password"
+                className="h-11 w-full rounded-md border border-slate-300 px-3 pr-10 text-sm"
+                id="confirm_password"
+                required
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+              />
+              <button
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                onClick={() => setShowConfirmPassword((current) => !current)}
+                type="button"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           {error ? (

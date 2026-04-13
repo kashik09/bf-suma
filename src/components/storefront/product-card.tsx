@@ -83,22 +83,22 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         ) : null}
       </div>
 
-      <div className="relative z-20 flex h-full flex-col space-y-3 p-4">
-        <div className="space-y-1.5">
+      <div className="relative z-20 flex h-full flex-col p-4">
+        <div className="mt-3">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
-          <h3 className="line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
-          <p className="line-clamp-2 text-sm font-medium text-brand-700">{benefitSnippet}</p>
-          <p className="line-clamp-2 text-sm text-slate-600">{product.description}</p>
+          <h3 className="mt-1 line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
+          <p className="mt-1 line-clamp-2 text-sm font-medium text-brand-700">{benefitSnippet}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-slate-600">{product.description}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-2">
           <p className="text-base font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
           {displayCompareAtPrice ? (
             <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
           ) : null}
         </div>
 
-        <div className="mt-auto pt-1">
+        <div className="mt-auto pt-3">
           <p className="mb-2 flex items-center gap-1 text-xs text-slate-600">
             <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
             Transparent pricing and direct checkout flow

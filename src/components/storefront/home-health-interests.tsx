@@ -8,23 +8,27 @@ import { SectionHeader } from "@/components/ui/section-header";
 import type { StorefrontCategory } from "@/types";
 
 const categoryBenefitBySlug: Record<string, string> = {
-  supplements: "Daily wellness essentials",
-  beverages: "Natural energy and focus support",
-  "womens-health": "Balanced support for women",
+  "bone-joint-care": "Mobility and bone support essentials",
+  "immune-boosters": "Daily immune and vitality support",
+  "premium-selected": "Top-tier formulas for advanced goals",
+  "cardiovascular-health": "Heart and circulation wellness support",
+  "digestive-health": "Gentle digestive and gut support",
   "mens-health": "Strength and vitality support",
-  "brain-health": "Support clarity and memory",
-  skincare: "Healthy skin support essentials",
-  "anti-aging": "Healthy aging support",
-  "joint-health": "Comfort and mobility support",
-  "bone-health": "Bone and joint support",
-  "digestive-health": "Gentle digestive support",
-  detox: "Everyday detox support"
+  "womens-health": "Balanced support for women",
+  "smart-kids": "Daily support for growing children",
+  "skincare-youth-series": "Healthy skin and glow support",
+  "suma-living": "Home and lifestyle wellness essentials"
 };
 
 function resolveCategoryBenefit(category: StorefrontCategory) {
   const mapped = categoryBenefitBySlug[category.slug];
   if (mapped) return mapped;
   return "Targeted wellness support";
+}
+
+function formatProductCount(count: number | undefined) {
+  if (!count || count <= 0) return "No products yet";
+  return `${count} product${count === 1 ? "" : "s"}`;
 }
 
 export function HomeHealthInterests({ categories }: { categories: StorefrontCategory[] }) {
@@ -164,6 +168,9 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                       <h3 className="text-lg font-semibold leading-tight text-white">{slide.category.name}</h3>
                       <p className="mt-1 line-clamp-1 text-sm text-slate-100/90">
                         {resolveCategoryBenefit(slide.category)}
+                      </p>
+                      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-100/90">
+                        {formatProductCount(slide.category.product_count)}
                       </p>
 
                       <span className="mt-3 inline-flex h-10 w-fit items-center justify-center gap-1 rounded-md bg-white px-4 text-sm font-semibold text-slate-900 shadow-soft transition group-hover:bg-brand-50">

@@ -25,7 +25,7 @@ export const metadata = buildStorefrontMetadata({
 
 export default async function HomePage() {
   const [categories, products, customerCount] = await Promise.all([
-    listFeaturedCategories(4),
+    listFeaturedCategories(8),
     listFeaturedProducts(6),
     getStorefrontCustomerCount()
   ]);
