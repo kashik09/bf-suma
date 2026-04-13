@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { ShopCatalog } from "@/components/storefront/client";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -65,19 +64,6 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
         }}
         products={snapshot.products}
       />
-
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
-        <h2 className="text-base font-semibold text-slate-900">Need guidance before you buy?</h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Visit the BF Suma blog for practical wellness guides, then come back to shop with more confidence.
-        </p>
-        <Link
-          className="mt-3 inline-flex text-sm font-semibold text-brand-700 transition hover:text-brand-800"
-          href="/blog"
-        >
-          Read wellness guides
-        </Link>
-      </section>
     </PageContainer>
   );
 }

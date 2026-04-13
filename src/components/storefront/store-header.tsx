@@ -8,6 +8,8 @@ import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS } from "@/lib/constants";
 
 export function StoreHeader() {
+  const navLinks = STORE_NAV_LINKS.filter((item) => item.href !== "/contact");
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
 
@@ -28,7 +30,7 @@ export function StoreHeader() {
 
         <div className="flex items-center justify-end gap-2 sm:gap-4">
           <nav aria-label="Main navigation" className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 md:flex">
-            {STORE_NAV_LINKS.map((item) => (
+            {navLinks.map((item) => (
               <Link className="transition hover:text-slate-900" href={item.href} key={item.href}>
                 {item.label}
               </Link>
@@ -56,7 +58,7 @@ export function StoreHeader() {
       <div className="border-t border-slate-100 bg-white md:hidden lg:hidden">
         <PageContainer className="flex items-center gap-4 overflow-x-auto pb-2 pt-0 text-sm font-semibold text-slate-700">
           <nav aria-label="Mobile quick links" className="flex items-center gap-4">
-            {STORE_NAV_LINKS.map((item) => (
+            {navLinks.map((item) => (
               <Link className="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-slate-100" href={item.href} key={item.href}>
                 {item.label}
               </Link>

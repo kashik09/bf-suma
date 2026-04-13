@@ -2,34 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
-import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
-
-function getAvailabilityBadge(availability: StorefrontProduct["availability"]) {
-  if (availability === "in_stock") return { label: "In Stock", variant: "success" as const };
-  if (availability === "low_stock") return { label: "Low Stock", variant: "warning" as const };
-  return { label: "Out of Stock", variant: "danger" as const };
-}
-
-function getUrgencySignal(availability: StorefrontProduct["availability"]) {
-  if (availability === "low_stock") return "Limited availability";
-  if (availability === "out_of_stock") return "Currently unavailable";
-  return "Ready to order";
-}
-
-function getBenefitSnippet(product: StorefrontProduct) {
-  if (product.category_slug === "beverages") return "Convenient daily routine support";
-  if (product.category_slug === "supplements") return "Targeted wellness support formula";
-  if (product.category_slug === "skincare") return "Daily skin support and care";
-  if (product.category_slug === "weight-management") return "Supports healthier routine consistency";
-  return "Clear product details for faster decisions";
-}
 
 function getSavingsLabel(product: StorefrontProduct, selectedCurrency: string) {
   if (!product.compare_at_price || product.compare_at_price <= product.price) return null;
@@ -39,15 +17,8 @@ function getSavingsLabel(product: StorefrontProduct, selectedCurrency: string) {
 
 export function ProductCard({ product }: { product: StorefrontProduct }) {
   const { currency } = useSelectedCurrency();
-  const badge = getAvailabilityBadge(product.availability);
-  const benefitSnippet = getBenefitSnippet(product);
   const savingsLabel = getSavingsLabel(product, currency);
-  const urgencySignal = getUrgencySignal(product.availability);
-  const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
   const displayPrice = convertPrice(product.price, product.currency, currency);
-  const displayCompareAtPrice = product.compare_at_price
-    ? convertPrice(product.compare_at_price, product.currency, currency)
-    : null;
 
   return (
     <Card className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -70,12 +41,6 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           />
         </div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/10 to-transparent" />
-        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
-          <Badge variant={badge.variant}>{badge.label}</Badge>
-          <span className="inline-flex w-fit rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-800">
-            {urgencySignal}
-          </span>
-        </div>
         {savingsLabel ? (
           <div className="absolute right-3 top-3">
             <Badge variant="success">{savingsLabel}</Badge>
@@ -87,23 +52,14 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <div className="mt-3">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
           <h3 className="mt-1 line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
-          <p className="mt-1 line-clamp-2 text-sm font-medium text-brand-700">{benefitSnippet}</p>
           <p className="mt-1 line-clamp-2 text-sm text-slate-600">{product.description}</p>
         </div>
 
         <div className="mt-2 flex items-center gap-2">
           <p className="text-base font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
-          {displayCompareAtPrice ? (
-            <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
-          ) : null}
         </div>
 
         <div className="mt-auto pt-3">
-          <p className="mb-2 flex items-center gap-1 text-xs text-slate-600">
-            <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
-            Transparent pricing and direct checkout flow
-          </p>
-
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
               aria-label={`View details for ${product.name}`}
@@ -113,15 +69,6 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
               View Product
               <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
-            <a
-              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:w-auto"
-              href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <MessageCircle className="mr-1 h-4 w-4" />
-              Ask on WhatsApp
-            </a>
           </div>
         </div>
       </div>

@@ -2,13 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
-import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
 const productBenefitBySlug: Record<string, string> = {
@@ -26,18 +23,6 @@ function toBenefitText(product: StorefrontProduct) {
   const trimmed = product.description.trim();
   if (trimmed.length <= 86) return trimmed;
   return `${trimmed.slice(0, 83)}...`;
-}
-
-function availabilityBadgeVariant(availability: StorefrontProduct["availability"]) {
-  if (availability === "in_stock") return "success" as const;
-  if (availability === "low_stock") return "warning" as const;
-  return "danger" as const;
-}
-
-function availabilityLabel(availability: StorefrontProduct["availability"]) {
-  if (availability === "in_stock") return "In stock";
-  if (availability === "low_stock") return "Low stock";
-  return "Out of stock";
 }
 
 function savingsLabel(product: StorefrontProduct, selectedCurrency: string) {
@@ -64,12 +49,8 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
-          const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
           const savings = savingsLabel(product, currency);
           const displayPrice = convertPrice(product.price, product.currency, currency);
-          const displayCompareAtPrice = product.compare_at_price
-            ? convertPrice(product.compare_at_price, product.currency, currency)
-            : null;
 
           return (
             <article
@@ -89,9 +70,6 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
               <div className="flex flex-1 flex-col space-y-2.5 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
-                  <Badge variant={availabilityBadgeVariant(product.availability)}>
-                    {availabilityLabel(product.availability)}
-                  </Badge>
                 </div>
 
                 <div>
@@ -101,16 +79,8 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <p className="text-lg font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
-                  {displayCompareAtPrice ? (
-                    <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
-                  ) : null}
                   {savings ? <span className="text-xs font-semibold text-brand-700">{savings}</span> : null}
                 </div>
-
-                <p className="flex items-center gap-1.5 text-xs text-slate-600">
-                  <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
-                  Transparent checkout totals. Optional WhatsApp support.
-                </p>
 
                 <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
                   <Link
@@ -120,15 +90,6 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                     View Details
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
-                  <a
-                    className="inline-flex h-10 items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-                    href={buildWhatsAppUrl(whatsappMessage, SUPPORT_WHATSAPP_PHONE)}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <MessageCircle className="mr-1 h-4 w-4" />
-                    Ask on WhatsApp
-                  </a>
                 </div>
               </div>
             </article>

@@ -219,9 +219,6 @@ export function ProductDetail({
   const lowStockCount = product.stock_qty > 0 && product.stock_qty < 10 ? product.stock_qty : null;
   const hasReviewData = reviewCount > 0;
   const displayPrice = convertPrice(product.price, product.currency, currency);
-  const displayCompareAtPrice = product.compare_at_price
-    ? convertPrice(product.compare_at_price, product.currency, currency)
-    : null;
 
   function increment() {
     setQuantity((current) => Math.min(current + 1, maxQuantity));
@@ -329,9 +326,6 @@ export function ProductDetail({
 
           <div className="flex items-center gap-2">
             <p className="text-2xl font-bold text-slate-900">{formatPrice(displayPrice, currency)}</p>
-            {displayCompareAtPrice ? (
-              <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
-            ) : null}
           </div>
 
           <div className="space-y-2">
