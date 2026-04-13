@@ -76,7 +76,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
-              <div className="relative h-52 w-full bg-white p-3">
+              <div className="relative h-36 w-full bg-white p-2">
                 <Image
                   alt={`BF Suma ${product.name} featured ${product.category_name.toLowerCase()} product`}
                   className="object-contain"
