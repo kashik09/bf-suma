@@ -1,9 +1,10 @@
 "use client";
 
-import { createClient, type Session } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { Session } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 
-let browserClient: ReturnType<typeof createClient<Database>> | null = null;
+let browserClient: ReturnType<typeof createBrowserClient<Database>> | null = null;
 
 function getSupabaseUrl() {
   const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,8 +21,13 @@ function getSupabaseAnonKey() {
 function getBrowserSupabaseClient() {
   if (browserClient) return browserClient;
 
-  browserClient = createClient<Database>(getSupabaseUrl(), getSupabaseAnonKey());
+  browserClient = createBrowserClient<Database>(getSupabaseUrl(), getSupabaseAnonKey());
   return browserClient;
+}
+
+function getEmailRedirectTo() {
+  if (typeof window === "undefined") return undefined;
+  return `${window.location.origin}/account/login`;
 }
 
 export async function signIn(email: string, password: string) {
@@ -35,6 +41,7 @@ export async function signUp(email: string, password: string, firstName: string,
     email,
     password,
     options: {
+      emailRedirectTo: getEmailRedirectTo(),
       data: {
         first_name: firstName,
         last_name: lastName
@@ -56,8 +63,7 @@ export async function getSession(): Promise<Session | null> {
 
 export async function sendPasswordReset(email: string) {
   const supabase = getBrowserSupabaseClient();
-  const redirectTo =
-    typeof window === "undefined" ? undefined : `${window.location.origin}/account/login`;
+  const redirectTo = getEmailRedirectTo();
 
   return supabase.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
 }

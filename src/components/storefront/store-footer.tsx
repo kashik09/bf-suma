@@ -9,7 +9,6 @@ import {
 } from "@/lib/constants";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
-import { StoreTrustBadges } from "@/components/storefront/store-trust-badges";
 
 export function StoreFooter() {
   return (
@@ -26,7 +25,6 @@ export function StoreFooter() {
           >
             WhatsApp Support
           </a>
-          <StoreTrustBadges className="pt-1" onDark />
         </div>
 
         <div>

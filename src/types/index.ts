@@ -212,6 +212,7 @@ export interface StorefrontCategory {
   slug: string;
   description: string;
   image_url: string;
+  product_count?: number;
 }
 
 export interface StorefrontProduct {

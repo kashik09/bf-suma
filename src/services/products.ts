@@ -231,6 +231,11 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
   const categories = (categoriesRes.data || []) as Category[];
   const products = (productsRes.data || []) as Product[];
   const images = (imagesRes.data || []) as ProductImage[];
+  const productCountsByCategoryId = products.reduce<Map<string, number>>((acc, product) => {
+    const nextCount = (acc.get(product.category_id) || 0) + 1;
+    acc.set(product.category_id, nextCount);
+    return acc;
+  }, new Map<string, number>());
 
   const categoriesById = new Map<string, Category>(categories.map((category) => [category.id, category]));
   const imagesByProductId = new Map<string, ProductImage[]>();
@@ -246,6 +251,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
     name: category.name,
     slug: category.slug,
     description: category.description || "Browse curated essentials in this category.",
+    product_count: productCountsByCategoryId.get(category.id) || 0,
     image_url:
       FALLBACK_CATEGORIES.find((fallbackCategory) => fallbackCategory.slug === category.slug)?.image_url ||
       FALLBACK_CATEGORIES[0].image_url
@@ -438,7 +444,13 @@ export async function listFeaturedProducts(limit: number = 6): Promise<Storefron
 
 export async function listFeaturedCategories(limit: number = 4): Promise<StorefrontCategory[]> {
   const categories = await listStorefrontCategories();
-  return categories.slice(0, limit);
+  return [...categories]
+    .sort((a, b) => {
+      const countDelta = (b.product_count || 0) - (a.product_count || 0);
+      if (countDelta !== 0) return countDelta;
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, limit);
 }
 
 export async function getStorefrontProductBySlug(slug: string): Promise<StorefrontProduct | null> {
