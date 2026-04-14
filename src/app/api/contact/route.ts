@@ -6,6 +6,8 @@ import { createInquiry } from "@/services/inquiries";
 import { buildRateLimitKey } from "@/lib/request-ip";
 import { logEvent } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 
