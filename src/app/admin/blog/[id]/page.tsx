@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { revalidatePath, revalidateTag } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";

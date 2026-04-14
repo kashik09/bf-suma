@@ -7,6 +7,8 @@ import { requireAdminSession } from "@/lib/admin-server";
 import { BlogSlugConflictError, createAdminBlogPost } from "@/services/admin-blog";
 import type { BlogChannelTarget, BlogPostStatus } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const BLOG_STATUS_VALUES = ["DRAFT", "REVIEW", "PUBLISHED"] as const;
 const BLOG_CHANNEL_TARGETS = ["SHOP", "WHATSAPP", "NEWSLETTER", "SOCIAL"] as const;
 

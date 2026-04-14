@@ -9,6 +9,8 @@ import { INQUIRY_STATUSES } from "@/lib/constants";
 import { listAdminInquiries, updateAdminInquiryStatus } from "@/services/admin-inquiries";
 import type { InquiryStatus } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 type ContactsSearchParams = Promise<{
   search?: string;
   status?: InquiryStatus | "all";

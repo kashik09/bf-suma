@@ -4,6 +4,8 @@ import { requireAdminSession } from "@/lib/admin-server";
 import { AdminBlogUnavailableError, listAdminBlogPosts } from "@/services/admin-blog";
 import type { BlogPostStatus } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 type BlogSearchParams = Promise<{
   search?: string;
   status?: "all" | BlogPostStatus;
