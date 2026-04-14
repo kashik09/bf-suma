@@ -91,6 +91,47 @@ const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
   "womens-health": "/category-images/womens-health.jpg"
 };
 
+// Legacy category slugs from earlier catalog sources are mapped to the
+// closest current category image to keep slideshow cards coherent.
+const CATEGORY_IMAGE_ALIAS_BY_SLUG: Record<string, string> = {
+  "bone-joint-care": "joint-health",
+  "immune-boosters": "supplements",
+  "premium-selected": "supplements",
+  "cardiovascular-health": "supplements",
+  "smart-kids": "supplements",
+  "skincare-youth-series": "skincare",
+  "suma-living": "personal-care"
+};
+
+function normalizeCategorySlug(input: string): string {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function resolveCategoryImageBySlug(slug?: string | null, categoryName?: string | null): string {
+  const slugCandidate = normalizeCategorySlug(slug || "");
+  const nameCandidate = normalizeCategorySlug(categoryName || "");
+
+  const candidates = [
+    slugCandidate,
+    CATEGORY_IMAGE_ALIAS_BY_SLUG[slugCandidate],
+    nameCandidate,
+    CATEGORY_IMAGE_ALIAS_BY_SLUG[nameCandidate]
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    const directMatch = CATEGORY_IMAGE_BY_SLUG[candidate];
+    if (directMatch) return directMatch;
+  }
+
+  return DEFAULT_PRODUCT_IMAGE;
+}
+
 function generateSku(slug: string, index: number): string {
   const prefix = slug.substring(0, 3).toUpperCase().replace(/-/g, "");
   return `BFS-${prefix}-${String(index + 1).padStart(3, "0")}`;
@@ -152,7 +193,7 @@ export const BFSUMA_CATEGORIES: StorefrontCategory[] = manifestCategories.map((c
   name: category.name,
   slug: category.slug,
   description: category.description || "Browse curated essentials in this category.",
-  image_url: CATEGORY_IMAGE_BY_SLUG[category.slug] || DEFAULT_PRODUCT_IMAGE
+  image_url: resolveCategoryImageBySlug(category.slug, category.name)
 }));
 
 const CATEGORY_BY_SLUG = new Map(BFSUMA_CATEGORIES.map((category) => [category.slug, category]));

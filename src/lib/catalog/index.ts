@@ -9,6 +9,7 @@ export {
   BFSUMA_CATALOG,
   BFSUMA_CATEGORIES,
   BFSUMA_PRODUCTS,
+  resolveCategoryImageBySlug,
   // Backwards compatibility aliases
   BFSUMA_CATALOG_SEED,
   BFSUMA_CATALOG_SEED_CATEGORIES,

@@ -8,13 +8,23 @@ import { SectionHeader } from "@/components/ui/section-header";
 import type { StorefrontCategory } from "@/types";
 
 const categoryBenefitBySlug: Record<string, string> = {
+  "anti-aging": "Daily support for healthy aging and vitality",
+  beverages: "Functional drinks for daily wellness routines",
+  "bone-health": "Calcium and mineral support for stronger bones",
+  "brain-health": "Support for focus, memory, and mental clarity",
+  detox: "Natural support for daily cleansing and reset",
+  "digestive-health": "Gentle digestive and gut support",
+  "joint-health": "Mobility and joint comfort support",
+  "mens-health": "Strength and vitality support",
+  "personal-care": "Everyday personal care essentials",
+  skincare: "Daily skincare support for healthy-looking skin",
+  supplements: "Core nutrition support for overall wellness",
+  "weight-management": "Support for healthy weight goals",
+  "womens-health": "Balanced support for women",
   "bone-joint-care": "Mobility and bone support essentials",
   "immune-boosters": "Daily immune and vitality support",
   "premium-selected": "Top-tier formulas for advanced goals",
   "cardiovascular-health": "Heart and circulation wellness support",
-  "digestive-health": "Gentle digestive and gut support",
-  "mens-health": "Strength and vitality support",
-  "womens-health": "Balanced support for women",
   "smart-kids": "Daily support for growing children",
   "skincare-youth-series": "Healthy skin and glow support",
   "suma-living": "Home and lifestyle wellness essentials"

@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
-import { BFSUMA_CATALOG } from "@/lib/catalog";
+import { BFSUMA_CATALOG, resolveCategoryImageBySlug } from "@/lib/catalog";
 import {
   getPdfCategoryContentForStorefrontSlug,
   getPdfShortDescriptionForCatalogSlug
@@ -252,9 +252,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
     slug: category.slug,
     description: category.description || "Browse curated essentials in this category.",
     product_count: productCountsByCategoryId.get(category.id) || 0,
-    image_url:
-      FALLBACK_CATEGORIES.find((fallbackCategory) => fallbackCategory.slug === category.slug)?.image_url ||
-      FALLBACK_CATEGORIES[0].image_url
+    image_url: resolveCategoryImageBySlug(category.slug, category.name)
   }));
 
   const mappedProducts = products
