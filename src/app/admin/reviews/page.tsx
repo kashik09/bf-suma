@@ -6,6 +6,8 @@ import { Badge, Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { getAdminReviews, updateReviewStatus } from "@/services/product-reviews";
 
+export const dynamic = "force-dynamic";
+
 type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 type ReviewStatusFilter = ReviewStatus | "all";
 

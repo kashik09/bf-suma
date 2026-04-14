@@ -5,6 +5,8 @@ import { AdminProductsUnavailableError, getAdminProducts } from "@/services/admi
 import { formatCurrency } from "@/lib/utils";
 import type { ProductStatus } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const STATUS_LABELS: Record<ProductStatus, string> = {
   ACTIVE: "Active",
   DRAFT: "Draft",
