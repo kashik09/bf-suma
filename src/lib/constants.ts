@@ -48,10 +48,10 @@ export const ADMIN_NAV_LINKS = [
 ] as const;
 
 export const TRUST_STRIP_ITEMS = [
-  "Transparent pricing",
-  "Fast local delivery",
-  "WhatsApp-first support",
-  "Quality checked essentials"
+  "Transparent pricing and totals",
+  "No forced account checkout",
+  "Pay on delivery or pickup",
+  "Optional WhatsApp guidance"
 ] as const;
 
 export const SHOP_SORT_OPTIONS = [
