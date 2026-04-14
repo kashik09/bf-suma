@@ -1,10 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { convertPrice, formatPrice } from "@/lib/currency";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { formatCurrency } from "@/lib/utils";
 import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
@@ -28,18 +31,23 @@ function getBenefitSnippet(product: StorefrontProduct) {
   return "Clear product details for faster decisions";
 }
 
-function getSavingsLabel(product: StorefrontProduct) {
+function getSavingsLabel(product: StorefrontProduct, selectedCurrency: string) {
   if (!product.compare_at_price || product.compare_at_price <= product.price) return null;
-  const savings = product.compare_at_price - product.price;
-  return `Save ${formatCurrency(savings, product.currency)}`;
+  const savingsMinor = convertPrice(product.compare_at_price - product.price, product.currency, selectedCurrency);
+  return `Save ${formatPrice(savingsMinor, selectedCurrency)}`;
 }
 
 export function ProductCard({ product }: { product: StorefrontProduct }) {
+  const { currency } = useSelectedCurrency();
   const badge = getAvailabilityBadge(product.availability);
   const benefitSnippet = getBenefitSnippet(product);
-  const savingsLabel = getSavingsLabel(product);
+  const savingsLabel = getSavingsLabel(product, currency);
   const urgencySignal = getUrgencySignal(product.availability);
   const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
+  const displayPrice = convertPrice(product.price, product.currency, currency);
+  const displayCompareAtPrice = product.compare_at_price
+    ? convertPrice(product.compare_at_price, product.currency, currency)
+    : null;
 
   return (
     <Card className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -51,7 +59,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <span className="sr-only">View product details for {product.name}</span>
       </Link>
       <div className="relative overflow-hidden">
-        <div className="relative aspect-[4/3] w-full bg-slate-50 p-3">
+        <div className="relative h-52 w-full bg-white p-3">
           <Image
             alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
             className="object-contain transition duration-500 group-hover:scale-105"
@@ -84,9 +92,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <p className="text-base font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
-          {product.compare_at_price ? (
-            <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
+          <p className="text-base font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
+          {displayCompareAtPrice ? (
+            <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
           ) : null}
         </div>
 

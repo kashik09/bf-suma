@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
+import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { useCart } from "@/hooks/use-cart";
 import { trackEvent } from "@/lib/analytics";
+import { convertPrice, formatPrice } from "@/lib/currency";
 import { buildProductLeadDescription } from "@/lib/seo";
 import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
-import { formatCurrency } from "@/lib/utils";
 import type { StorefrontProduct } from "@/types";
 import type { PdfCatalogProductContent } from "@/lib/catalog/pdf-catalog-content";
 import { AlertTriangle, CheckCircle2, MessageCircle, Quote, ShieldCheck, Sparkles, Truck } from "lucide-react";
@@ -195,6 +196,7 @@ export function ProductDetail({
   soldThisWeek = null,
   featuredReview = null
 }: ProductDetailProps) {
+  const { currency } = useSelectedCurrency();
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
@@ -216,6 +218,10 @@ export function ProductDetail({
   const productWhatsAppInterestMessage = buildWhatsAppProductInterestMessage(product.name);
   const lowStockCount = product.stock_qty > 0 && product.stock_qty < 10 ? product.stock_qty : null;
   const hasReviewData = reviewCount > 0;
+  const displayPrice = convertPrice(product.price, product.currency, currency);
+  const displayCompareAtPrice = product.compare_at_price
+    ? convertPrice(product.compare_at_price, product.currency, currency)
+    : null;
 
   function increment() {
     setQuantity((current) => Math.min(current + 1, maxQuantity));
@@ -322,9 +328,9 @@ export function ProductDetail({
           </div>
 
           <div className="flex items-center gap-2">
-            <p className="text-2xl font-bold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
-            {product.compare_at_price ? (
-              <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
+            <p className="text-2xl font-bold text-slate-900">{formatPrice(displayPrice, currency)}</p>
+            {displayCompareAtPrice ? (
+              <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
             ) : null}
           </div>
 

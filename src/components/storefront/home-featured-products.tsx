@@ -1,10 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
+import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { convertPrice, formatPrice } from "@/lib/currency";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { formatCurrency } from "@/lib/utils";
 import { buildWhatsAppProductInterestMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { StorefrontProduct } from "@/types";
 
@@ -37,13 +40,14 @@ function availabilityLabel(availability: StorefrontProduct["availability"]) {
   return "Out of stock";
 }
 
-function savingsLabel(product: StorefrontProduct) {
+function savingsLabel(product: StorefrontProduct, selectedCurrency: string) {
   if (!product.compare_at_price || product.compare_at_price <= product.price) return null;
-  const delta = product.compare_at_price - product.price;
-  return `Save ${formatCurrency(delta, product.currency)}`;
+  const delta = convertPrice(product.compare_at_price - product.price, product.currency, selectedCurrency);
+  return `Save ${formatPrice(delta, selectedCurrency)}`;
 }
 
 export function HomeFeaturedProducts({ products }: { products: StorefrontProduct[] }) {
+  const { currency } = useSelectedCurrency();
   const featured = products.slice(0, 6);
 
   return (
@@ -61,14 +65,18 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
           const whatsappMessage = buildWhatsAppProductInterestMessage(product.name);
-          const savings = savingsLabel(product);
+          const savings = savingsLabel(product, currency);
+          const displayPrice = convertPrice(product.price, product.currency, currency);
+          const displayCompareAtPrice = product.compare_at_price
+            ? convertPrice(product.compare_at_price, product.currency, currency)
+            : null;
 
           return (
             <article
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
               key={product.id}
             >
-              <div className="relative aspect-[4/3] w-full bg-slate-50 p-3">
+              <div className="relative h-52 w-full bg-white p-3">
                 <Image
                   alt={`BF Suma ${product.name} featured ${product.category_name.toLowerCase()} product`}
                   className="object-contain"
@@ -92,9 +100,9 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
                 </div>
 
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <p className="text-lg font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
-                  {product.compare_at_price ? (
-                    <p className="text-sm text-slate-500 line-through">{formatCurrency(product.compare_at_price, product.currency)}</p>
+                  <p className="text-lg font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
+                  {displayCompareAtPrice ? (
+                    <p className="text-sm text-slate-500 line-through">{formatPrice(displayCompareAtPrice, currency)}</p>
                   ) : null}
                   {savings ? <span className="text-xs font-semibold text-brand-700">{savings}</span> : null}
                 </div>
