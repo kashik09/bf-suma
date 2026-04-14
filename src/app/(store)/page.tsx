@@ -3,12 +3,10 @@ import { MessageCircle } from "lucide-react";
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
 import {
-  Hero,
   HomeFeaturedProducts,
-  HomeFinalCta,
-  HomeHealthInterests,
-  NewsletterSignup
+  HomeFinalCta
 } from "@/components/storefront";
+import { Hero, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";

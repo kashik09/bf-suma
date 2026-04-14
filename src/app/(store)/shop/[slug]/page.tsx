@@ -1,7 +1,10 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
-import { ProductDetail, RelatedProducts } from "@/components/storefront";
+import { RelatedProducts } from "@/components/storefront";
+import { ProductDetail } from "@/components/storefront/client";
 import { ProductReviewForm } from "@/components/storefront/product-review-form";
 import { ProductReviewsList } from "@/components/storefront/product-reviews-list";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";

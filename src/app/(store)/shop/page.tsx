@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
-import { ShopCatalog } from "@/components/storefront";
+import { ShopCatalog } from "@/components/storefront/client";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { getStorefrontCatalogSnapshot } from "@/services/products";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 export const metadata = buildStorefrontMetadata({
   title: "Shop Wellness Products",
   description:
