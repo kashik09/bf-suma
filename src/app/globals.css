@@ -77,6 +77,14 @@ a {
     background: linear-gradient(135deg, rgba(0, 170, 219, 0.08) 0%, rgba(0, 170, 219, 0.02) 100%);
   }
 
+  .bg-logo-spectrum-pink {
+    background: linear-gradient(135deg, rgba(236, 41, 123, 0.08) 0%, rgba(236, 41, 123, 0.02) 100%);
+  }
+
+  .bg-logo-spectrum-orange {
+    background: linear-gradient(135deg, rgba(244, 129, 61, 0.08) 0%, rgba(244, 129, 61, 0.02) 100%);
+  }
+
   .bg-logo-spectrum-footer {
     background-color: #071224;
     background-image:
