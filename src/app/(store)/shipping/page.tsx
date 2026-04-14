@@ -12,17 +12,30 @@ export const metadata = buildStorefrontMetadata({
   path: "/shipping"
 });
 
+const shippingToc = [
+  { id: "delivery-areas", label: "Delivery Areas" },
+  { id: "delivery-times", label: "Delivery Times" },
+  { id: "delivery-fees", label: "Delivery Fees" },
+  { id: "order-processing", label: "Order Processing" },
+  { id: "pickup-option", label: "Pickup Option" },
+  { id: "order-tracking", label: "Order Tracking" },
+  { id: "delivery-instructions", label: "Delivery Instructions" },
+  { id: "missed-deliveries", label: "Missed Deliveries" },
+  { id: "damaged-or-lost-packages", label: "Damaged or Lost Packages" },
+  { id: "questions", label: "Questions" }
+] as const;
+
 export default function ShippingPolicyPage() {
   const whatsappLink = buildWhatsAppUrl("Hello, I have a question about shipping.", SUPPORT_WHATSAPP_PHONE);
 
   return (
-    <LegalPage title="Shipping Policy" lastUpdated="April 2026">
+    <LegalPage title="Shipping Policy" lastUpdated="April 2026" toc={[...shippingToc]}>
       <p>
         We are committed to delivering your wellness products quickly and safely. This policy explains
         our shipping methods, delivery times, and fees.
       </p>
 
-      <h2>Delivery Areas</h2>
+      <h2 id="delivery-areas">Delivery Areas</h2>
       <p>We currently deliver throughout Uganda, including:</p>
       <ul>
         <li><strong>Kampala and surrounding areas:</strong> Same-day or next-day delivery</li>
@@ -33,7 +46,7 @@ export default function ShippingPolicyPage() {
         For locations outside our standard delivery zones, please contact us to arrange delivery options.
       </p>
 
-      <h2>Delivery Times</h2>
+      <h2 id="delivery-times">Delivery Times</h2>
       <h3>Standard Delivery</h3>
       <table className="w-full border-collapse text-sm">
         <thead>
@@ -71,7 +84,7 @@ export default function ShippingPolicyPage() {
         such as weather, traffic, or public holidays.
       </p>
 
-      <h2>Delivery Fees</h2>
+      <h2 id="delivery-fees">Delivery Fees</h2>
       <p>Delivery fees are calculated based on your location and order size:</p>
       <ul>
         <li><strong>Kampala City:</strong> From UGX 5,000</li>
@@ -82,7 +95,7 @@ export default function ShippingPolicyPage() {
         The exact delivery fee will be displayed during checkout before you confirm your order.
       </p>
 
-      <h2>Order Processing</h2>
+      <h2 id="order-processing">Order Processing</h2>
       <p>
         Orders are processed Monday through Saturday. Orders placed on Sundays or public holidays
         will be processed on the next business day.
@@ -93,19 +106,19 @@ export default function ShippingPolicyPage() {
         <li>Orders placed after 12 PM: Dispatched next business day</li>
       </ul>
 
-      <h2>Pickup Option</h2>
+      <h2 id="pickup-option">Pickup Option</h2>
       <p>
         If you prefer, you can pick up your order from our location. Select &quot;Pickup&quot; during
         checkout and we&apos;ll notify you when your order is ready. Pickup is free of charge.
       </p>
 
-      <h2>Order Tracking</h2>
+      <h2 id="order-tracking">Order Tracking</h2>
       <p>
         Once your order is dispatched, you will receive a notification via SMS or WhatsApp with
         delivery updates. You can also contact us anytime to check your order status.
       </p>
 
-      <h2>Delivery Instructions</h2>
+      <h2 id="delivery-instructions">Delivery Instructions</h2>
       <p>
         Please provide accurate delivery information, including:
       </p>
@@ -116,7 +129,7 @@ export default function ShippingPolicyPage() {
         <li>Any special instructions for the delivery person</li>
       </ul>
 
-      <h2>Missed Deliveries</h2>
+      <h2 id="missed-deliveries">Missed Deliveries</h2>
       <p>
         If you&apos;re unavailable when our delivery person arrives, they will attempt to contact you.
         If delivery cannot be completed:
@@ -127,14 +140,14 @@ export default function ShippingPolicyPage() {
         <li>Multiple failed delivery attempts may incur additional fees</li>
       </ul>
 
-      <h2>Damaged or Lost Packages</h2>
+      <h2 id="damaged-or-lost-packages">Damaged or Lost Packages</h2>
       <p>
         We take care to package your items securely. If your package arrives damaged or is lost in
         transit, please contact us within 24 hours. We will investigate and provide a replacement
         or refund as appropriate.
       </p>
 
-      <h2>Questions?</h2>
+      <h2 id="questions">Questions</h2>
       <p>
         For shipping inquiries, contact us at{" "}
         <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or via{" "}
