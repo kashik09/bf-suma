@@ -14,10 +14,20 @@ function getSavingsLabel(product: StorefrontProduct, selectedCurrency: string) {
   return `Save ${formatPrice(savingsMinor, selectedCurrency)}`;
 }
 
-export function ProductCard({ product }: { product: StorefrontProduct }) {
+type ProductCardVariant = "shop" | "featured";
+
+interface ProductCardProps {
+  product: StorefrontProduct;
+  variant?: ProductCardVariant;
+  description?: string;
+}
+
+export function ProductCard({ product, variant = "shop", description }: ProductCardProps) {
   const { currency } = useSelectedCurrency();
+  const isFeatured = variant === "featured";
   const savingsLabel = getSavingsLabel(product, currency);
   const displayPrice = convertPrice(product.price, product.currency, currency);
+  const displayDescription = description || product.description;
 
   return (
     <Link
@@ -25,7 +35,13 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
       className="group block h-full cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
       href={`/shop/${product.slug}`}
     >
-      <Card className="relative h-full overflow-hidden rounded-2xl border border-slate-100 p-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
+      <Card
+        className={`relative h-full overflow-hidden rounded-2xl p-0 ${
+          isFeatured
+            ? "border border-slate-200 border-l-4 border-l-green-500 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            : "border border-slate-100 shadow-sm transition-shadow duration-200 hover:shadow-md"
+        }`}
+      >
         <div className="relative overflow-hidden">
           <div className="relative h-44 w-full bg-white p-2">
             <Image
@@ -47,13 +63,21 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
         <div className="relative z-20 flex h-full flex-col p-4">
           <div className="space-y-1.5">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
+            {isFeatured ? (
+              <span className="inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">
+                {product.category_name}
+              </span>
+            ) : (
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
+            )}
             <h3 className="line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
-            <p className="line-clamp-2 text-sm text-slate-500">{product.description}</p>
+            <p className="line-clamp-2 text-sm text-slate-500">{displayDescription}</p>
           </div>
 
           <div className="mt-2 flex items-center gap-2">
-            <p className="text-base font-bold text-slate-900">{formatPrice(displayPrice, currency)}</p>
+            <p className={`${isFeatured ? "text-base sm:text-lg" : "text-base"} font-bold text-slate-900`}>
+              {formatPrice(displayPrice, currency)}
+            </p>
           </div>
 
           <div className="mt-auto pt-4">
