@@ -6,7 +6,7 @@ const trustStripIcons = [Receipt, Lock, Truck, MessageCircle] as const;
 
 export function TrustStrip() {
   return (
-    <section className="border-b border-slate-200 bg-logo-spectrum-soft">
+    <section className="border-b border-slate-200 bg-logo-spectrum-warm">
       <PageContainer className="grid gap-2.5 py-3.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
         {TRUST_STRIP_ITEMS.map((item, index) => {
           const Icon = trustStripIcons[index];
