@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/admin-session";
 import {
+  isAccountRoute,
   isAdminRoute,
   isFaqRoute,
   isStorefrontApiRoute
@@ -67,6 +69,36 @@ function isLegacyScaffoldApiPath(pathname: string) {
   );
 }
 
+async function getSupabaseUserFromRequest(request: NextRequest) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    return { user: null, response: NextResponse.next({ request }) };
+  }
+
+  const response = NextResponse.next({ request });
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          response.cookies.set(name, value, options);
+        });
+      }
+    }
+  });
+
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  return { user, response };
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const method = request.method.toUpperCase();
@@ -76,6 +108,25 @@ export async function middleware(request: NextRequest) {
   const isAdminLoginRoute = pathname === "/admin/login";
   const isAdminLogoutRoute = pathname === "/admin/logout";
   const isAdminResetPasswordRoute = pathname === "/admin/reset-password";
+  const isAccount = isAccountRoute(pathname);
+  const isPublicAccountRoute =
+    pathname === "/account/login" ||
+    pathname === "/account/signup" ||
+    pathname === "/account/forgot-password";
+
+  if (isAccount) {
+    const { user, response } = await getSupabaseUserFromRequest(request);
+
+    if (!isPublicAccountRoute && pathname !== "/account/logout" && !user) {
+      return applySecurityHeaders(NextResponse.redirect(new URL("/account/login", request.url)));
+    }
+
+    if (isPublicAccountRoute && user) {
+      return applySecurityHeaders(NextResponse.redirect(new URL("/account/dashboard", request.url)));
+    }
+
+    return applySecurityHeaders(response);
+  }
 
   if (isFaqRoute(pathname) && !allowFaqPage) {
     return applySecurityHeaders(NextResponse.redirect(new URL("/", request.url)));
@@ -149,5 +200,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/checkout", "/api/:path*", "/faq"]
+  matcher: ["/admin/:path*", "/account/:path*", "/checkout", "/api/:path*", "/faq"]
 };

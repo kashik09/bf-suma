@@ -1,12 +1,11 @@
 import SearchAutocomplete from "@/components/storefront/search-autocomplete";
+import { CurrencySwitcher } from "@/components/storefront/currency-switcher";
+import { StoreAccountMenu } from "@/components/storefront/store-account-menu";
+import { StoreCartButton } from "@/components/storefront/store-cart-button";
 import Image from "next/image";
-
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
-import { STORE_NAV_LINKS, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
-import { StoreCartButton } from "@/components/storefront/store-cart-button";
-
+import { STORE_NAV_LINKS } from "@/lib/constants";
 
 export function StoreHeader() {
   return (
@@ -42,6 +41,8 @@ export function StoreHeader() {
             </Link>
           </nav>
 
+          <StoreAccountMenu />
+          <CurrencySwitcher />
           <StoreCartButton />
         </div>
       </PageContainer>

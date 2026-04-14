@@ -1,3 +1,5 @@
+import { getConsentLevel } from "@/lib/consent";
+
 declare global {
   interface Window {
     dataLayer: unknown[];
@@ -23,6 +25,7 @@ export function isDoNotTrackEnabled(): boolean {
 export function trackEvent(name: string, params: Record<string, unknown> = {}): void {
   if (typeof window === "undefined") return;
   if (isDoNotTrackEnabled()) return;
+  if (getConsentLevel() !== "all") return;
   if (typeof window.gtag !== "function") return;
 
   window.gtag("event", name, params);
