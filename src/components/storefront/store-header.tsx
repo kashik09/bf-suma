@@ -1,4 +1,4 @@
-import SearchAutocomplete from "@/components/storefront/search-autocomplete-lazy";
+import SearchAutocomplete from "@/components/storefront/search-autocomplete";
 import Image from "next/image";
 
 import Link from "next/link";

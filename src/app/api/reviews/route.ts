@@ -6,6 +6,8 @@ import { buildRateLimitKey } from "@/lib/request-ip";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 const RATE_LIMIT_MAX_REQUESTS = 3;
 const RATE_LIMIT_WINDOW_SECONDS = 300; // 5 minutes - stricter for reviews
 

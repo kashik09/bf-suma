@@ -1,6 +1,8 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 /**
  * TEMPORARY: One-time cache invalidation for blog.
  * DELETE THIS FILE after using it once.
