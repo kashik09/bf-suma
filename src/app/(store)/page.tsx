@@ -2,9 +2,6 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
-import {
-  HomeFinalCta
-} from "@/components/storefront";
 import { Hero, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
@@ -80,14 +77,8 @@ export default async function HomePage() {
             </a>
           </div>
         </section>
-
         <WeeklyFeed />
-
-
-
         <MiniArticle />
-
-        <HomeFinalCta />
       </PageContainer>
     </>
   );
