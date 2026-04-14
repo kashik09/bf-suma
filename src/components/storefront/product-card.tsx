@@ -38,7 +38,7 @@ export function ProductCard({ product, variant = "shop", description }: ProductC
       <Card
         className={`relative h-full overflow-hidden rounded-2xl p-0 ${
           isFeatured
-            ? "border border-slate-200 border-l-4 border-l-green-500 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            ? "rounded-xl border border-slate-200 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md"
             : "border border-slate-100 shadow-sm transition-shadow duration-200 hover:shadow-md"
         }`}
       >
