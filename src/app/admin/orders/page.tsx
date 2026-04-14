@@ -6,6 +6,8 @@ import { formatCurrency } from "@/lib/utils";
 import { listOrdersForAdmin } from "@/services/orders";
 import type { OrderStatus } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 function formatStatus(status: string) {
   return status.replace(/_/g, " ");
 }
