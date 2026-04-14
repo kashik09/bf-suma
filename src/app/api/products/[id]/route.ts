@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { buildCatalogResponseHeaders } from "@/lib/catalog-health";
 import { getStorefrontCatalogSnapshot } from "@/services/products";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const snapshot = await getStorefrontCatalogSnapshot();

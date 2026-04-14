@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { buildCatalogResponseHeaders } from "@/lib/catalog-health";
 import { getStorefrontCatalogSnapshot } from "@/services/products";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
