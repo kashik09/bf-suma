@@ -1,8 +1,10 @@
 import { PageContainer } from "@/components/layout/page-container";
-import { CartPanel } from "@/components/storefront";
+import { CartPanel } from "@/components/storefront/client";
 import { SectionHeader } from "@/components/ui/section-header";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { getStorefrontCatalogHealth } from "@/services/products";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = buildStorefrontMetadata({
   title: "Your Cart",

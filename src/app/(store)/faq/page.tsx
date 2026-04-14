@@ -8,6 +8,8 @@ import { listPdfFaqEntries } from "@/lib/catalog/pdf-catalog-content";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
+export const dynamic = "force-static";
+
 export const metadata = buildStorefrontMetadata({
   title: "Frequently Asked Questions",
   description:

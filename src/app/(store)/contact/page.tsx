@@ -1,10 +1,12 @@
-import { ContactForm } from "@/components/storefront";
+import { ContactForm } from "@/components/storefront/client";
 import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_EMAIL, SUPPORT_PHONES, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+
+export const dynamic = "force-static";
 
 export const metadata = buildStorefrontMetadata({
   title: "Contact Support",
