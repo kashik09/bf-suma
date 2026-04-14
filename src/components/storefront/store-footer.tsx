@@ -78,6 +78,8 @@ export function StoreFooter() {
           <Link className="transition hover:text-white" href="/terms">Terms</Link>
           <Link className="transition hover:text-white" href="/refund-policy">Refunds</Link>
           <Link className="transition hover:text-white" href="/shipping">Shipping</Link>
+          <Link className="transition hover:text-white" href="/cookies">Cookies</Link>
+          <Link className="transition hover:text-white" href="/cookies#cookie-settings">Cookie Settings</Link>
         </div>
       </PageContainer>
     </footer>

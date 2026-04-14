@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 import { isDoNotTrackEnabled, trackEvent } from "@/lib/analytics";
+import { CONSENT_CHANGE_EVENT, getConsentLevel } from "@/lib/consent";
 
 const GA_MEASUREMENT_ID = (process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "").trim();
 
@@ -16,6 +17,22 @@ export function GoogleAnalytics() {
   const pathname = usePathname();
   const [trackingAllowed, setTrackingAllowed] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [consentLevel, setConsentLevel] = useState<"all" | "essential" | null>(null);
+
+  useEffect(() => {
+    function syncConsent() {
+      setConsentLevel(getConsentLevel());
+    }
+
+    syncConsent();
+    window.addEventListener(CONSENT_CHANGE_EVENT, syncConsent as EventListener);
+    window.addEventListener("storage", syncConsent);
+
+    return () => {
+      window.removeEventListener(CONSENT_CHANGE_EVENT, syncConsent as EventListener);
+      window.removeEventListener("storage", syncConsent);
+    };
+  }, []);
 
   useEffect(() => {
     if (!GA_MEASUREMENT_ID) {
@@ -23,8 +40,15 @@ export function GoogleAnalytics() {
       return;
     }
 
-    setTrackingAllowed(!isDoNotTrackEnabled());
-  }, []);
+    setTrackingAllowed(consentLevel === "all" && !isDoNotTrackEnabled());
+  }, [consentLevel]);
+
+  useEffect(() => {
+    if (!GA_MEASUREMENT_ID || typeof window === "undefined") return;
+
+    const gaDisableKey = `ga-disable-${GA_MEASUREMENT_ID}`;
+    (window as unknown as Record<string, unknown>)[gaDisableKey] = !trackingAllowed;
+  }, [trackingAllowed]);
 
   useEffect(() => {
     if (!trackingAllowed || !scriptLoaded) return;

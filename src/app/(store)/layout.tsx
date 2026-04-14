@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { CookieConsent } from "@/components/storefront/cookie-consent";
 import { StoreFooter, StoreHeader, WhatsAppFloatingCTA } from "@/components/storefront";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       </main>
       <StoreFooter />
       <WhatsAppFloatingCTA />
+      <CookieConsent />
     </AppShell>
   );
 }
