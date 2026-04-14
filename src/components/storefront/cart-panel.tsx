@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/hooks/use-cart";
+import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { convertPrice, formatPrice } from "@/lib/currency";
 import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
-import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -15,6 +16,7 @@ interface CartPanelProps {
 
 export function CartPanel({ commerceReady = true, degradedReason = null }: CartPanelProps) {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
+  const { currency } = useSelectedCurrency();
 
   const getAvailabilityMeta = (availability: "in_stock" | "low_stock" | "out_of_stock") => {
     if (availability === "in_stock") {
@@ -58,7 +60,9 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                 </div>
                 <div className="flex-1 space-y-2">
                   <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
-                  <p className="text-sm text-slate-500">{formatCurrency(item.price, item.currency)}</p>
+                  <p className="text-sm text-slate-500">
+                    {formatPrice(convertPrice(item.price, item.currency, currency), currency)}
+                  </p>
                   <Badge variant={availability.variant}>{availability.label}</Badge>
 
                   <div className="flex items-center gap-2">
@@ -108,7 +112,9 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
         <h2 className="text-lg font-semibold text-slate-900">Order Summary</h2>
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600">Subtotal</span>
-          <span className="font-semibold text-slate-900">{formatCurrency(subtotal, items[0]?.currency)}</span>
+          <span className="font-semibold text-slate-900">
+            {formatPrice(convertPrice(subtotal, items[0]?.currency || "KES", currency), currency)}
+          </span>
         </div>
         <p className="text-xs text-slate-500">{DELIVERY_ESTIMATE_TEXT}</p>
 

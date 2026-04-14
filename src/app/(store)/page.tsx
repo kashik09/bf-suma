@@ -3,10 +3,9 @@ import { MessageCircle } from "lucide-react";
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
 import {
-  HomeFeaturedProducts,
   HomeFinalCta
 } from "@/components/storefront";
-import { Hero, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
+import { Hero, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
@@ -62,12 +61,6 @@ export default async function HomePage() {
               </p>
             ) : null}
           </div>
-
-          <ul className="grid gap-2 text-sm text-slate-700 md:grid-cols-3">
-            {pdfHomepage.trustItems.slice(0, 3).map((item) => (
-              <li className="rounded-lg border border-slate-200 bg-slate-50/70 p-3" key={item}>{item}</li>
-            ))}
-          </ul>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Link
