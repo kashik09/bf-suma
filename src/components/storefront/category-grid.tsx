@@ -12,10 +12,7 @@ export function CategoryGrid({ categories }: { categories: StorefrontCategory[] 
           key={category.id}
         >
           <Card className="h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
-            <div
-              className="h-28 w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${category.image_url || "/catalog-images/placeholder.webp"})` }}
-            />
+            <div className="h-28 w-full bg-[linear-gradient(145deg,_#f1f5f9_0%,_#e2e8f0_100%)]" />
             <div className="space-y-1 p-4">
               <h3 className="text-base font-semibold text-slate-900">{category.name}</h3>
               <p className="line-clamp-2 text-sm text-slate-600">{category.description}</p>
