@@ -91,18 +91,6 @@ const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
   "womens-health": "/category-images/womens-health.jpg"
 };
 
-// Legacy category slugs from earlier catalog sources are mapped to the
-// closest current category image to keep slideshow cards coherent.
-const CATEGORY_IMAGE_ALIAS_BY_SLUG: Record<string, string> = {
-  "bone-joint-care": "joint-health",
-  "immune-boosters": "supplements",
-  "premium-selected": "supplements",
-  "cardiovascular-health": "supplements",
-  "smart-kids": "supplements",
-  "skincare-youth-series": "skincare",
-  "suma-living": "personal-care"
-};
-
 function normalizeCategorySlug(input: string): string {
   return input
     .trim()
@@ -117,19 +105,14 @@ export function resolveCategoryImageBySlug(slug?: string | null, categoryName?: 
   const slugCandidate = normalizeCategorySlug(slug || "");
   const nameCandidate = normalizeCategorySlug(categoryName || "");
 
-  const candidates = [
-    slugCandidate,
-    CATEGORY_IMAGE_ALIAS_BY_SLUG[slugCandidate],
-    nameCandidate,
-    CATEGORY_IMAGE_ALIAS_BY_SLUG[nameCandidate]
-  ].filter(Boolean) as string[];
+  const candidates = [slugCandidate, nameCandidate].filter(Boolean) as string[];
 
   for (const candidate of candidates) {
     const directMatch = CATEGORY_IMAGE_BY_SLUG[candidate];
     if (directMatch) return directMatch;
   }
 
-  return DEFAULT_PRODUCT_IMAGE;
+  return "";
 }
 
 function generateSku(slug: string, index: number): string {

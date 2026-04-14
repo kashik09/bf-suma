@@ -76,6 +76,39 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+
+    const imagePaths = heroSlides.map((slideEntry) => slideEntry.image);
+    const seen = new Set<string>();
+    const duplicated = new Set<string>();
+
+    imagePaths.forEach((path) => {
+      if (seen.has(path)) duplicated.add(path);
+      seen.add(path);
+    });
+
+    if (duplicated.size > 0) {
+      console.warn(`[Hero] Duplicate hero image path(s): ${Array.from(duplicated).join(", ")}`);
+    }
+
+    const probes: HTMLImageElement[] = [];
+    heroSlides.forEach((slideEntry) => {
+      const probe = new window.Image();
+      probe.onerror = () => {
+        console.warn(`[Hero] Missing hero image asset for slide "${slideEntry.id}": ${slideEntry.image}`);
+      };
+      probe.src = slideEntry.image;
+      probes.push(probe);
+    });
+
+    return () => {
+      probes.forEach((probe) => {
+        probe.onerror = null;
+      });
+    };
+  }, [heroSlides]);
+
   const slide = heroSlides[activeSlide];
 
   return (

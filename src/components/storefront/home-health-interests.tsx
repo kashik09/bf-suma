@@ -46,6 +46,7 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
   const slides = [{ kind: "all" as const }, ...items.map((category) => ({ kind: "category" as const, category }))];
   const [activeIndex, setActiveIndex] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(1);
+  const [failedImageBySlug, setFailedImageBySlug] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     function syncSlidesPerView() {
@@ -90,6 +91,23 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
 
   function goPrev() {
     setActiveIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  }
+
+  function getCategoryGradient(categoryName: string) {
+    const palette = [
+      "from-sky-500 via-indigo-500 to-purple-500",
+      "from-emerald-500 via-teal-500 to-cyan-500",
+      "from-amber-500 via-orange-500 to-rose-500",
+      "from-fuchsia-500 via-violet-500 to-indigo-500",
+      "from-lime-500 via-emerald-500 to-teal-500",
+      "from-blue-500 via-cyan-500 to-sky-500"
+    ];
+
+    const hash = categoryName
+      .split("")
+      .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+    return palette[hash % palette.length];
   }
 
   return (
@@ -163,14 +181,26 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                     className="group relative isolate block h-[18rem] overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-soft ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-card hover:ring-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-[19rem]"
                     href={`/category/${slide.category.slug}`}
                   >
-                    <Image
-                      alt={`${slide.category.name} category image`}
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      src={slide.category.image_url || "/catalog-images/placeholder.webp"}
-                      unoptimized
-                    />
+                    {slide.category.image_url && !failedImageBySlug[slide.category.slug] ? (
+                      <Image
+                        alt={`${slide.category.name} category image`}
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                        fill
+                        onError={() =>
+                          setFailedImageBySlug((prev) => ({
+                            ...prev,
+                            [slide.category.slug]: true
+                          }))}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        src={slide.category.image_url}
+                        unoptimized
+                      />
+                    ) : (
+                      <div
+                        aria-label={`${slide.category.name} placeholder image`}
+                        className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(slide.category.name)}`}
+                      />
+                    )}
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/92 via-slate-900/55 to-slate-900/10" />
 
                     <div className="absolute inset-x-0 bottom-0 flex h-full flex-col justify-end p-4 sm:p-5">
