@@ -6,124 +6,53 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const dynamic = "force-static";
 
 export const metadata = buildStorefrontMetadata({
-  title: `Refund Policy | ${APP_NAME}`,
+  title: `No Refund Policy | ${APP_NAME}`,
   description:
-    "Review BF Suma return, exchange, and refund steps so you know eligibility, timelines, and what to expect if an order issue occurs.",
+    "Read BF Suma's no-refund terms before checkout so you understand that all purchases are final and non-refundable.",
   path: "/refund-policy"
 });
 
+const refundPolicyToc = [
+  { id: "all-sales-are-final", label: "All Sales Are Final" },
+  { id: "why-we-have-this-policy", label: "Why We Have This Policy" },
+  { id: "what-this-means", label: "What This Means" },
+  { id: "questions", label: "Questions" }
+] as const;
+
 export default function RefundPolicyPage() {
-  const whatsappLink = buildWhatsAppUrl("Hello, I have a question about a refund.", SUPPORT_WHATSAPP_PHONE);
+  const whatsappLink = buildWhatsAppUrl("Hello, I have a question before purchasing.", SUPPORT_WHATSAPP_PHONE);
 
   return (
-    <LegalPage title="Refund Policy" lastUpdated="April 2026">
+    <LegalPage title="No Refund Policy" lastUpdated="April 2026" toc={[...refundPolicyToc]}>
       <p>
-        At BF Suma, we want you to be completely satisfied with your purchase. This policy outlines
-        our guidelines for returns, exchanges, and refunds.
+        All sales are final. We do not offer refunds under any circumstances. By completing a purchase
+        on bfsumauganda.com, you acknowledge and agree that all sales are final and non-refundable.
       </p>
 
-      <h2>Return Eligibility</h2>
-      <p>You may request a return or exchange if:</p>
+      <h2 id="all-sales-are-final">All Sales Are Final</h2>
+      <p>
+        We do not offer refunds under any circumstances once an order is placed and confirmed.
+      </p>
+
+      <h2 id="why-we-have-this-policy">Why We Have This Policy</h2>
+      <p>
+        BF Suma products are health and wellness consumables. Once dispatched, we cannot accept returns
+        or issue refunds.
+      </p>
+
+      <h2 id="what-this-means">What This Means</h2>
       <ul>
-        <li>The product is damaged or defective upon delivery</li>
-        <li>You received the wrong product</li>
-        <li>The product is significantly different from its description</li>
+        <li>No refunds for change of mind</li>
+        <li>No refunds for unused or partially used products</li>
+        <li>No refunds after delivery</li>
+        <li>All purchases are considered final at checkout</li>
       </ul>
 
-      <h3>Timeframe</h3>
+      <h2 id="questions">Questions</h2>
       <p>
-        Return requests must be made within <strong>7 days</strong> of receiving your order.
-        Please contact us immediately if you notice any issues with your delivery.
-      </p>
-
-      <h3>Condition Requirements</h3>
-      <p>For a return to be accepted:</p>
-      <ul>
-        <li>Products must be unused and in original packaging</li>
-        <li>Seals must be intact (for sealed products)</li>
-        <li>All original accessories and documentation must be included</li>
-        <li>You must provide proof of purchase (order number or receipt)</li>
-      </ul>
-
-      <h2>Non-Returnable Items</h2>
-      <p>The following items cannot be returned:</p>
-      <ul>
-        <li>Products that have been opened, used, or consumed</li>
-        <li>Products returned after 7 days without prior approval</li>
-        <li>Products damaged due to misuse or improper storage</li>
-        <li>Items marked as final sale or non-returnable</li>
-      </ul>
-
-      <h2>How to Request a Return</h2>
-      <ol>
-        <li>
-          <strong>Contact us:</strong> Reach out via{" "}
-          <a href={whatsappLink} target="_blank" rel="noreferrer">WhatsApp</a> or email at{" "}
-          <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> within 7 days of delivery.
-        </li>
-        <li>
-          <strong>Provide details:</strong> Include your order number, photos of the issue, and
-          a description of the problem.
-        </li>
-        <li>
-          <strong>Wait for approval:</strong> Our team will review your request and respond within
-          24-48 hours.
-        </li>
-        <li>
-          <strong>Return the product:</strong> If approved, we&apos;ll arrange pickup or provide
-          instructions for returning the item.
-        </li>
-      </ol>
-
-      <h2>Refund Process</h2>
-      <h3>Refund Methods</h3>
-      <p>Once we receive and inspect the returned item, we will process your refund via:</p>
-      <ul>
-        <li>Mobile money (M-Pesa, Airtel Money)</li>
-        <li>Bank transfer</li>
-        <li>Store credit (if preferred)</li>
-      </ul>
-
-      <h3>Processing Time</h3>
-      <p>
-        Refunds are typically processed within <strong>3-5 business days</strong> after we receive
-        the returned item. The time for the refund to appear in your account may vary depending on
-        your payment provider.
-      </p>
-
-      <h3>Refund Amount</h3>
-      <p>
-        You will receive a full refund of the product price. Original delivery fees are non-refundable
-        unless the return is due to our error (wrong item, defective product, etc.).
-      </p>
-
-      <h2>Exchanges</h2>
-      <p>
-        If you prefer an exchange rather than a refund, we&apos;ll send a replacement product once
-        we receive the original item. If the replacement has a different price:
-      </p>
-      <ul>
-        <li>If cheaper, we&apos;ll refund the difference</li>
-        <li>If more expensive, you&apos;ll pay the difference before shipment</li>
-      </ul>
-
-      <h2>Damaged in Transit</h2>
-      <p>
-        If your order arrives damaged, please take photos immediately and contact us within 24 hours.
-        We will arrange for a replacement or full refund at no additional cost to you.
-      </p>
-
-      <h2>Order Cancellation</h2>
-      <p>
-        You may cancel your order free of charge before it is dispatched. Once the order is out for
-        delivery, standard return policies apply.
-      </p>
-
-      <h2>Questions?</h2>
-      <p>
-        If you have any questions about our refund policy, please contact us at{" "}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or via{" "}
-        <a href={whatsappLink} target="_blank" rel="noreferrer">WhatsApp</a>. We&apos;re here to help!
+        If you have questions before purchasing, contact us via{" "}
+        <a href={whatsappLink} rel="noreferrer" target="_blank">WhatsApp</a> or email at{" "}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> before placing your order.
       </p>
     </LegalPage>
   );

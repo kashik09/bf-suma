@@ -11,15 +11,28 @@ export const metadata = buildStorefrontMetadata({
   path: "/privacy"
 });
 
+const privacyToc = [
+  { id: "information-we-collect", label: "Information We Collect" },
+  { id: "how-we-use-your-information", label: "How We Use Your Information" },
+  { id: "information-sharing", label: "Information Sharing" },
+  { id: "data-security", label: "Data Security" },
+  { id: "your-rights", label: "Your Rights" },
+  { id: "cookies", label: "Cookies" },
+  { id: "third-party-links", label: "Third-Party Links" },
+  { id: "childrens-privacy", label: "Children's Privacy" },
+  { id: "changes-to-this-policy", label: "Changes to This Policy" },
+  { id: "contact-us", label: "Contact Us" }
+] as const;
+
 export default function PrivacyPolicyPage() {
   return (
-    <LegalPage title="Privacy Policy" lastUpdated="April 2026">
+    <LegalPage title="Privacy Policy" lastUpdated="April 2026" toc={[...privacyToc]}>
       <p>
         At BF Suma, we respect your privacy and are committed to protecting your personal information.
         This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.
       </p>
 
-      <h2>Information We Collect</h2>
+      <h2 id="information-we-collect">Information We Collect</h2>
 
       <h3>Information You Provide</h3>
       <p>We collect information you voluntarily provide when you:</p>
@@ -39,7 +52,7 @@ export default function PrivacyPolicyPage() {
         <li>Referring website or source</li>
       </ul>
 
-      <h2>How We Use Your Information</h2>
+      <h2 id="how-we-use-your-information">How We Use Your Information</h2>
       <p>We use your information to:</p>
       <ul>
         <li>Process and fulfill your orders</li>
@@ -50,7 +63,7 @@ export default function PrivacyPolicyPage() {
         <li>Comply with legal obligations</li>
       </ul>
 
-      <h2>Information Sharing</h2>
+      <h2 id="information-sharing">Information Sharing</h2>
       <p>We do not sell your personal information. We may share your data with:</p>
       <ul>
         <li><strong>Delivery partners:</strong> To fulfill and deliver your orders</li>
@@ -59,13 +72,13 @@ export default function PrivacyPolicyPage() {
         <li><strong>Legal authorities:</strong> When required by law or to protect our rights</li>
       </ul>
 
-      <h2>Data Security</h2>
+      <h2 id="data-security">Data Security</h2>
       <p>
         We implement appropriate security measures to protect your personal information from unauthorized access,
         alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.
       </p>
 
-      <h2>Your Rights</h2>
+      <h2 id="your-rights">Your Rights</h2>
       <p>You have the right to:</p>
       <ul>
         <li>Access the personal information we hold about you</li>
@@ -75,31 +88,31 @@ export default function PrivacyPolicyPage() {
         <li>Opt out of certain data collection</li>
       </ul>
 
-      <h2>Cookies</h2>
+      <h2 id="cookies">Cookies</h2>
       <p>
         We use cookies and similar technologies to improve your browsing experience, analyze site traffic,
         and remember your preferences. You can control cookies through your browser settings.
       </p>
 
-      <h2>Third-Party Links</h2>
+      <h2 id="third-party-links">Third-Party Links</h2>
       <p>
         Our website may contain links to third-party sites. We are not responsible for the privacy practices
         of these external sites. We encourage you to review their privacy policies.
       </p>
 
-      <h2>Children&apos;s Privacy</h2>
+      <h2 id="childrens-privacy">Children&apos;s Privacy</h2>
       <p>
         Our services are not directed to individuals under 18. We do not knowingly collect personal information
         from children. If you believe we have collected such information, please contact us immediately.
       </p>
 
-      <h2>Changes to This Policy</h2>
+      <h2 id="changes-to-this-policy">Changes to This Policy</h2>
       <p>
         We may update this Privacy Policy from time to time. We will notify you of significant changes by
         posting the new policy on this page with an updated revision date.
       </p>
 
-      <h2>Contact Us</h2>
+      <h2 id="contact-us">Contact Us</h2>
       <p>
         If you have questions about this Privacy Policy or your personal information, please contact us at{" "}
         <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
