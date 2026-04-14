@@ -4,39 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from "lucide-react";
+import { HERO_SLIDES } from "@/lib/hero-slides";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
-
-const defaultHeroSlides = [
-  {
-    id: "partner",
-    badge: "Premium Formulations",
-    headline: "YOUR BEST PARTNERS",
-    subhead: "Trusted daily wellness support for consistent results",
-    image: "/hero-images/supplements.jpg"
-  },
-  {
-    id: "ingredients",
-    badge: "Quality Ingredients",
-    headline: "BEST INGREDIENTS",
-    subhead: "Thoughtful blends selected for performance and safety",
-    image: "/hero-images/vegetables.jpg"
-  },
-  {
-    id: "lifestyle",
-    badge: "Everyday Fit",
-    headline: "SUPPLEMENTS FOR EVERY LIFESTYLE",
-    subhead: "Flexible options for workdays, training days, and recovery days",
-    image: "/hero-images/lifestyle.jpg"
-  },
-  {
-    id: "joint-care",
-    badge: "Bone & Joint Care",
-    headline: "FREE YOUR JOINT DANCE YOUR LIFE",
-    subhead: "Support for mobility, comfort, and active living",
-    image: "/hero-images/joint-health.jpg"
-  }
-];
 
 interface HeroProps {
   heroHeadline?: string;
@@ -47,11 +17,11 @@ export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
   const heroSlides = useMemo(
     () => [
       {
-        ...defaultHeroSlides[0],
-        headline: heroHeadline || defaultHeroSlides[0].headline,
-        subhead: heroSupportingText || defaultHeroSlides[0].subhead
+        ...HERO_SLIDES[0],
+        headline: heroHeadline || HERO_SLIDES[0].headline,
+        subhead: heroSupportingText || HERO_SLIDES[0].subhead
       },
-      ...defaultHeroSlides.slice(1)
+      ...HERO_SLIDES.slice(1)
     ],
     [heroHeadline, heroSupportingText]
   );
