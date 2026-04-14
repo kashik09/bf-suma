@@ -11,18 +11,26 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function StoreFooter() {
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white py-10">
-      <PageContainer className="grid gap-8 md:grid-cols-3">
-        <div>
-          <h3 className="text-base font-semibold text-slate-900">BF Suma</h3>
-          <p className="mt-2 text-sm text-slate-600">{APP_DESCRIPTION}</p>
+    <footer className="mt-16 border-t border-slate-200 bg-slate-950 py-12 text-slate-200">
+      <PageContainer className="grid gap-8 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
+        <div className="space-y-3">
+          <h3 className="text-lg font-bold text-white">BF Suma</h3>
+          <p className="text-sm leading-relaxed text-slate-300">{APP_DESCRIPTION}</p>
+          <a
+            className="inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+            href={buildWhatsAppUrl("Hello BF Suma, I need product guidance.", SUPPORT_WHATSAPP_PHONE)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            WhatsApp Support
+          </a>
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-slate-900">Explore</h4>
-          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-600">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Explore</h4>
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-300">
             {STORE_NAV_LINKS.map((item) => (
-              <Link className="hover:text-brand-600" href={item.href} key={item.href}>
+              <Link className="transition hover:text-white" href={item.href} key={item.href}>
                 {item.label}
               </Link>
             ))}
@@ -30,15 +38,24 @@ export function StoreFooter() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-slate-900">Support</h4>
-          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-600">
-            <Link className="hover:text-brand-600" href="/contact">Contact Form</Link>
-            <a className="hover:text-brand-600" href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Support</h4>
+          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-300">
+            <Link className="transition hover:text-white" href="/contact">Contact Form</Link>
+            <a className="transition hover:text-white" href={buildWhatsAppUrl("Hello BF Suma, I need assistance.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
               WhatsApp
             </a>
-            <a className="hover:text-brand-600" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-            <a className="hover:text-brand-600" href={`tel:${SUPPORT_PHONE}`}>{SUPPORT_PHONE}</a>
+            <a className="transition hover:text-white" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            <a className="transition hover:text-white" href={`tel:${SUPPORT_PHONE}`}>{SUPPORT_PHONE}</a>
           </div>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-100">Why BF Suma</h4>
+          <ul className="mt-3 space-y-2 text-sm text-slate-300">
+            <li>Trusted wellness-focused catalog</li>
+            <li>Transparent pricing and availability</li>
+            <li>Local delivery and pickup support</li>
+          </ul>
         </div>
       </PageContainer>
     </footer>
