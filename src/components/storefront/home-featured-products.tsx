@@ -5,19 +5,9 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { ProductCard } from "@/components/storefront/product-card";
 import type { StorefrontProduct } from "@/types";
 
-const productBenefitBySlug: Record<string, string> = {
-  "ginseng-coffee": "Gentle daily energy support with added functional ingredients.",
-  "cordyceps-coffee": "Supports stamina and focus for active routines.",
-  "quad-reishi-capsules": "Immune-focused mushroom blend for consistent support.",
-  "zaminocal-plus-capsules": "Mineral support for bones and joint comfort.",
-  "youth-essence-facial-cream": "Hydration-first daily skin support formula.",
-  "xpower-coffee": "Convenient vitality support in an easy coffee format."
-};
-
 function toBenefitText(product: StorefrontProduct) {
-  const mapped = productBenefitBySlug[product.slug];
-  if (mapped) return mapped;
   const trimmed = product.description.trim();
+  if (!trimmed) return "Product details available on the product page.";
   if (trimmed.length <= 86) return trimmed;
   return `${trimmed.slice(0, 83)}...`;
 }

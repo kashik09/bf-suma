@@ -31,6 +31,11 @@ const categoryBenefitBySlug: Record<string, string> = {
 };
 
 function resolveCategoryBenefit(category: StorefrontCategory) {
+  const description = category.description.trim();
+  if (description && description !== "Browse curated essentials in this category.") {
+    return description;
+  }
+
   const mapped = categoryBenefitBySlug[category.slug];
   if (mapped) return mapped;
   return "Targeted wellness support";
