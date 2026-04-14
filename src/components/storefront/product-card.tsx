@@ -20,9 +20,10 @@ interface ProductCardProps {
   product: StorefrontProduct;
   variant?: ProductCardVariant;
   description?: string;
+  className?: string;
 }
 
-export function ProductCard({ product, variant = "shop", description }: ProductCardProps) {
+export function ProductCard({ product, variant = "shop", description, className }: ProductCardProps) {
   const { currency } = useSelectedCurrency();
   const isFeatured = variant === "featured";
   const savingsLabel = getSavingsLabel(product, currency);
@@ -32,7 +33,9 @@ export function ProductCard({ product, variant = "shop", description }: ProductC
   return (
     <Link
       aria-label={`Open product details for ${product.name}`}
-      className="group block h-full cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+      className={`group block h-full cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 ${
+        className || ""
+      }`}
       href={`/shop/${product.slug}`}
     >
       <Card
@@ -61,7 +64,7 @@ export function ProductCard({ product, variant = "shop", description }: ProductC
           ) : null}
         </div>
 
-        <div className="relative z-20 flex h-full flex-col p-4">
+        <div className="relative z-20 flex h-full min-h-[320px] flex-col p-4">
           <div className="space-y-1.5">
             {isFeatured ? (
               <span className="inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">
@@ -80,8 +83,8 @@ export function ProductCard({ product, variant = "shop", description }: ProductC
             </p>
           </div>
 
-          <div className="mt-auto pt-4">
-            <span className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+          <div className="mt-auto border-t border-slate-100 pt-3">
+            <span className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700">
               View Details →
             </span>
           </div>
