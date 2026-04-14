@@ -27,6 +27,10 @@ export function isFaqRoute(pathname: string): boolean {
   return pathname === "/faq";
 }
 
+export function isAccountRoute(pathname: string): boolean {
+  return pathname.startsWith("/account");
+}
+
 export function isScaffoldAdminRoute(pathname: string): boolean {
   return SCAFFOLD_ADMIN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
