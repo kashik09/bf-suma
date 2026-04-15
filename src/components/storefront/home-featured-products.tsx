@@ -27,7 +27,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
         )}
       />
 
-      <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+      <div className="grid auto-rows-fr items-stretch gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
           return (
             <ProductCard
