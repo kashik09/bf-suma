@@ -1,11 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import type { StorefrontProduct } from "@/types";
 
+const PLACEHOLDER_IMAGE = "/catalog-images/placeholder.svg";
+
 export function ProductCard({ product }: { product: StorefrontProduct }) {
+  const [imgSrc, setImgSrc] = useState(product.image_url || PLACEHOLDER_IMAGE);
+
   return (
     <Card className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
       <Link
@@ -21,8 +28,9 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
             className="object-contain transition duration-500 group-hover:scale-105"
             fill
+            onError={() => setImgSrc(PLACEHOLDER_IMAGE)}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-            src={product.image_url || "/catalog-images/placeholder.svg"}
+            src={imgSrc}
             unoptimized
           />
         </div>
@@ -40,15 +48,22 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           <p className="text-lg font-bold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
         </div>
 
-        <div className="mt-auto pt-1">
+        <div className="mt-auto flex items-center gap-2 pt-1">
           <Link
             aria-label={`View details for ${product.name}`}
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             href={`/shop/${product.slug}`}
           >
             View Product
             <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
           </Link>
+          <button
+            aria-label={`Add ${product.name} to wishlist`}
+            className="relative z-20 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            type="button"
+          >
+            <Heart className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </Card>
