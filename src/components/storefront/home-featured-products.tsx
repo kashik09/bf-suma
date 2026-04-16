@@ -5,13 +5,6 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { ProductCard } from "@/components/storefront/product-card";
 import type { StorefrontProduct } from "@/types";
 
-function toBenefitText(product: StorefrontProduct) {
-  const trimmed = product.description.trim();
-  if (!trimmed) return "Product details available on the product page.";
-  if (trimmed.length <= 86) return trimmed;
-  return `${trimmed.slice(0, 83)}...`;
-}
-
 export function HomeFeaturedProducts({ products }: { products: StorefrontProduct[] }) {
   const featured = products.slice(0, 6);
 
@@ -29,15 +22,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
 
       <div className="grid auto-rows-fr items-stretch gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {featured.map((product) => {
-          return (
-            <ProductCard
-              className="h-full"
-              description={toBenefitText(product)}
-              key={product.id}
-              product={product}
-              variant="featured"
-            />
-          );
+          return <ProductCard key={product.id} product={product} />;
         })}
       </div>
     </section>
