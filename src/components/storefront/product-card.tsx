@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import type { StorefrontProduct } from "@/types";
@@ -29,35 +30,36 @@ export function ProductCard({ product, variant = "shop", description, className 
       }`}
       href={`/shop/${product.slug}`}
     >
-      <div className="flex min-h-[320px] h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md">
-        <div className="relative h-44 w-full bg-white p-2 after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:h-8 after:bg-gradient-to-t after:from-white after:to-transparent after:content-['']">
-          <Image
-            alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
-            className="h-full w-full object-contain"
-            height={256}
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-            src={product.image_url || "/catalog-images/placeholder.svg"}
-            unoptimized
-            width={256}
-          />
+      <div className="group relative flex h-full min-h-[320px] cursor-pointer flex-col overflow-hidden rounded-2xl bg-white p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
+        <div className="relative h-44 w-full bg-white p-2">
+          <div className="relative h-full w-full">
+            <Image
+              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
+              className="object-contain transition duration-500 group-hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+              src={product.image_url || "/catalog-images/placeholder.svg"}
+              unoptimized
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent" />
         </div>
 
-        <div className="flex flex-1 flex-col p-4">
-          <span className="inline-flex w-fit rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-            {product.category_name}
-          </span>
-          <h3 className="mt-1.5 line-clamp-2 text-base font-bold leading-tight text-slate-900">{product.name}</h3>
+        <div className="relative z-20 flex flex-1 flex-col space-y-3 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{product.category_name}</p>
+          <h3 className="line-clamp-2 text-base font-semibold leading-tight text-slate-900">{product.name}</h3>
           <p className="mt-1.5 line-clamp-2 text-sm text-slate-500">
             {displayDescription || "Product details available on the product page."}
           </p>
-          <div className="mt-auto border-t border-slate-100 pt-3">
-            <p className="text-lg font-bold text-slate-900">{formatPrice(displayPrice, currency)}</p>
+          <div className="mt-auto pt-1">
+            <p className="text-base font-semibold text-slate-900">{formatPrice(displayPrice, currency)}</p>
             <button
-              className="mt-2 w-full rounded-xl bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+              className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
               tabIndex={-1}
               type="button"
             >
               View Details →
+              <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
             </button>
           </div>
         </div>
