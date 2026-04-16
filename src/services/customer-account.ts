@@ -11,10 +11,20 @@ interface CustomerOrderListItem {
   item_count: number;
 }
 
+interface OrderStatusCounts {
+  pending: number;
+  confirmed: number;
+  processing: number;
+  outForDelivery: number;
+  delivered: number;
+  cancelled: number;
+}
+
 interface CustomerDashboardSnapshot {
   customer: Customer;
   totalOrders: number;
   totalSpent: number;
+  statusCounts: OrderStatusCounts;
   recentOrders: CustomerOrderListItem[];
 }
 
@@ -92,10 +102,29 @@ export async function getCustomerDashboardSnapshot(email: string): Promise<Custo
     item_count: itemCounts.get(order.id) || 0
   }));
 
+  const statusCounts: OrderStatusCounts = {
+    pending: 0,
+    confirmed: 0,
+    processing: 0,
+    outForDelivery: 0,
+    delivered: 0,
+    cancelled: 0
+  };
+
+  for (const order of orders) {
+    if (order.status === "PENDING") statusCounts.pending += 1;
+    else if (order.status === "CONFIRMED") statusCounts.confirmed += 1;
+    else if (order.status === "PROCESSING") statusCounts.processing += 1;
+    else if (order.status === "OUT_FOR_DELIVERY") statusCounts.outForDelivery += 1;
+    else if (order.status === "DELIVERED") statusCounts.delivered += 1;
+    else if (order.status === "CANCELED") statusCounts.cancelled += 1;
+  }
+
   return {
     customer,
     totalOrders: orders.length,
     totalSpent: orders.reduce((sum, order) => sum + order.total, 0),
+    statusCounts,
     recentOrders
   };
 }
