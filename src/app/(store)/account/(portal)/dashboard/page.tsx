@@ -3,9 +3,12 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock3,
+  Heart,
   LayoutDashboard,
+  Package,
   ShoppingBag,
-  Truck
+  Truck,
+  User
 } from "lucide-react";
 import { AccountAmount } from "@/components/storefront/account-amount";
 import { requireCustomerUser } from "@/lib/auth/customer-server";
@@ -26,6 +29,37 @@ function statusBadgeClass(status: string) {
   if (status === "CONFIRMED") return "bg-amber-100 text-amber-800";
   return "bg-slate-100 text-slate-700";
 }
+
+const quickActions = [
+  {
+    title: "Order History",
+    description: "Track status and view order details.",
+    href: "/account/orders",
+    icon: ShoppingBag,
+    actionLabel: "View orders"
+  },
+  {
+    title: "My Profile",
+    description: "Update your name, email, and phone.",
+    href: "/account/profile",
+    icon: User,
+    actionLabel: "Edit profile"
+  },
+  {
+    title: "Browse Shop",
+    description: "Discover wellness products for you.",
+    href: "/shop",
+    icon: Package,
+    actionLabel: "Shop now"
+  },
+  {
+    title: "Wishlist",
+    description: "Save products to buy later.",
+    href: "/shop",
+    icon: Heart,
+    actionLabel: "Coming soon"
+  }
+];
 
 export default async function AccountDashboardPage() {
   const user = await requireCustomerUser();
@@ -78,6 +112,7 @@ export default async function AccountDashboardPage() {
 
   return (
     <div className="space-y-6 pb-20 md:pb-0">
+      {/* Header Section */}
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
         <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
           <div>
@@ -132,6 +167,7 @@ export default async function AccountDashboardPage() {
         </div>
       </section>
 
+      {/* Order Snapshot Cards */}
       <section>
         <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
           Order Snapshot
@@ -157,58 +193,162 @@ export default async function AccountDashboardPage() {
         </div>
       </section>
 
+      {/* Quick Actions */}
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Recent Orders
-          </p>
-          <Link
-            className="text-sm font-medium text-brand-600 hover:underline"
-            href="/account/orders"
-          >
-            View all
-          </Link>
+        <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+          Quick Actions
+        </p>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {quickActions.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.href + item.title}
+                className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md"
+              >
+                <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-100 text-brand-600">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <h3 className="text-sm font-semibold text-slate-900">{item.title}</h3>
+                <p className="mt-1 text-xs text-slate-600">{item.description}</p>
+                <Link
+                  className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline"
+                  href={item.href}
+                >
+                  {item.actionLabel}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            );
+          })}
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
-          {recentOrders.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
-              <p className="text-sm text-slate-600">
-                No orders yet. Your purchases will appear here.
-              </p>
+      </section>
+
+      {/* Recent Orders + Tips */}
+      <section className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Recent Orders
+            </p>
+            <Link
+              className="text-sm font-medium text-brand-600 hover:underline"
+              href="/account/orders"
+            >
+              View all
+            </Link>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
+            {recentOrders.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
+                <p className="text-sm text-slate-600">
+                  No orders yet. Your purchases will appear here.
+                </p>
+                <Link
+                  className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline"
+                  href="/shop"
+                >
+                  Start shopping
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {recentOrders.map((order) => (
+                  <Link
+                    key={order.id}
+                    className="block rounded-xl border border-slate-200 bg-white p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-sm"
+                    href={`/account/orders/${order.id}`}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-semibold text-slate-900">#{order.order_number}</p>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeClass(order.status)}`}
+                      >
+                        {order.status.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-600">
+                      {formatDate(order.created_at)} · {order.item_count} items
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-brand-600">
+                      <AccountAmount amountMinor={order.total} currency={order.currency} />
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Account Activity
+            </p>
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
+              <div className="space-y-3">
+                <Link
+                  href="/account/orders"
+                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3 transition hover:border-brand-200 hover:bg-brand-50/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-100 text-brand-600">
+                      <ShoppingBag className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">Total orders</p>
+                      <p className="text-xs text-slate-500">View history</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900">{totalOrders}</p>
+                </Link>
+
+                <Link
+                  href="/account/profile"
+                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3 transition hover:border-brand-200 hover:bg-brand-50/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-100 text-brand-600">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">Profile</p>
+                      <p className="text-xs text-slate-500">Update details</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Delivery Tips
+            </p>
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
+              <div className="flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600">
+                  <Truck className="h-4 w-4" />
+                </div>
+                <p className="text-sm text-slate-600">
+                  Keep your phone number updated so couriers can reach you quickly for deliveries.
+                </p>
+              </div>
+              <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+                Update your <span className="font-medium text-slate-900">Profile</span> to ensure
+                fast, hassle-free delivery.
+              </div>
               <Link
                 className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline"
-                href="/shop"
+                href="/account/profile"
               >
-                Start shopping
+                Update profile
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-          ) : (
-            <div className="space-y-2.5">
-              {recentOrders.map((order) => (
-                <Link
-                  key={order.id}
-                  className="block rounded-xl border border-slate-200 bg-white p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-sm"
-                  href={`/account/orders/${order.id}`}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-slate-900">#{order.order_number}</p>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeClass(order.status)}`}
-                    >
-                      {order.status.replaceAll("_", " ")}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {formatDate(order.created_at)} · {order.item_count} items
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-brand-600">
-                    <AccountAmount amountMinor={order.total} currency={order.currency} />
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
+          </div>
         </div>
       </section>
     </div>
