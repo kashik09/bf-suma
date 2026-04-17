@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
+import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { useCart } from "@/hooks/use-cart";
 import { trackEvent } from "@/lib/analytics";
@@ -286,7 +287,13 @@ export function ProductDetail({
               {availabilityStatus}
             </span>
           </div>
-          <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
+            <WishlistButton
+              className="h-11 w-11 rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-rose-200 hover:bg-rose-50"
+              slug={product.slug}
+            />
+          </div>
           <div className="flex flex-wrap items-center gap-2 text-sm">
             {hasReviewData ? (
               <p className="font-semibold text-slate-900">

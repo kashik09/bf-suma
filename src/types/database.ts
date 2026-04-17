@@ -775,6 +775,35 @@ export type Database = {
           },
         ]
       }
+      wishlists: {
+        Row: {
+          created_at: string | null
+          customer_id: string
+          id: string
+          product_slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          product_slug: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          product_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

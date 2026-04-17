@@ -55,9 +55,9 @@ const quickActions = [
   {
     title: "Wishlist",
     description: "Save products to buy later.",
-    href: "/shop",
+    href: "/account/wishlist",
     icon: Heart,
-    actionLabel: "Coming soon"
+    actionLabel: "View wishlist"
   }
 ];
 

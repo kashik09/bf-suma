@@ -109,10 +109,11 @@ export async function middleware(request: NextRequest) {
   const isAdminLogoutRoute = pathname === "/admin/logout";
   const isAdminResetPasswordRoute = pathname === "/admin/reset-password";
   const isAccount = isAccountRoute(pathname);
-  const isPublicAccountRoute =
+  const isGuestOnlyAccountRoute =
     pathname === "/account/login" ||
     pathname === "/account/signup" ||
     pathname === "/account/forgot-password";
+  const isPublicAccountRoute = isGuestOnlyAccountRoute || pathname === "/account/wishlist";
 
   if (isAccount) {
     const { user, response } = await getSupabaseUserFromRequest(request);
@@ -121,7 +122,7 @@ export async function middleware(request: NextRequest) {
       return applySecurityHeaders(NextResponse.redirect(new URL("/account/login", request.url)));
     }
 
-    if (isPublicAccountRoute && user) {
+    if (isGuestOnlyAccountRoute && user) {
       return applySecurityHeaders(NextResponse.redirect(new URL("/account/dashboard", request.url)));
     }
 

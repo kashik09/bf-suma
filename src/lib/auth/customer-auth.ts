@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 import type { Session } from "@supabase/supabase-js";
+import { clearWishlist, getWishlist } from "@/lib/wishlist";
 import type { Database } from "@/types/database";
 
 let browserClient: ReturnType<typeof createBrowserClient<Database>> | null = null;
@@ -30,9 +31,34 @@ function getEmailRedirectTo() {
   return `${window.location.origin}/account/login`;
 }
 
+async function syncWishlistAfterLogin() {
+  const localSlugs = getWishlist();
+
+  try {
+    const response = await fetch("/api/account/wishlist/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slugs: localSlugs })
+    });
+
+    if (!response.ok) return;
+
+    // Local storage is temporary pre-auth state; account now owns canonical wishlist.
+    clearWishlist();
+  } catch {
+    // Best effort only.
+  }
+}
+
 export async function signIn(email: string, password: string) {
   const supabase = getBrowserSupabaseClient();
-  return supabase.auth.signInWithPassword({ email, password });
+  const result = await supabase.auth.signInWithPassword({ email, password });
+
+  if (!result.error) {
+    await syncWishlistAfterLogin();
+  }
+
+  return result;
 }
 
 export async function signUp(email: string, password: string, firstName: string, lastName: string) {

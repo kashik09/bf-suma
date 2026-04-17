@@ -2,6 +2,7 @@ import SearchAutocomplete from "@/components/storefront/search-autocomplete";
 import { CurrencySwitcher } from "@/components/storefront/currency-switcher";
 import { StoreAccountMenu } from "@/components/storefront/store-account-menu";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
+import { StoreWishlistButton } from "@/components/storefront/store-wishlist-button";
 import Image from "next/image";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
@@ -12,7 +13,6 @@ export function StoreHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-
       <PageContainer className="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-6">
         <Link href="/">
           <Image
@@ -45,6 +45,7 @@ export function StoreHeader() {
 
           <StoreAccountMenu />
           <CurrencySwitcher />
+          <StoreWishlistButton />
           <StoreCartButton />
         </div>
       </PageContainer>
