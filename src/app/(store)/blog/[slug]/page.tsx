@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { BlogProse } from "@/components/content/blog-prose";
 import { PageContainer } from "@/components/layout/page-container";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
@@ -39,6 +40,8 @@ function formatPublishedDate(value: string | null, fallback: string) {
   });
 }
 
+const getBlogPost = cache(async (slug: string) => getPublishedBlogPostBySlug(slug));
+
 
 export async function generateMetadata({
   params
@@ -46,7 +49,7 @@ export async function generateMetadata({
   params: Promise<BlogPageParams>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPublishedBlogPostBySlug(slug);
+  const post = await getBlogPost(slug);
 
   if (!post) {
     return {
@@ -96,7 +99,7 @@ export default async function BlogDetailPage({
   params: Promise<BlogPageParams>;
 }) {
   const { slug } = await params;
-  const post = await getPublishedBlogPostBySlug(slug);
+  const post = await getBlogPost(slug);
 
   if (!post) {
     const readiness = await getBlogReadiness();

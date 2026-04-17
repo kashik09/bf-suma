@@ -5,7 +5,6 @@ import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { buildStorefrontMetadata, getBlogSeoTitle } from "@/lib/seo";
 import { listPublishedBlogPosts } from "@/services/blog";
-import { listFeaturedProducts } from "@/services/products";
 
 // Force dynamic rendering to avoid build-time fetch failures
 export const dynamic = "force-dynamic";
@@ -27,10 +26,7 @@ function formatPublishedDate(value: string | null, fallback: string) {
 }
 
 export default async function BlogIndexPage() {
-  const [posts, featuredProducts] = await Promise.all([
-    listPublishedBlogPosts(),
-    listFeaturedProducts(6)
-  ]);
+  const posts = await listPublishedBlogPosts();
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">

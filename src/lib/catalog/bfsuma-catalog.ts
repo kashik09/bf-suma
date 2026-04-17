@@ -158,10 +158,6 @@ function toLocalImagePath(imageUrl: string | null, slug: string): string {
   }
 }
 
-function normalizeCurrency(currency: string): string {
-  return (currency || STORE_CURRENCY).toUpperCase();
-}
-
 function resolveAvailability(status: ProductStatus, stockQty: number): AvailabilityState {
   if (status === "OUT_OF_STOCK" || stockQty <= 0) return "out_of_stock";
   if (stockQty <= 10) return "low_stock";
@@ -201,10 +197,7 @@ function resolveCategory(slug: string | null | undefined): StorefrontCategory {
 
 export const BFSUMA_PRODUCTS: StorefrontProduct[] = manifestProducts
   .map<StorefrontProduct | null>((product, index) => {
-    const currency = normalizeCurrency(product.currency);
-    if (currency !== STORE_CURRENCY) {
-      return null;
-    }
+    const currency = STORE_CURRENCY;
 
     const category = resolveCategory(product.category_slug);
     const status: ProductStatus = "ACTIVE";

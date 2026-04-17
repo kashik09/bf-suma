@@ -98,7 +98,7 @@ export default async function AdminNewProductPage({
           typeof parsed.data.compareAtPriceMajor === "number"
             ? toMinorUnits(parsed.data.compareAtPriceMajor)
             : null,
-        currency: "KES",
+        currency: "UGX",
         stock_qty: parsed.data.stockQty,
         status: parsed.data.status as ProductStatus,
         category_id: parsed.data.categoryId
@@ -148,13 +148,13 @@ export default async function AdminNewProductPage({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="priceMajor">Price (KES)</label>
-            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="priceMajor" min="0" name="priceMajor" required step="0.01" type="number" />
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="priceMajor">Price (UGX)</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="priceMajor" min="0" name="priceMajor" required step="1" type="number" />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="compareAtPriceMajor">Compare At Price (KES)</label>
-            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="compareAtPriceMajor" min="0" name="compareAtPriceMajor" step="0.01" type="number" />
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="compareAtPriceMajor">Compare At Price (UGX)</label>
+            <input className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm" id="compareAtPriceMajor" min="0" name="compareAtPriceMajor" step="1" type="number" />
           </div>
 
           <div>

@@ -35,8 +35,27 @@ interface CustomerOrderDetail {
   itemCount: number;
 }
 
+interface OrderItemQuantityRow {
+  quantity: number | string | null;
+}
+
+interface OrdersWithItemsRow extends Order {
+  order_items: OrderItemQuantityRow[] | null;
+}
+
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
+}
+
+function toInt(value: number | string | null | undefined): number {
+  if (value === null || value === undefined) return 0;
+  const normalized = Number(value);
+  if (!Number.isFinite(normalized)) return 0;
+  return Math.max(0, Math.round(normalized));
+}
+
+function countOrderItems(items: OrderItemQuantityRow[] | null | undefined): number {
+  return (items || []).reduce((sum, item) => sum + toInt(item.quantity), 0);
 }
 
 async function getCustomerByEmail(email: string): Promise<Customer | null> {
@@ -51,55 +70,41 @@ async function getCustomerByEmail(email: string): Promise<Customer | null> {
   return (data as Customer | null) ?? null;
 }
 
-function aggregateItemCounts(items: Pick<OrderItem, "order_id" | "quantity">[]) {
-  const map = new Map<string, number>();
-
-  items.forEach((item) => {
-    map.set(item.order_id, (map.get(item.order_id) || 0) + Number(item.quantity || 0));
-  });
-
-  return map;
-}
-
-async function listOrdersForCustomerId(customerId: string): Promise<Order[]> {
+async function listOrdersWithItemsByCustomerEmail(email: string): Promise<OrdersWithItemsRow[]> {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase
     .from("orders")
-    .select("*")
-    .eq("customer_id", customerId)
+    .select(
+      "id, order_number, customer_id, status, payment_status, subtotal, delivery_fee, total, currency, delivery_address, notes, created_at, updated_at, order_items(quantity), customers!inner(email)"
+    )
+    .eq("customers.email", normalizeEmail(email))
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return (data || []) as Order[];
+  return ((data || []) as OrdersWithItemsRow[]).map((row) => ({
+    ...row,
+    order_items: row.order_items || []
+  }));
 }
 
 export async function getCustomerDashboardSnapshot(email: string): Promise<CustomerDashboardSnapshot | null> {
-  const customer = await getCustomerByEmail(email);
+  const normalized = normalizeEmail(email);
+
+  const [customer, ordersWithItems] = await Promise.all([
+    getCustomerByEmail(normalized),
+    listOrdersWithItemsByCustomerEmail(normalized)
+  ]);
+
   if (!customer) return null;
 
-  const orders = await listOrdersForCustomerId(customer.id);
-  const orderIds = orders.map((order) => order.id);
-
-  let itemCounts = new Map<string, number>();
-  if (orderIds.length > 0) {
-    const supabase = createServiceRoleSupabaseClient();
-    const { data, error } = await supabase
-      .from("order_items")
-      .select("order_id, quantity")
-      .in("order_id", orderIds);
-
-    if (error) throw new Error(error.message);
-    itemCounts = aggregateItemCounts((data || []) as Pick<OrderItem, "order_id" | "quantity">[]);
-  }
-
-  const recentOrders = orders.slice(0, 5).map((order) => ({
+  const recentOrders = ordersWithItems.slice(0, 5).map((order) => ({
     id: order.id,
     order_number: order.order_number,
     status: order.status,
     total: order.total,
     currency: order.currency,
     created_at: order.created_at,
-    item_count: itemCounts.get(order.id) || 0
+    item_count: countOrderItems(order.order_items)
   }));
 
   const statusCounts: OrderStatusCounts = {
@@ -111,7 +116,7 @@ export async function getCustomerDashboardSnapshot(email: string): Promise<Custo
     cancelled: 0
   };
 
-  for (const order of orders) {
+  for (const order of ordersWithItems) {
     if (order.status === "PENDING") statusCounts.pending += 1;
     else if (order.status === "CONFIRMED") statusCounts.confirmed += 1;
     else if (order.status === "PROCESSING") statusCounts.processing += 1;
@@ -122,8 +127,8 @@ export async function getCustomerDashboardSnapshot(email: string): Promise<Custo
 
   return {
     customer,
-    totalOrders: orders.length,
-    totalSpent: orders.reduce((sum, order) => sum + order.total, 0),
+    totalOrders: ordersWithItems.length,
+    totalSpent: ordersWithItems.reduce((sum, order) => sum + order.total, 0),
     statusCounts,
     recentOrders
   };
@@ -133,20 +138,7 @@ export async function listCustomerOrdersByEmail(email: string): Promise<Customer
   const customer = await getCustomerByEmail(email);
   if (!customer) return [];
 
-  const orders = await listOrdersForCustomerId(customer.id);
-  const orderIds = orders.map((order) => order.id);
-
-  let itemCounts = new Map<string, number>();
-  if (orderIds.length > 0) {
-    const supabase = createServiceRoleSupabaseClient();
-    const { data, error } = await supabase
-      .from("order_items")
-      .select("order_id, quantity")
-      .in("order_id", orderIds);
-
-    if (error) throw new Error(error.message);
-    itemCounts = aggregateItemCounts((data || []) as Pick<OrderItem, "order_id" | "quantity">[]);
-  }
+  const orders = await listOrdersWithItemsByCustomerEmail(email);
 
   return orders.map((order) => ({
     id: order.id,
@@ -155,7 +147,7 @@ export async function listCustomerOrdersByEmail(email: string): Promise<Customer
     total: order.total,
     currency: order.currency,
     created_at: order.created_at,
-    item_count: itemCounts.get(order.id) || 0
+    item_count: countOrderItems(order.order_items)
   }));
 }
 

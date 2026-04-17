@@ -11,43 +11,62 @@ import {
   removeCartItem,
   updateCartItemQuantity
 } from "@/lib/cart";
+import { getSession } from "@/lib/auth/customer-auth";
 import { getStoredCustomerProfile } from "@/lib/customer-profile";
 import type { StorefrontProduct } from "@/types";
+
+function normalizeEmail(email: string | null | undefined): string {
+  return (email || "").trim().toLowerCase();
+}
 
 export function useCart() {
   const [items, setItems] = useState(getCartItems());
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const profile = getStoredCustomerProfile();
-      if (!profile?.email) return;
+      void (async () => {
+        const session = await getSession().catch(() => null);
+        if (!session?.access_token) return;
 
-      if (items.length === 0) {
+        const sessionEmail = normalizeEmail(session.user?.email);
+        if (!sessionEmail) return;
+
+        const profile = getStoredCustomerProfile();
+        const profileEmail = normalizeEmail(profile?.email);
+        if (!profile || !profileEmail || profileEmail !== sessionEmail) return;
+
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
+        };
+
+        if (items.length === 0) {
+          void fetch("/api/abandoned-cart", {
+            method: "DELETE",
+            headers,
+            body: JSON.stringify({
+              customerEmail: profile.email
+            })
+          }).catch(() => undefined);
+          return;
+        }
+
         void fetch("/api/abandoned-cart", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
+          method: "POST",
+          headers,
           body: JSON.stringify({
-            customerEmail: profile.email
+            customerEmail: profile.email,
+            customerName: [profile.firstName, profile.lastName].filter(Boolean).join(" ").trim() || null,
+            cartItems: items.map((item) => ({
+              product_id: item.product_id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              slug: item.slug
+            }))
           })
         }).catch(() => undefined);
-        return;
-      }
-
-      void fetch("/api/abandoned-cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerEmail: profile.email,
-          customerName: [profile.firstName, profile.lastName].filter(Boolean).join(" ").trim() || null,
-          cartItems: items.map((item) => ({
-            product_id: item.product_id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            slug: item.slug
-          }))
-        })
-      }).catch(() => undefined);
+      })();
     }, 350);
 
     return () => window.clearTimeout(timer);

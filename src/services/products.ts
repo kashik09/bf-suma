@@ -482,13 +482,8 @@ export async function listRelatedProducts(
     .slice(0, limit);
 }
 
-interface OrderItemQuantityRow {
-  order_id: string;
+interface ProductUnitsSoldRow {
   quantity: number | string;
-}
-
-interface OrderStatusRow {
-  id: string;
 }
 
 export async function getProductUnitsSoldThisWeek(productId: string): Promise<number | null> {
@@ -497,29 +492,20 @@ export async function getProductUnitsSoldThisWeek(productId: string): Promise<nu
     const weekStart = new Date();
     weekStart.setDate(weekStart.getDate() - 7);
 
-    const { data: itemRows, error: itemError } = await supabase
+    const { data, error } = await supabase
       .from("order_items")
-      .select("order_id, quantity")
-      .eq("product_id", productId);
+      .select("quantity, orders!inner(id)")
+      .eq("product_id", productId)
+      .neq("orders.status", "CANCELED")
+      .gte("orders.created_at", weekStart.toISOString());
 
-    if (itemError) throw itemError;
-    const items = (itemRows || []) as OrderItemQuantityRow[];
-    if (items.length === 0) return 0;
+    if (error) throw error;
 
-    const orderIds = [...new Set(items.map((row) => row.order_id))];
-    const { data: orderRows, error: orderError } = await supabase
-      .from("orders")
-      .select("id")
-      .in("id", orderIds)
-      .neq("status", "CANCELED")
-      .gte("created_at", weekStart.toISOString());
+    const rows = (data || []) as ProductUnitsSoldRow[];
+    if (rows.length === 0) return 0;
 
-    if (orderError) throw orderError;
-    const validOrderIds = new Set(((orderRows || []) as OrderStatusRow[]).map((row) => row.id));
-
-    return items.reduce((sum, item) => {
-      if (!validOrderIds.has(item.order_id)) return sum;
-      const quantity = Number(item.quantity);
+    return rows.reduce((sum, row) => {
+      const quantity = Number(row.quantity);
       if (!Number.isFinite(quantity)) return sum;
       return sum + Math.max(0, Math.round(quantity));
     }, 0);

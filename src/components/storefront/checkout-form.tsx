@@ -17,7 +17,7 @@ import { trackEvent } from "@/lib/analytics";
 import { setStoredCustomerProfile } from "@/lib/customer-profile";
 import { DELIVERY_FEE_AMOUNT_MINOR } from "@/lib/constants";
 import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib/validation";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, fromMinorUnits, STORE_CURRENCY } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
 const PICKUP_LOCATIONS = [
@@ -56,8 +56,8 @@ function createIdempotencyKey() {
   return `order-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
-function toMajorCurrency(minor: number): number {
-  return Number((minor / 100).toFixed(2));
+function toMajorCurrency(minor: number, currency: string = STORE_CURRENCY): number {
+  return fromMinorUnits(minor, currency);
 }
 
 function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof useCart>["items"]): OrderIntakeInput {
@@ -207,12 +207,12 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
     beginCheckoutTrackedRef.current = true;
 
     trackEvent("begin_checkout", {
-      currency: items[0]?.currency || "KES",
-      value: toMajorCurrency(total),
+      currency: items[0]?.currency || STORE_CURRENCY,
+      value: toMajorCurrency(total, items[0]?.currency || STORE_CURRENCY),
       items: items.map((item) => ({
         item_id: item.product_id,
         item_name: item.name,
-        price: toMajorCurrency(item.price),
+        price: toMajorCurrency(item.price, item.currency),
         quantity: item.quantity
       }))
     });
@@ -305,12 +305,12 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
 
       trackEvent("purchase", {
         transaction_id: response.orderNumber || idempotencyKey,
-        currency: response.currency || "KES",
-        value: toMajorCurrency(response.total ?? payload.total),
+        currency: response.currency || STORE_CURRENCY,
+        value: toMajorCurrency(response.total ?? payload.total, response.currency || STORE_CURRENCY),
         items: items.map((item) => ({
           item_id: item.product_id,
           item_name: item.name,
-          price: toMajorCurrency(item.price),
+          price: toMajorCurrency(item.price, item.currency),
           quantity: item.quantity
         }))
       });

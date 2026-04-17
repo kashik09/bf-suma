@@ -162,13 +162,12 @@ after(async () => {
 test("money conversion and formatting utilities use minor-unit contract", async () => {
   const utils = await loadUtilsModule();
 
-  assert.equal(utils.STORE_CURRENCY, "KES");
-  assert.equal(utils.toMinorUnits(5371, "KES"), 537100);
-  assert.equal(utils.fromMinorUnits(537100, "KES"), 5371);
+  assert.equal(utils.STORE_CURRENCY, "UGX");
+  assert.equal(utils.toMinorUnits(5371, "UGX"), 5371);
+  assert.equal(utils.fromMinorUnits(5371, "UGX"), 5371);
 
-  const kesFormatted = utils.formatCurrency(537100, "KES");
-  assert.match(kesFormatted, /KES/);
-  assert.match(kesFormatted, /5,371/);
+  const ugxFormatted = utils.formatCurrency(5371, "UGX");
+  assert.match(ugxFormatted, /5,371/);
 });
 
 test("order totals remain integer minor units on successful intake", async (t) => {

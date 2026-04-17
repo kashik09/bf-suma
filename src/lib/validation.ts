@@ -97,7 +97,7 @@ export const cartItemSchema = z.object({
   slug: z.string().min(1),
   name: z.string().min(1),
   price: z.number().int().nonnegative(),
-  currency: z.literal("KES").default("KES"),
+  currency: z.literal("UGX").default("UGX"),
   image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]),
   quantity: z.number().int().min(1).max(99),
   max_quantity: z.number().int().min(0),
@@ -108,7 +108,7 @@ export const orderIntakeItemSchema = z.object({
   product_id: z.string().min(1),
   price: z.number().int().nonnegative(),
   quantity: z.number().int().min(1).max(99),
-  currency: z.literal("KES").optional(),
+  currency: z.literal("UGX").optional(),
   image_url: z.union([absoluteImageUrlSchema, relativeImagePathSchema]).optional()
 }).passthrough();
 

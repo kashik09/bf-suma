@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const STORE_CURRENCY = "KES" as const;
+export const STORE_CURRENCY = "UGX" as const;
 
 const CURRENCY_FRACTION_DIGITS: Record<string, number> = {
   KES: 2,

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/hooks/use-cart";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
+import { STORE_CURRENCY } from "@/lib/utils";
 import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -113,7 +114,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600">Subtotal</span>
           <span className="font-semibold text-slate-900">
-            {formatPrice(convertPrice(subtotal, items[0]?.currency || "KES", currency), currency)}
+            {formatPrice(convertPrice(subtotal, items[0]?.currency || STORE_CURRENCY, currency), currency)}
           </span>
         </div>
         <p className="text-xs text-slate-500">{DELIVERY_ESTIMATE_TEXT}</p>

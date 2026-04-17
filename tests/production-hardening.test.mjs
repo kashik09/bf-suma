@@ -64,7 +64,7 @@ function buildPayload({
         slug: "test-product",
         name: "Test Product",
         price: productPrice,
-        currency: "KES",
+        currency: "UGX",
         image_url: "/catalog-images/test.webp",
         quantity,
         max_quantity: 10,
@@ -94,9 +94,9 @@ test("checkout schema enforces launch payment contract and image URL validation"
   assert.equal(invalidPayment.success, false, "Expected pay_now to be rejected by launch contract");
 
   const invalidCurrencyPayload = buildPayload({ productId: "prod-4" });
-  invalidCurrencyPayload.items[0].currency = "UGX";
+  invalidCurrencyPayload.items[0].currency = "KES";
   const invalidCurrency = validation.orderIntakeSchema.safeParse(invalidCurrencyPayload);
-  assert.equal(invalidCurrency.success, false, "Expected non-KES cart item currency to be rejected");
+  assert.equal(invalidCurrency.success, false, "Expected non-UGX cart item currency to be rejected");
 });
 
 test("server repricing logic rejects tampering and computes authoritative totals", async () => {
@@ -107,7 +107,7 @@ test("server repricing logic rejects tampering and computes authoritative totals
       id: "prod-1",
       name: "Cordyceps Coffee",
       price: 205400,
-      currency: "KES",
+      currency: "UGX",
       status: "ACTIVE",
       stock_qty: 50
     }
@@ -116,19 +116,19 @@ test("server repricing logic rejects tampering and computes authoritative totals
   const honestPayload = buildPayload({ productId: "prod-1", productPrice: 205400 });
   const honest = commerce.computeAuthoritativeOrder(honestPayload, products, {
     deliveryFeeAmount: 5000,
-    storeCurrency: "KES"
+    storeCurrency: "UGX"
   });
 
   assert.equal(honest.subtotal, 205400);
   assert.equal(honest.deliveryFee, 5000);
   assert.equal(honest.total, 210400);
-  assert.equal(honest.currency, "KES");
+  assert.equal(honest.currency, "UGX");
 
   const tamperedTotalPayload = buildPayload({ productId: "prod-1", total: 1000 });
   assert.throws(
     () => commerce.computeAuthoritativeOrder(tamperedTotalPayload, products, {
       deliveryFeeAmount: 5000,
-      storeCurrency: "KES"
+      storeCurrency: "UGX"
     }),
     /totals do not match current pricing/i
   );
@@ -137,7 +137,7 @@ test("server repricing logic rejects tampering and computes authoritative totals
   assert.throws(
     () => commerce.computeAuthoritativeOrder(tamperedPricePayload, products, {
       deliveryFeeAmount: 5000,
-      storeCurrency: "KES"
+      storeCurrency: "UGX"
     }),
     /item prices changed/i
   );
@@ -146,7 +146,7 @@ test("server repricing logic rejects tampering and computes authoritative totals
   assert.throws(
     () => commerce.computeAuthoritativeOrder(missingProductPayload, products, {
       deliveryFeeAmount: 5000,
-      storeCurrency: "KES"
+      storeCurrency: "UGX"
     }),
     /no longer available/i
   );
@@ -155,7 +155,7 @@ test("server repricing logic rejects tampering and computes authoritative totals
   assert.throws(
     () => commerce.computeAuthoritativeOrder(outOfStockPayload, products, {
       deliveryFeeAmount: 5000,
-      storeCurrency: "KES"
+      storeCurrency: "UGX"
     }),
     /do not have enough stock/i
   );
@@ -216,7 +216,7 @@ test("atomic order RPC result parsing enforces deterministic write outcomes", as
       subtotal: 205400,
       deliveryFee: 5000,
       total: 210400,
-      currency: "KES"
+      currency: "UGX"
     },
     field_errors: null
   });
@@ -232,7 +232,7 @@ test("atomic order RPC result parsing enforces deterministic write outcomes", as
       subtotal: 205400,
       deliveryFee: 5000,
       total: 210400,
-      currency: "KES"
+      currency: "UGX"
     },
     field_errors: null
   });
@@ -286,13 +286,12 @@ test("atomic order RPC result parsing enforces deterministic write outcomes", as
 test("money model helpers enforce canonical minor-unit behavior", async () => {
   const utils = await loadTsModule("src/lib/utils.ts");
 
-  assert.equal(utils.STORE_CURRENCY, "KES");
-  assert.equal(utils.toMinorUnits(5371, "KES"), 537100);
-  assert.equal(utils.fromMinorUnits(537100, "KES"), 5371);
+  assert.equal(utils.STORE_CURRENCY, "UGX");
+  assert.equal(utils.toMinorUnits(5371, "UGX"), 5371);
+  assert.equal(utils.fromMinorUnits(5371, "UGX"), 5371);
 
-  const formatted = utils.formatCurrency(205400, "KES");
-  assert.match(formatted, /KES/);
-  assert.match(formatted, /2,054/);
+  const formatted = utils.formatCurrency(205400, "UGX");
+  assert.match(formatted, /205,400/);
 });
 
 test("route guard logic blocks admin scaffolds and hidden surfaces", async () => {
