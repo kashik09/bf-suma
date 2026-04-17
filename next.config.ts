@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
   // Optimize images
   images: {
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 60 * 60 * 24 * 7 // 7 days
+    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "uhhjnszgxfwmddvxdafj.supabase.co"
+      }
+    ]
   },
 
   // Faster builds

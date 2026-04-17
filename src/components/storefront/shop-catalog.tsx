@@ -56,7 +56,7 @@ function applyFilters(products: StorefrontProduct[], filters: ProductFilterState
   });
 }
 
-function toQueryString(filters: ProductFilterState): string {
+function toQueryString(filters: ProductFilterState, page: string | null): string {
   const params = new URLSearchParams();
   const normalizedSearch = filters.search.trim();
 
@@ -64,6 +64,7 @@ function toQueryString(filters: ProductFilterState): string {
   if (filters.category && filters.category !== "all") params.set("category", filters.category);
   if (filters.availability && filters.availability !== "all") params.set("availability", filters.availability);
   if (filters.sort && filters.sort !== "featured") params.set("sort", filters.sort);
+  if (page && page !== "1") params.set("page", page);
 
   return params.toString();
 }
@@ -78,9 +79,10 @@ export function ShopCatalog({ categories, products, initialState }: ShopCatalogP
   const filteredProducts = useMemo(() => applyFilters(products, filters), [products, filters]);
 
   useEffect(() => {
-    const query = toQueryString(filters);
+    const currentUrl = new URL(window.location.href);
+    const query = toQueryString(filters, currentUrl.searchParams.get("page"));
     const nextPath = query ? `/shop?${query}` : "/shop";
-    const currentPath = `${window.location.pathname}${window.location.search}`;
+    const currentPath = `${currentUrl.pathname}${currentUrl.search}`;
     if (currentPath !== nextPath) {
       window.history.replaceState(null, "", nextPath);
     }
