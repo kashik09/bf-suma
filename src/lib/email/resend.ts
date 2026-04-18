@@ -1,4 +1,6 @@
 import { formatCurrency } from "@/lib/utils";
+import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 interface SendNewsletterWelcomeEmailInput {
   email: string;
@@ -12,6 +14,13 @@ interface SendOrderConfirmationEmailInput {
   deliveryFee: number;
   total: number;
   currency: string;
+  deliveryAddress: string;
+  items: Array<{
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    lineTotal: number;
+  }>;
   estimatedDeliveryWindow: string;
 }
 
@@ -57,8 +66,8 @@ function isEnabled() {
 
 function resolveResendConfig() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  const from = process.env.RESEND_FROM_EMAIL?.trim();
-  const replyTo = process.env.RESEND_REPLY_TO_EMAIL?.trim();
+  const from = (process.env.RESEND_FROM_EMAIL || process.env.FROM_EMAIL)?.trim();
+  const replyTo = (process.env.RESEND_REPLY_TO_EMAIL || process.env.REPLY_TO_EMAIL)?.trim();
 
   if (!isEnabled()) {
     return { enabled: false as const, reason: "welcome_email_disabled" };
@@ -299,18 +308,62 @@ export async function sendOrderConfirmationEmail({
   deliveryFee,
   total,
   currency,
+  deliveryAddress,
+  items,
   estimatedDeliveryWindow
 }: SendOrderConfirmationEmailInput): Promise<EmailDeliveryResult> {
+  const supportWhatsAppUrl = buildWhatsAppUrl(buildWhatsAppOrderSupportMessage(), SUPPORT_WHATSAPP_PHONE);
+  const normalizedItems = items.length > 0
+    ? items
+    : [
+      {
+        name: "Order item",
+        quantity: 1,
+        unitPrice: total,
+        lineTotal: total
+      }
+    ];
+
+  const itemsHtml = normalizedItems
+    .map((item) => {
+      const safeName = escapeHtml(item.name);
+      return `<tr>
+      <td style="padding:10px 12px;font-size:14px;color:#0f172a;vertical-align:top;">${safeName}</td>
+      <td style="padding:10px 12px;font-size:14px;color:#334155;text-align:center;vertical-align:top;">${item.quantity}</td>
+      <td style="padding:10px 12px;font-size:14px;color:#334155;text-align:right;vertical-align:top;">${escapeHtml(formatCurrency(item.lineTotal, currency))}</td>
+    </tr>`;
+    })
+    .join("");
+
+  const itemsText = normalizedItems
+    .map((item) => `- ${item.name} x${item.quantity}: ${formatCurrency(item.lineTotal, currency)}`)
+    .join("\n");
+
   const bodyHtml = `
     <h2 style="margin:0 0 12px;font-size:20px;font-weight:600;color:#0f172a;">Thanks, your order is confirmed</h2>
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       Hi ${escapeHtml(firstName)}, we’ve received order <strong>${escapeHtml(orderNumber)}</strong>.
     </p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin:0 0 12px;">
+      <thead>
+        <tr>
+          <th align="left" style="padding:10px 12px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b;background:#f8fafc;">Item</th>
+          <th align="center" style="padding:10px 12px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b;background:#f8fafc;">Qty</th>
+          <th align="right" style="padding:10px 12px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b;background:#f8fafc;">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHtml}
+      </tbody>
+    </table>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
       <tr><td style="padding:10px 12px;font-size:14px;color:#334155;">Subtotal: <strong>${escapeHtml(formatCurrency(subtotal, currency))}</strong></td></tr>
       <tr><td style="padding:10px 12px;font-size:14px;color:#334155;border-top:1px solid #e2e8f0;">Delivery: <strong>${escapeHtml(formatCurrency(deliveryFee, currency))}</strong></td></tr>
       <tr><td style="padding:10px 12px;font-size:14px;color:#0f172a;border-top:1px solid #e2e8f0;">Total: <strong>${escapeHtml(formatCurrency(total, currency))}</strong></td></tr>
     </table>
+    <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#334155;">
+      Delivery address: <strong>${escapeHtml(deliveryAddress)}</strong>
+    </p>
     <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#334155;">
       Delivery estimate: <strong>${escapeHtml(estimatedDeliveryWindow)}</strong>
     </p>
@@ -324,21 +377,26 @@ export async function sendOrderConfirmationEmail({
     title: `Order confirmed: ${orderNumber}`,
     bodyHtml,
     ctaLabel: "Track via Support",
-    ctaHref: "https://wa.me/256761309924"
+    ctaHref: supportWhatsAppUrl
   });
 
   const text = [
-    `Thanks, your order is confirmed.`,
+    "Thanks, your order is confirmed.",
     `Order: ${orderNumber}`,
+    "",
+    "Items:",
+    itemsText,
     "",
     `Subtotal: ${formatCurrency(subtotal, currency)}`,
     `Delivery: ${formatCurrency(deliveryFee, currency)}`,
     `Total: ${formatCurrency(total, currency)}`,
     "",
+    `Delivery address: ${deliveryAddress}`,
+    "",
     `Delivery estimate: ${estimatedDeliveryWindow}`,
     "",
     "While you wait: start with consistent daily use, hydrate well, and check product guidance on the label.",
-    "Need help? WhatsApp: https://wa.me/256761309924"
+    `Need help? WhatsApp: ${supportWhatsAppUrl}`
   ].join("\n");
 
   return sendEmail({

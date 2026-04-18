@@ -400,6 +400,44 @@ export async function POST(request: Request) {
           ? "Ready for pickup today or next business day."
           : "Arrives in 1-2 business days.";
         const normalizedEmail = parsed.data.email.trim().toLowerCase();
+        const deliveryAddress = isPickup
+          ? `Pickup: ${(parsed.data.pickupLocation || "Main Store").trim()}`
+          : (parsed.data.deliveryAddress || "").trim();
+
+        const supabase = createServiceRoleSupabaseClient();
+        const { data: orderItemRows, error: orderItemsError } = await supabase
+          .from("order_items")
+          .select("product_name_snapshot, quantity, unit_price, line_total")
+          .eq("order_id", result.orderId)
+          .order("created_at", { ascending: true });
+
+        if (orderItemsError) {
+          logEvent("warn", "order.confirmation_email_items_fetch_failed", {
+            correlationId,
+            orderId: result.orderId,
+            message: orderItemsError.message
+          });
+        }
+
+        const confirmationItems = ((orderItemRows || []) as Array<{
+          product_name_snapshot: string | null;
+          quantity: number | string;
+          unit_price: number | string;
+          line_total: number | string;
+        }>).map((item) => ({
+          name: String(item.product_name_snapshot || "Order item"),
+          quantity: Number(item.quantity),
+          unitPrice: Number(item.unit_price),
+          lineTotal: Number(item.line_total)
+        }));
+
+        const fallbackItems = parsed.data.items.map((item) => ({
+          name: item.product_id,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          lineTotal: item.price * item.quantity
+        }));
+
         const emailDelivery = await sendOrderConfirmationEmail({
           email: normalizedEmail,
           firstName: parsed.data.firstName.trim(),
@@ -408,19 +446,27 @@ export async function POST(request: Request) {
           deliveryFee: result.deliveryFee,
           total: result.total,
           currency: result.currency,
+          deliveryAddress: deliveryAddress || "Address not provided",
+          items: confirmationItems.length > 0 ? confirmationItems : fallbackItems,
           estimatedDeliveryWindow
         });
 
-        if (emailDelivery.status === "failed") {
-          logEvent("warn", "order.confirmation_email_failed", {
+        if (emailDelivery.status === "sent") {
+          logEvent("info", "order.confirmation_email_sent", {
             correlationId,
             orderId: result.orderId,
+            messageId: emailDelivery.messageId || null
+          });
+        } else {
+          logEvent("warn", "order.confirmation_email_not_sent", {
+            correlationId,
+            orderId: result.orderId,
+            status: emailDelivery.status,
             reason: emailDelivery.reason || "unknown"
           });
         }
 
         try {
-          const supabase = createServiceRoleSupabaseClient();
           const { data: customerRow } = await supabase
             .from("customers")
             .select("id")
@@ -439,10 +485,17 @@ export async function POST(request: Request) {
                 firstName: parsed.data.firstName.trim()
               });
 
-              if (welcomeDelivery.status === "failed") {
-                logEvent("warn", "order.welcome_email_failed", {
+              if (welcomeDelivery.status === "sent") {
+                logEvent("info", "order.welcome_email_sent", {
                   correlationId,
                   orderId: result.orderId,
+                  messageId: welcomeDelivery.messageId || null
+                });
+              } else {
+                logEvent("warn", "order.welcome_email_not_sent", {
+                  correlationId,
+                  orderId: result.orderId,
+                  status: welcomeDelivery.status,
                   reason: welcomeDelivery.reason || "unknown"
                 });
               }
