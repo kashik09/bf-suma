@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from "lucide-react";
@@ -8,23 +8,8 @@ import { HERO_SLIDES } from "@/lib/hero-slides";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
-interface HeroProps {
-  heroHeadline?: string;
-  heroSupportingText?: string;
-}
-
-export function Hero({ heroHeadline, heroSupportingText }: HeroProps) {
-  const heroSlides = useMemo(
-    () => [
-      {
-        ...HERO_SLIDES[0],
-        headline: heroHeadline || HERO_SLIDES[0].headline,
-        subhead: heroSupportingText || HERO_SLIDES[0].subhead
-      },
-      ...HERO_SLIDES.slice(1)
-    ],
-    [heroHeadline, heroSupportingText]
-  );
+export function Hero() {
+  const heroSlides = HERO_SLIDES;
 
   const [activeSlide, setActiveSlide] = useState(0);
   const [heroFading, setHeroFading] = useState(false);

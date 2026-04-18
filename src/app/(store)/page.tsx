@@ -3,7 +3,6 @@ import { MessageCircle } from "lucide-react";
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
 import { Hero, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
-import { getPdfHomepageContent } from "@/lib/catalog/pdf-catalog-content";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -26,7 +25,6 @@ export default async function HomePage() {
     listFeaturedProducts(6),
     getStorefrontCustomerCount()
   ]);
-  const pdfHomepage = getPdfHomepageContent();
   const organizationJsonLd = buildOrganizationJsonLd();
 
   return (
@@ -35,13 +33,9 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <Hero
-        heroHeadline={pdfHomepage.heroHeadline}
-        heroSupportingText={pdfHomepage.heroSupportingText}
-      />
-      
+      <Hero />
+
       <PageContainer className="space-y-10 py-10 sm:space-y-12 md:space-y-14 md:py-12 lg:py-14">
-        
         <HomeHealthInterests categories={categories} />
         <HomeFeaturedProducts products={products} />
 

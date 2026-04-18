@@ -9,30 +9,37 @@ export interface HeroSlide {
 export const HERO_SLIDES: HeroSlide[] = [
   {
     id: "supplements",
-    badge: "Daily Supplements",
-    headline: "PREMIUM SUPPLEMENTS FOR DAILY WELLNESS",
-    subhead: "Trusted nutrition support for energy, focus, and day-to-day vitality.",
+    badge: "Daily Wellness",
+    headline: "TRUSTED WELLNESS ESSENTIALS FOR YOUR DAILY ROUTINE",
+    subhead: "Rooted in research, driven by quality: BF Suma brings you trusted wellness solutions for everyday health.",
     image: "/hero-images/supplements.jpg"
   },
   {
     id: "nutrition",
     badge: "Plant-Based Nutrition",
     headline: "WHOLE-FOOD WELLNESS SUPPORT",
-    subhead: "Nutrient-focused choices inspired by balanced, plant-forward living.",
+    subhead: "Inspired by nature, designed to support everyday wellbeing.",
     image: "/hero-images/vegetables.jpg"
   },
   {
     id: "lifestyle",
     badge: "Lifestyle Balance",
     headline: "WELLNESS THAT FITS YOUR LIFESTYLE",
-    subhead: "Flexible options for busy workdays, active routines, and recovery time.",
+    subhead: "Simple, effective support for active living and recovery.",
     image: "/hero-images/lifestyle.jpg"
+  },
+  {
+    id: "daily-vitality",
+    badge: "Daily Vitality",
+    headline: "FEEL STRONG, STAY ENERGIZED",
+    subhead: "Balanced support for energy, movement, and everyday performance.",
+    image: "/hero-images/joint-health.jpg"
   },
   {
     id: "joint-health",
     badge: "Joint Health",
     headline: "SUPPORT COMFORTABLE, ACTIVE MOVEMENT",
     subhead: "Formulations selected to help support mobility and everyday comfort.",
-    image: "/hero-images/joint-health.jpg"
+    image: "/hero-images/daily-vitality.jpg"
   }
 ];
