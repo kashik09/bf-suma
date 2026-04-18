@@ -206,19 +206,19 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                         className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(slide.category.name)}`}
                       />
                     )}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/92 via-slate-900/55 to-slate-900/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20" />
 
-                    <div className="absolute inset-x-0 bottom-0 flex h-full flex-col justify-end p-4 sm:p-5">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-100/90">Focus area</p>
-                      <h3 className="text-lg font-semibold leading-tight text-white">{slide.category.name}</h3>
-                      <p className="mt-1 line-clamp-1 text-sm text-slate-100/90">
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-white text-xs uppercase tracking-widest drop-shadow-md">Focus area</p>
+                      <h3 className="text-white font-bold text-lg drop-shadow-lg">{slide.category.name}</h3>
+                      <p className="text-white text-sm drop-shadow-md">
                         {resolveCategoryBenefit(slide.category)}
                       </p>
-                      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-100/90">
+                      <p className="text-white text-xs font-medium drop-shadow-md">
                         {formatProductCount(slide.category.product_count)}
                       </p>
 
-                      <span className="mt-3 inline-flex h-10 w-fit items-center justify-center gap-1 rounded-md bg-white px-4 text-sm font-semibold text-slate-900 shadow-soft transition group-hover:bg-brand-50">
+                      <span className="bg-white text-slate-900 text-sm font-semibold px-4 py-2 rounded-full">
                         Explore Category
                         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                       </span>
