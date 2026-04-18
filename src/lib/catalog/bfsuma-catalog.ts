@@ -77,17 +77,26 @@ const STORAGE_IMAGE_EXT_BY_SLUG: Record<string, string> = {
 // Category images - mapped to category-images folder
 const CATEGORY_IMAGE_BY_SLUG: Record<string, string> = {
   skincare: "/category-images/01-skincare.jpg",
+  "skincare-youth-series": "/category-images/01-skincare.jpg",
   "anti-aging": "/category-images/02-anti-aging.jpg",
+  "premium-selected": "/category-images/02-anti-aging.jpg",
   beverages: "/category-images/03-beverages.jpg",
+  "cardiovascular-health": "/category-images/03-beverages.jpg",
   supplements: "/category-images/04-supplements.jpg",
+  "immune-booster": "/category-images/04-supplements.jpg",
+  "immune-boosters": "/category-images/04-supplements.jpg",
   "joint-health": "/category-images/05-joint-health.jpg",
+  "bone-joint-care": "/category-images/05-joint-health.jpg",
   "bone-health": "/category-images/06-bone-health.jpg",
   "digestive-health": "/category-images/07-digestive-health.jpg",
   "personal-care": "/category-images/08-personal-care.jpg",
+  "suma-living": "/category-images/08-personal-care.jpg",
   "weight-management": "/category-images/09-weight-management.jpg",
   "womens-health": "/category-images/10-womens-health.jpg",
+  "womens-beauty": "/category-images/10-womens-health.jpg",
   "mens-health": "/category-images/11-mens-health.jpg",
   "brain-health": "/category-images/12-brain-health.jpg",
+  "smart-kids": "/category-images/12-brain-health.jpg",
   detox: "/category-images/13-detox.jpg"
 };
 

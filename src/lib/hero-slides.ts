@@ -7,11 +7,18 @@ export interface HeroSlide {
 }
 
 export const HERO_SLIDES: HeroSlide[] = [
+    {
+    id: "catalog",
+    badge: " ",
+    headline: " ",
+    subhead: " ",
+    image: "/hero-images/wellness.png"
+  },
   {
     id: "supplements",
     badge: "Daily Wellness",
     headline: "TRUSTED WELLNESS ESSENTIALS FOR YOUR DAILY ROUTINE",
-    subhead: "Rooted in research, driven by quality: BF Suma brings you trusted wellness solutions for everyday health.",
+    subhead: "Rooted in research, driven by quality: BF SUMA brings you trusted wellness solutions for everyday health.",
     image: "/hero-images/supplements.jpg"
   },
   {

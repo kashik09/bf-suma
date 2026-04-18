@@ -15,7 +15,7 @@ export function HomeFeaturedProducts({ products }: { products: StorefrontProduct
         description="Shortlisted products with clear value, practical descriptions, and direct checkout flow."
         action={(
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
-            View full catalog
+            View all products
           </Link>
         )}
       />
