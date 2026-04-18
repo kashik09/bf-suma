@@ -45,8 +45,10 @@ export function StoreHeader() {
 
           <StoreAccountMenu />
           <CurrencySwitcher />
-          <StoreWishlistButton />
-          <StoreCartButton />
+          <div className="flex shrink-0 items-center gap-2">
+            <StoreWishlistButton />
+            <StoreCartButton />
+          </div>
         </div>
       </PageContainer>
 

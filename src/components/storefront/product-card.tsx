@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           slug={product.slug}
         />
         <Link aria-label={`Open product details for ${product.name}`} className="block" href={`/shop/${product.slug}`}>
-          <div className="relative h-44 w-full bg-white p-2">
+          <div className="relative h-44 w-full bg-white">
             <Image
               alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
               className="object-contain transition duration-500 group-hover:scale-105"
