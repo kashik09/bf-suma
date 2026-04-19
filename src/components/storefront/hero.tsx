@@ -126,17 +126,15 @@ export function Hero() {
           heroFading ? "opacity-0" : "opacity-100"
         }`}
       >
-        <div className="backdrop-blur-sm bg-white/10 rounded-2xl px-8 py-6 border border-white/20">
-          <p className="mb-4 inline-flex rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white border border-white/30">
-            {slide.badge}
-          </p>
-          <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white/90 sm:text-5xl md:text-6xl lg:text-7xl">
-            {slide.headline}
-          </h1>
-          <p className="mb-6 max-w-xl text-sm font-medium text-white/75 sm:text-base md:text-lg">
-            {slide.subhead}
-          </p>
-        </div>
+        <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white">
+          {slide.badge}
+        </p>
+        <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white [text-shadow:_0_0_30px_rgba(255,255,255,0.5),_2px_2px_15px_rgba(0,0,0,0.3)] sm:text-5xl md:text-6xl lg:text-7xl">
+          {slide.headline}
+        </h1>
+        <p className="mb-6 max-w-xl text-sm font-medium text-white/80 drop-shadow-md sm:text-base md:text-lg">
+          {slide.subhead}
+        </p>
 
         <div className="flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center">
           <Link
