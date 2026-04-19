@@ -117,8 +117,7 @@ export function Hero() {
             sizes="100vw"
             src={s.image}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-slate-900/40 to-slate-900/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
         </div>
       ))}
 
