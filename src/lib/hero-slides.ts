@@ -41,12 +41,5 @@ export const HERO_SLIDES: HeroSlide[] = [
     headline: "FEEL STRONG, STAY ENERGIZED",
     subhead: "Balanced support for energy, movement, and everyday performance.",
     image: "/hero-images/joint-health.jpg"
-  },
-  {
-    id: "joint-health",
-    badge: "Joint Health",
-    headline: "SUPPORT COMFORTABLE, ACTIVE MOVEMENT",
-    subhead: "Formulations selected to help support mobility and everyday comfort.",
-    image: "/hero-images/daily-vitality.jpg"
   }
 ];
