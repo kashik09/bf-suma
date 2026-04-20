@@ -3,7 +3,7 @@ export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
 const CURRENCY_STORAGE_KEY = "storefront-currency";
 export const CURRENCY_CHANGE_EVENT = "storefront-currency-changed";
-const DEFAULT_CURRENCY: SupportedCurrency = "UGX";
+export const DEFAULT_CURRENCY: SupportedCurrency = "UGX";
 const UGX_PER_USD = 4464;
 const KES_PER_USD = 129;
 

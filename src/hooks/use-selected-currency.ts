@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   CURRENCY_CHANGE_EVENT,
+  DEFAULT_CURRENCY,
   type SupportedCurrency,
   getCurrency,
   setCurrency as persistCurrency
 } from "@/lib/currency";
 
 export function useSelectedCurrency() {
-  const [currency, setCurrencyState] = useState<SupportedCurrency>(getCurrency);
+  // Start with SSR-safe default so server and hydration markup match.
+  const [currency, setCurrencyState] = useState<SupportedCurrency>(DEFAULT_CURRENCY);
 
   useEffect(() => {
     function syncCurrency() {
