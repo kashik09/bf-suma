@@ -6,13 +6,16 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { Card } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
+import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { convertPrice, formatPrice } from "@/lib/currency";
 import type { StorefrontProduct } from "@/types";
 
 const PLACEHOLDER_IMAGE = "/catalog-images/placeholder.svg";
 
 export function ProductCard({ product }: { product: StorefrontProduct }) {
   const [imgSrc, setImgSrc] = useState(product.image_url || PLACEHOLDER_IMAGE);
+  const { currency: selectedCurrency } = useSelectedCurrency();
+  const convertedPrice = convertPrice(product.price, product.currency, selectedCurrency);
 
   return (
     <Card className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -46,7 +49,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <p className="mt-1.5 line-clamp-2 text-sm text-slate-600">{product.description}</p>
 
         <div className="mt-auto pt-3">
-          <p className="text-xl font-bold text-brand-600">{formatCurrency(product.price, product.currency)}</p>
+          <p className="text-xl font-bold text-brand-600">{formatPrice(convertedPrice, selectedCurrency)}</p>
           <Link
             aria-label={`View details for ${product.name}`}
             className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
