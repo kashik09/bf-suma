@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run test:critical",
     "test:critical": "node --test tests/production-hardening.test.mjs",
-    "test:integration": "node --test tests/critical-path.test.mjs && node --test tests/money-model.test.mjs"
+    "test:integration": "node --test tests/critical-path.test.mjs && node --test tests/money-model.test.mjs",
+    "audit:images": "tsx scripts/image-audit.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
