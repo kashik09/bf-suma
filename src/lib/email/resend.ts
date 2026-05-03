@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/lib/utils";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getSender, type EmailPurpose } from "./senders";
 
 interface SendNewsletterWelcomeEmailInput {
   email: string;
@@ -66,26 +67,18 @@ function isEnabled() {
 
 function resolveResendConfig() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  const from = (process.env.RESEND_FROM_EMAIL || process.env.FROM_EMAIL)?.trim();
-  const replyTo = (process.env.RESEND_REPLY_TO_EMAIL || process.env.REPLY_TO_EMAIL)?.trim();
 
   if (!isEnabled()) {
-    return { enabled: false as const, reason: "welcome_email_disabled" };
+    return { enabled: false as const, reason: "email_delivery_disabled" };
   }
 
   if (!apiKey) {
     return { enabled: false as const, reason: "missing_resend_api_key" };
   }
 
-  if (!from) {
-    return { enabled: false as const, reason: "missing_resend_from_email" };
-  }
-
   return {
     enabled: true as const,
-    apiKey,
-    from,
-    replyTo: replyTo && replyTo.length > 0 ? replyTo : undefined
+    apiKey
   };
 }
 
@@ -170,12 +163,14 @@ async function sendEmail({
   to,
   subject,
   html,
-  text
+  text,
+  purpose
 }: {
   to: string;
   subject: string;
   html: string;
   text: string;
+  purpose: EmailPurpose;
 }): Promise<EmailDeliveryResult> {
   const config = resolveResendConfig();
   if (!config.enabled) {
@@ -185,6 +180,8 @@ async function sendEmail({
     };
   }
 
+  const sender = getSender(purpose);
+
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -193,12 +190,12 @@ async function sendEmail({
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: config.from,
+        from: sender.from,
         to: [to],
         subject,
         html,
         text,
-        ...(config.replyTo ? { reply_to: config.replyTo } : {})
+        reply_to: sender.replyTo
       })
     });
 
@@ -241,7 +238,7 @@ export async function sendNewsletterWelcomeEmail({
     title: "Welcome to BF Suma updates",
     bodyHtml,
     ctaLabel: "Browse Products",
-    ctaHref: "https://bfsuma.com/shop"
+    ctaHref: "https://bfsumauganda.com/shop"
   });
 
   const text = [
@@ -249,7 +246,7 @@ export async function sendNewsletterWelcomeEmail({
     "",
     "Thanks for subscribing. You’ll receive concise wellness tips, product updates, and useful guidance.",
     "",
-    "Browse products: https://bfsuma.com/shop",
+    "Browse products: https://bfsumauganda.com/shop",
     "Need help? WhatsApp: https://wa.me/256761309924"
   ].join("\n");
 
@@ -257,7 +254,8 @@ export async function sendNewsletterWelcomeEmail({
     to: email,
     subject: "Welcome to BF Suma updates",
     html,
-    text
+    text,
+    purpose: "newsletter"
   });
 }
 
@@ -280,23 +278,24 @@ export async function sendStorefrontWelcomeEmail({
     title: "Welcome to BF Suma",
     bodyHtml,
     ctaLabel: "Read wellness guides",
-    ctaHref: "https://bfsuma.com/blog"
+    ctaHref: "https://bfsumauganda.com/blog"
   });
 
   const text = [
     "Welcome to BF Suma.",
     "",
-    `Hi ${firstName}, thanks for your first order. We’re glad you chose BF Suma.`,
+    `Hi ${firstName}, thanks for your first order. We're glad you chose BF Suma.`,
     "What makes us different: clear product guidance, transparent pricing, and direct support.",
     "",
-    "Read wellness guides: https://bfsuma.com/blog"
+    "Read wellness guides: https://bfsumauganda.com/blog"
   ].join("\n");
 
   return sendEmail({
     to: email,
     subject: "Welcome to BF Suma",
     html,
-    text
+    text,
+    purpose: "transactional"
   });
 }
 
@@ -403,7 +402,8 @@ export async function sendOrderConfirmationEmail({
     to: email,
     subject: `Order confirmed: ${orderNumber}`,
     html,
-    text
+    text,
+    purpose: "order"
   });
 }
 
@@ -444,7 +444,8 @@ export async function sendAbandonedCartReminderEmail({
     to: email,
     subject: "You left something behind",
     html,
-    text
+    text,
+    purpose: "transactional"
   });
 }
 
@@ -485,7 +486,8 @@ export async function sendPostPurchaseReviewRequestEmail({
     to: email,
     subject: "How are you getting on?",
     html,
-    text
+    text,
+    purpose: "transactional"
   });
 }
 
@@ -515,7 +517,7 @@ export async function sendReengagementEmail({
   const text = [
     "We miss you at BF Suma.",
     "",
-    `${firstName}, we’ve refreshed our bestsellers and wellness picks since your last visit.`,
+    `${firstName}, we've refreshed our bestsellers and wellness picks since your last visit.`,
     "",
     `See bestsellers: ${bestSellersUrl}`
   ].join("\n");
@@ -524,6 +526,7 @@ export async function sendReengagementEmail({
     to: email,
     subject: "We miss you at BF Suma",
     html,
-    text
+    text,
+    purpose: "transactional"
   });
 }

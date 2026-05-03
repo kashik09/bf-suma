@@ -6,11 +6,23 @@ declare const Deno: {
   env: { get: (name: string) => string | undefined };
 };
 
+export type EmailPurpose =
+  | "order"
+  | "support"
+  | "partnership"
+  | "newsletter"
+  | "transactional";
+
+interface SenderConfig {
+  from: string;
+  replyTo: string;
+}
+
 interface EnvConfig {
   supabaseUrl: string;
   serviceRoleKey: string;
   resendApiKey: string | null;
-  resendFromEmail: string | null;
+  emailDomain: string;
   lifecycleEnabled: boolean;
   appBaseUrl: string;
 }
@@ -26,7 +38,8 @@ export function loadEnvConfig(): EnvConfig {
   const supabaseUrl = readEnv("NEXT_PUBLIC_SUPABASE_URL") || "";
   const serviceRoleKey = readEnv("SUPABASE_SERVICE_ROLE_KEY") || "";
   const lifecycleEnabled = (readEnv("LIFECYCLE_EMAILS_ENABLED") || "false") === "true";
-  const appBaseUrl = readEnv("NEXT_PUBLIC_SITE_URL") || "https://bfsuma.com";
+  const appBaseUrl = readEnv("NEXT_PUBLIC_SITE_URL") || "https://bfsumauganda.com";
+  const emailDomain = readEnv("EMAIL_DOMAIN") || "bfsumauganda.com";
 
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error("Missing Supabase environment variables for lifecycle function.");
@@ -36,10 +49,37 @@ export function loadEnvConfig(): EnvConfig {
     supabaseUrl,
     serviceRoleKey,
     resendApiKey: readEnv("RESEND_API_KEY"),
-    resendFromEmail: readEnv("RESEND_FROM_EMAIL"),
+    emailDomain,
     lifecycleEnabled,
     appBaseUrl
   };
+}
+
+function getSenderForPurpose(domain: string, purpose: EmailPurpose): SenderConfig {
+  const senders: Record<EmailPurpose, SenderConfig> = {
+    order: {
+      from: `BF Suma Orders <orders@${domain}>`,
+      replyTo: `orders@${domain}`
+    },
+    support: {
+      from: `BF Suma Support <support@${domain}>`,
+      replyTo: `support@${domain}`
+    },
+    partnership: {
+      from: `BF Suma Partnerships <partnerships@${domain}>`,
+      replyTo: `partnerships@${domain}`
+    },
+    newsletter: {
+      from: `BF Suma <hello@${domain}>`,
+      replyTo: `hello@${domain}`
+    },
+    transactional: {
+      from: `BF Suma <noreply@${domain}>`,
+      replyTo: `support@${domain}`
+    }
+  };
+
+  return senders[purpose];
 }
 
 function normalizeUrl(base: string, path: string): string {
@@ -82,10 +122,13 @@ export async function sendResendEmail(params: {
   subject: string;
   html: string;
   text: string;
+  purpose?: EmailPurpose;
 }): Promise<boolean> {
-  const { env, to, subject, html, text } = params;
+  const { env, to, subject, html, text, purpose = "transactional" } = params;
   if (!env.lifecycleEnabled) return false;
-  if (!env.resendApiKey || !env.resendFromEmail) return false;
+  if (!env.resendApiKey) return false;
+
+  const sender = getSenderForPurpose(env.emailDomain, purpose);
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -94,11 +137,12 @@ export async function sendResendEmail(params: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      from: env.resendFromEmail,
+      from: sender.from,
       to: [to],
       subject,
       html,
-      text
+      text,
+      reply_to: sender.replyTo
     })
   });
 
