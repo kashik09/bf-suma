@@ -34,13 +34,18 @@ function toMinorUnits(amountMajor: number, currency: string): number {
  * Format price for display.
  * - UGX: "UGX 46,800" (no decimals)
  * - KES: "KES 12,000" (no decimals)
- * - USD: "USD 136.18" (2 decimals)
+ * - USD: "USD 40" for whole amounts, "USD 40.50" for fractional
  */
 export function formatPrice(amount: number, currency: string): string {
   const normalized = normalizeCurrency(currency);
   const targetCurrency = normalized || DEFAULT_CURRENCY;
-  const fractionDigits = getFractionDigits(targetCurrency);
+  let fractionDigits = getFractionDigits(targetCurrency);
   const amountMajor = toMajorUnits(amount, targetCurrency);
+
+  // Strip .00 from whole USD amounts (e.g. "USD 40" not "USD 40.00")
+  if (targetCurrency === "USD" && amountMajor % 1 === 0) {
+    fractionDigits = 0;
+  }
 
   // Use en-US locale for consistent number formatting (avoids "US$" prefix issue)
   const formatted = new Intl.NumberFormat("en-US", {
