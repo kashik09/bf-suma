@@ -30,27 +30,26 @@ function toMinorUnits(amountMajor: number, currency: string): number {
   return Math.round(amountMajor * 10 ** getFractionDigits(currency));
 }
 
+/**
+ * Format price for display.
+ * - UGX: "UGX 46,800" (no decimals)
+ * - KES: "KES 12,000" (no decimals)
+ * - USD: "USD 136.18" (2 decimals)
+ */
 export function formatPrice(amount: number, currency: string): string {
   const normalized = normalizeCurrency(currency);
   const targetCurrency = normalized || DEFAULT_CURRENCY;
   const fractionDigits = getFractionDigits(targetCurrency);
   const amountMajor = toMajorUnits(amount, targetCurrency);
 
-  if (targetCurrency === "KES") {
-    const formatted = new Intl.NumberFormat("en-KE", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amountMajor);
-
-    return `KSh ${formatted}`;
-  }
-
-  return new Intl.NumberFormat("en-UG", {
-    style: "currency",
-    currency: targetCurrency,
+  // Use en-US locale for consistent number formatting (avoids "US$" prefix issue)
+  const formatted = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits
+    maximumFractionDigits: fractionDigits,
+    useGrouping: true
   }).format(amountMajor);
+
+  return `${targetCurrency} ${formatted}`;
 }
 
 export function convertPrice(amountMinor: number, fromCurrency: string, toCurrency: string): number {
