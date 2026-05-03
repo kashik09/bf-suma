@@ -804,6 +804,99 @@ export type Database = {
           },
         ]
       }
+      packages: {
+        Row: {
+          id: string
+          slug: string
+          name: string
+          tagline: string | null
+          description: string | null
+          hero_image_url: string | null
+          infographic_image_url: string | null
+          override_price_minor: number | null
+          currency: string
+          dm_keyword: string | null
+          is_featured: boolean
+          is_active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name: string
+          tagline?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          infographic_image_url?: string | null
+          override_price_minor?: number | null
+          currency?: string
+          dm_keyword?: string | null
+          is_featured?: boolean
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name?: string
+          tagline?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          infographic_image_url?: string | null
+          override_price_minor?: number | null
+          currency?: string
+          dm_keyword?: string | null
+          is_featured?: boolean
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      package_items: {
+        Row: {
+          id: string
+          package_id: string
+          product_id: string
+          quantity: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          package_id: string
+          product_id: string
+          quantity?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          package_id?: string
+          product_id?: string
+          quantity?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_items_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

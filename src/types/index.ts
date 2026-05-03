@@ -303,6 +303,58 @@ export interface NewsletterSignupResponse {
   emailDelivery: "sent" | "skipped" | "failed";
 }
 
+// Packages (health bundles containing multiple products)
+export interface Package {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  description: string | null;
+  hero_image_url: string | null;
+  infographic_image_url: string | null;
+  override_price_minor: number | null;
+  currency: CurrencyCode;
+  dm_keyword: string | null;
+  is_featured: boolean;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PackageItem {
+  id: string;
+  package_id: string;
+  product_id: string;
+  quantity: number;
+  created_at: string;
+}
+
+export interface PackageItemWithProduct extends PackageItem {
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    currency: CurrencyCode;
+    image_url: string;
+    stock_qty: number;
+    status: ProductStatus;
+  };
+}
+
+export interface PackageWithItems extends Package {
+  items: PackageItemWithProduct[];
+}
+
+export interface PackageDisplayData extends PackageWithItems {
+  calculated_price: number;
+  final_price: number;
+  savings: number | null;
+  is_in_stock: boolean;
+  item_count: number;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -320,6 +372,8 @@ export interface Database {
       newsletter_subscribers: { Row: NewsletterSubscriber };
       admin_users: { Row: AdminUser };
       blog_posts: { Row: BlogPost };
+      packages: { Row: Package };
+      package_items: { Row: PackageItem };
     };
   };
 }
