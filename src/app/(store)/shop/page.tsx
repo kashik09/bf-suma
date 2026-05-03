@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = buildStorefrontMetadata({
   title: "Shop Wellness Products",
   description:
-    "Browse BF Suma wellness products in Kenya by category, availability, and price. Compare trusted formulations and check out with transparent totals.",
+    "Browse BF Suma wellness products in Uganda by category, availability, and price. Compare trusted formulations and check out with transparent totals.",
   path: "/shop"
 });
 

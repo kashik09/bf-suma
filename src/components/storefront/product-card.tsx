@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <Link aria-label={`Open product details for ${product.name}`} className="block" href={`/shop/${product.slug}`}>
           <div className="relative h-44 w-full bg-white">
             <Image
-              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
+              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Uganda`}
               className="object-contain transition duration-500 group-hover:scale-105"
               fill
               onError={() => setImgSrc(PLACEHOLDER_IMAGE)}

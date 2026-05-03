@@ -263,7 +263,7 @@ export function ProductDetail({
         <div className="space-y-3">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
             <Image
-              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Kenya`}
+              alt={`BF Suma ${product.name} ${product.category_name.toLowerCase()} product in Uganda`}
               blurDataURL={PRODUCT_IMAGE_BLUR_DATA_URL}
               className="object-contain"
               fill

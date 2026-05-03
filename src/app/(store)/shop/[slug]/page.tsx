@@ -83,8 +83,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }),
     path: `/shop/${product.slug}`,
     keywords: [
-      `${product.name} Kenya`,
-      `${product.category_name} Kenya`,
+      `${product.name} Uganda`,
+      `${product.category_name} Uganda`,
       "BF Suma products"
     ]
   });

@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export const metadata = buildStorefrontMetadata({
   title: "Wellness Blog",
   description:
-    "Read practical wellness guides in Kenya, product education, and daily health insights from BF Suma to make faster, more confident buying decisions.",
+    "Read practical wellness guides in Uganda, product education, and daily health insights from BF Suma to make faster, more confident buying decisions.",
   path: "/blog"
 });
 

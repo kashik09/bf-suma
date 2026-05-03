@@ -6,16 +6,16 @@ const DEFAULT_SOCIAL_IMAGE = "/bf-suma-logo.png";
 const META_DESCRIPTION_LIMIT = 160;
 
 const BLOG_SEO_TITLE_OVERRIDES: Record<string, string> = {
-  "understanding-power-reishi-mushrooms-immune-health": "Reishi Mushroom Benefits for Immune Health in Kenya",
-  "complete-guide-ginseng-energy-focus-vitality": "Ginseng Benefits for Energy and Focus in Kenya",
-  "skin-health-within-science-youth-essence": "Skin Health Tips in Kenya: Nutrition, Routine, and Youth Essence",
+  "understanding-power-reishi-mushrooms-immune-health": "Reishi Mushroom Benefits for Immune Health in Uganda",
+  "complete-guide-ginseng-energy-focus-vitality": "Ginseng Benefits for Energy and Focus in Uganda",
+  "skin-health-within-science-youth-essence": "Skin Health Tips in Uganda: Nutrition, Routine, and Youth Essence",
   "building-strong-immune-system-complete-wellness-guide":
-    "How to Build a Strong Immune System Naturally in Kenya",
-  "natural-ways-boost-energy-levels-throughout-day": "Natural Ways to Boost Energy Levels in Kenya",
+    "How to Build a Strong Immune System Naturally in Uganda",
+  "natural-ways-boost-energy-levels-throughout-day": "Natural Ways to Boost Energy Levels in Uganda",
   "gut-health-connection-why-digestive-system-matters":
-    "Gut Health Guide in Kenya: Digestion, Immunity, and Daily Habits",
-  "sleep-better-tonight-science-backed-tips-quality-rest": "How to Sleep Better Naturally: Practical Tips in Kenya",
-  "stress-management-practical-tools-modern-life": "Stress Management Tips for Modern Life in Kenya"
+    "Gut Health Guide in Uganda: Digestion, Immunity, and Daily Habits",
+  "sleep-better-tonight-science-backed-tips-quality-rest": "How to Sleep Better Naturally: Practical Tips in Uganda",
+  "stress-management-practical-tools-modern-life": "Stress Management Tips for Modern Life in Uganda"
 };
 
 function toValidUrl(input?: string | null): URL | null {
@@ -113,7 +113,7 @@ export function buildProductMetaDescription(params: {
   const category = params.categoryName.trim().toLowerCase();
   const benefit = normalizeSeoCopy(params.description || `Trusted ${category} support for daily routines.`);
   return clampMetaDescription(
-    `${params.name} in Kenya by BF Suma. ${benefit} Order online with transparent pricing and fast support.`
+    `${params.name} in Uganda by BF Suma. ${benefit} Order online with transparent pricing and fast support.`
   );
 }
 
@@ -124,10 +124,10 @@ export function buildProductLeadDescription(params: {
 }): string {
   const source = normalizeSeoCopy(params.description);
   if (!source) {
-    return `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} product in Kenya for daily wellness routines.`;
+    return `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} product in Uganda for daily wellness routines.`;
   }
 
-  const prefix = `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} option in Kenya.`;
+  const prefix = `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} option in Uganda.`;
   if (source.toLowerCase().startsWith(params.name.toLowerCase())) {
     return `${source} Shop with clear pricing and local support.`;
   }
@@ -141,7 +141,7 @@ export function getBlogSeoTitle(slug: string, fallbackTitle: string): string {
 
 export function buildBlogMetaDescription(params: { title: string; excerpt: string }): string {
   return clampMetaDescription(
-    `${params.title} from BF Suma Kenya. ${normalizeSeoCopy(params.excerpt)}`
+    `${params.title} from BF Suma Uganda. ${normalizeSeoCopy(params.excerpt)}`
   );
 }
 
