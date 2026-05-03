@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Package, Tag } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import type { PackageDisplayData } from "@/types";
@@ -21,6 +23,14 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
   const { currency: selectedCurrency } = useSelectedCurrency();
   const convertedPrice = convertPrice(pkg.final_price, pkg.currency, selectedCurrency);
   const convertedSavings = pkg.savings ? convertPrice(pkg.savings, pkg.currency, selectedCurrency) : null;
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleViewPackage() {
+    startTransition(() => {
+      router.push(`/packages/${pkg.slug}`);
+    });
+  }
 
   return (
     <Card
@@ -89,14 +99,24 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
               </p>
             )}
           </div>
-          <Link
+          <button
             aria-label={`View details for ${pkg.name}`}
-            className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-            href={`/packages/${pkg.slug}`}
+            className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-60"
+            disabled={isPending}
+            onClick={handleViewPackage}
           >
-            View Package
-            <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
-          </Link>
+            {isPending ? (
+              <>
+                <Spinner className="mr-2" />
+                Loading...
+              </>
+            ) : (
+              <>
+                View Package
+                <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
+              </>
+            )}
+          </button>
         </div>
       </div>
     </Card>

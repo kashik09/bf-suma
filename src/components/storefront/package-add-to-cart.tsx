@@ -1,6 +1,7 @@
 "use client";
 
-import { ShoppingCart, Tag } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, ShoppingCart, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
@@ -21,20 +22,14 @@ interface PackageAddToCartProps {
 export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
   const { currency: selectedCurrency } = useSelectedCurrency();
   const { toast } = useToast();
+  const [justAdded, setJustAdded] = useState(false);
 
   const convertedFinalPrice = convertPrice(pkg.final_price, pkg.currency, selectedCurrency);
   const convertedCalculatedPrice = convertPrice(pkg.calculated_price, pkg.currency, selectedCurrency);
   const convertedSavings = pkg.savings ? convertPrice(pkg.savings, pkg.currency, selectedCurrency) : null;
 
   function handleAddToCart() {
-    if (!pkg.is_in_stock) {
-      toast({
-        title: "Package unavailable",
-        description: "One or more items in this package are out of stock.",
-        variant: "error"
-      });
-      return;
-    }
+    if (!pkg.is_in_stock || justAdded) return;
 
     addBundleToCart({
       bundle_id: pkg.id,
@@ -76,6 +71,9 @@ export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
       description: `${pkg.name} (${pkg.item_count} items)`,
       variant: "success"
     });
+
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 800);
   }
 
   return (
@@ -99,12 +97,21 @@ export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
 
       <Button
         className="w-full sm:w-auto"
-        disabled={!pkg.is_in_stock}
+        disabled={!pkg.is_in_stock || justAdded}
         onClick={handleAddToCart}
         size="lg"
       >
-        <ShoppingCart className="mr-2 h-4 w-4" />
-        {pkg.is_in_stock ? "Add Bundle to Cart" : "Currently Unavailable"}
+        {justAdded ? (
+          <>
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+            Added
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            {pkg.is_in_stock ? "Add Bundle to Cart" : "Currently Unavailable"}
+          </>
+        )}
       </Button>
 
       {!pkg.is_in_stock && (

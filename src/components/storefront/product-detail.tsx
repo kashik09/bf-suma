@@ -201,6 +201,7 @@ export function ProductDetail({
   const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
   const isUnavailable = product.availability === "out_of_stock" || !commerceReady;
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
@@ -230,14 +231,7 @@ export function ProductDetail({
   }
 
   function handleAddToCart() {
-    if (isUnavailable) {
-      toast({
-        title: "Item unavailable",
-        description: "This product is currently out of stock.",
-        variant: "error"
-      });
-      return;
-    }
+    if (isUnavailable || justAdded) return;
 
     addItem(product, quantity);
     trackEvent("add_to_cart", {
@@ -258,6 +252,9 @@ export function ProductDetail({
       description: `${product.name} x${quantity}`,
       variant: "success"
     });
+
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 800);
   }
 
   return (
@@ -369,11 +366,22 @@ export function ProductDetail({
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               className="sm:flex-1"
-              disabled={isUnavailable}
+              disabled={isUnavailable || justAdded}
               onClick={handleAddToCart}
               title={isUnavailable ? "Product is out of stock" : "Add item to cart"}
             >
-              {!commerceReady ? "Checkout unavailable" : isUnavailable ? "Out of stock" : "Add to Cart - Fast Checkout"}
+              {justAdded ? (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Added to Cart
+                </>
+              ) : !commerceReady ? (
+                "Checkout unavailable"
+              ) : isUnavailable ? (
+                "Out of stock"
+              ) : (
+                "Add to Cart - Fast Checkout"
+              )}
             </Button>
             <a
               className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 sm:flex-1"

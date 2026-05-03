@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Spinner } from "./spinner";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
@@ -8,6 +9,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  isLoading?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -27,6 +29,9 @@ export function Button({
   className,
   variant = "primary",
   size = "md",
+  isLoading = false,
+  disabled,
+  children,
   ...props
 }: ButtonProps) {
   return (
@@ -37,7 +42,11 @@ export function Button({
         sizeClasses[size],
         className
       )}
+      disabled={disabled || isLoading}
       {...props}
-    />
+    >
+      {isLoading && <Spinner className="mr-2" />}
+      {children}
+    </button>
   );
 }

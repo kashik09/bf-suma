@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import type { StorefrontProduct } from "@/types";
@@ -16,6 +18,14 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
   const [imgSrc, setImgSrc] = useState(product.image_url || PLACEHOLDER_IMAGE);
   const { currency: selectedCurrency } = useSelectedCurrency();
   const convertedPrice = convertPrice(product.price, product.currency, selectedCurrency);
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleViewDetails() {
+    startTransition(() => {
+      router.push(`/shop/${product.slug}`);
+    });
+  }
 
   return (
     <Card className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100">
@@ -50,14 +60,24 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
 
         <div className="mt-auto pt-2">
           <p className="text-2xl font-bold text-brand-600">{formatPrice(convertedPrice, selectedCurrency)}</p>
-          <Link
+          <button
             aria-label={`View details for ${product.name}`}
-            className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-            href={`/shop/${product.slug}`}
+            className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-60"
+            disabled={isPending}
+            onClick={handleViewDetails}
           >
-            View Details
-            <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
-          </Link>
+            {isPending ? (
+              <>
+                <Spinner className="mr-2" />
+                Loading...
+              </>
+            ) : (
+              <>
+                View Details
+                <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
+              </>
+            )}
+          </button>
         </div>
       </div>
     </Card>
