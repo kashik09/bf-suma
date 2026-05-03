@@ -2,11 +2,12 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
-import { Hero, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
+import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getStorefrontCustomerCount } from "@/services/customers";
+import { getFeaturedPackages } from "@/services/packages";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
 
 // Revalidate every 60 seconds for fast subsequent loads
@@ -20,9 +21,10 @@ export const metadata = buildStorefrontMetadata({
 });
 
 export default async function HomePage() {
-  const [categories, products, customerCount] = await Promise.all([
+  const [categories, products, featuredPackages, customerCount] = await Promise.all([
     listFeaturedCategories(8),
     listFeaturedProducts(6),
+    getFeaturedPackages(3),
     getStorefrontCustomerCount()
   ]);
   const organizationJsonLd = buildOrganizationJsonLd();
@@ -38,6 +40,7 @@ export default async function HomePage() {
       <PageContainer className="space-y-10 py-10 sm:space-y-12 md:space-y-14 md:py-12 lg:py-14">
         <HomeHealthInterests categories={categories} />
         <HomeFeaturedProducts products={products} />
+        <HomeFeaturedPackages packages={featuredPackages} />
 
         <FeaturedInsight />
 

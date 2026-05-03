@@ -3,6 +3,7 @@ export * from "./checkout-form";
 export * from "./contact-form";
 export * from "./currency-switcher";
 export * from "./hero";
+export * from "./home-featured-packages";
 export * from "./home-featured-products";
 export * from "./home-health-interests";
 export * from "./newsletter-signup";
