@@ -314,3 +314,50 @@ export async function deleteAdminProduct(id: string): Promise<void> {
     throw error;
   }
 }
+
+export interface AdminProductOption {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  currency: "UGX" | "KES";
+  stock_qty: number;
+  image_url: string | null;
+}
+
+export async function listAdminProductOptions(): Promise<AdminProductOption[]> {
+  const supabase = createServiceRoleSupabaseClient();
+
+  const [productsRes, imagesRes] = await Promise.all([
+    supabase
+      .from("products")
+      .select("id, name, slug, price, currency, stock_qty")
+      .eq("status", "ACTIVE")
+      .order("name", { ascending: true }),
+    supabase
+      .from("product_images")
+      .select("product_id, url, sort_order")
+      .order("sort_order", { ascending: true })
+  ]);
+
+  if (productsRes.error) throw productsRes.error;
+
+  const imagesByProductId = new Map<string, string>();
+  if (imagesRes.data) {
+    for (const img of imagesRes.data) {
+      if (!imagesByProductId.has(img.product_id)) {
+        imagesByProductId.set(img.product_id, img.url);
+      }
+    }
+  }
+
+  return (productsRes.data || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    currency: (p.currency || "UGX") as "UGX" | "KES",
+    stock_qty: p.stock_qty,
+    image_url: imagesByProductId.get(p.id) || null
+  }));
+}
