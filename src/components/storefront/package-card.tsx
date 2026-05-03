@@ -78,9 +78,9 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
           <p className="mt-1 line-clamp-2 text-sm text-slate-600">{pkg.tagline}</p>
         )}
 
-        <div className="mt-auto pt-3">
+        <div className="mt-auto pt-2">
           <div className="flex items-baseline gap-2">
-            <p className={`font-bold text-brand-600 ${featured ? "text-2xl" : "text-xl"}`}>
+            <p className={`font-bold text-brand-600 ${featured ? "text-3xl" : "text-2xl"}`}>
               {formatPrice(convertedPrice, selectedCurrency)}
             </p>
             {convertedSavings && (

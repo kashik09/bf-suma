@@ -48,8 +48,8 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         </h3>
         <p className="mt-1.5 line-clamp-2 text-sm text-slate-600">{product.description}</p>
 
-        <div className="mt-auto pt-3">
-          <p className="text-xl font-bold text-brand-600">{formatPrice(convertedPrice, selectedCurrency)}</p>
+        <div className="mt-auto pt-2">
+          <p className="text-2xl font-bold text-brand-600">{formatPrice(convertedPrice, selectedCurrency)}</p>
           <Link
             aria-label={`View details for ${product.name}`}
             className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
