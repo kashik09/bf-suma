@@ -13,6 +13,7 @@ import {
   sendResendEmail,
   supabaseRestRequest
 } from "../_shared/runtime.ts";
+import { renderEmailLayout } from "../_shared/email-layout.ts";
 
 interface OrderRow {
   id: string;
@@ -136,12 +137,22 @@ async function handler() {
         : `${env.appBaseUrl.replace(/\/+$/, "")}/shop`;
 
       const subject = "How are you getting on with your order?";
-      const html = `
-        <p>Hi ${candidate.customerFirstName},</p>
-        <p>We hope your order ${candidate.orderNumber} is working well for you.</p>
-        <p>${candidate.productName ? `Tell us about your ${candidate.productName}.` : "Tell us how your product is working for you."}</p>
-        <p><a href="${reviewUrl}">Leave a quick review</a></p>
+      const bodyHtml = `
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
+          Hi ${candidate.customerFirstName}, we hope your order ${candidate.orderNumber} is working well for you.
+        </p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+          ${candidate.productName ? `Tell us about your ${candidate.productName}.` : "Tell us how your product is working for you."}
+        </p>
       `.trim();
+      const html = renderEmailLayout({
+        preheader: "Share your product experience in one quick review.",
+        heading: "How are you getting on?",
+        bodyHtml,
+        ctaText: "Leave a review",
+        ctaUrl: reviewUrl,
+        recipientEmail: candidate.customerEmail
+      });
       const text = [
         `Hi ${candidate.customerFirstName},`,
         `We hope your order ${candidate.orderNumber} is working well for you.`,

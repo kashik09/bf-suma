@@ -13,6 +13,7 @@ import {
   sendResendEmail,
   supabaseRestRequest
 } from "../_shared/runtime.ts";
+import { renderEmailLayout } from "../_shared/email-layout.ts";
 
 interface AbandonedCartRow {
   id: string;
@@ -75,12 +76,22 @@ async function handler() {
       const cartSummary = buildCartSummary(candidate.cartItems || []);
       const cartUrl = `${env.appBaseUrl.replace(/\/+$/, "")}/cart`;
       const subject = "You left something behind";
-      const html = `
-        <p>Hi ${firstName},</p>
-        <p>Your BF Suma cart is still waiting for you.</p>
-        <p><strong>${cartSummary}</strong></p>
-        <p><a href="${cartUrl}">Return to your cart</a></p>
+      const bodyHtml = `
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
+          Hi ${firstName}, your BF Suma cart is still waiting for you.
+        </p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+          <strong>${cartSummary}</strong>
+        </p>
       `.trim();
+      const html = renderEmailLayout({
+        preheader: "Your BF Suma cart is waiting for you.",
+        heading: "You left something behind",
+        bodyHtml,
+        ctaText: "Return to cart",
+        ctaUrl: cartUrl,
+        recipientEmail: candidate.customerEmail
+      });
       const text = [
         `Hi ${firstName},`,
         "Your BF Suma cart is still waiting for you.",

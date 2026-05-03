@@ -13,6 +13,7 @@ import {
   sendResendEmail,
   supabaseRestRequest
 } from "../_shared/runtime.ts";
+import { renderEmailLayout } from "../_shared/email-layout.ts";
 
 interface CustomerRow {
   id: string;
@@ -96,15 +97,27 @@ async function handler() {
     sendEmail: async (candidate) => {
       const bestSellersUrl = `${env.appBaseUrl.replace(/\/+$/, "")}/shop`;
       const subject = "We miss you at BF Suma";
-      const html = `
-        <p>Hi ${candidate.customerFirstName},</p>
-        <p>We’ve added new bestsellers and fresh wellness picks since your last order.</p>
-        <p><a href="${bestSellersUrl}">See what’s popular now</a></p>
+      const bodyHtml = `
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
+          Hi ${candidate.customerFirstName}, we've refreshed our bestsellers and wellness picks since your last visit.
+        </p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+          Explore what's trending now and pick up where you left off.
+        </p>
       `.trim();
+      const html = renderEmailLayout({
+        preheader: "See what BF Suma customers are choosing now.",
+        heading: "We miss you at BF Suma",
+        bodyHtml,
+        ctaText: "See bestsellers",
+        ctaUrl: bestSellersUrl,
+        recipientEmail: candidate.customerEmail,
+        showUnsubscribe: true
+      });
       const text = [
         `Hi ${candidate.customerFirstName},`,
-        "We’ve added new bestsellers and fresh wellness picks since your last order.",
-        `See what’s popular now: ${bestSellersUrl}`
+        "We've added new bestsellers and fresh wellness picks since your last order.",
+        `See what's popular now: ${bestSellersUrl}`
       ].join("\n");
 
       return sendResendEmail({
