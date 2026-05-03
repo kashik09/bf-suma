@@ -11,7 +11,9 @@
     "test": "npm run test:critical",
     "test:critical": "node --test tests/production-hardening.test.mjs",
     "test:integration": "node --test tests/critical-path.test.mjs && node --test tests/money-model.test.mjs",
-    "audit:images": "tsx scripts/image-audit.ts"
+    "audit:images": "tsx scripts/image-audit.ts",
+    "email:preview": "tsx scripts/email-preview.ts",
+    "email:preview:send": "tsx scripts/email-preview.ts --send"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
