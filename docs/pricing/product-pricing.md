@@ -1,3 +1,8 @@
+> ⚠️ **DEPRECATED** — refer to BF_SUMA_Website_Prices.xlsx (sent by
+> client May 2026) for authoritative retail prices. This file is
+> kept for historical reference only and should NOT be used for
+> pricing decisions.
+
 # BF SUMA PRODUCTS PRICE LIST (April 2026)
 
 | Category | Product ID | Product Name | Dist. Price (USD) | Website Price UGX | PV |
