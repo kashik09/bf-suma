@@ -107,3 +107,64 @@ export function getCartCount(items: CartItem[]) {
 export function getCartSubtotal(items: CartItem[]) {
   return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
+
+export interface BundleItemInput {
+  product_id: string;
+  slug: string;
+  name: string;
+  price: number;
+  image_url: string;
+  quantity: number;
+  max_quantity: number;
+  availability: "in_stock" | "low_stock" | "out_of_stock";
+  currency: "KES" | "UGX";
+}
+
+export interface AddBundleInput {
+  bundle_id: string;
+  bundle_name: string;
+  bundle_image_url: string | null;
+  items: BundleItemInput[];
+}
+
+export function addBundleToCart(bundle: AddBundleInput) {
+  const current = readCartStorage();
+
+  for (const item of bundle.items) {
+    if (item.availability === "out_of_stock" || item.max_quantity <= 0) {
+      continue;
+    }
+
+    const existingIndex = current.findIndex(
+      (cartItem) => cartItem.product_id === item.product_id && cartItem.bundle_id === bundle.bundle_id
+    );
+
+    const safeQuantity = Math.max(1, Math.min(item.quantity, item.max_quantity));
+
+    if (existingIndex >= 0) {
+      const existing = current[existingIndex];
+      const nextQuantity = Math.min(existing.quantity + safeQuantity, existing.max_quantity || 99);
+      current[existingIndex] = {
+        ...existing,
+        quantity: nextQuantity
+      };
+    } else {
+      current.push({
+        product_id: item.product_id,
+        slug: item.slug,
+        name: item.name,
+        price: item.price,
+        image_url: item.image_url,
+        quantity: safeQuantity,
+        max_quantity: item.max_quantity,
+        availability: item.availability,
+        currency: item.currency || STORE_CURRENCY,
+        bundle_id: bundle.bundle_id,
+        bundle_name: bundle.bundle_name,
+        bundle_image_url: bundle.bundle_image_url || undefined
+      });
+    }
+  }
+
+  writeCartStorage(current);
+}

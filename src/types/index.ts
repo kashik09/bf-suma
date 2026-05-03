@@ -246,6 +246,10 @@ export interface CartItem {
   max_quantity: number;
   availability: AvailabilityState;
   currency: CurrencyCode;
+  // Optional bundle tracking for package purchases
+  bundle_id?: string;
+  bundle_name?: string;
+  bundle_image_url?: string;
 }
 
 export interface OrderIntakePayload {
