@@ -82,7 +82,7 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
       <section className="rounded-2xl border border-sky-200/60 bg-logo-spectrum-cool p-5 shadow-soft sm:p-6">
         <SectionHeader
           title="Shop"
-          description="Browse a clean, mobile-first catalog with clear pricing, clear availability, and low-friction checkout paths."
+          description="Browse a clean, mobile-first catalog with clear pricing and low-friction checkout paths."
         />
       </section>
 

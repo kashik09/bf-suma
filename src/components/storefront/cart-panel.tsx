@@ -151,8 +151,6 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                         <p className="text-sm text-slate-500">
                           {formatPrice(convertPrice(item.price, item.currency, currency), currency)}
                         </p>
-                        <Badge variant={availability.variant}>{availability.label}</Badge>
-
                         <div className="flex items-center gap-2">
                           <button
                             aria-label={`Decrease quantity for ${item.name}`}
@@ -170,9 +168,9 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                             disabled={item.availability === "out_of_stock" || item.quantity >= item.max_quantity}
                             title={
                               item.availability === "out_of_stock"
-                                ? "This product is out of stock."
+                                ? "Currently unavailable"
                                 : item.quantity >= item.max_quantity
-                                  ? "You reached the available quantity."
+                                  ? "Maximum quantity reached"
                                   : "Increase quantity"
                             }
                             onClick={() => updateQuantity(item.product_id, item.quantity + 1)}

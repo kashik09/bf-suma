@@ -28,10 +28,9 @@ export function ProductFilters({
     let count = 0;
     if (normalizedSearch) count += 1;
     if (state.category && state.category !== "all") count += 1;
-    if (state.availability && state.availability !== "all") count += 1;
     if (state.sort && state.sort !== "featured") count += 1;
     return count;
-  }, [normalizedSearch, state.availability, state.category, state.sort]);
+  }, [normalizedSearch, state.category, state.sort]);
 
   const activeFilterChips = useMemo(() => {
     const chips: Array<{ id: keyof ProductFilterState; label: string; clearValue: string }> = [];
@@ -42,16 +41,12 @@ export function ProductFilters({
       const categoryName = categories.find((category) => category.slug === state.category)?.name || state.category;
       chips.push({ id: "category", label: `Category: ${categoryName}`, clearValue: "all" });
     }
-    if (state.availability && state.availability !== "all") {
-      const availabilityLabel = state.availability === "in_stock" ? "In stock" : "Out of stock";
-      chips.push({ id: "availability", label: `Availability: ${availabilityLabel}`, clearValue: "all" });
-    }
     if (state.sort && state.sort !== "featured") {
       const sortLabel = SHOP_SORT_OPTIONS.find((option) => option.value === state.sort)?.label || state.sort;
       chips.push({ id: "sort", label: `Sort: ${sortLabel}`, clearValue: "featured" });
     }
     return chips;
-  }, [categories, normalizedSearch, state.availability, state.category, state.sort]);
+  }, [categories, normalizedSearch, state.category, state.sort]);
 
   return (
     <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
@@ -91,7 +86,7 @@ export function ProductFilters({
         </div>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="search">
             Search
@@ -120,21 +115,6 @@ export function ProductFilters({
                 {category.name}
               </option>
             ))}
-          </Select>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="availability-filter">
-            Availability
-          </label>
-          <Select
-            id="availability-filter"
-            value={state.availability || "all"}
-            onChange={(e) => onChange({ availability: e.target.value })}
-          >
-            <option value="all">Any availability</option>
-            <option value="in_stock">In stock</option>
-            <option value="out_of_stock">Out of stock</option>
           </Select>
         </div>
 

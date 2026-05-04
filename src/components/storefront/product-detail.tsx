@@ -278,11 +278,7 @@ export function ProductDetail({
 
         <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={availabilityVariant(product.availability)}>{availabilityLabel(product.availability)}</Badge>
             <span className="text-xs font-medium text-slate-500">{product.category_name}</span>
-            <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
-              {availabilityStatus}
-            </span>
           </div>
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">{product.name}</h1>
@@ -334,9 +330,6 @@ export function ProductDetail({
 
           <div className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Quantity</p>
-            {lowStockCount ? (
-              <p className="text-sm font-semibold text-amber-700">Only {lowStockCount} left in stock</p>
-            ) : null}
             <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white p-1">
               <button
                 aria-label={`Decrease quantity for ${product.name}`}
@@ -359,7 +352,7 @@ export function ProductDetail({
               </button>
             </div>
             {isUnavailable && (
-              <p className="text-xs text-red-600">Unavailable right now. Contact support for restock timing.</p>
+              <p className="text-xs text-red-600">Currently unavailable. Contact support for assistance.</p>
             )}
           </div>
 
@@ -368,7 +361,7 @@ export function ProductDetail({
               className="sm:flex-1"
               disabled={isUnavailable || justAdded}
               onClick={handleAddToCart}
-              title={isUnavailable ? "Product is out of stock" : "Add item to cart"}
+              title={isUnavailable ? "Currently unavailable" : "Add item to cart"}
             >
               {justAdded ? (
                 <>
@@ -378,7 +371,7 @@ export function ProductDetail({
               ) : !commerceReady ? (
                 "Checkout unavailable"
               ) : isUnavailable ? (
-                "Out of stock"
+                "Currently Unavailable"
               ) : (
                 "Add to Cart - Fast Checkout"
               )}

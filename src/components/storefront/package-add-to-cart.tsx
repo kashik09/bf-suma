@@ -116,7 +116,7 @@ export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
 
       {!pkg.is_in_stock && (
         <p className="text-sm text-rose-600">
-          One or more items in this package are out of stock.
+          This package is currently unavailable.
         </p>
       )}
     </div>
