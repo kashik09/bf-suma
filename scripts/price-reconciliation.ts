@@ -90,7 +90,8 @@ async function parseXlsx(filePath: string): Promise<SpreadsheetRow[]> {
   // Dynamic import xlsx only when needed
   let XLSX: typeof import("xlsx");
   try {
-    XLSX = await import("xlsx");
+    const xlsxModule = await import("xlsx");
+    XLSX = xlsxModule.default || xlsxModule;
   } catch {
     console.error("xlsx package not installed. Run: npm install xlsx");
     process.exit(1);
@@ -99,38 +100,48 @@ async function parseXlsx(filePath: string): Promise<SpreadsheetRow[]> {
   const workbook = XLSX.readFile(filePath);
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
-  const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
 
+  // Get raw data with headers as first row
+  const rawData = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1 }) as unknown[][];
+
+  // Find the header row (contains "Product ID")
+  let headerRowIndex = -1;
+  for (let i = 0; i < Math.min(rawData.length, 10); i++) {
+    const row = rawData[i];
+    if (Array.isArray(row) && row.some((cell) => String(cell).includes("Product ID"))) {
+      headerRowIndex = i;
+      break;
+    }
+  }
+
+  if (headerRowIndex === -1) {
+    console.error("Could not find header row with 'Product ID' column");
+    return [];
+  }
+
+  const headers = rawData[headerRowIndex].map((h) => String(h || "").trim());
   const rows: SpreadsheetRow[] = [];
 
-  for (const row of jsonData) {
-    // Try to find SKU column (various possible names)
-    const sku = String(
-      row["Product ID"] || row["SKU"] || row["sku"] || row["product_id"] || ""
-    ).trim();
+  // Find column indices
+  const skuCol = headers.findIndex((h) => h === "Product ID" || h === "SKU");
+  const nameCol = headers.findIndex((h) => h === "Product Name" || h === "Name");
+  const ugxCol = headers.findIndex((h) => h.includes("Retail") && h.includes("UGX"));
+  const usdCol = headers.findIndex((h) => h.includes("Retail") && h.includes("USD"));
+  const kesCol = headers.findIndex((h) => h.includes("Retail") && h.includes("KES"));
 
+  // Parse data rows
+  for (let i = headerRowIndex + 1; i < rawData.length; i++) {
+    const row = rawData[i];
+    if (!Array.isArray(row)) continue;
+
+    const sku = String(row[skuCol] || "").trim();
     if (!sku) continue;
 
-    // Try to find name column
-    const name = String(
-      row["Product Name"] || row["Name"] || row["name"] || row["product_name"] || ""
-    ).trim();
+    const name = String(row[nameCol] || "").trim();
 
-    // Try to find price columns
-    const ugx = parseFloat(
-      String(row["Website Price UGX"] || row["UGX"] || row["ugx"] || row["Price UGX"] || "0")
-        .replace(/,/g, "")
-    ) || 0;
-
-    const usd = parseFloat(
-      String(row["Dist. Price (USD)"] || row["USD"] || row["usd"] || row["Price USD"] || "0")
-        .replace(/[$,]/g, "")
-    ) || 0;
-
-    const kes = parseFloat(
-      String(row["KES"] || row["kes"] || row["Price KES"] || "0")
-        .replace(/,/g, "")
-    ) || 0;
+    const ugx = parseFloat(String(row[ugxCol] || "0").replace(/,/g, "")) || 0;
+    const usd = parseFloat(String(row[usdCol] || "0").replace(/[$,]/g, "")) || 0;
+    const kes = parseFloat(String(row[kesCol] || "0").replace(/,/g, "")) || 0;
 
     if (ugx > 0 || usd > 0) {
       rows.push({ sku, name, ugx, usd, kes });

@@ -106,7 +106,7 @@ const PACKAGES: PackageData[] = [
     is_active: true,
     is_featured: true,
     sort_order: 3,
-    products: ["Feminergy", "FemiCare", "Femibiotics", "FemiCalcium D3"]
+    products: ["Feminergy", "FemiCare", "Femibiotics", "FemiCalcium D3", "FemiVitamins"]
   },
   {
     slug: "fibroids-package",
@@ -136,7 +136,7 @@ const PACKAGES: PackageData[] = [
     is_active: true,
     is_featured: true,
     sort_order: 4,
-    products: ["Pure & Broken Ganoderma Spores", "Pure & Broken Ganoderma Oil", "Quad-Reishi", "Refined Yunzhi Essence", "Cordyceps Coffee", "Reishi Coffee", "Ginseng Coffee"]
+    products: ["Pure & Broken Ganoderma Spores", "Pure & Broken Ganoderma Oil", "Quad-Reishi", "Refined Yunzhi Essence", "Cordyceps Coffee", "Reishi Coffee", "Ginseng Coffee", "Sleep Beauty"]
   },
   {
     slug: "cardiovascular-health",
