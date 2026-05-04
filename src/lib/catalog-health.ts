@@ -6,7 +6,23 @@ export interface CatalogHealth {
   degradedReason: string | null;
 }
 
+/**
+ * Check if inventory sync is manually marked as broken via env flag.
+ * When set, forces degraded mode regardless of actual catalog health.
+ */
+function isInventorySyncBroken(): boolean {
+  return process.env.NEXT_PUBLIC_INVENTORY_SYNC_BROKEN === "true";
+}
+
 export function buildLiveCatalogHealth(): CatalogHealth {
+  if (isInventorySyncBroken()) {
+    return {
+      source: "live",
+      commerceReady: false,
+      degradedReason: "Inventory sync is currently under maintenance. Checkout is temporarily disabled."
+    };
+  }
+
   return {
     source: "live",
     commerceReady: true,
