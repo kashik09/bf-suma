@@ -209,13 +209,9 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/92 via-slate-900/55 to-slate-900/10" />
 
                     <div className="absolute inset-x-0 bottom-0 flex h-full flex-col justify-end p-4 sm:p-5">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-100/90">Focus area</p>
                       <h3 className="text-lg font-semibold leading-tight text-white">{slide.category.name}</h3>
                       <p className="mt-1 line-clamp-1 text-sm text-slate-100/90">
                         {resolveCategoryBenefit(slide.category)}
-                      </p>
-                      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-100/90">
-                        {formatProductCount(slide.category.product_count)}
                       </p>
 
                       <span className="mt-3 inline-flex h-10 w-fit items-center justify-center gap-1 rounded-md bg-white px-4 text-sm font-semibold text-slate-900 shadow-soft transition group-hover:bg-brand-50">
