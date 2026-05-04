@@ -6,6 +6,8 @@
  * All CSS is inline except for media queries in <head>.
  */
 
+import { CONTACT, getWhatsAppPrimaryUrl, getWhatsAppSecondaryUrl } from "@/config/contact";
+
 // Brand colors from tailwind.config.ts
 const COLORS = {
   brand50: "#eef9ef",
@@ -22,9 +24,6 @@ const COLORS = {
   border: "#e2e8f0"
 } as const;
 
-// Contact info
-const WHATSAPP_PRIMARY = "+256 747 928 920";
-const WHATSAPP_SECONDARY = "+256 778 928 815";
 const LOGO_URL = "https://bfsumauganda.com/bf-suma-logo.png";
 const SITE_URL = "https://bfsumauganda.com";
 
@@ -155,8 +154,8 @@ export function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
               <!-- WhatsApp contact -->
               <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: ${COLORS.textSecondary};">
                 <strong>Need help?</strong> WhatsApp us:<br />
-                <a href="https://wa.me/256747928920" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a> &nbsp;|&nbsp;
-                <a href="https://wa.me/256778928815" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
+                <a href="${getWhatsAppPrimaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappPrimaryDisplay}</a> &nbsp;|&nbsp;
+                <a href="${getWhatsAppSecondaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappSecondaryDisplay}</a>
               </p>
 
               <!-- Social links -->

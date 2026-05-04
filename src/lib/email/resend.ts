@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/lib/utils";
+import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getSender, type EmailPurpose } from "./senders";
@@ -181,7 +182,7 @@ export async function sendNewsletterWelcomeEmail({
     "Thanks for subscribing. You'll receive concise wellness tips, product updates, and useful guidance.",
     "",
     "Browse products: https://bfsumauganda.com/shop",
-    "Need help? WhatsApp: https://wa.me/256747928920"
+    `Need help? WhatsApp: ${getWhatsAppPrimaryUrl()}`
   ].join("\n");
 
   return sendEmail({
