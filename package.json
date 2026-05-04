@@ -13,7 +13,8 @@
     "test:integration": "node --test tests/critical-path.test.mjs && node --test tests/money-model.test.mjs",
     "audit:images": "tsx scripts/image-audit.ts",
     "email:preview": "tsx scripts/email-preview.ts",
-    "email:preview:send": "tsx scripts/email-preview.ts --send"
+    "email:preview:send": "tsx scripts/email-preview.ts --send",
+    "seed:packages": "npx tsx scripts/seed-packages.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
