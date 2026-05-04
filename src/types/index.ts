@@ -44,6 +44,8 @@ export interface Product {
   stock_qty: number;
   status: ProductStatus;
   category_id: string;
+  /** True if this product is a curated set (multi-item bundle sold as one SKU) */
+  is_set: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -233,6 +235,8 @@ export interface StorefrontProduct {
   image_url: string;
   gallery_urls: string[];
   availability: AvailabilityState;
+  /** True if this product is a curated set (multi-item bundle sold as one SKU) */
+  is_set: boolean;
 }
 
 export interface CartItem {
