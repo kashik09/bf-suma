@@ -74,6 +74,7 @@ export const STORE_NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Packages", href: "/packages" },
+  { label: "Sets", href: "/sets" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" }
 ] as const;
