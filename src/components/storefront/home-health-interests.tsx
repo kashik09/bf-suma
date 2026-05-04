@@ -119,9 +119,7 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
     <section className="space-y-5 sm:space-y-6">
       <SectionHeader
         title="Choose Your Wellness Focus"
-        description="Start with one category, compare only relevant options, and get to checkout faster with less friction.
-        
-        "
+        description="Start with one category, compare only relevant options, and get to checkout faster with less friction."
         action={(
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
             View all categories
