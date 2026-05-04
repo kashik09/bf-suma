@@ -20,6 +20,14 @@ export const CONTACT = {
   mtnTill: "82661246",
 } as const;
 
+export const SOCIAL_LINKS = [
+  { label: "Facebook", href: "https://facebook.com/bfsumauganda" },
+  { label: "Instagram", href: "https://instagram.com/bfsumauganda" },
+  { label: "TikTok", href: "https://tiktok.com/@bfsumauganda" },
+  { label: "X", href: "https://x.com/bfsumauganda" },
+  { label: "YouTube", href: "https://youtube.com/@bfsumauganda" },
+] as const;
+
 /** Build wa.me URL for primary WhatsApp */
 export function getWhatsAppPrimaryUrl(message?: string): string {
   const base = `https://wa.me/${CONTACT.whatsappPrimary}`;

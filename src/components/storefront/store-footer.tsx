@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
-import { CONTACT } from "@/config/contact";
+import { CONTACT, SOCIAL_LINKS } from "@/config/contact";
 import {
   APP_DESCRIPTION,
   STORE_NAV_LINKS,
@@ -71,6 +71,20 @@ export function StoreFooter() {
             ctaLabel="Subscribe"
             className="max-w-xs"
           />
+          <h4 className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">Follow Us</h4>
+          <div className="mt-2 flex flex-wrap gap-3 text-sm">
+            {SOCIAL_LINKS.map((link) => (
+              <a
+                className="text-slate-100/85 transition hover:text-accent-sun"
+                href={link.href}
+                key={link.label}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
       </PageContainer>
 
