@@ -470,12 +470,6 @@ export async function listFeaturedCategories(limit: number = 4): Promise<Storefr
     .slice(0, limit);
 }
 
-/** Fetch all active set products (multi-item bundles sold as one SKU) */
-export async function listSetProducts(): Promise<StorefrontProduct[]> {
-  const products = await listStorefrontProducts({ sort: "featured" });
-  return products.filter((product) => product.is_set);
-}
-
 export async function getStorefrontProductBySlug(slug: string): Promise<StorefrontProduct | null> {
   const products = await listStorefrontProducts();
   return products.find((product) => product.slug === slug) || null;
