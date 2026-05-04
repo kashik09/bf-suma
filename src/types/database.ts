@@ -39,36 +39,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      abandoned_carts: {
-        Row: {
-          cart_items: Json
-          created_at: string
-          customer_email: string
-          customer_name: string | null
-          email_sent_at: string | null
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          cart_items?: Json
-          created_at?: string
-          customer_email: string
-          customer_name?: string | null
-          email_sent_at?: string | null
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          cart_items?: Json
-          created_at?: string
-          customer_email?: string
-          customer_name?: string | null
-          email_sent_at?: string | null
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       admin_users: {
         Row: {
           auth_user_id: string | null
@@ -245,7 +215,6 @@ export type Database = {
           id: string
           last_name: string
           phone: string | null
-          reengagement_email_sent_at: string | null
           updated_at: string
           whatsapp_opt_in: boolean
         }
@@ -256,7 +225,6 @@ export type Database = {
           id?: string
           last_name: string
           phone?: string | null
-          reengagement_email_sent_at?: string | null
           updated_at?: string
           whatsapp_opt_in?: boolean
         }
@@ -267,7 +235,6 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
-          reengagement_email_sent_at?: string | null
           updated_at?: string
           whatsapp_opt_in?: boolean
         }
@@ -614,7 +581,6 @@ export type Database = {
           notes: string | null
           order_number: string
           payment_status: string
-          review_request_sent_at: string | null
           status: string
           subtotal: number
           total: number
@@ -631,7 +597,6 @@ export type Database = {
           notes?: string | null
           order_number: string
           payment_status?: string
-          review_request_sent_at?: string | null
           status?: string
           subtotal: number
           total: number
@@ -648,7 +613,6 @@ export type Database = {
           notes?: string | null
           order_number?: string
           payment_status?: string
-          review_request_sent_at?: string | null
           status?: string
           subtotal?: number
           total?: number
@@ -663,99 +627,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      package_items: {
-        Row: {
-          created_at: string
-          id: string
-          package_id: string
-          product_id: string
-          quantity: number
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          package_id: string
-          product_id: string
-          quantity?: number
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          package_id?: string
-          product_id?: string
-          quantity?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "package_items_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "package_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      packages: {
-        Row: {
-          created_at: string
-          currency: string
-          description: string | null
-          dm_keyword: string | null
-          hero_image_url: string | null
-          id: string
-          infographic_image_url: string | null
-          is_active: boolean
-          is_featured: boolean
-          name: string
-          override_price_minor: number | null
-          slug: string
-          sort_order: number
-          tagline: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          currency?: string
-          description?: string | null
-          dm_keyword?: string | null
-          hero_image_url?: string | null
-          id?: string
-          infographic_image_url?: string | null
-          is_active?: boolean
-          is_featured?: boolean
-          name: string
-          override_price_minor?: number | null
-          slug: string
-          sort_order?: number
-          tagline?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          currency?: string
-          description?: string | null
-          dm_keyword?: string | null
-          hero_image_url?: string | null
-          id?: string
-          infographic_image_url?: string | null
-          is_active?: boolean
-          is_featured?: boolean
-          name?: string
-          override_price_minor?: number | null
-          slug?: string
-          sort_order?: number
-          tagline?: string | null
-          updated_at?: string
-        }
-        Relationships: []
       }
       product_images: {
         Row: {
@@ -856,7 +727,6 @@ export type Database = {
           currency: string
           description: string | null
           id: string
-          is_set: boolean
           name: string
           price: number
           sku: string
@@ -872,7 +742,6 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
-          is_set?: boolean
           name: string
           price: number
           sku: string
@@ -888,7 +757,6 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
-          is_set?: boolean
           name?: string
           price?: number
           sku?: string
@@ -936,16 +804,105 @@ export type Database = {
           },
         ]
       }
+      packages: {
+        Row: {
+          id: string
+          slug: string
+          name: string
+          tagline: string | null
+          description: string | null
+          hero_image_url: string | null
+          infographic_image_url: string | null
+          override_price_minor: number | null
+          currency: string
+          dm_keyword: string | null
+          is_featured: boolean
+          is_active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name: string
+          tagline?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          infographic_image_url?: string | null
+          override_price_minor?: number | null
+          currency?: string
+          dm_keyword?: string | null
+          is_featured?: boolean
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name?: string
+          tagline?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          infographic_image_url?: string | null
+          override_price_minor?: number | null
+          currency?: string
+          dm_keyword?: string | null
+          is_featured?: boolean
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      package_items: {
+        Row: {
+          id: string
+          package_id: string
+          product_id: string
+          quantity: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          package_id: string
+          product_id: string
+          quantity?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          package_id?: string
+          product_id?: string
+          quantity?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_items_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       debug_order_intake: { Args: never; Returns: string }
-      invoke_lifecycle_edge_function: {
-        Args: { function_name: string }
-        Returns: number
-      }
       process_order_intake_atomic: {
         Args: {
           p_currency: string

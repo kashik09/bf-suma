@@ -230,8 +230,7 @@ export const BFSUMA_PRODUCTS: StorefrontProduct[] = manifestProducts
       category_slug: category.slug,
       image_url: imageUrl,
       gallery_urls: [imageUrl],
-      availability: resolveAvailability(status, stockQty),
-      is_set: false
+      availability: resolveAvailability(status, stockQty)
     };
   })
   .filter((product): product is StorefrontProduct => product !== null);

@@ -299,8 +299,7 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
           FALLBACK_PRODUCTS.find((fallbackProduct) => fallbackProduct.slug === product.slug)?.image_url ||
           FALLBACK_PRODUCTS[0].image_url,
         gallery_urls: imageUrls.length > 0 ? imageUrls : [FALLBACK_PRODUCTS[0].image_url],
-        availability: resolveAvailability(status, Number(product.stock_qty)),
-        is_set: product.is_set === true
+        availability: resolveAvailability(status, Number(product.stock_qty))
       };
     })
     .filter((product): product is StorefrontProduct => Boolean(product));
@@ -377,7 +376,6 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
       stock_qty: 0,
       status: "OUT_OF_STOCK",
       category_id: product.category_id,
-      is_set: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }));
@@ -413,7 +411,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       stock_qty: 0,
       status: "OUT_OF_STOCK",
       category_id: fallbackProduct.category_id,
-      is_set: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
