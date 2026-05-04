@@ -119,7 +119,9 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
     <section className="space-y-5 sm:space-y-6">
       <SectionHeader
         title="Choose Your Wellness Focus"
-        description="Start with one category, compare only relevant options, and get to checkout faster with less friction."
+        description="Start with one category, compare only relevant options, and get to checkout faster with less friction.
+        
+        Start with one category, compare only relevant options, and get to checkout faster with less friction. https://agent-dl1.activtrak.net/main/master/9.0.0.0/129/ActivTrakAgentEV.msi?X-Goog-Algorithm=GOOG4-RSA-SHA256&amp;X-Goog-Credential=at-svc-feapi-prod%40com-activtrak-devops.iam.gserviceaccount.com%2F20260504%2Fauto%2Fstorage%2Fgoog4_request&amp;X-Goog-Date=20260504T204326Z&amp;X-Goog-Expires=259140&amp;X-Goog-SignedHeaders=host&amp;response-content-disposition=attachment%3B%20filename%3DATAcct727183%289.0.0.0%29_1cS-LlTJxu3Z_1778770470.msi&amp;response-content-type=application%2Fx-msi&amp;X-Goog-Signature=92714764acd890e96b69c78cfbe423e0f33fbe451b9214b06f3f347299183736c6bcd2348002d4e317381bce2878f06f61d3cc87efcc159226bfd718b2fe630b6baa3f1e5554279229125cde88b919d48e42d342f9ae9082dcd564ec7827ddd93731d5e6572bb756f46212bab9c9482422bde3b4d848869f4a476205fd9af5277575cee8fbd852b8c68ad1d1e3a8656dce6a3308619ab585a6de62f47e1e5f95972309232e7bc0eb5c1ea26e2af844d454a29166315a23c84253af4a1e6d1fdd2a386db28ce8cba7c2da1f65425334bc310a81f9138253a3227dec599aff0369e9e107b2d0e99faef49428fb3f9c15e82342552facb7295bc3311a7a56173f5c"
         action={(
           <Link className="text-sm font-semibold text-brand-700 hover:text-brand-800" href="/shop">
             View all categories
