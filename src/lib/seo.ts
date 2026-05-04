@@ -6,16 +6,14 @@ const DEFAULT_SOCIAL_IMAGE = "/bf-suma-logo.png";
 const META_DESCRIPTION_LIMIT = 160;
 
 const BLOG_SEO_TITLE_OVERRIDES: Record<string, string> = {
-  "understanding-power-reishi-mushrooms-immune-health": "Reishi Mushroom Benefits for Immune Health in Uganda",
-  "complete-guide-ginseng-energy-focus-vitality": "Ginseng Benefits for Energy and Focus in Uganda",
-  "skin-health-within-science-youth-essence": "Skin Health Tips in Uganda: Nutrition, Routine, and Youth Essence",
-  "building-strong-immune-system-complete-wellness-guide":
-    "How to Build a Strong Immune System Naturally in Uganda",
-  "natural-ways-boost-energy-levels-throughout-day": "Natural Ways to Boost Energy Levels in Uganda",
-  "gut-health-connection-why-digestive-system-matters":
-    "Gut Health Guide in Uganda: Digestion, Immunity, and Daily Habits",
-  "sleep-better-tonight-science-backed-tips-quality-rest": "How to Sleep Better Naturally: Practical Tips in Uganda",
-  "stress-management-practical-tools-modern-life": "Stress Management Tips for Modern Life in Uganda"
+  "understanding-power-reishi-mushrooms-immune-health": "Reishi Mushroom Benefits for Immune Health",
+  "complete-guide-ginseng-energy-focus-vitality": "Ginseng Benefits for Energy and Focus",
+  "skin-health-within-science-youth-essence": "Skin Health Tips: Nutrition, Routine, and Youth Essence",
+  "building-strong-immune-system-complete-wellness-guide": "How to Build a Strong Immune System Naturally",
+  "natural-ways-boost-energy-levels-throughout-day": "Natural Ways to Boost Energy Levels",
+  "gut-health-connection-why-digestive-system-matters": "Gut Health Guide: Digestion, Immunity, and Daily Habits",
+  "sleep-better-tonight-science-backed-tips-quality-rest": "How to Sleep Better Naturally: Practical Tips",
+  "stress-management-practical-tools-modern-life": "Stress Management Tips for Modern Life"
 };
 
 function toValidUrl(input?: string | null): URL | null {
@@ -141,7 +139,7 @@ export function getBlogSeoTitle(slug: string, fallbackTitle: string): string {
 
 export function buildBlogMetaDescription(params: { title: string; excerpt: string }): string {
   return clampMetaDescription(
-    `${params.title} from BF Suma Uganda. ${normalizeSeoCopy(params.excerpt)}`
+    `${params.title} from BF Suma. ${normalizeSeoCopy(params.excerpt)}`
   );
 }
 
