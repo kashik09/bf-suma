@@ -6,7 +6,7 @@
  * All CSS is inline except for media queries in <head>.
  */
 
-import { CONTACT, getWhatsAppPrimaryUrl, getWhatsAppSecondaryUrl } from "@/config/contact";
+import { ADDRESS, CONTACT, getWhatsAppPrimaryUrl, getWhatsAppSecondaryUrl } from "@/config/contact";
 
 // Brand colors from tailwind.config.ts
 const COLORS = {
@@ -166,8 +166,10 @@ export function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
                 <a href="https://twitter.com/bfsumauganda" style="color: ${COLORS.brand700}; text-decoration: none;">Twitter</a>
               </p>
 
-              <!-- Address placeholder -->
-              <!-- TODO: Add physical address when confirmed -->
+              <!-- Physical address -->
+              <p style="margin: 0 0 12px; font-size: 13px; color: ${COLORS.textMuted};">
+                ${ADDRESS.full}
+              </p>
 
               ${unsubscribeBlock}
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
-import { CONTACT, SOCIAL_LINKS } from "@/config/contact";
+import { MapPin } from "lucide-react";
+import { ADDRESS, CONTACT, MAPS_URL, SOCIAL_LINKS } from "@/config/contact";
 import {
   APP_DESCRIPTION,
   STORE_NAV_LINKS,
@@ -46,7 +47,15 @@ export function StoreFooter() {
               WhatsApp
             </a>
             <a className="transition hover:text-accent-sun" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-            <p className="text-slate-200">Kampala, Uganda</p>
+            <a
+              className="flex items-center gap-1.5 text-slate-200 transition hover:text-accent-sun"
+              href={MAPS_URL}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              <span>{ADDRESS.full}</span>
+            </a>
             {SUPPORT_PHONES.map((phone) => (
               <a className="transition hover:text-accent-sun" href={`tel:${phone}`} key={phone}>
                 {phone}

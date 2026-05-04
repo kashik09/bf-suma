@@ -2,6 +2,7 @@ import { ContactForm } from "@/components/storefront/client";
 import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
+import { ADDRESS, MAPS_URL } from "@/config/contact";
 import { SUPPORT_EMAIL, SUPPORT_PHONES, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -35,6 +36,19 @@ export default function ContactPage() {
           <a className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800" href={buildWhatsAppUrl("Hello BF Suma, I need support.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
             WhatsApp Us
           </a>
+          <div className="space-y-1 border-t border-slate-200 pt-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Visit Us</p>
+            <a
+              className="block text-sm font-medium text-slate-700 hover:text-slate-900"
+              href={MAPS_URL}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {ADDRESS.line1}<br />
+              {ADDRESS.line2}<br />
+              {ADDRESS.city}, {ADDRESS.country}
+            </a>
+          </div>
           <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </a>
