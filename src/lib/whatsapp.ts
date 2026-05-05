@@ -72,3 +72,31 @@ export function buildWhatsAppGenericInquiryMessage() {
 export function buildWhatsAppBlogMessage(postTitle: string) {
   return `Hi! I just read your article "${postTitle}" — could you recommend products related to this?`;
 }
+
+/**
+ * FOOTER SUPPORT LINK
+ */
+export function buildWhatsAppFooterSupportMessage() {
+  return "Hi! I have a question about BF Suma — could you help me?";
+}
+
+/**
+ * FLOATING CTA (bottom-right button)
+ */
+export function buildWhatsAppFloatingCtaMessage() {
+  return "Hi! I'm browsing the BF Suma site and could use some help.";
+}
+
+/**
+ * HOMEPAGE CTA
+ */
+export function buildWhatsAppHomepageCtaMessage() {
+  return "Hi! I'm new to BF Suma and would like to learn more about your products.";
+}
+
+/**
+ * BLOG FALLBACK (when no article loaded)
+ */
+export function buildWhatsAppBlogFallbackMessage() {
+  return "Hi! I was reading on the BF Suma site and would like to ask a question.";
+}
