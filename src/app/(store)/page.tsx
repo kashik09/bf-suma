@@ -5,7 +5,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
-import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppGenericInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getStorefrontCustomerCount } from "@/services/customers";
 import { getFeaturedPackages } from "@/services/packages";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
@@ -65,7 +65,7 @@ export default async function HomePage() {
             </Link>
             <a
               className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-5 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
-              href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("homepage_cta"), SUPPORT_WHATSAPP_PHONE)}
+              href={buildWhatsAppUrl(buildWhatsAppGenericInquiryMessage(), SUPPORT_WHATSAPP_PHONE)}
               rel="noreferrer"
               target="_blank"
             >

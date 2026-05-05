@@ -8,7 +8,7 @@ import {
   SUPPORT_EMAIL,
   SUPPORT_WHATSAPP_PHONE
 } from "@/lib/constants";
-import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppGenericInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 
 export function StoreFooter() {
@@ -20,7 +20,7 @@ export function StoreFooter() {
           <p className="text-sm leading-relaxed text-slate-100/85">{APP_DESCRIPTION}</p>
           <a
             className="inline-flex h-9 items-center justify-center rounded-md bg-brand-500 px-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-600"
-            href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("footer_primary"), SUPPORT_WHATSAPP_PHONE)}
+            href={buildWhatsAppUrl(buildWhatsAppGenericInquiryMessage(), SUPPORT_WHATSAPP_PHONE)}
             rel="noreferrer"
             target="_blank"
           >
@@ -42,7 +42,7 @@ export function StoreFooter() {
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Support</h4>
           <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-100/85">
-            <a className="transition hover:text-accent-sun" href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("footer_support"), SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
+            <a className="transition hover:text-accent-sun" href={buildWhatsAppUrl(buildWhatsAppGenericInquiryMessage(), SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
               WhatsApp
             </a>
             <a className="transition hover:text-accent-sun" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>

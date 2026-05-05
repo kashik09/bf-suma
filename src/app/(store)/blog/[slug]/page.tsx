@@ -17,7 +17,7 @@ import {
   toAbsoluteUrl
 } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
-import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppBlogMessage, buildWhatsAppGenericInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import {
   getBlogReadiness,
   getPublishedBlogPostBySlug,
@@ -127,7 +127,7 @@ export default async function BlogDetailPage({
               </Link>
               <a
                 className="inline-flex h-10 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
-                href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("blog_unavailable"), SUPPORT_WHATSAPP_PHONE)}
+                href={buildWhatsAppUrl(buildWhatsAppGenericInquiryMessage(), SUPPORT_WHATSAPP_PHONE)}
                 rel="noreferrer"
                 target="_blank"
               >
@@ -252,7 +252,7 @@ export default async function BlogDetailPage({
               </Link>
               <a
                 className="inline-flex h-10 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100"
-                href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage(`blog:${post.slug}`), SUPPORT_WHATSAPP_PHONE)}
+                href={buildWhatsAppUrl(buildWhatsAppBlogMessage(post.title), SUPPORT_WHATSAPP_PHONE)}
                 rel="noreferrer"
                 target="_blank"
               >
