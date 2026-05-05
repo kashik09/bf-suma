@@ -563,7 +563,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <StoreTrustBadges className="mt-3" />
 
           <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
-            {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order - Pay on Delivery"}
+            {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
           </Button>
 
           {resultMessage ? (

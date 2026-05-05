@@ -212,7 +212,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
             className="inline-flex h-11 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/checkout"
           >
-            Checkout - Fast Delivery
+            Checkout
           </Link>
         ) : (
           <button
