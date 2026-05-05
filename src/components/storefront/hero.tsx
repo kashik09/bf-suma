@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from "lucide-react";
 import { HERO_SLIDES } from "@/lib/hero-slides";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function Hero() {
   const heroSlides = HERO_SLIDES;
@@ -153,7 +153,7 @@ export function Hero() {
             </Link>
             <a
               className="inline-flex h-12 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-6 text-sm font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-7 sm:text-base"
-              href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("hero"), SUPPORT_WHATSAPP_PHONE)}
+              href={buildWhatsAppUrl(slide.whatsappMessage || "", SUPPORT_WHATSAPP_PHONE)}
               rel="noreferrer"
               target="_blank"
             >

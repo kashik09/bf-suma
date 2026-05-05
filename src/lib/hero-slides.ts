@@ -4,42 +4,48 @@ export interface HeroSlide {
   headline: string;
   subhead: string;
   image: string;
+  whatsappMessage: string | null;
 }
 
 export const HERO_SLIDES: HeroSlide[] = [
-    {
+  {
     id: "catalog",
     badge: " ",
     headline: " ",
     subhead: " ",
-    image: "/hero-images/wellness.png"
+    image: "/hero-images/wellness.png",
+    whatsappMessage: null
   },
   {
     id: "supplements",
     badge: "Daily Wellness",
     headline: "TRUSTED WELLNESS ESSENTIALS FOR YOUR DAILY ROUTINE",
     subhead: "Rooted in research, driven by quality: BF SUMA brings you trusted wellness solutions for everyday health.",
-    image: "/hero-images/supplements.jpg"
+    image: "/hero-images/supplements.jpg",
+    whatsappMessage: "Hi! I'm interested in BF Suma's wellness supplements. Can you help me choose the right one for my needs?"
   },
   {
     id: "nutrition",
     badge: "Plant-Based Nutrition",
     headline: "WHOLE-FOOD WELLNESS SUPPORT",
     subhead: "Inspired by nature, designed to support everyday wellbeing.",
-    image: "/hero-images/vegetables.jpg"
+    image: "/hero-images/vegetables.jpg",
+    whatsappMessage: "Hi! I'd love to learn about BF Suma's plant-based nutrition products."
   },
   {
     id: "lifestyle",
     badge: "Lifestyle Balance",
     headline: "WELLNESS THAT FITS YOUR LIFESTYLE",
     subhead: "Simple, effective support for active living and recovery.",
-    image: "/hero-images/lifestyle.jpg"
+    image: "/hero-images/lifestyle.jpg",
+    whatsappMessage: "Hi! I'm looking for products to support an active lifestyle. What would you recommend?"
   },
   {
     id: "daily-vitality",
     badge: "Daily Vitality",
     headline: "FEEL STRONG, STAY ENERGIZED",
     subhead: "Balanced support for energy, movement, and everyday performance.",
-    image: "/hero-images/joint-health.jpg"
+    image: "/hero-images/joint-health.jpg",
+    whatsappMessage: "Hi! I'm interested in products for daily energy and vitality."
   }
 ];
