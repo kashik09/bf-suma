@@ -58,3 +58,17 @@ export function buildWhatsAppProductOrderMessage(productName: string, quantity: 
 export function buildWhatsAppOrderSupportMessage() {
   return `Hi! I need help with my order.`;
 }
+
+/**
+ * GENERIC INQUIRY (footer, floating CTA, homepage)
+ */
+export function buildWhatsAppGenericInquiryMessage() {
+  return "Hi! I'd like to ask about BF Suma products.";
+}
+
+/**
+ * BLOG POST INQUIRY
+ */
+export function buildWhatsAppBlogMessage(postTitle: string) {
+  return `Hi! I just read your article "${postTitle}" — could you recommend products related to this?`;
+}
