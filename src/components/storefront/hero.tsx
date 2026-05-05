@@ -117,9 +117,7 @@ export function Hero() {
             sizes="100vw"
             src={s.image}
           />
-          {s.id !== "catalog" && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
-          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
         </div>
       ))}
 
@@ -144,26 +142,26 @@ export function Hero() {
           </p>
         )}
 
-        <div className={`flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center ${
-          slide.id === "catalog" ? "mt-12 sm:mt-16" : ""
-        }`}>
-          <Link
-            className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-7 sm:text-base"
-            href="/shop"
-          >
-            <ShoppingBag className="mr-2 h-5 w-5" />
-            Shop Now - Fast Delivery
-          </Link>
-          <a
-            className="inline-flex h-12 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-6 text-sm font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-7 sm:text-base"
-            href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("hero"), SUPPORT_WHATSAPP_PHONE)}
-            rel="noreferrer"
-            target="_blank"
-          >
-            <MessageCircle className="mr-2 h-5 w-5" />
-            Ask on WhatsApp
-          </a>
-        </div>
+        {slide.id !== "catalog" && (
+          <div className="flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center">
+            <Link
+              className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-7 sm:text-base"
+              href="/shop"
+            >
+              <ShoppingBag className="mr-2 h-5 w-5" />
+              Shop Now - Fast Delivery
+            </Link>
+            <a
+              className="inline-flex h-12 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-6 text-sm font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-7 sm:text-base"
+              href={buildWhatsAppUrl(buildWhatsAppGeneralHelpMessage("hero"), SUPPORT_WHATSAPP_PHONE)}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Ask on WhatsApp
+            </a>
+          </div>
+        )}
       </div>
 
       <button
