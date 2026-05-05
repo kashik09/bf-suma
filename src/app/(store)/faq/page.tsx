@@ -77,12 +77,7 @@ const additionalFaqs: FaqItem[] = [
     answer: "Discontinue use immediately and consult a healthcare professional. While our products are generally well-tolerated, individual reactions can vary. Always follow recommended dosages.",
     category: "Usage"
   },
-  // Returns & Support
-  {
-    question: "What is your return policy?",
-    answer: "We accept returns of unopened products within 7 days of delivery. Products must be in original packaging. Contact us via WhatsApp or email to initiate a return. See our full refund policy for details.",
-    category: "Support"
-  },
+  // Support
   {
     question: "How can I contact customer support?",
     answer: "The fastest way to reach us is via WhatsApp. You can also email us or use the contact form on our website. We typically respond within 24 hours during business days.",

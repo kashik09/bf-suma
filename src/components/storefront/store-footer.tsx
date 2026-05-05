@@ -102,7 +102,6 @@ export function StoreFooter() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <Link className="transition hover:text-white" href="/privacy">Privacy</Link>
           <Link className="transition hover:text-white" href="/terms">Terms</Link>
-          <Link className="transition hover:text-white" href="/refund-policy">Refunds</Link>
           <Link className="transition hover:text-white" href="/shipping">Shipping</Link>
           <Link className="transition hover:text-white" href="/cookies">Cookies</Link>
           <Link className="transition hover:text-white" href="/cookies#cookie-settings">Cookie Settings</Link>

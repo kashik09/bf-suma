@@ -143,8 +143,8 @@ export default function ShippingPolicyPage() {
       <h2 id="damaged-or-lost-packages">Damaged or Lost Packages</h2>
       <p>
         We take care to package your items securely. If your package arrives damaged or is lost in
-        transit, please contact us within 24 hours. We will investigate and provide a replacement
-        or refund as appropriate.
+        transit, please contact us within 24 hours. We will investigate and arrange a replacement
+        as appropriate.
       </p>
 
       <h2 id="questions">Questions</h2>

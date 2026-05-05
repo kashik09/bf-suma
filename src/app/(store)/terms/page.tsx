@@ -16,7 +16,6 @@ const termsToc = [
   { id: "products-and-services", label: "Products and Services" },
   { id: "orders-and-payment", label: "Orders and Payment" },
   { id: "delivery", label: "Delivery" },
-  { id: "returns-and-refunds", label: "Returns and Refunds" },
   { id: "health-and-wellness-products", label: "Health and Wellness Products" },
   { id: "intellectual-property", label: "Intellectual Property" },
   { id: "user-conduct", label: "User Conduct" },
@@ -58,7 +57,7 @@ export default function TermsOfServicePage() {
       <h3>Availability</h3>
       <p>
         Product availability is subject to change. If a product becomes unavailable after you place an order,
-        we will notify you promptly and offer alternatives or a full refund.
+        we will notify you promptly and offer alternatives or a replacement.
       </p>
 
       <h2 id="orders-and-payment">Orders and Payment</h2>
@@ -84,12 +83,6 @@ export default function TermsOfServicePage() {
       <p>
         We deliver within Uganda. Delivery times are estimates and may vary based on location and circumstances
         beyond our control. Please refer to our <a href="/shipping">Shipping Policy</a> for detailed information.
-      </p>
-
-      <h2 id="returns-and-refunds">Returns and Refunds</h2>
-      <p>
-        We want you to be satisfied with your purchase. Please review our <a href="/refund-policy">Refund Policy</a> for
-        information on returns, exchanges, and refunds.
       </p>
 
       <h2 id="health-and-wellness-products">Health and Wellness Products</h2>
