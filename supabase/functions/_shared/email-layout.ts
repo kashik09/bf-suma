@@ -23,10 +23,13 @@ const COLORS = {
 } as const;
 
 // Contact info - keep in sync with src/config/contact.ts (canonical source)
-const WHATSAPP_PRIMARY = "+256 747 928 920";
-const WHATSAPP_SECONDARY = "+256 778 928 815";
-const WHATSAPP_PRIMARY_DIGITS = "256747928920";
-const WHATSAPP_SECONDARY_DIGITS = "256778928815";
+// MTN is primary (most Ugandans use MTN)
+const WHATSAPP_PRIMARY = "+256 778 928 815";
+const WHATSAPP_SECONDARY = "+256 747 928 920";
+const WHATSAPP_PRIMARY_DIGITS = "256778928815";
+const WHATSAPP_SECONDARY_DIGITS = "256747928920";
+const WHATSAPP_PRIMARY_LABEL = "MTN";
+const WHATSAPP_SECONDARY_LABEL = "Airtel";
 const LOGO_URL = "https://bfsumauganda.com/bf-suma-logo.png";
 const SITE_URL = "https://bfsumauganda.com";
 
@@ -155,10 +158,10 @@ export function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
               ${footerNoteBlock}
 
               <!-- WhatsApp contact -->
-              <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: ${COLORS.textSecondary};">
+              <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.8; color: ${COLORS.textSecondary};">
                 <strong>Need help?</strong> WhatsApp us:<br />
-                <a href="https://wa.me/${WHATSAPP_PRIMARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a> &nbsp;|&nbsp;
-                <a href="https://wa.me/${WHATSAPP_SECONDARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
+                ${WHATSAPP_PRIMARY_LABEL}: <a href="https://wa.me/${WHATSAPP_PRIMARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a><br />
+                ${WHATSAPP_SECONDARY_LABEL}: <a href="https://wa.me/${WHATSAPP_SECONDARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
               </p>
 
               <!-- Social links -->

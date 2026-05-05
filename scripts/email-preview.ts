@@ -48,6 +48,8 @@ const WHATSAPP_PRIMARY = CONTACT.whatsappPrimaryDisplay;
 const WHATSAPP_SECONDARY = CONTACT.whatsappSecondaryDisplay;
 const WHATSAPP_PRIMARY_DIGITS = CONTACT.whatsappPrimary;
 const WHATSAPP_SECONDARY_DIGITS = CONTACT.whatsappSecondary;
+const WHATSAPP_PRIMARY_LABEL = CONTACT.whatsappPrimaryLabel;
+const WHATSAPP_SECONDARY_LABEL = CONTACT.whatsappSecondaryLabel;
 const LOGO_URL = "https://bfsumauganda.com/bf-suma-logo.png";
 const SITE_URL = "https://bfsumauganda.com";
 
@@ -151,10 +153,10 @@ function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
           <tr>
             <td class="footer-padding" style="border-top: 1px solid ${COLORS.border}; padding: 24px 32px; background-color: ${COLORS.brand50};">
               ${footerNoteBlock}
-              <p style="margin: 0 0 12px; font-size: 13px; color: ${COLORS.textSecondary};">
+              <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.8; color: ${COLORS.textSecondary};">
                 <strong>Need help?</strong> WhatsApp us:<br />
-                <a href="https://wa.me/${WHATSAPP_PRIMARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a> |
-                <a href="https://wa.me/${WHATSAPP_SECONDARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
+                ${WHATSAPP_PRIMARY_LABEL}: <a href="https://wa.me/${WHATSAPP_PRIMARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a><br />
+                ${WHATSAPP_SECONDARY_LABEL}: <a href="https://wa.me/${WHATSAPP_SECONDARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
               </p>
               <p style="margin: 0 0 12px; font-size: 13px; color: ${COLORS.textMuted};">
                 Follow us:

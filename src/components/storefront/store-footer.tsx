@@ -6,7 +6,6 @@ import {
   APP_DESCRIPTION,
   STORE_NAV_LINKS,
   SUPPORT_EMAIL,
-  SUPPORT_PHONES,
   SUPPORT_WHATSAPP_PHONE
 } from "@/lib/constants";
 import { buildWhatsAppGeneralHelpMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -56,11 +55,12 @@ export function StoreFooter() {
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               <span>{ADDRESS.full}</span>
             </a>
-            {SUPPORT_PHONES.map((phone) => (
-              <a className="transition hover:text-accent-sun" href={`tel:${phone}`} key={phone}>
-                {phone}
-              </a>
-            ))}
+            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappPrimaryDisplay.replace(/\s/g, "")}`}>
+              {CONTACT.whatsappPrimaryLabel}: {CONTACT.whatsappPrimaryDisplay}
+            </a>
+            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappSecondaryDisplay.replace(/\s/g, "")}`}>
+              {CONTACT.whatsappSecondaryLabel}: {CONTACT.whatsappSecondaryDisplay}
+            </a>
           </div>
           <h4 className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">Mobile Money</h4>
           <div className="mt-2 flex flex-col space-y-1 text-sm text-slate-100/85">

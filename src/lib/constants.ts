@@ -13,12 +13,8 @@ export const APP_DESCRIPTION = "Trusted wellness essentials with clear pricing a
 
 export const SUPPORT_EMAIL = "support@bfsuma.com";
 
-/** Display format phones for UI */
+/** Display format phone for UI (primary) */
 export const SUPPORT_PHONE = CONTACT.whatsappPrimaryDisplay;
-export const SUPPORT_PHONES = [
-  CONTACT.whatsappPrimaryDisplay,
-  CONTACT.whatsappSecondaryDisplay
-];
 
 /** Digits-only for wa.me links */
 export const SUPPORT_WHATSAPP_PHONE = CONTACT.whatsappPrimary;

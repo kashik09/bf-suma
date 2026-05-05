@@ -3,7 +3,8 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ADDRESS, MAPS_URL } from "@/config/contact";
-import { SUPPORT_EMAIL, SUPPORT_PHONES, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { SUPPORT_EMAIL, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
+import { CONTACT } from "@/config/contact";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -52,11 +53,12 @@ export default function ContactPage() {
           <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </a>
-          {SUPPORT_PHONES.map((phone) => (
-            <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${phone}`} key={phone}>
-              {phone}
-            </a>
-          ))}
+          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${CONTACT.whatsappPrimaryDisplay.replace(/\s/g, "")}`}>
+            {CONTACT.whatsappPrimaryLabel}: {CONTACT.whatsappPrimaryDisplay}
+          </a>
+          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${CONTACT.whatsappSecondaryDisplay.replace(/\s/g, "")}`}>
+            {CONTACT.whatsappSecondaryLabel}: {CONTACT.whatsappSecondaryDisplay}
+          </a>
         </Card>
       </div>
     </PageContainer>

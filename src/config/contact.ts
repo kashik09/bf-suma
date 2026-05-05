@@ -6,14 +6,18 @@
  */
 
 export const CONTACT = {
-  /** Primary WhatsApp (digits only for wa.me links) */
-  whatsappPrimary: "256747928920",
-  /** Secondary WhatsApp (digits only) */
-  whatsappSecondary: "256778928815",
+  /** Primary WhatsApp - MTN (digits only for wa.me links) */
+  whatsappPrimary: "256778928815",
+  /** Secondary WhatsApp - Airtel (digits only) */
+  whatsappSecondary: "256747928920",
 
-  /** Display formats for email copy */
-  whatsappPrimaryDisplay: "+256 747 928 920",
-  whatsappSecondaryDisplay: "+256 778 928 815",
+  /** Display formats for UI */
+  whatsappPrimaryDisplay: "+256 778 928 815",
+  whatsappSecondaryDisplay: "+256 747 928 920",
+
+  /** Network labels */
+  whatsappPrimaryLabel: "MTN",
+  whatsappSecondaryLabel: "Airtel",
 
   /** Mobile Money till numbers */
   airtelTill: "7063501",

@@ -152,10 +152,10 @@ export function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
               ${footerNoteBlock}
 
               <!-- WhatsApp contact -->
-              <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: ${COLORS.textSecondary};">
+              <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.8; color: ${COLORS.textSecondary};">
                 <strong>Need help?</strong> WhatsApp us:<br />
-                <a href="${getWhatsAppPrimaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappPrimaryDisplay}</a> &nbsp;|&nbsp;
-                <a href="${getWhatsAppSecondaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappSecondaryDisplay}</a>
+                ${CONTACT.whatsappPrimaryLabel}: <a href="${getWhatsAppPrimaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappPrimaryDisplay}</a><br />
+                ${CONTACT.whatsappSecondaryLabel}: <a href="${getWhatsAppSecondaryUrl()}" style="color: ${COLORS.brand700}; text-decoration: none;">${CONTACT.whatsappSecondaryDisplay}</a>
               </p>
 
               <!-- Social links -->
