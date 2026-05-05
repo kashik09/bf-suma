@@ -266,7 +266,7 @@ function normalizePayloadForHash(payload: OrderIntakeInput) {
 
 function normalizeDeliveryAddress(payload: OrderIntakeInput): string {
   if (payload.fulfillmentType === "pickup") {
-    return `Pickup: ${(payload.pickupLocation || "Main Store").trim()}`;
+    return `Pickup: ${(payload.pickupLocation || "").trim() || "Shop location"}`;
   }
 
   return (payload.deliveryAddress || "").trim();

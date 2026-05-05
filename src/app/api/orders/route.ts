@@ -401,7 +401,7 @@ export async function POST(request: Request) {
           : "Arrives in 1-2 business days.";
         const normalizedEmail = parsed.data.email.trim().toLowerCase();
         const deliveryAddress = isPickup
-          ? `Pickup: ${(parsed.data.pickupLocation || "Main Store").trim()}`
+          ? `Pickup: ${(parsed.data.pickupLocation || "").trim() || "Shop location"}`
           : (parsed.data.deliveryAddress || "").trim();
 
         const supabase = createServiceRoleSupabaseClient();

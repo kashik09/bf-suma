@@ -20,11 +20,9 @@ import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib
 import { formatCurrency, fromMinorUnits, STORE_CURRENCY } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
-const PICKUP_LOCATIONS = [
-  "Main Store - Lubowa",
-  "Main Store - Kampala",
-  "Main Store - Entebbe"
-];
+import { ADDRESS } from "@/config/contact";
+
+const PICKUP_LOCATIONS = [ADDRESS.full];
 const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
 
 function computeDeliveryFee(subtotal: number, isPickup: boolean) {
