@@ -1,4 +1,4 @@
-import { Car, DollarSign, Mail, MessageCircle, Plane, TrendingUp } from "lucide-react";
+import { Car, DollarSign, Heart, Mail, MessageCircle, Plane, Sprout, TrendingUp, Wallet } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { buildStorefrontMetadata } from "@/lib/seo";
@@ -46,9 +46,21 @@ const BENEFITS = [
 ] as const;
 
 const MORE_THAN_BUSINESS = [
-  "Your financial independence",
-  "Your personal growth",
-  "Your community's health and wellbeing"
+  {
+    icon: Wallet,
+    title: "Financial Independence",
+    description: "Build sustainable income on your own terms"
+  },
+  {
+    icon: Sprout,
+    title: "Personal Growth",
+    description: "Develop leadership and business skills"
+  },
+  {
+    icon: Heart,
+    title: "Community Impact",
+    description: "Help others achieve better health and wellbeing"
+  }
 ] as const;
 
 export default function PartnershipPage() {
@@ -105,19 +117,24 @@ export default function PartnershipPage() {
       </PageContainer>
 
       {/* More Than Business */}
-      <section className="bg-slate-50 py-12">
+      <section className="bg-slate-50 py-12 sm:py-16">
         <PageContainer>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="mb-6 text-2xl font-bold text-slate-900">
-              More Than Business
-            </h2>
-            <ul className="space-y-3">
-              {MORE_THAN_BUSINESS.map((item) => (
-                <li key={item} className="text-lg text-slate-700">
-                  {item}
-                </li>
-              ))}
-            </ul>
+          <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:mb-10">
+            More Than Business
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {MORE_THAN_BUSINESS.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-xl border border-slate-200 bg-white p-6 text-center shadow-soft"
+              >
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+                  <item.icon className="h-7 w-7" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">{item.title}</h3>
+                <p className="text-sm text-slate-600">{item.description}</p>
+              </div>
+            ))}
           </div>
         </PageContainer>
       </section>
