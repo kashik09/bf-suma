@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { PackageCard } from "@/components/storefront/package-card";
+import { PaginationFooter } from "@/components/storefront/pagination-footer";
 import { SectionHeader } from "@/components/ui/section-header";
 import { buildStorefrontMetadata } from "@/lib/seo";
 import { getPackages } from "@/services/packages";
@@ -13,8 +15,26 @@ export const metadata = buildStorefrontMetadata({
   path: "/packages"
 });
 
-export default async function PackagesPage() {
-  const packages = await getPackages();
+const PACKAGES_PER_PAGE = 12;
+
+type PackagesSearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+function parsePage(value: string | string[] | undefined): number {
+  const v = Array.isArray(value) ? value[0] : value;
+  if (!v) return 1;
+  const parsed = Number.parseInt(v, 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return 1;
+  return parsed;
+}
+
+export default async function PackagesPage({ searchParams }: { searchParams: PackagesSearchParams }) {
+  const resolvedParams = await searchParams;
+  const page = parsePage(resolvedParams.page);
+  const allPackages = await getPackages();
+
+  const totalPages = Math.ceil(allPackages.length / PACKAGES_PER_PAGE);
+  const startIndex = (page - 1) * PACKAGES_PER_PAGE;
+  const packages = allPackages.slice(startIndex, startIndex + PACKAGES_PER_PAGE);
 
   const featuredPackages = packages.filter((pkg) => pkg.is_featured && pkg.is_in_stock);
   const otherPackages = packages.filter((pkg) => !pkg.is_featured || !pkg.is_in_stock);
@@ -68,6 +88,15 @@ export default async function PackagesPage() {
           </a>
         </section>
       )}
+
+      <Suspense fallback={null}>
+        <PaginationFooter
+          currentPage={page}
+          totalPages={totalPages}
+          baseUrl="/packages"
+          preserveParams={[]}
+        />
+      </Suspense>
     </PageContainer>
   );
 }

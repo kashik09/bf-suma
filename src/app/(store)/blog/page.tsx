@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
+import { PaginationFooter } from "@/components/storefront/pagination-footer";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { buildStorefrontMetadata, getBlogSeoTitle } from "@/lib/seo";
@@ -16,6 +18,18 @@ export const metadata = buildStorefrontMetadata({
   path: "/blog"
 });
 
+const POSTS_PER_PAGE = 12;
+
+type BlogSearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+function parsePage(value: string | string[] | undefined): number {
+  const v = Array.isArray(value) ? value[0] : value;
+  if (!v) return 1;
+  const parsed = Number.parseInt(v, 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return 1;
+  return parsed;
+}
+
 function formatPublishedDate(value: string | null, fallback: string) {
   const resolved = value || fallback;
   return new Date(resolved).toLocaleDateString("en-UG", {
@@ -25,8 +39,14 @@ function formatPublishedDate(value: string | null, fallback: string) {
   });
 }
 
-export default async function BlogIndexPage() {
-  const posts = await listPublishedBlogPosts();
+export default async function BlogIndexPage({ searchParams }: { searchParams: BlogSearchParams }) {
+  const resolvedParams = await searchParams;
+  const page = parsePage(resolvedParams.page);
+  const allPosts = await listPublishedBlogPosts();
+
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  const startIndex = (page - 1) * POSTS_PER_PAGE;
+  const posts = allPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
@@ -114,6 +134,15 @@ export default async function BlogIndexPage() {
           })}
         </div>
       )}
+
+      <Suspense fallback={null}>
+        <PaginationFooter
+          currentPage={page}
+          totalPages={totalPages}
+          baseUrl="/blog"
+          preserveParams={[]}
+        />
+      </Suspense>
     </PageContainer>
   );
 }

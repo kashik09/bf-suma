@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { ShopCatalog } from "@/components/storefront/client";
+import { PaginationFooter } from "@/components/storefront/pagination-footer";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
 import { buildStorefrontMetadata } from "@/lib/seo";
@@ -75,6 +77,7 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
   const visibleCount = page * PRODUCTS_PER_PAGE;
   const paginatedProducts = snapshot.products.slice(0, visibleCount);
   const hasMoreProducts = paginatedProducts.length < snapshot.products.length;
+  const totalPages = Math.ceil(snapshot.products.length / PRODUCTS_PER_PAGE);
 
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
@@ -119,6 +122,15 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
           </Link>
         </div>
       ) : null}
+
+      <Suspense fallback={null}>
+        <PaginationFooter
+          currentPage={page}
+          totalPages={totalPages}
+          baseUrl="/shop"
+          preserveParams={["search", "category", "sort"]}
+        />
+      </Suspense>
     </PageContainer>
   );
 }
