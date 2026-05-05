@@ -136,7 +136,9 @@ export function Hero() {
           {slide.subhead}
         </p>
 
-        <div className="flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center">
+        <div className={`flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center ${
+          slide.id === "catalog" ? "mt-12 sm:mt-16" : ""
+        }`}>
           <Link
             className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-7 sm:text-base"
             href="/shop"
