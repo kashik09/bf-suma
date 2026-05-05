@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants";
 
-const DEFAULT_SITE_URL = "https://bfsuma.com";
+const DEFAULT_SITE_URL = "https://bfsumauganda.com";
 const DEFAULT_SOCIAL_IMAGE = "/bf-suma-logo.png";
 const META_DESCRIPTION_LIMIT = 160;
 

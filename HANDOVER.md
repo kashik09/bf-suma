@@ -118,9 +118,9 @@ The Supabase edge function (`supabase/functions/_shared/email-layout.ts`) has it
 - Storefront not loading / deploy issue:
   - Contact your hosting provider support first.
 - Orders not saving / checkout errors:
-  - Contact technical support immediately at `support@bfsuma.com`.
+  - Contact technical support immediately at `support@bfsumauganda.com`.
 - Emails not sending:
-  - Check Resend status, then contact technical support at `support@bfsuma.com`.
+  - Check Resend status, then contact technical support at `support@bfsumauganda.com`.
 - Admin login/session issues:
   - Contact technical support and provide screenshot + page URL.
 - Search/analytics not showing data:
