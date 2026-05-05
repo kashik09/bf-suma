@@ -14,6 +14,7 @@
 
 import { writeFileSync, existsSync, readFileSync, mkdirSync } from "fs";
 import { resolve } from "path";
+import { CONTACT } from "../src/config/contact";
 
 // Load environment for --send option
 const envPath = resolve(process.cwd(), ".env.local");
@@ -28,8 +29,6 @@ if (existsSync(envPath)) {
   }
 }
 
-// Import the email layout
-// Note: This uses the src/ version, not the Deno version
 const COLORS = {
   brand50: "#eef9ef",
   brand100: "#dcf2db",
@@ -44,8 +43,11 @@ const COLORS = {
   border: "#e2e8f0"
 } as const;
 
-const WHATSAPP_PRIMARY = "+256 747 928 920";
-const WHATSAPP_SECONDARY = "+256 778 928 815";
+// Phone numbers from canonical source
+const WHATSAPP_PRIMARY = CONTACT.whatsappPrimaryDisplay;
+const WHATSAPP_SECONDARY = CONTACT.whatsappSecondaryDisplay;
+const WHATSAPP_PRIMARY_DIGITS = CONTACT.whatsappPrimary;
+const WHATSAPP_SECONDARY_DIGITS = CONTACT.whatsappSecondary;
 const LOGO_URL = "https://bfsumauganda.com/bf-suma-logo.png";
 const SITE_URL = "https://bfsumauganda.com";
 
@@ -151,8 +153,8 @@ function renderEmailLayout(opts: RenderEmailLayoutOptions): string {
               ${footerNoteBlock}
               <p style="margin: 0 0 12px; font-size: 13px; color: ${COLORS.textSecondary};">
                 <strong>Need help?</strong> WhatsApp us:<br />
-                <a href="https://wa.me/256747928920" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a> |
-                <a href="https://wa.me/256778928815" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
+                <a href="https://wa.me/${WHATSAPP_PRIMARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_PRIMARY}</a> |
+                <a href="https://wa.me/${WHATSAPP_SECONDARY_DIGITS}" style="color: ${COLORS.brand700}; text-decoration: none;">${WHATSAPP_SECONDARY}</a>
               </p>
               <p style="margin: 0 0 12px; font-size: 13px; color: ${COLORS.textMuted};">
                 Follow us:
@@ -257,7 +259,7 @@ const EMAIL_GENERATORS: Record<EmailType, () => { html: string; subject: string 
         <p style="margin:12px 0 0;font-size:14px;">Delivery estimate: <strong>2-3 business days</strong></p>
       `,
       ctaText: "Track via Support",
-      ctaUrl: "https://wa.me/256747928920",
+      ctaUrl: `https://wa.me/${WHATSAPP_PRIMARY_DIGITS}`,
       footerNote: "Thank you for shopping with BF Suma.",
       recipientEmail: MOCK_DATA.recipientEmail
     })

@@ -57,10 +57,18 @@
 | `NEWSLETTER_WELCOME_EMAIL_ENABLED` | Enables welcome email for newsletter signup | Set by your team (`true/false`) |
 | `NEXT_PUBLIC_GSC_VERIFICATION_TOKEN` | Verifies site ownership in Google Search Console | Google Search Console HTML tag content |
 | `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | Enables GA4 tracking (format starts with `G-`) | Google Analytics Data Stream |
-| `NEXT_PUBLIC_SUPPORT_PHONE` | Customer-facing support phone in UI | Your business support number |
-| `NEXT_PUBLIC_SUPPORT_PHONES` | Multiple support numbers shown in UI | Your business support numbers |
-| `NEXT_PUBLIC_SUPPORT_WHATSAPP_PHONE` | WhatsApp contact used for quick help links | Your official WhatsApp business number |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Optional alias for WhatsApp number | Same as above (optional) |
+
+---
+
+## Phone Numbers
+
+Phone numbers are configured in `src/config/contact.ts`. Do NOT use environment variables for phone numbers.
+
+To update phone numbers, edit `src/config/contact.ts` directly:
+- `whatsappPrimary` / `whatsappSecondary` — digits only, for wa.me links
+- `whatsappPrimaryDisplay` / `whatsappSecondaryDisplay` — formatted for UI display
+
+The Supabase edge function (`supabase/functions/_shared/email-layout.ts`) has its own copy and must be updated manually when phone numbers change.
 
 ---
 
