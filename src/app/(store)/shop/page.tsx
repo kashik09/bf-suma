@@ -128,7 +128,12 @@ export default async function ShopPage({ searchParams }: { searchParams: ShopSea
           currentPage={page}
           totalPages={totalPages}
           baseUrl="/shop"
-          preserveParams={["search", "category", "sort"]}
+          preserveParams={{
+            ...(search ? { search } : {}),
+            ...(category !== "all" ? { category } : {}),
+            ...(availability !== "all" ? { availability } : {}),
+            ...(sort !== "featured" ? { sort } : {})
+          }}
         />
       </Suspense>
     </PageContainer>

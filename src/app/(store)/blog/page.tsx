@@ -140,7 +140,7 @@ export default async function BlogIndexPage({ searchParams }: { searchParams: Bl
           currentPage={page}
           totalPages={totalPages}
           baseUrl="/blog"
-          preserveParams={[]}
+          preserveParams={{}}
         />
       </Suspense>
     </PageContainer>

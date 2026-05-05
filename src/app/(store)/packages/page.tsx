@@ -94,7 +94,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pac
           currentPage={page}
           totalPages={totalPages}
           baseUrl="/packages"
-          preserveParams={[]}
+          preserveParams={{}}
         />
       </Suspense>
     </PageContainer>

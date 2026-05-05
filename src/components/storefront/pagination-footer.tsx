@@ -1,38 +1,45 @@
 "use client";
 
-import { useCallback } from "react";
+import { useTransition } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ChevronsUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaginationFooterProps {
   currentPage: number;
   totalPages: number;
   baseUrl: string;
-  preserveParams?: string[];
+  /** Filter params to preserve when changing page (e.g. { category: "health", sort: "price_asc" }) */
+  preserveParams?: Record<string, string>;
 }
 
 export function PaginationFooter({
   currentPage,
   totalPages,
   baseUrl,
-  preserveParams = []
+  preserveParams = {}
 }: PaginationFooterProps) {
-  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const buildPageUrl = useCallback(
-    (page: number) => {
-      const params = new URLSearchParams();
-      for (const key of preserveParams) {
-        const value = searchParams.get(key);
-        if (value) params.set(key, value);
-      }
-      if (page > 1) params.set("page", String(page));
-      const query = params.toString();
-      return query ? `${baseUrl}?${query}` : baseUrl;
-    },
-    [baseUrl, preserveParams, searchParams]
-  );
+  const buildPageUrl = (page: number) => {
+    const params = new URLSearchParams();
+    // Preserve provided filter params
+    for (const [key, value] of Object.entries(preserveParams)) {
+      if (value) params.set(key, value);
+    }
+    // Only add page param if > 1
+    if (page > 1) params.set("page", String(page));
+    const query = params.toString();
+    return query ? `${baseUrl}?${query}` : baseUrl;
+  };
+
+  const navigateToPage = (page: number) => {
+    startTransition(() => {
+      router.push(buildPageUrl(page));
+    });
+  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -40,21 +47,24 @@ export function PaginationFooter({
 
   if (totalPages <= 1) return null;
 
-  // Calculate visible page numbers (current ± 2)
+  // Calculate visible page numbers (current ± 2 with ellipsis)
   const pages: (number | "ellipsis-start" | "ellipsis-end")[] = [];
-  const showStart = currentPage > 3;
-  const showEnd = currentPage < totalPages - 2;
+  const showStartEllipsis = currentPage > 3;
+  const showEndEllipsis = currentPage < totalPages - 2;
 
-  if (showStart) {
+  // Always show page 1 if we're far from it
+  if (showStartEllipsis) {
     pages.push(1);
     if (currentPage > 4) pages.push("ellipsis-start");
   }
 
+  // Show current ± 2
   for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
     if (!pages.includes(i)) pages.push(i);
   }
 
-  if (showEnd) {
+  // Always show last page if we're far from it
+  if (showEndEllipsis) {
     if (currentPage < totalPages - 3) pages.push("ellipsis-end");
     if (!pages.includes(totalPages)) pages.push(totalPages);
   }
@@ -66,7 +76,7 @@ export function PaginationFooter({
   const buttonDisabled = "bg-white border-slate-200 text-slate-300 cursor-not-allowed opacity-40";
 
   return (
-    <div className="mt-8 flex flex-col items-center gap-4">
+    <div className={cn("mt-8 flex flex-col items-center gap-4", isPending && "opacity-60")}>
       {/* Page indicator */}
       <p className="text-sm text-slate-600">
         Page {currentPage} of {totalPages}
@@ -78,8 +88,13 @@ export function PaginationFooter({
         {currentPage > 1 ? (
           <Link
             href={buildPageUrl(currentPage - 1)}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateToPage(currentPage - 1);
+            }}
             className={`${buttonBase} ${buttonInactive}`}
             aria-label="Previous page"
+            prefetch
           >
             <ChevronLeft className="h-4 w-4" />
           </Link>
@@ -94,7 +109,7 @@ export function PaginationFooter({
           if (page === "ellipsis-start" || page === "ellipsis-end") {
             return (
               <span key={page} className="px-1 text-slate-400">
-                ...
+                …
               </span>
             );
           }
@@ -103,8 +118,13 @@ export function PaginationFooter({
             <Link
               key={page}
               href={buildPageUrl(page)}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToPage(page);
+              }}
               className={`${buttonBase} ${isActive ? buttonActive : buttonInactive}`}
               aria-current={isActive ? "page" : undefined}
+              prefetch
             >
               {page}
             </Link>
@@ -115,8 +135,13 @@ export function PaginationFooter({
         {currentPage < totalPages ? (
           <Link
             href={buildPageUrl(currentPage + 1)}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateToPage(currentPage + 1);
+            }}
             className={`${buttonBase} ${buttonInactive}`}
             aria-label="Next page"
+            prefetch
           >
             <ChevronRight className="h-4 w-4" />
           </Link>
