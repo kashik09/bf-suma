@@ -167,7 +167,7 @@ export function SearchAutocomplete({
   }
 
   return (
-    <div className={className} ref={rootRef}>
+    <div className={cn("relative", className)} ref={rootRef}>
       <form
         className="relative"
         onSubmit={(event) => {
