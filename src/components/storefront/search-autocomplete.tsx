@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/currency";
+import { cn } from "@/lib/utils";
 
 interface SearchResult {
   id: string;
@@ -34,6 +34,7 @@ export function SearchAutocomplete({
 }: SearchAutocompleteProps) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -41,6 +42,18 @@ export function SearchAutocomplete({
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const canSearch = useMemo(() => query.trim().length >= MIN_QUERY_LENGTH, [query]);
+
+  // Compute inline autocomplete suggestion from first result
+  const suggestionTail = useMemo(() => {
+    if (!results.length || !query.trim()) return "";
+    const firstMatch = results[0].name;
+    const lowerQuery = query.trim().toLowerCase();
+    const lowerMatch = firstMatch.toLowerCase();
+    if (lowerMatch.startsWith(lowerQuery)) {
+      return firstMatch.slice(query.trim().length);
+    }
+    return "";
+  }, [results, query]);
 
   useEffect(() => {
     if (!canSearch) {
@@ -83,6 +96,12 @@ export function SearchAutocomplete({
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  function acceptSuggestion() {
+    if (suggestionTail) {
+      setQuery(query.trim() + suggestionTail);
+    }
+  }
+
   function navigateToShopSearch() {
     const trimmed = query.trim();
     if (!trimmed) {
@@ -96,6 +115,18 @@ export function SearchAutocomplete({
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    // Tab or Right Arrow accepts inline suggestion
+    if ((event.key === "Tab" || event.key === "ArrowRight") && suggestionTail) {
+      // Only accept on ArrowRight if cursor is at end
+      const input = inputRef.current;
+      if (event.key === "ArrowRight" && input && input.selectionStart !== query.length) {
+        return; // Let arrow key move cursor normally
+      }
+      event.preventDefault();
+      acceptSuggestion();
+      return;
+    }
+
     if (!open || results.length === 0) {
       if (event.key === "Enter") {
         event.preventDefault();
@@ -144,22 +175,41 @@ export function SearchAutocomplete({
           navigateToShopSearch();
         }}
       >
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-        <Input
-          aria-label="Search products"
-          className="pl-9 pr-9"
-          placeholder={placeholder}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onFocus={() => {
-            if (canSearch) setOpen(true);
-          }}
-          onKeyDown={handleKeyDown}
-        />
+        <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+        {/* Input with inline autocomplete overlay */}
+        <div className="relative">
+          {/* Ghost text overlay for autocomplete suggestion */}
+          {suggestionTail && (
+            <div className="pointer-events-none absolute inset-0 flex items-center pl-9 pr-9">
+              <span className="text-sm">
+                <span className="invisible">{query}</span>
+                <span className="text-slate-400">{suggestionTail}</span>
+              </span>
+            </div>
+          )}
+
+          <input
+            ref={inputRef}
+            aria-label="Search products"
+            className={cn(
+              "h-11 w-full rounded-md border border-slate-300 bg-transparent px-3 pl-9 pr-9 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500/30 focus-visible:ring-offset-0"
+            )}
+            placeholder={placeholder}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onFocus={() => {
+              if (canSearch) setOpen(true);
+            }}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
+          />
+        </div>
+
         {query ? (
           <button
             aria-label="Clear search"
-            className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+            className="absolute right-2 top-1/2 z-10 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
             type="button"
             onClick={() => {
               setQuery("");
@@ -190,7 +240,7 @@ export function SearchAutocomplete({
           ) : null}
 
           {!loading && results.length > 0 ? (
-            <ul className="max-h-96 overflow-auto py-1">
+            <ul className="max-h-64 overflow-auto py-1">
               {results.map((product, index) => (
                 <li key={product.id}>
                   <Link
