@@ -117,7 +117,9 @@ export function Hero() {
             sizes="100vw"
             src={s.image}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
+          {s.id !== "catalog" && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
+          )}
         </div>
       ))}
 
@@ -126,15 +128,21 @@ export function Hero() {
           heroFading ? "opacity-0" : "opacity-100"
         }`}
       >
-        <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white">
-          {slide.badge}
-        </p>
-        <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white [text-shadow:_0_0_30px_rgba(255,255,255,0.5),_2px_2px_15px_rgba(0,0,0,0.3)] sm:text-5xl md:text-6xl lg:text-7xl">
-          {slide.headline}
-        </h1>
-        <p className="mb-6 max-w-xl text-sm font-medium text-white/80 drop-shadow-md sm:text-base md:text-lg">
-          {slide.subhead}
-        </p>
+        {slide.badge.trim() && (
+          <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white">
+            {slide.badge}
+          </p>
+        )}
+        {slide.headline.trim() && (
+          <h1 className="mb-3 max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white [text-shadow:_0_0_30px_rgba(255,255,255,0.5),_2px_2px_15px_rgba(0,0,0,0.3)] sm:text-5xl md:text-6xl lg:text-7xl">
+            {slide.headline}
+          </h1>
+        )}
+        {slide.subhead.trim() && (
+          <p className="mb-6 max-w-xl text-sm font-medium text-white/80 drop-shadow-md sm:text-base md:text-lg">
+            {slide.subhead}
+          </p>
+        )}
 
         <div className={`flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center ${
           slide.id === "catalog" ? "mt-12 sm:mt-16" : ""
