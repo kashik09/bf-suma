@@ -1,7 +1,20 @@
-import { Car, DollarSign, Heart, Mail, MessageCircle, Plane, Sprout, TrendingUp, Wallet } from "lucide-react";
+import Image from "next/image";
+import { Car, DollarSign, Heart, ImageIcon, Mail, MessageCircle, Plane, Sprout, TrendingUp, Wallet } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { buildStorefrontMetadata } from "@/lib/seo";
+
+/** Image placeholder component for future replacement */
+function ImagePlaceholder({ label, className }: { label: string; className?: string }) {
+  return (
+    <div className={`flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 ${className}`}>
+      <div className="text-center text-slate-400">
+        <ImageIcon className="mx-auto mb-2 h-10 w-10" />
+        <p className="text-xs font-medium">{label}</p>
+      </div>
+    </div>
+  );
+}
 
 export const metadata = buildStorefrontMetadata({
   title: "Become a Distributor",
@@ -70,25 +83,58 @@ export default function PartnershipPage() {
 
   return (
     <main>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 py-16 text-white sm:py-20">
-        <PageContainer className="space-y-4 text-center">
-          <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-            Your Next Step in Wellness & Opportunity Starts Here
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-white/90 sm:text-xl">
-            Join BF Suma and build a rewarding path in health, wellbeing, and financial growth.
-          </p>
+      {/* Hero - Split Layout */}
+      <section className="bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500">
+        <PageContainer className="grid items-center gap-8 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
+          <div className="text-center text-white lg:text-left">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">
+              Become a Distributor
+            </p>
+            <h1 className="mb-4 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
+              Your Next Step in Wellness & Opportunity
+            </h1>
+            <p className="mb-6 text-lg text-white/90 sm:text-xl">
+              Join BF Suma and build a rewarding path in health, wellbeing, and financial growth.
+            </p>
+            <a
+              href="#get-started"
+              className="inline-flex h-12 items-center justify-center rounded-md bg-white px-8 text-sm font-semibold text-brand-700 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              Get Started Today
+            </a>
+          </div>
+          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+            <ImagePlaceholder
+              label="Team / Lifestyle Photo"
+              className="aspect-[4/3] rounded-2xl shadow-2xl"
+            />
+          </div>
         </PageContainer>
       </section>
 
-      {/* Intro */}
-      <PageContainer className="py-10 sm:py-12">
-        <p className="mx-auto max-w-3xl text-center text-lg leading-relaxed text-slate-700">
-          At BF Suma, we believe wellness is more than products — it's an opportunity to grow,
-          earn, and make a meaningful impact. As a distributor, you become part of a dynamic
-          network focused on nutrition, health, and everyday well-being.
-        </p>
+      {/* Intro with side image */}
+      <PageContainer className="py-12 sm:py-16">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="order-2 lg:order-1">
+            <ImagePlaceholder
+              label="Products / Training Photo"
+              className="aspect-[4/3] rounded-2xl"
+            />
+          </div>
+          <div className="order-1 lg:order-2">
+            <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl">
+              More Than Just Products
+            </h2>
+            <p className="mb-4 text-lg leading-relaxed text-slate-700">
+              At BF Suma, we believe wellness is more than products — it&apos;s an opportunity
+              to grow, earn, and make a meaningful impact.
+            </p>
+            <p className="text-lg leading-relaxed text-slate-700">
+              As a distributor, you become part of a dynamic network focused on nutrition,
+              health, and everyday well-being.
+            </p>
+          </div>
+        </div>
       </PageContainer>
 
       {/* Benefits Grid */}
@@ -116,8 +162,32 @@ export default function PartnershipPage() {
         </div>
       </PageContainer>
 
+      {/* Success Stories / Social Proof Image */}
+      <section className="bg-brand-50">
+        <PageContainer className="py-12 sm:py-16">
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <div>
+              <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl">
+                Join a Thriving Community
+              </h2>
+              <p className="mb-4 text-lg text-slate-700">
+                Our distributors come from all walks of life — entrepreneurs, professionals,
+                students, and homemakers united by a shared vision for wellness and success.
+              </p>
+              <p className="text-lg text-slate-700">
+                With training, support, and a proven system, you&apos;ll never walk alone.
+              </p>
+            </div>
+            <ImagePlaceholder
+              label="Community / Event Photo"
+              className="aspect-[4/3] rounded-2xl"
+            />
+          </div>
+        </PageContainer>
+      </section>
+
       {/* More Than Business */}
-      <section className="bg-slate-50 py-12 sm:py-16">
+      <section className="py-12 sm:py-16">
         <PageContainer>
           <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 sm:mb-10">
             More Than Business
@@ -140,38 +210,48 @@ export default function PartnershipPage() {
       </section>
 
       {/* CTA Section */}
-      <PageContainer className="py-12 sm:py-16">
-        <div className="mx-auto max-w-2xl rounded-2xl border border-brand-200 bg-brand-50 p-8 text-center shadow-soft">
-          <h2 className="mb-4 text-2xl font-bold text-slate-900">
-            Start Your Journey Today
-          </h2>
-          <p className="mb-6 text-slate-700">
-            Take the first step toward building your wellness business with BF Suma.
-          </p>
-          <div className="flex flex-col justify-center gap-3 sm:flex-row">
-            <a
-              href="mailto:partnerships@bfsumauganda.com"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              <Mail className="h-4 w-4" />
-              Email Us
-            </a>
-            <a
-              href={whatsappUrl}
-              rel="noreferrer"
-              target="_blank"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-brand-600 px-6 text-sm font-semibold text-white transition hover:bg-brand-700"
-            >
-              <MessageCircle className="h-4 w-4" />
-              WhatsApp Us
-            </a>
+      <section id="get-started" className="bg-slate-900 py-16 sm:py-20">
+        <PageContainer>
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="text-center lg:text-left">
+              <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+                Start Your Journey Today
+              </h2>
+              <p className="mb-8 text-lg text-slate-300">
+                Take the first step toward building your wellness business with BF Suma.
+                Our team is ready to guide you.
+              </p>
+              <div className="flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+                <a
+                  href="mailto:partnerships@bfsumauganda.com"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-white px-6 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                >
+                  <Mail className="h-4 w-4" />
+                  Email Us
+                </a>
+                <a
+                  href={whatsappUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-brand-500 px-6 text-sm font-semibold text-white transition hover:bg-brand-600"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp Us
+                </a>
+              </div>
+              <p className="mt-8 text-sm text-slate-400">
+                BF Suma — Wellness, Backed by Nature & Science.
+              </p>
+            </div>
+            <div className="mx-auto w-full max-w-sm lg:max-w-none">
+              <ImagePlaceholder
+                label="Success / Award Photo"
+                className="aspect-square rounded-2xl"
+              />
+            </div>
           </div>
-          <p className="mt-8 text-sm text-slate-500">
-            BF Suma — Wellness, Backed by Nature & Science. A compass to the path for a bright
-            future right ahead of you.
-          </p>
-        </div>
-      </PageContainer>
+        </PageContainer>
+      </section>
     </main>
   );
 }
