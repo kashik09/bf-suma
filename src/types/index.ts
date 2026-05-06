@@ -1,8 +1,11 @@
 export type ProductStatus = "DRAFT" | "ACTIVE" | "ARCHIVED" | "OUT_OF_STOCK";
 export type OrderStatus =
   | "PENDING"
+  | "PENDING_PAYMENT"
+  | "PAYMENT_CONFIRMED"
   | "CONFIRMED"
   | "PROCESSING"
+  | "READY_FOR_PICKUP"
   | "OUT_FOR_DELIVERY"
   | "DELIVERED"
   | "CANCELED";

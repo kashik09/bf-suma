@@ -20,8 +20,11 @@ interface RecentOrdersProps {
 
 const statusVariants: Record<OrderStatus, "neutral" | "success" | "warning" | "danger" | "info"> = {
   PENDING: "warning",
+  PENDING_PAYMENT: "warning",
+  PAYMENT_CONFIRMED: "info",
   CONFIRMED: "info",
   PROCESSING: "info",
+  READY_FOR_PICKUP: "info",
   OUT_FOR_DELIVERY: "info",
   DELIVERED: "success",
   CANCELED: "danger"
@@ -29,8 +32,11 @@ const statusVariants: Record<OrderStatus, "neutral" | "success" | "warning" | "d
 
 const statusLabels: Record<OrderStatus, string> = {
   PENDING: "Pending",
+  PENDING_PAYMENT: "Awaiting Payment",
+  PAYMENT_CONFIRMED: "Payment Confirmed",
   CONFIRMED: "Confirmed",
   PROCESSING: "Processing",
+  READY_FOR_PICKUP: "Ready for Pickup",
   OUT_FOR_DELIVERY: "Out for Delivery",
   DELIVERED: "Delivered",
   CANCELED: "Canceled"

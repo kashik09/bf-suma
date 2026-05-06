@@ -18,8 +18,11 @@ function formatDateTime(value: string) {
 
 const STATUS_VARIANTS: Record<OrderStatus, "warning" | "info" | "success" | "danger"> = {
   PENDING: "warning",
+  PENDING_PAYMENT: "warning",
+  PAYMENT_CONFIRMED: "info",
   CONFIRMED: "info",
   PROCESSING: "info",
+  READY_FOR_PICKUP: "info",
   OUT_FOR_DELIVERY: "info",
   DELIVERED: "success",
   CANCELED: "danger"
