@@ -545,6 +545,20 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
             </div>
           </div>
 
+          {isPickup ? (
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-green-100 bg-green-50 p-3">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />
+              <p className="text-xs text-slate-700">Pickup is free at our shop.</p>
+            </div>
+          ) : (
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-blue-100 bg-blue-50 p-3">
+              <Info className="h-4 w-4 shrink-0 text-blue-600" />
+              <p className="text-xs text-slate-700">
+                Delivery fees apply and vary by zone. Same-day delivery within the CBD when ordered before 12 PM.
+              </p>
+            </div>
+          )}
+
           <ul className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
             <li className="flex items-start gap-1.5">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-700" />
