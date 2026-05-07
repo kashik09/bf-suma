@@ -783,3 +783,93 @@ export async function createOrderIntakeWithIdempotency(
 ): Promise<{ result: CreateOrderIntakeResult; resultCode: OrderCreateResultCode }> {
   return executeAtomicOrderWrite(payload, idempotencyKey, requestHash);
 }
+
+export interface ConfirmationOrderCustomer {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+}
+
+export interface ConfirmationOrderItem {
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+}
+
+export interface ConfirmationOrderDetail {
+  orderNumber: string;
+  status: OrderStatus;
+  paymentStatus: Order["payment_status"];
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  currency: Order["currency"];
+  deliveryAddress: string;
+  fulfillmentType: "delivery" | "pickup";
+  createdAt: string;
+  customer: ConfirmationOrderCustomer;
+  items: ConfirmationOrderItem[];
+}
+
+export async function getOrderByNumberForConfirmation(
+  orderNumber: string
+): Promise<ConfirmationOrderDetail | null> {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: orderRow, error: orderError } = await supabase
+    .from("orders")
+    .select(
+      "id, order_number, customer_id, status, payment_status, subtotal, delivery_fee, total, currency, delivery_address, notes, created_at, customers:customer_id(first_name, last_name, email, phone)"
+    )
+    .eq("order_number", orderNumber)
+    .maybeSingle();
+
+  if (orderError) throw orderError;
+  if (!orderRow) return null;
+
+  const { data: orderItems, error: orderItemsError } = await supabase
+    .from("order_items")
+    .select("product_name_snapshot, unit_price, quantity, line_total")
+    .eq("order_id", orderRow.id)
+    .order("created_at", { ascending: true });
+
+  if (orderItemsError) throw orderItemsError;
+
+  const row = orderRow as OrderWithCustomerRow;
+  const customer = extractCustomer(row.customers);
+  if (!customer) return null;
+
+  const deliveryAddress = row.delivery_address || "";
+  const isPickup = deliveryAddress.toLowerCase().startsWith("pickup:");
+
+  return {
+    orderNumber: row.order_number,
+    status: row.status,
+    paymentStatus: row.payment_status,
+    subtotal: toInt(row.subtotal),
+    deliveryFee: toInt(row.delivery_fee),
+    total: toInt(row.total),
+    currency: row.currency,
+    deliveryAddress,
+    fulfillmentType: isPickup ? "pickup" : "delivery",
+    createdAt: row.created_at,
+    customer: {
+      firstName: customer.first_name,
+      lastName: customer.last_name,
+      email: customer.email,
+      phone: customer.phone
+    },
+    items: ((orderItems || []) as Array<{
+      product_name_snapshot: string;
+      unit_price: number;
+      quantity: number;
+      line_total: number;
+    }>).map((item) => ({
+      productName: item.product_name_snapshot,
+      unitPrice: toInt(item.unit_price),
+      quantity: toInt(item.quantity),
+      lineTotal: toInt(item.line_total)
+    }))
+  };
+}

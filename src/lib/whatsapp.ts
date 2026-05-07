@@ -100,3 +100,14 @@ export function buildWhatsAppHomepageCtaMessage() {
 export function buildWhatsAppBlogFallbackMessage() {
   return "Hi! I was reading on the BF Suma site and would like to ask a question.";
 }
+
+/**
+ * PAYMENT CONFIRMATION (post-checkout)
+ * Used on order confirmation page after till payment
+ */
+export function buildWhatsAppPaymentConfirmationMessage(
+  orderNumber: string,
+  totalFormatted: string
+) {
+  return `Hi! I just paid ${totalFormatted} for order ${orderNumber}. Confirming my payment — please check and process my order. Thank you!`;
+}
