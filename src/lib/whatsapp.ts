@@ -104,10 +104,92 @@ export function buildWhatsAppBlogFallbackMessage() {
 /**
  * PAYMENT CONFIRMATION (post-checkout)
  * Used on order confirmation page after till payment
+ * @deprecated Use buildWhatsAppMtnPaymentMessage, buildWhatsAppAirtelPaymentMessage, or buildWhatsAppCashPaymentMessage instead
  */
 export function buildWhatsAppPaymentConfirmationMessage(
   orderNumber: string,
   totalFormatted: string
 ) {
   return `Hi! I just paid ${totalFormatted} for order ${orderNumber}. Confirming my payment — please check and process my order. Thank you!`;
+}
+
+export interface PaymentConfirmationOrder {
+  orderNumber: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+  };
+  total: number;
+  currency: string;
+  fulfillmentType: "delivery" | "pickup";
+  deliveryAddress: string;
+}
+
+/**
+ * MTN MoMo payment confirmation
+ */
+export function buildWhatsAppMtnPaymentMessage(
+  order: PaymentConfirmationOrder,
+  totalFormatted: string
+) {
+  const fulfillmentLine =
+    order.fulfillmentType === "pickup"
+      ? "Pickup between 8 AM and 6 PM at your shop"
+      : `Delivery to: ${order.deliveryAddress}`;
+
+  return `Hi BF Suma,
+
+I just paid for my order via MTN MoMo:
+• Order: ${order.orderNumber}
+• Name: ${order.customer.firstName} ${order.customer.lastName}
+• Total: ${totalFormatted}
+• ${fulfillmentLine}
+
+Could you confirm receipt? Thanks!`;
+}
+
+/**
+ * Airtel Money payment confirmation
+ */
+export function buildWhatsAppAirtelPaymentMessage(
+  order: PaymentConfirmationOrder,
+  totalFormatted: string
+) {
+  const fulfillmentLine =
+    order.fulfillmentType === "pickup"
+      ? "Pickup between 8 AM and 6 PM at your shop"
+      : `Delivery to: ${order.deliveryAddress}`;
+
+  return `Hi BF Suma,
+
+I just paid for my order via Airtel Money:
+• Order: ${order.orderNumber}
+• Name: ${order.customer.firstName} ${order.customer.lastName}
+• Total: ${totalFormatted}
+• ${fulfillmentLine}
+
+Could you confirm receipt? Thanks!`;
+}
+
+/**
+ * Cash on arrival payment confirmation
+ */
+export function buildWhatsAppCashPaymentMessage(
+  order: PaymentConfirmationOrder,
+  totalFormatted: string
+) {
+  const fulfillmentLine =
+    order.fulfillmentType === "pickup"
+      ? "Pickup between 8 AM and 6 PM at your shop"
+      : `Delivery to: ${order.deliveryAddress}`;
+
+  return `Hi BF Suma,
+
+I'd like to pay cash for my order:
+• Order: ${order.orderNumber}
+• Name: ${order.customer.firstName} ${order.customer.lastName}
+• Total: ${totalFormatted}
+• ${fulfillmentLine}
+
+Please confirm. Thanks!`;
 }

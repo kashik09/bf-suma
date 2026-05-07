@@ -4,7 +4,13 @@ import Link from "next/link";
 import { Card } from "@/components/ui";
 import { CONTACT, ADDRESS } from "@/config/contact";
 import { formatCurrency } from "@/lib/utils";
-import { buildWhatsAppUrl, buildWhatsAppPaymentConfirmationMessage } from "@/lib/whatsapp";
+import {
+  buildWhatsAppUrl,
+  buildWhatsAppMtnPaymentMessage,
+  buildWhatsAppAirtelPaymentMessage,
+  buildWhatsAppCashPaymentMessage,
+  type PaymentConfirmationOrder
+} from "@/lib/whatsapp";
 import { getOrderByNumberForConfirmation } from "@/services/orders";
 import { EmailReceiptForm } from "./email-receipt-form";
 
@@ -23,8 +29,33 @@ export default async function OrderConfirmationPage({
   }
 
   const totalFormatted = formatCurrency(order.total, order.currency);
-  const whatsAppMessage = buildWhatsAppPaymentConfirmationMessage(order.orderNumber, totalFormatted);
-  const whatsAppUrl = buildWhatsAppUrl(whatsAppMessage, CONTACT.whatsappPrimary);
+
+  // Build payment confirmation order object
+  const paymentOrder: PaymentConfirmationOrder = {
+    orderNumber: order.orderNumber,
+    customer: {
+      firstName: order.customer.firstName,
+      lastName: order.customer.lastName
+    },
+    total: order.total,
+    currency: order.currency,
+    fulfillmentType: order.fulfillmentType,
+    deliveryAddress: order.deliveryAddress ?? ""
+  };
+
+  // Build 3 payment-method-specific WhatsApp URLs
+  const mtnWaUrl = buildWhatsAppUrl(
+    buildWhatsAppMtnPaymentMessage(paymentOrder, totalFormatted),
+    CONTACT.whatsappPrimary
+  );
+  const airtelWaUrl = buildWhatsAppUrl(
+    buildWhatsAppAirtelPaymentMessage(paymentOrder, totalFormatted),
+    CONTACT.whatsappPrimary
+  );
+  const cashWaUrl = buildWhatsAppUrl(
+    buildWhatsAppCashPaymentMessage(paymentOrder, totalFormatted),
+    CONTACT.whatsappPrimary
+  );
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
@@ -106,24 +137,45 @@ export default async function OrderConfirmationPage({
         </div>
       </Card>
 
-      {/* WhatsApp Confirmation Button */}
+      {/* Payment Method Selection */}
       <Card className="mb-6">
         <div className="mb-3 flex items-center gap-2">
           <MessageCircle className="h-5 w-5 text-slate-500" />
-          <h2 className="text-lg font-semibold text-slate-900">Confirm Payment</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Pay before pickup or delivery</h2>
         </div>
-        <p className="mb-4 text-sm text-slate-600">
-          After sending your payment, tap the button below to notify us on WhatsApp.
+        <p className="mb-4 font-medium text-slate-700">Choose your payment method:</p>
+        <div className="grid gap-3">
+          <a
+            href={mtnWaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-yellow-600"
+          >
+            <MessageCircle className="h-5 w-5" />
+            MTN MoMo
+          </a>
+          <a
+            href={airtelWaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
+          >
+            <MessageCircle className="h-5 w-5" />
+            Airtel Money
+          </a>
+          <a
+            href={cashWaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-600 px-4 py-3 font-semibold text-white transition hover:bg-slate-700"
+          >
+            <MessageCircle className="h-5 w-5" />
+            Cash on Arrival
+          </a>
+        </div>
+        <p className="mt-3 text-center text-xs text-slate-500">
+          Tapping a button opens WhatsApp with your payment details.
         </p>
-        <a
-          href={whatsAppUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-3 font-semibold text-white transition hover:bg-green-700"
-        >
-          <MessageCircle className="h-5 w-5" />
-          Confirm Payment on WhatsApp
-        </a>
       </Card>
 
       {/* Fulfillment Info */}
@@ -172,16 +224,6 @@ export default async function OrderConfirmationPage({
           ))}
         </div>
         <div className="mt-4 space-y-2 border-t border-slate-200 pt-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Subtotal</span>
-            <span className="text-slate-900">{formatCurrency(order.subtotal, order.currency)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Delivery</span>
-            <span className="text-slate-900">
-              {order.deliveryFee === 0 ? "Free" : formatCurrency(order.deliveryFee, order.currency)}
-            </span>
-          </div>
           <div className="flex justify-between text-lg font-semibold">
             <span className="text-slate-900">Total</span>
             <span className="text-slate-900">{totalFormatted}</span>
