@@ -210,25 +210,18 @@ export default async function OrderConfirmationPage({
 
       {/* Order Summary */}
       <Card className="mb-6">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">Order Summary</h2>
-        <div className="divide-y divide-slate-100">
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">Order Summary</h2>
+        <ul className="space-y-1 text-sm text-slate-700">
           {order.items.map((item, index) => (
-            <div key={index} className="flex justify-between py-2">
-              <div>
-                <p className="text-slate-900">{item.productName}</p>
-                <p className="text-sm text-slate-500">Qty: {item.quantity}</p>
-              </div>
-              <p className="font-medium text-slate-900">
-                {formatCurrency(item.lineTotal, order.currency)}
-              </p>
-            </div>
+            <li key={index} className="flex justify-between">
+              <span>{item.quantity} × {item.productName}</span>
+              <span className="font-medium">{formatCurrency(item.lineTotal, order.currency)}</span>
+            </li>
           ))}
-        </div>
-        <div className="mt-4 space-y-2 border-t border-slate-200 pt-4">
-          <div className="flex justify-between text-lg font-semibold">
-            <span className="text-slate-900">Total</span>
-            <span className="text-slate-900">{totalFormatted}</span>
-          </div>
+        </ul>
+        <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
+          <span>Total</span>
+          <span>{totalFormatted}</span>
         </div>
       </Card>
 
