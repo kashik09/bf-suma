@@ -4,7 +4,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, ShieldCheck, Truck } from "lucide-react";
+import { CheckCircle2, Info, ShieldCheck, Truck } from "lucide-react";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -417,6 +417,13 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Fulfillment and Payment</h2>
             <p className="text-sm text-slate-600">Choose how you want to receive and pay for your order.</p>
+          </div>
+
+          <div className="mb-4 flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3">
+            <Info className="h-5 w-5 shrink-0 text-blue-600" />
+            <p className="text-sm text-slate-700">
+              Delivery fees vary by zone. Same-day delivery available within the CBD when your order is placed before 12 PM.
+            </p>
           </div>
 
           <fieldset className="space-y-2">
