@@ -457,13 +457,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
                 <Select id="deliveryZone" {...form.register("deliveryZone")}>
                   {DELIVERY_ZONES.map((zone) => (
                     <option key={zone.id} value={zone.id}>
-                      {zone.name} — {formatCurrency(zone.feeMinor, STORE_CURRENCY)}
+                      {zone.name}
                     </option>
                   ))}
                 </Select>
-                <p className="mt-1 text-xs text-slate-500">
-                  {DELIVERY_ZONES.find((z) => z.id === zoneId)?.description}
-                </p>
               </FormField>
 
               <FormField
