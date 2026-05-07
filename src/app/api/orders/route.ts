@@ -398,7 +398,7 @@ export async function POST(request: Request) {
       try {
         const estimatedDeliveryWindow = isPickup
           ? "Ready for pickup today or next business day."
-          : "Arrives in 1-2 business days.";
+          : "Same-day delivery for orders within Kampala CBD placed before 12 PM.";
         const normalizedEmail = parsed.data.email.trim().toLowerCase();
         const deliveryAddress = isPickup
           ? `Pickup: ${(parsed.data.pickupLocation || "").trim() || "Shop location"}`
