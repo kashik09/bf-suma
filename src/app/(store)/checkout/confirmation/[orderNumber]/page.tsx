@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { CheckCircle, MessageCircle, CreditCard, Truck, MapPin } from "lucide-react";
+import { CheckCircle, MessageCircle, CreditCard, Truck, MapPin, Banknote } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui";
 import { CONTACT, ADDRESS } from "@/config/contact";
@@ -150,28 +151,54 @@ export default async function OrderConfirmationPage({
             href={mtnWaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-yellow-600"
+            className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
           >
-            <MessageCircle className="h-5 w-5" />
-            MTN MoMo
+            <Image
+              src="/payment-logos/mtn.png"
+              alt="MTN MoMo"
+              width={48}
+              height={48}
+              className="shrink-0"
+            />
+            <div className="flex-1">
+              <p className="font-semibold text-slate-900">MTN MoMo</p>
+              <p className="text-sm text-slate-500">Till: {CONTACT.mtnTill}</p>
+            </div>
+            <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
           <a
             href={airtelWaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
+            className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
           >
-            <MessageCircle className="h-5 w-5" />
-            Airtel Money
+            <Image
+              src="/payment-logos/airtel.png"
+              alt="Airtel Money"
+              width={48}
+              height={48}
+              className="shrink-0"
+            />
+            <div className="flex-1">
+              <p className="font-semibold text-slate-900">Airtel Money</p>
+              <p className="text-sm text-slate-500">Till: {CONTACT.airtelTill}</p>
+            </div>
+            <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
           <a
             href={cashWaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-600 px-4 py-3 font-semibold text-white transition hover:bg-slate-700"
+            className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
           >
-            <MessageCircle className="h-5 w-5" />
-            Cash on Arrival
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100">
+              <Banknote className="h-6 w-6 text-slate-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-slate-900">Cash on Arrival</p>
+              <p className="text-sm text-slate-500">Pay when you receive</p>
+            </div>
+            <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
         </div>
         <p className="mt-3 text-center text-xs text-slate-500">
