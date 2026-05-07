@@ -1,7 +1,7 @@
 import { formatCurrency } from "@/lib/utils";
 import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildWhatsAppOrderSupportMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppOrderSupportMessage, buildWhatsAppGenericInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getSender, type EmailPurpose } from "./senders";
 import { renderEmailLayout } from "./templates/base";
 
@@ -247,6 +247,7 @@ export async function sendOrderConfirmationEmail({
   estimatedDeliveryWindow
 }: SendOrderConfirmationEmailInput): Promise<EmailDeliveryResult> {
   const supportWhatsAppUrl = buildWhatsAppUrl(buildWhatsAppOrderSupportMessage(), SUPPORT_WHATSAPP_PHONE);
+  const genericInquiryWhatsAppUrl = buildWhatsAppUrl(buildWhatsAppGenericInquiryMessage(), SUPPORT_WHATSAPP_PHONE);
   const normalizedItems = items.length > 0
     ? items
     : [
@@ -300,9 +301,16 @@ export async function sendOrderConfirmationEmail({
     <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#334155;">
       Delivery estimate: <strong>${escapeHtml(estimatedDeliveryWindow)}</strong>
     </p>
-    <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#334155;">
-      While you wait: check product guidance on the label for best results.
+    <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:#334155;">
+      A note from us: Each product comes with usage guidance on the label — give it a read for the best results. Have questions? WhatsApp us anytime.
     </p>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:12px 0 0;">
+      <tr>
+        <td style="border-radius:6px;background-color:#25D366;">
+          <a href="${genericInquiryWhatsAppUrl}" target="_blank" style="display:inline-block;padding:10px 16px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">WhatsApp us</a>
+        </td>
+      </tr>
+    </table>
   `.trim();
 
   const html = renderEmailLayout({
@@ -330,7 +338,9 @@ export async function sendOrderConfirmationEmail({
     "",
     `Delivery estimate: ${estimatedDeliveryWindow}`,
     "",
-    "While you wait: start with consistent daily use, hydrate well, and check product guidance on the label.",
+    "A note from us: Each product comes with usage guidance on the label — give it a read for the best results. Have questions? WhatsApp us anytime.",
+    `WhatsApp us: ${genericInquiryWhatsAppUrl}`,
+    "",
     `Need help? WhatsApp: ${supportWhatsAppUrl}`
   ].join("\n");
 
