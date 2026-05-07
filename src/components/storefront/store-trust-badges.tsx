@@ -1,3 +1,4 @@
+import { ShieldCheck, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StoreTrustBadgesProps {
@@ -6,44 +7,24 @@ interface StoreTrustBadgesProps {
 }
 
 const badges = [
-  {
-    label: "Secure checkout",
-    icon: (
-      <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
-        <path
-          d="M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3Zm0 4.1 4 1.5V11c0 3.4-2 6.7-4 7.8-2-1.1-4-4.4-4-7.8V7.6l4-1.5Z"
-          fill="currentColor"
-        />
-      </svg>
-    )
-  },
-  {
-    label: "Local delivery",
-    icon: (
-      <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
-        <path
-          d="M3 6h12v9h2.3l2.7 2.7V19h-1a2 2 0 1 1-4 0H9a2 2 0 1 1-4 0H3V6Zm2 2v9h1a2 2 0 0 1 4 0h3V8H5Zm12 2h2l2 2h-4v-2Z"
-          fill="currentColor"
-        />
-      </svg>
-    )
-  }
+  { label: "Secure checkout", Icon: ShieldCheck },
+  { label: "Local delivery", Icon: Truck }
 ];
 
 export function StoreTrustBadges({ className, onDark = false }: StoreTrustBadgesProps) {
   return (
-    <ul className={cn("grid grid-cols-2 gap-2", className)}>
+    <ul className={cn("grid grid-cols-2 gap-3", className)}>
       {badges.map((badge) => (
         <li
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-semibold",
+            "flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium",
             onDark
               ? "border border-white/20 bg-white/5 text-white"
               : "border border-slate-200 bg-slate-50 text-slate-700"
           )}
           key={badge.label}
         >
-          {badge.icon}
+          <badge.Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{badge.label}</span>
         </li>
       ))}
