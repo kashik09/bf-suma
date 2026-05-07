@@ -13,8 +13,7 @@ import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
 import {
   computeZoneDeliveryFee,
-  DEFAULT_ZONE_ID,
-  DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR
+  DEFAULT_ZONE_ID
 } from "@/config/delivery-zones";
 
 const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
@@ -401,7 +400,7 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
   }
 
   const zoneId = payload.deliveryZone || DEFAULT_ZONE_ID;
-  const deliveryFee = computeZoneDeliveryFee(subtotal, payload.fulfillmentType === "pickup", zoneId);
+  const deliveryFee = computeZoneDeliveryFee(payload.fulfillmentType === "pickup", zoneId);
   const total = subtotal + deliveryFee;
 
   if (

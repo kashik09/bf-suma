@@ -8,37 +8,44 @@
 export interface DeliveryZone {
   id: string;
   name: string;
-  description: string;
+  coverage: string;
   feeMinor: number;
-  estimateDays: string;
+  estimate: string;
 }
 
 export const DELIVERY_ZONES: DeliveryZone[] = [
   {
     id: "central",
     name: "Central Kampala",
-    description: "City center, Old Kampala, Nakasero, Kololo, Kamwokya",
+    coverage: "CBD, Nakasero, Kololo, Bugolobi, Wandegeya, Makerere, Kamwokya",
     feeMinor: 5000,
-    estimateDays: "Same day"
+    estimate: "Same-day if before 12 PM"
   },
   {
     id: "greater",
     name: "Greater Kampala",
-    description: "Ntinda, Bukoto, Kisaasi, Naalya, Kira, Najjera, Namugongo",
-    feeMinor: 7000,
-    estimateDays: "Same day or next day"
+    coverage: "Ntinda, Bukoto, Kisaasi, Naalya, Kira, Najjera, Namugongo, Kyaliwajjala, Banda, Mbuya",
+    feeMinor: 10000,
+    estimate: "Same-day or next day"
   },
   {
     id: "outskirts",
     name: "Kampala Outskirts",
-    description: "Mukono, Wakiso, Entebbe, Gayaza, Bweyogerere",
+    coverage: "Mukono, Wakiso, Entebbe, Gayaza, Bweyogerere, Kajjansi, Seeta, Kyengera, Bulenga",
+    feeMinor: 15000,
+    estimate: "1-2 business days"
+  },
+  {
+    // Bus parcel service — customer collects from local bus park
+    id: "upcountry",
+    name: "Outside Kampala",
+    coverage: "Jinja, Mbarara, Gulu, Masaka, Fort Portal, Mbale, Arua and other upcountry areas",
     feeMinor: 10000,
-    estimateDays: "1-2 days"
+    estimate: "24-48 hours via bus parcel"
   }
 ];
 
 export const DEFAULT_ZONE_ID = "central";
-export const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
 
 export function getZoneById(zoneId: string): DeliveryZone | undefined {
   return DELIVERY_ZONES.find((zone) => zone.id === zoneId);
@@ -50,12 +57,10 @@ export function getDeliveryFeeForZone(zoneId: string): number {
 }
 
 export function computeZoneDeliveryFee(
-  subtotal: number,
   isPickup: boolean,
   zoneId: string
 ): number {
   if (isPickup) return 0;
-  if (subtotal >= DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR) return 0;
   return getDeliveryFeeForZone(zoneId);
 }
 
@@ -64,5 +69,5 @@ export function getDeliveryEstimate(isPickup: boolean, zoneId: string): string {
     return "Ready for pickup today or next business day";
   }
   const zone = getZoneById(zoneId);
-  return zone ? `Arrives: ${zone.estimateDays}` : "Arrives: 1-2 days";
+  return zone?.estimate ?? "1-2 business days";
 }

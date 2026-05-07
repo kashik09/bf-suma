@@ -46,7 +46,7 @@ function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof u
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const isPickup = values.fulfillmentType === "pickup";
   const zoneId = values.deliveryZone || DEFAULT_ZONE_ID;
-  const deliveryFee = computeZoneDeliveryFee(subtotal, isPickup, zoneId);
+  const deliveryFee = computeZoneDeliveryFee(isPickup, zoneId);
   const total = subtotal + deliveryFee;
 
   return {
@@ -177,7 +177,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const watchedPickupLocation = form.watch("pickupLocation");
   const isPickup = watchedFulfillmentType === "pickup";
   const zoneId = watchedDeliveryZone || DEFAULT_ZONE_ID;
-  const deliveryFee = items.length > 0 ? computeZoneDeliveryFee(subtotal, isPickup, zoneId) : 0;
+  const deliveryFee = items.length > 0 ? computeZoneDeliveryFee(isPickup, zoneId) : 0;
   const estimatedDeliveryWindow = getDeliveryEstimate(isPickup, zoneId);
 
   const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
@@ -467,7 +467,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
                   ))}
                 </Select>
                 <p className="mt-1 text-xs text-slate-500">
-                  {DELIVERY_ZONES.find((z) => z.id === zoneId)?.description}
+                  {DELIVERY_ZONES.find((z) => z.id === zoneId)?.coverage}
                 </p>
               </FormField>
 
