@@ -35,6 +35,11 @@ const checkoutSchemaBase = z.object({
     .max(30, "Phone number is too long")
     .regex(/^\+?[0-9()\-\s]+$/, "Enter a valid phone number"),
   fulfillmentType: z.enum(["delivery", "pickup"]),
+  deliveryZone: z
+    .string()
+    .trim()
+    .max(50, "Delivery zone is invalid")
+    .optional(),
   deliveryAddress: z
     .string()
     .trim()

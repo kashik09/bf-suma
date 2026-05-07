@@ -9,9 +9,13 @@ import {
   type AtomicOrderWriteResultPayload,
   type AtomicOrderWriteRpcRow
 } from "@/lib/order-write-result";
-import { DELIVERY_FEE_AMOUNT_MINOR } from "@/lib/constants";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { upsertCustomerByEmail } from "@/services/customers";
+import {
+  computeZoneDeliveryFee,
+  DEFAULT_ZONE_ID,
+  DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR
+} from "@/config/delivery-zones";
 
 const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ["PENDING_PAYMENT", "CONFIRMED", "CANCELED"],
@@ -24,7 +28,6 @@ const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   DELIVERED: [],
   CANCELED: []
 };
-const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
 
 interface AtomicOrderItemPayload {
   product_id: string;
@@ -397,10 +400,8 @@ function computeAuthoritativeOrder(payload: OrderIntakeInput, products: ProductS
     });
   }
 
-  const deliveryFee =
-    payload.fulfillmentType === "pickup" || subtotal >= DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR
-      ? 0
-      : DELIVERY_FEE_AMOUNT_MINOR;
+  const zoneId = payload.deliveryZone || DEFAULT_ZONE_ID;
+  const deliveryFee = computeZoneDeliveryFee(subtotal, payload.fulfillmentType === "pickup", zoneId);
   const total = subtotal + deliveryFee;
 
   if (

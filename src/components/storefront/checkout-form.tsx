@@ -15,36 +15,19 @@ import { StoreTrustBadges } from "@/components/storefront/store-trust-badges";
 import { useCart } from "@/hooks/use-cart";
 import { trackEvent } from "@/lib/analytics";
 import { setStoredCustomerProfile } from "@/lib/customer-profile";
-import { DELIVERY_FEE_AMOUNT_MINOR } from "@/lib/constants";
 import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib/validation";
 import { formatCurrency, fromMinorUnits, STORE_CURRENCY } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
 import { ADDRESS } from "@/config/contact";
+import {
+  DELIVERY_ZONES,
+  DEFAULT_ZONE_ID,
+  computeZoneDeliveryFee,
+  getDeliveryEstimate
+} from "@/config/delivery-zones";
 
 const PICKUP_LOCATIONS = [ADDRESS.full];
-const DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR = 50000;
-
-function computeDeliveryFee(subtotal: number, isPickup: boolean) {
-  if (isPickup || subtotal >= DELIVERY_FEE_WAIVER_SUBTOTAL_MINOR) return 0;
-  return DELIVERY_FEE_AMOUNT_MINOR;
-}
-
-function getEstimatedDeliveryWindow(isPickup: boolean) {
-  if (isPickup) {
-    return "Ready for pickup today or the next business day.";
-  }
-
-  const etaDate = new Date();
-  etaDate.setDate(etaDate.getDate() + 2);
-  const etaLabel = etaDate.toLocaleDateString("en-UG", {
-    weekday: "short",
-    month: "short",
-    day: "numeric"
-  });
-
-  return `Arrives by ${etaLabel}`;
-}
 
 function createIdempotencyKey() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -60,7 +43,9 @@ function toMajorCurrency(minor: number, currency: string = STORE_CURRENCY): numb
 
 function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof useCart>["items"]): OrderIntakeInput {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = computeDeliveryFee(subtotal, values.fulfillmentType === "pickup");
+  const isPickup = values.fulfillmentType === "pickup";
+  const zoneId = values.deliveryZone || DEFAULT_ZONE_ID;
+  const deliveryFee = computeZoneDeliveryFee(subtotal, isPickup, zoneId);
   const total = subtotal + deliveryFee;
 
   return {
@@ -69,6 +54,7 @@ function buildOrderPayload(values: CheckoutInput, cartItems: ReturnType<typeof u
     email: values.email,
     phone: values.phone,
     fulfillmentType: values.fulfillmentType,
+    deliveryZone: isPickup ? undefined : zoneId,
     deliveryAddress: values.deliveryAddress,
     pickupLocation: values.pickupLocation,
     paymentMethod: values.paymentMethod,
@@ -171,6 +157,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       email: "",
       phone: "",
       fulfillmentType: "delivery",
+      deliveryZone: DEFAULT_ZONE_ID,
       deliveryAddress: "",
       pickupLocation: PICKUP_LOCATIONS[0],
       paymentMethod: "pay_on_delivery",
@@ -183,11 +170,13 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const watchedPhone = form.watch("phone");
   const watchedEmail = form.watch("email");
   const watchedFulfillmentType = form.watch("fulfillmentType");
+  const watchedDeliveryZone = form.watch("deliveryZone");
   const watchedDeliveryAddress = form.watch("deliveryAddress");
   const watchedPickupLocation = form.watch("pickupLocation");
   const isPickup = watchedFulfillmentType === "pickup";
-  const deliveryFee = items.length > 0 ? computeDeliveryFee(subtotal, isPickup) : 0;
-  const estimatedDeliveryWindow = getEstimatedDeliveryWindow(isPickup);
+  const zoneId = watchedDeliveryZone || DEFAULT_ZONE_ID;
+  const deliveryFee = items.length > 0 ? computeZoneDeliveryFee(subtotal, isPickup, zoneId) : 0;
+  const estimatedDeliveryWindow = getDeliveryEstimate(isPickup, zoneId);
 
   const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
 
@@ -459,17 +448,36 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               </Select>
             </FormField>
           ) : (
-            <FormField
-              error={form.formState.errors.deliveryAddress?.message}
-              htmlFor="deliveryAddress"
-              label="Delivery Address"
-            >
-              <Textarea
-                id="deliveryAddress"
-                placeholder="Area, street, nearby landmark, and any useful directions"
-                {...form.register("deliveryAddress")}
-              />
-            </FormField>
+            <>
+              <FormField
+                error={form.formState.errors.deliveryZone?.message}
+                htmlFor="deliveryZone"
+                label="Delivery Zone"
+              >
+                <Select id="deliveryZone" {...form.register("deliveryZone")}>
+                  {DELIVERY_ZONES.map((zone) => (
+                    <option key={zone.id} value={zone.id}>
+                      {zone.name} — {formatCurrency(zone.feeMinor, STORE_CURRENCY)}
+                    </option>
+                  ))}
+                </Select>
+                <p className="mt-1 text-xs text-slate-500">
+                  {DELIVERY_ZONES.find((z) => z.id === zoneId)?.description}
+                </p>
+              </FormField>
+
+              <FormField
+                error={form.formState.errors.deliveryAddress?.message}
+                htmlFor="deliveryAddress"
+                label="Delivery Address"
+              >
+                <Textarea
+                  id="deliveryAddress"
+                  placeholder="Area, street, nearby landmark, and any useful directions"
+                  {...form.register("deliveryAddress")}
+                />
+              </FormField>
+            </>
           )}
 
           <fieldset className="space-y-2">
@@ -478,8 +486,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
                 <span>
-                  <span className="block font-medium text-slate-900">{isPickup ? "Pay at pickup" : "Pay on delivery"}</span>
-                  <span className="block text-xs text-slate-500">Pay with cash or mobile money when order arrives.</span>
+                  <span className="block font-medium text-slate-900">{isPickup ? "Pay on order" : "Pay on delivery"}</span>
                 </span>
               </label>
             </div>
@@ -527,20 +534,13 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
             </div>
             <div className="mb-1 flex items-center justify-between">
               <span className="text-slate-600">{isPickup ? "Pickup Fee" : "Delivery Fee"}</span>
-              <span className="font-medium">{isPickup ? "Free" : formatCurrency(deliveryFee, items[0]?.currency)}</span>
+              <span className="font-medium">{deliveryFee === 0 ? "Free" : formatCurrency(deliveryFee, items[0]?.currency)}</span>
             </div>
             <div className="flex items-center justify-between text-base font-semibold">
               <span>Total</span>
               <span>{formatCurrency(total, items[0]?.currency)}</span>
             </div>
           </div>
-
-          <p className="text-xs text-slate-500">
-            {isPickup
-              ? "You can pay when you collect your order."
-              : "You can pay when your order is delivered."}
-          </p>
-
           <p className="mt-1 text-xs font-medium text-slate-700">{estimatedDeliveryWindow}</p>
 
           <ul className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
