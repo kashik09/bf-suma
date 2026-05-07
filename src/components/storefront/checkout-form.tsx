@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -141,6 +142,7 @@ interface CheckoutFormProps {
 export function CheckoutForm({ commerceReady = true, degradedReason = null }: CheckoutFormProps) {
   const { items, subtotal, clear } = useCart();
   const { toast } = useToast();
+  const router = useRouter();
   const [resultMessage, setResultMessage] = useState<string | null>(null);
   const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -305,18 +307,14 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
       clear();
       form.reset();
       lastSubmissionRef.current = null;
-      const successMessage =
-        response.message ||
-        (response.orderNumber
-          ? `Thanks, your order ${response.orderNumber} has been received.`
-          : "Thanks, your order has been received.");
-      setResultMessage(successMessage);
-      setResultStatus("success");
-      toast({
-        title: "Order received",
-        description: successMessage,
-        variant: "success"
-      });
+
+      if (response.orderNumber) {
+        try {
+          router.push(`/checkout/confirmation/${response.orderNumber}`);
+        } catch {
+          window.location.href = `/checkout/confirmation/${response.orderNumber}`;
+        }
+      }
     } catch (error) {
       let message = "We couldn't place your order right now. Please try again.";
       if (error instanceof ApiRequestError) {
