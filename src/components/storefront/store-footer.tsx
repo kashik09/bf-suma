@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
-import { MapPin } from "lucide-react";
+import { Facebook, Instagram, MapPin, Twitter, Youtube } from "lucide-react";
 import { ADDRESS, CONTACT, MAPS_URL, SOCIAL_LINKS } from "@/config/contact";
+import type { ReactNode } from "react";
+
+const SOCIAL_ICONS: Record<string, ReactNode> = {
+  Facebook: <Facebook className="h-5 w-5" />,
+  Instagram: <Instagram className="h-5 w-5" />,
+  YouTube: <Youtube className="h-5 w-5" />,
+  X: <Twitter className="h-5 w-5" />,
+  TikTok: (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+  )
+};
 import {
   APP_DESCRIPTION,
   STORE_NAV_LINKS,
@@ -76,7 +89,7 @@ export function StoreFooter() {
             className="max-w-xs"
           />
           <h4 className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">Follow Us</h4>
-          <div className="mt-2 flex flex-wrap gap-3 text-sm">
+          <div className="mt-2 flex items-center gap-4">
             {SOCIAL_LINKS.map((link) => (
               <a
                 className="text-slate-100/85 transition hover:text-accent-sun"
@@ -84,8 +97,9 @@ export function StoreFooter() {
                 key={link.label}
                 rel="noreferrer"
                 target="_blank"
+                aria-label={link.label}
               >
-                {link.label}
+                {SOCIAL_ICONS[link.label] ?? link.label}
               </a>
             ))}
           </div>
