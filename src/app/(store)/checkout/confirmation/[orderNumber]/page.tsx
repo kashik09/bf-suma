@@ -3,6 +3,7 @@ import { CheckCircle, MessageCircle, CreditCard, Truck, MapPin } from "lucide-re
 import Link from "next/link";
 import { Card } from "@/components/ui";
 import { CONTACT, ADDRESS } from "@/config/contact";
+import { SUPPORT_EMAIL } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
 import {
   buildWhatsAppUrl,
@@ -234,6 +235,28 @@ export default async function OrderConfirmationPage({
       {/* Email Receipt Form */}
       <Card className="mb-6">
         <EmailReceiptForm orderNumber={order.orderNumber} defaultEmail={order.customer.email} />
+      </Card>
+
+      {/* Need Help Section */}
+      <Card className="mb-6">
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">Need help?</h2>
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <a
+            href={`mailto:${SUPPORT_EMAIL}?subject=Help with order ${order.orderNumber}`}
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            Email us
+          </a>
+          <a
+            href={`https://wa.me/${CONTACT.whatsappPrimary}?text=${encodeURIComponent(`Hi! I need help with my order ${order.orderNumber}.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp us
+          </a>
+        </div>
       </Card>
 
       {/* Back to Shop */}
