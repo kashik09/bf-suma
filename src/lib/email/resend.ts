@@ -642,3 +642,75 @@ export async function sendInternalOrderNotification({
     purpose: "order"
   });
 }
+
+interface SendContactFormSubmissionEmailInput {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendContactFormSubmissionEmail({
+  name,
+  email,
+  subject,
+  message
+}: SendContactFormSubmissionEmailInput): Promise<EmailDeliveryResult> {
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">
+      New contact form submission:
+    </p>
+    <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+      <tr>
+        <td style="padding:12px 16px;background:#f8fafc;font-weight:600;color:#64748b;width:100px;">Name</td>
+        <td style="padding:12px 16px;color:#0f172a;">${escapeHtml(name)}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 16px;background:#f8fafc;font-weight:600;color:#64748b;border-top:1px solid #e2e8f0;">Email</td>
+        <td style="padding:12px 16px;color:#0f172a;border-top:1px solid #e2e8f0;">
+          <a href="mailto:${escapeHtml(email)}" style="color:#2f7f2d;">${escapeHtml(email)}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 16px;background:#f8fafc;font-weight:600;color:#64748b;border-top:1px solid #e2e8f0;">Subject</td>
+        <td style="padding:12px 16px;color:#0f172a;border-top:1px solid #e2e8f0;">${escapeHtml(subject)}</td>
+      </tr>
+      <tr>
+        <td style="padding:12px 16px;background:#f8fafc;font-weight:600;color:#64748b;border-top:1px solid #e2e8f0;vertical-align:top;">Message</td>
+        <td style="padding:12px 16px;color:#0f172a;border-top:1px solid #e2e8f0;white-space:pre-wrap;">${escapeHtml(message)}</td>
+      </tr>
+    </table>
+    <p style="margin:16px 0 0;font-size:13px;color:#64748b;">
+      Reply directly to this email to respond to the customer.
+    </p>
+  `.trim();
+
+  const text = [
+    "New contact form submission:",
+    "",
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Subject: ${subject}`,
+    "",
+    "Message:",
+    message,
+    "",
+    "Reply directly to this email to respond to the customer."
+  ].join("\n");
+
+  const html = renderEmailLayout({
+    preheader: `Contact form: ${subject}`,
+    heading: "New message from website",
+    bodyHtml,
+    recipientEmail: "support@bfsumauganda.com"
+  });
+
+  return sendEmail({
+    to: "support@bfsumauganda.com",
+    subject: `Contact form: ${subject}`,
+    html,
+    text,
+    purpose: "transactional",
+    replyTo: email
+  });
+}

@@ -1,211 +1,112 @@
-import { NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
-import { inquirySchema } from "@/lib/validation";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
-import { createInquiry } from "@/services/inquiries";
-import { buildRateLimitKey } from "@/lib/request-ip";
-import { logEvent } from "@/lib/logger";
+import { sendContactFormSubmissionEmail } from "@/lib/email/resend";
 
-export const dynamic = "force-dynamic";
+const contactSchema = z.object({
+  name: z.string().min(2).max(120),
+  email: z.string().email(),
+  subject: z.string().min(3).max(120),
+  message: z.string().min(10).max(1500),
+  honeypot: z.string().max(0)
+});
 
-const RATE_LIMIT_MAX_REQUESTS = 5;
-const RATE_LIMIT_WINDOW_SECONDS = 60;
+// TODO: In production, replace with Vercel KV or Redis for distributed rate limiting
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
-interface RateLimitDecision {
-  retryAfterSeconds: number;
-  fingerprint: string;
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return true;
+  }
+
+  entry.count++;
+  return false;
 }
 
-interface InMemoryRateLimitState {
-  count: number;
-  windowStartMs: number;
-}
-
-const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
-
-function getCorrelationId(request: Request): string {
-  const requestId = request.headers.get("x-correlation-id") || request.headers.get("x-request-id");
-  const trimmed = requestId?.trim() || "";
-  if (trimmed.length > 0 && trimmed.length <= 120) return trimmed;
-  return randomUUID();
-}
-
-function buildClientFingerprint(request: Request): string {
-  return buildRateLimitKey(request.headers, "contact");
-}
-
-function getWindowStartIso(nowMs: number): string {
-  const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-  const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-  return new Date(windowStartMs).toISOString();
-}
-
-function getRetryAfterSeconds(nowMs: number): number {
-  const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-  const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-  const remainingMs = windowStartMs + windowMs - nowMs;
-  return Math.max(1, Math.ceil(remainingMs / 1000));
-}
-
-async function enforcePostRateLimit(request: Request, endpoint: string): Promise<RateLimitDecision | null> {
-  const fingerprint = buildClientFingerprint(request);
-  const nowMs = Date.now();
-
-  const fallbackInMemory = (): RateLimitDecision | null => {
-    const key = `${endpoint}:${fingerprint}`;
-    const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-    const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-    const retryAfterSeconds = getRetryAfterSeconds(nowMs);
-
-    const state = inMemoryRateLimits.get(key);
-    if (!state || state.windowStartMs !== windowStartMs) {
-      inMemoryRateLimits.set(key, { count: 1, windowStartMs });
-      return null;
-    }
-
-    if (state.count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
-    }
-
-    state.count += 1;
-    inMemoryRateLimits.set(key, state);
-    return null;
-  };
-
+export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
+    const parsed = contactSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: "Invalid form data", errors: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    // Honeypot check - silently succeed for bots
+    if (parsed.data.honeypot) {
+      return NextResponse.json({ status: "sent" });
+    }
+
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const userAgent = request.headers.get("user-agent") || "";
+
+    // Rate limit check
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { message: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
+    // Save to DB first (never lose a message)
     const supabase = createServiceRoleSupabaseClient();
-    const windowStart = getWindowStartIso(nowMs);
-    const retryAfterSeconds = getRetryAfterSeconds(nowMs);
-    const nowIso = new Date(nowMs).toISOString();
-
-    const { data: existing, error: fetchError } = await supabase
-      .from("api_rate_limits")
-      .select("request_count")
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .maybeSingle();
-
-    if (fetchError) return fallbackInMemory();
-
-    if (!existing) {
-      const { error: insertError } = await supabase.from("api_rate_limits").insert({
-        endpoint,
-        fingerprint,
-        window_start: windowStart,
-        request_count: 1,
-        created_at: nowIso,
-        updated_at: nowIso
-      });
-
-      if (insertError) return fallbackInMemory();
-      return null;
-    }
-
-    if (existing.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
-    }
-
-    const nextCount = existing.request_count + 1;
-    const { error: updateError } = await supabase
-      .from("api_rate_limits")
-      .update({
-        request_count: nextCount,
-        updated_at: nowIso
+    const { data: submission, error: dbError } = await supabase
+      .from("contact_submissions")
+      .insert({
+        name: parsed.data.name,
+        email: parsed.data.email,
+        subject: parsed.data.subject,
+        message: parsed.data.message,
+        ip_address: ip,
+        user_agent: userAgent
       })
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .eq("request_count", existing.request_count);
+      .select("id")
+      .single();
 
-    if (!updateError) return null;
-
-    const { data: latest } = await supabase
-      .from("api_rate_limits")
-      .select("request_count")
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .maybeSingle();
-
-    if (latest && latest.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
+    if (dbError) {
+      console.error("Failed to save contact submission:", dbError);
+      return NextResponse.json(
+        { message: "Failed to save your message. Please try again." },
+        { status: 500 }
+      );
     }
 
-    return fallbackInMemory();
-  } catch {
-    return fallbackInMemory();
-  }
-}
-
-export async function POST(request: Request) {
-  const correlationId = getCorrelationId(request);
-  const rateLimit = await enforcePostRateLimit(request, "contact");
-  if (rateLimit) {
-    logEvent("warn", "contact.rate_limited", {
-      correlationId,
-      endpoint: "contact",
-      retryAfterSeconds: rateLimit.retryAfterSeconds,
-      fingerprintPrefix: rateLimit.fingerprint.slice(0, 12)
+    // Send email notification
+    const emailResult = await sendContactFormSubmissionEmail({
+      name: parsed.data.name,
+      email: parsed.data.email,
+      subject: parsed.data.subject,
+      message: parsed.data.message
     });
 
-    return NextResponse.json(
-      {
-        message: "Too many requests. Please retry later.",
-        retryAfterSeconds: rateLimit.retryAfterSeconds
-      },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(rateLimit.retryAfterSeconds)
-        }
-      }
-    );
-  }
+    // Update email_sent_at if successful
+    if (emailResult.status === "sent") {
+      await supabase
+        .from("contact_submissions")
+        .update({ email_sent_at: new Date().toISOString() })
+        .eq("id", submission.id);
+    }
 
-  const body = await request.json().catch(() => null);
-  const parsed = inquirySchema.safeParse(body);
-
-  if (!parsed.success) {
-    logEvent("warn", "contact.validation_failed", {
-      correlationId,
-      fieldErrorKeys: Object.keys(parsed.error.flatten().fieldErrors).sort()
-    });
-
-    return NextResponse.json(
-      {
-        message: "Please check your contact details and message, then try again.",
-        fieldErrors: parsed.error.flatten().fieldErrors
-      },
-      { status: 400 }
-    );
-  }
-
-  try {
-    const data = await createInquiry(parsed.data);
-
-    logEvent("info", "contact.create_succeeded", {
-      correlationId,
-      inquiryId: data.id,
-      status: data.status
-    });
-
-    return NextResponse.json({
-      id: data.id,
-      status: data.status
-    }, { status: 201 });
+    // Return success even if email failed (we have the DB row)
+    return NextResponse.json({ status: "sent" });
   } catch (error) {
-    logEvent("error", "contact.create_failed", {
-      correlationId,
-      reason: "unexpected_error",
-      message: error instanceof Error ? error.message : "Unknown error"
-    });
-
+    console.error("Contact form error:", error);
     return NextResponse.json(
-      {
-        message: "Inquiry intake is temporarily unavailable. Please try again later or use WhatsApp support."
-      },
-      { status: 503 }
+      { message: "An unexpected error occurred. Please try again." },
+      { status: 500 }
     );
   }
 }
