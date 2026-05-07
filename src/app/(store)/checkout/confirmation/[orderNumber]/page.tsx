@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CheckCircle, MessageCircle, CreditCard, Truck, MapPin, Banknote } from "lucide-react";
+import { CheckCircle, MessageCircle, Truck, MapPin, Banknote } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui";
@@ -116,16 +116,42 @@ export default async function OrderConfirmationPage({
         </ol>
       </Card>
 
-      {/* Till Numbers */}
+      {/* Payment Card - Merged */}
       <Card className="mb-6">
         <div className="mb-3 flex items-center gap-2">
-          <CreditCard className="h-5 w-5 text-slate-500" />
-          <h2 className="text-lg font-semibold text-slate-900">Payment Details</h2>
+          <MessageCircle className="h-5 w-5 text-slate-500" />
+          <h2 className="text-lg font-semibold text-slate-900">Pay before pickup or delivery</h2>
         </div>
-        <p className="mb-4 text-sm text-slate-600">
-          Send exactly <span className="font-semibold text-slate-900">{totalFormatted}</span> to:
+
+        {/* Amount */}
+        <p className="mb-2 text-sm text-slate-600">
+          Send exactly <span className="font-semibold text-slate-900">{totalFormatted}</span> to one of the till numbers below.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2">
+
+        {/* Items summary */}
+        <p className="mb-4 text-sm text-slate-500">
+          For:{" "}
+          {order.items.length <= 3
+            ? order.items.map((item, i) => (
+                <span key={i}>
+                  {item.productName} (×{item.quantity})
+                  {i < order.items.length - 1 ? ", " : ""}
+                </span>
+              ))
+            : <>
+                {order.items.slice(0, 3).map((item, i) => (
+                  <span key={i}>
+                    {item.productName} (×{item.quantity})
+                    {i < 2 ? ", " : ""}
+                  </span>
+                ))}
+                {" "}and {order.items.length - 3} more
+              </>
+          }
+        </p>
+
+        {/* Till numbers */}
+        <div className="mb-4 grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Airtel Money</p>
             <p className="mt-1 text-2xl font-bold text-slate-900">{CONTACT.airtelTill}</p>
@@ -137,15 +163,9 @@ export default async function OrderConfirmationPage({
             <p className="mt-1 text-sm text-slate-600">Till Number</p>
           </div>
         </div>
-      </Card>
 
-      {/* Payment Method Selection */}
-      <Card className="mb-6">
-        <div className="mb-3 flex items-center gap-2">
-          <MessageCircle className="h-5 w-5 text-slate-500" />
-          <h2 className="text-lg font-semibold text-slate-900">Pay before pickup or delivery</h2>
-        </div>
-        <p className="mb-4 font-medium text-slate-700">Choose your payment method:</p>
+        {/* Payment method buttons */}
+        <p className="mb-3 font-medium text-slate-700">Choose your payment method:</p>
         <div className="grid gap-3">
           <a
             href={mtnWaUrl}
@@ -153,16 +173,10 @@ export default async function OrderConfirmationPage({
             rel="noopener noreferrer"
             className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
           >
-            <Image
-              src="/payment-logos/mtn.png"
-              alt="MTN MoMo"
-              width={48}
-              height={48}
-              className="shrink-0"
-            />
+            <Image src="/payment-logos/mtn.png" alt="MTN MoMo" width={48} height={48} className="shrink-0" />
             <div className="flex-1">
               <p className="font-semibold text-slate-900">MTN MoMo</p>
-              <p className="text-sm text-slate-500">Till: {CONTACT.mtnTill}</p>
+              <p className="text-sm text-slate-500">Mobile Money</p>
             </div>
             <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
@@ -172,16 +186,10 @@ export default async function OrderConfirmationPage({
             rel="noopener noreferrer"
             className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
           >
-            <Image
-              src="/payment-logos/airtel.png"
-              alt="Airtel Money"
-              width={48}
-              height={48}
-              className="shrink-0"
-            />
+            <Image src="/payment-logos/airtel.png" alt="Airtel Money" width={48} height={48} className="shrink-0" />
             <div className="flex-1">
               <p className="font-semibold text-slate-900">Airtel Money</p>
-              <p className="text-sm text-slate-500">Till: {CONTACT.airtelTill}</p>
+              <p className="text-sm text-slate-500">Mobile Money</p>
             </div>
             <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
