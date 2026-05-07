@@ -362,6 +362,23 @@ export interface PackageDisplayData extends PackageWithItems {
   item_count: number;
 }
 
+export type ContactSubmissionStatus = "new" | "responded" | "spam";
+
+export interface ContactSubmission {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  status: ContactSubmissionStatus;
+  email_sent_at: string | null;
+}
+
+export type ContactSubmissionInsert = Omit<ContactSubmission, "id" | "created_at" | "status" | "email_sent_at">;
+
 export interface Database {
   public: {
     Tables: {
@@ -381,6 +398,7 @@ export interface Database {
       blog_posts: { Row: BlogPost };
       packages: { Row: Package };
       package_items: { Row: PackageItem };
+      contact_submissions: { Row: ContactSubmission };
     };
   };
 }
