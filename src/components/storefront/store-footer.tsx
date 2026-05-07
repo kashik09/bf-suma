@@ -54,13 +54,13 @@ export function StoreFooter() {
 
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Support</h4>
-          <div className="mt-3 flex flex-col space-y-2 text-sm text-slate-100/85">
+          <div className="mt-3 flex flex-col space-y-1.5 text-sm text-slate-100/85">
             <a className="transition hover:text-accent-sun" href={buildWhatsAppUrl(buildWhatsAppFooterSupportMessage(), SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
-              WhatsApp
+              WhatsApp us
             </a>
             <a className="transition hover:text-accent-sun" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
             <a
-              className="flex items-center gap-1.5 text-slate-200 transition hover:text-accent-sun"
+              className="flex items-center gap-1.5 transition hover:text-accent-sun"
               href={MAPS_URL}
               rel="noreferrer"
               target="_blank"
@@ -68,10 +68,10 @@ export function StoreFooter() {
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               <span>{ADDRESS.full}</span>
             </a>
-            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappPrimaryDisplay.replace(/\s/g, "")}`}>
+            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappPrimary}`}>
               {CONTACT.whatsappPrimaryLabel}: {CONTACT.whatsappPrimaryDisplay}
             </a>
-            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappSecondaryDisplay.replace(/\s/g, "")}`}>
+            <a className="transition hover:text-accent-sun" href={`tel:${CONTACT.whatsappSecondary}`}>
               {CONTACT.whatsappSecondaryLabel}: {CONTACT.whatsappSecondaryDisplay}
             </a>
           </div>
