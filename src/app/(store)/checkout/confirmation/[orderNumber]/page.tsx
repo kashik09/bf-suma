@@ -272,7 +272,21 @@ export default async function OrderConfirmationPage({
             </li>
           ))}
         </ul>
-        <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
+        <div className="mt-3 space-y-1 border-t border-slate-200 pt-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-slate-600">Subtotal</span>
+            <span className="font-medium">{formatCurrency(order.subtotal, order.currency)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-600">
+              {order.fulfillmentType === "pickup" ? "Pickup" : "Delivery"}
+            </span>
+            <span className="font-medium">
+              {order.deliveryFee === 0 ? "Free" : formatCurrency(order.deliveryFee, order.currency)}
+            </span>
+          </div>
+        </div>
+        <div className="mt-2 flex justify-between text-base font-semibold text-slate-900">
           <span>Total</span>
           <span>{totalFormatted}</span>
         </div>

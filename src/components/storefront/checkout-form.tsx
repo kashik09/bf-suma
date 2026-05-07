@@ -554,7 +554,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
             <div className="mt-3 flex items-start gap-2 rounded-md border border-blue-100 bg-blue-50 p-3">
               <Info className="h-4 w-4 shrink-0 text-blue-600" />
               <p className="text-xs text-slate-700">
-                Delivery fees apply and vary by zone. Same-day delivery within the CBD when ordered before 12 PM.
+                Delivery fee for your zone is shown above. Same-day delivery within the CBD for orders before 12 PM.
               </p>
             </div>
           )}
