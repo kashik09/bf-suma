@@ -98,13 +98,15 @@ async function sendEmail({
   subject,
   html,
   text,
-  purpose
+  purpose,
+  replyTo
 }: {
   to: string;
   subject: string;
   html: string;
   text: string;
   purpose: EmailPurpose;
+  replyTo?: string;
 }): Promise<EmailDeliveryResult> {
   const config = resolveResendConfig();
   if (!config.enabled) {
@@ -129,7 +131,7 @@ async function sendEmail({
         subject,
         html,
         text,
-        reply_to: sender.replyTo
+        reply_to: replyTo ?? sender.replyTo
       })
     });
 
