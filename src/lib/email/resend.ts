@@ -163,9 +163,10 @@ export async function sendNewsletterWelcomeEmail({
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       You're in. Expect occasional wellness tips, new product alerts, and practical health guidance — no spam, just useful stuff.
     </p>
-    <p style="margin:0;font-size:15px;line-height:1.6;color:#334155;">
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">
       Questions anytime? Just reply to this email or reach us on WhatsApp.
     </p>
+    <p style="margin:0;font-size:14px;color:#64748b;">— The BF Suma team</p>
   `.trim();
 
   const html = renderEmailLayout({
@@ -182,6 +183,8 @@ export async function sendNewsletterWelcomeEmail({
     "You're on the list.",
     "",
     "Expect occasional wellness tips, new product alerts, and practical health guidance — no spam, just useful stuff.",
+    "",
+    "— The BF Suma team",
     "",
     "Browse products: https://bfsumauganda.com/shop",
     `Need help? WhatsApp: ${getWhatsAppPrimaryUrl()}`
@@ -204,9 +207,10 @@ export async function sendStorefrontWelcomeEmail({
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       Hi ${escapeHtml(firstName)}, thanks for ordering with us. Your first order means a lot — we'll make sure it goes smoothly.
     </p>
-    <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#334155;">
       If you ever have questions about a product or need help, just WhatsApp us. We're quick to respond.
     </p>
+    <p style="margin:0;font-size:14px;color:#64748b;">— The BF Suma team</p>
   `.trim();
 
   const html = renderEmailLayout({
@@ -223,6 +227,8 @@ export async function sendStorefrontWelcomeEmail({
     "",
     `Hi ${firstName}, thanks for ordering with us. Your first order means a lot — we'll make sure it goes smoothly.`,
     "Questions about a product? Just WhatsApp us. We're quick to respond.",
+    "",
+    "— The BF Suma team",
     "",
     "Browse wellness guides: https://bfsumauganda.com/blog"
   ].join("\n");
@@ -365,9 +371,10 @@ export async function sendAbandonedCartReminderEmail({
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       Hi ${escapeHtml(firstName)}, you've still got items in your cart. No rush — just a heads-up in case you meant to finish.
     </p>
-    <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#334155;">
       ${escapeHtml(cartSummary)}
     </p>
+    <p style="margin:0;font-size:14px;color:#64748b;">— BF Suma</p>
   `.trim();
 
   const html = renderEmailLayout({
@@ -385,12 +392,14 @@ export async function sendAbandonedCartReminderEmail({
     `${firstName}, you've still got items in your cart. No rush — just a heads-up in case you meant to finish.`,
     cartSummary,
     "",
+    "— BF Suma",
+    "",
     `Complete your order: ${cartUrl}`
   ].join("\n");
 
   return sendEmail({
     to: email,
-    subject: "You left something behind",
+    subject: "Still interested?",
     html,
     text,
     purpose: "transactional"
@@ -407,9 +416,10 @@ export async function sendPostPurchaseReviewRequestEmail({
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       Hi ${escapeHtml(firstName)}, how's the ${escapeHtml(productName)} treating you?
     </p>
-    <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#334155;">
       A quick review helps other customers decide — and we'd genuinely appreciate it.
     </p>
+    <p style="margin:0;font-size:14px;color:#64748b;">— The BF Suma team</p>
   `.trim();
 
   const html = renderEmailLayout({
@@ -427,12 +437,14 @@ export async function sendPostPurchaseReviewRequestEmail({
     `${firstName}, how's the ${productName} treating you?`,
     "A quick review helps other customers decide — and we'd genuinely appreciate it.",
     "",
+    "— The BF Suma team",
+    "",
     `Leave a review: ${reviewUrl}`
   ].join("\n");
 
   return sendEmail({
     to: email,
-    subject: "How are you getting on?",
+    subject: "Quick check-in",
     html,
     text,
     purpose: "transactional"
@@ -448,9 +460,10 @@ export async function sendReengagementEmail({
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
       Hi ${escapeHtml(firstName)}, it's been a while. We've added new products and restocked popular items since your last visit.
     </p>
-    <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#334155;">
       Here's what customers are buying now.
     </p>
+    <p style="margin:0;font-size:14px;color:#64748b;">— BF Suma</p>
   `.trim();
 
   const html = renderEmailLayout({
@@ -468,12 +481,14 @@ export async function sendReengagementEmail({
     "",
     `${firstName}, it's been a while. We've added new products and restocked popular items since your last visit.`,
     "",
+    "— BF Suma",
+    "",
     `View bestsellers: ${bestSellersUrl}`
   ].join("\n");
 
   return sendEmail({
     to: email,
-    subject: "We miss you at BF Suma",
+    subject: "See what's new at BF Suma",
     html,
     text,
     purpose: "transactional"
