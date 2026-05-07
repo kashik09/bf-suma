@@ -487,12 +487,10 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
 
           <fieldset className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Payment Method</p>
-            <div className="grid gap-2 sm:grid-cols-1">
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
-                <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
-                <span className="font-medium text-slate-900">{isPickup ? "Pay on order" : "Pay on order"}</span>
-              </label>
-            </div>
+            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
+              <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} defaultChecked />
+              <span className="font-medium text-slate-900">Pay on order</span>
+            </label>
           </fieldset>
 
           <FormField error={form.formState.errors.notes?.message} htmlFor="notes" label="Delivery Note (Optional)">
