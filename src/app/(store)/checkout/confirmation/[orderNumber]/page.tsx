@@ -11,7 +11,9 @@ import {
   buildWhatsAppMtnPaymentMessage,
   buildWhatsAppAirtelPaymentMessage,
   buildWhatsAppCashPaymentMessage,
-  type PaymentConfirmationOrder
+  buildWhatsAppOrderHelpMessage,
+  type PaymentConfirmationOrder,
+  type OrderHelpOrder
 } from "@/lib/whatsapp";
 import { getOrderByNumberForConfirmation } from "@/services/orders";
 import { EmailReceiptForm } from "./email-receipt-form";
@@ -56,6 +58,16 @@ export default async function OrderConfirmationPage({
   );
   const cashWaUrl = buildWhatsAppUrl(
     buildWhatsAppCashPaymentMessage(paymentOrder, totalFormatted),
+    CONTACT.whatsappPrimary
+  );
+
+  // Build order help WhatsApp URL
+  const helpOrder: OrderHelpOrder = {
+    ...paymentOrder,
+    createdAt: order.createdAt
+  };
+  const helpWaUrl = buildWhatsAppUrl(
+    buildWhatsAppOrderHelpMessage(helpOrder, totalFormatted),
     CONTACT.whatsappPrimary
   );
 
@@ -282,7 +294,7 @@ export default async function OrderConfirmationPage({
             Email us
           </a>
           <a
-            href={`https://wa.me/${CONTACT.whatsappPrimary}?text=${encodeURIComponent(`Hi! I need help with my order ${order.orderNumber}.`)}`}
+            href={helpWaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"

@@ -125,6 +125,47 @@ export interface PaymentConfirmationOrder {
   deliveryAddress: string;
 }
 
+export interface OrderHelpOrder {
+  orderNumber: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+  };
+  total: number;
+  currency: string;
+  fulfillmentType: "delivery" | "pickup";
+  deliveryAddress: string;
+  createdAt: string;
+}
+
+/**
+ * ORDER HELP (confirmation page "Need help?" button)
+ */
+export function buildWhatsAppOrderHelpMessage(
+  order: OrderHelpOrder,
+  totalFormatted: string
+) {
+  const placedDate = new Date(order.createdAt).toLocaleString("en-UG", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const fulfillmentLine =
+    order.fulfillmentType === "pickup"
+      ? "Pickup at shop"
+      : `Delivery to: ${order.deliveryAddress}`;
+
+  return `Hi BF Suma,
+
+I need help with my order:
+• Order: ${order.orderNumber}
+• Name: ${order.customer.firstName} ${order.customer.lastName}
+• Placed: ${placedDate}
+• Total: ${totalFormatted}
+• ${fulfillmentLine}
+
+Issue: [Please describe your issue here]`;
+}
+
 /**
  * MTN MoMo payment confirmation
  */
