@@ -420,7 +420,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <div className="mb-4 flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3">
             <Info className="h-5 w-5 shrink-0 text-blue-600" />
             <p className="text-sm text-slate-700">
-              Delivery fees vary by zone. Same-day delivery available within the CBD when your order is placed before 12 PM.
+              Delivery fees are shown in your Order Summary based on the zone you select. Same-day delivery within CBD for orders before 12 PM.
             </p>
           </div>
 
