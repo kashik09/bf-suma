@@ -1,6 +1,6 @@
 # Product Image Audit Report
 
-Generated: 2026-05-03T19:47:36.050Z
+Generated: 2026-05-06T19:38:04.792Z
 
 ## Summary
 
@@ -8,9 +8,9 @@ Generated: 2026-05-03T19:47:36.050Z
 |--------|-------|
 | ✅ Has Image | 54 |
 | ⚠️ Placeholder | 0 |
-| ❌ No Image (NULL) | 0 |
+| ❌ No Image (NULL) | 2 |
 | 🔁 Duplicate URL | 0 |
-| **Total Products** | **54** |
+| **Total Products** | **56** |
 
 ---
 
@@ -72,6 +72,7 @@ Generated: 2026-05-03T19:47:36.050Z
 | ✅ | AP039F | 4 in 1 Cordyceps Coffee | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
 | ✅ | AP147B | Pure Broken Ganoderma Spores Oil Capsules (60s) | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
 | ✅ | AP153A | Quad Reishi Capsules | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
+| ❌ | AP209B | Sleep Beauty | — |
 
 ### Men's Health
 
@@ -144,6 +145,7 @@ Generated: 2026-05-03T19:47:36.050Z
 | ✅ | AP074E | Feminergy Capsules | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
 | ✅ | AP179D | FemiBiotics | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
 | ✅ | AP192C | Femicalcium D3 | https://uhhjnszgxfwmddvxdafj.supabase.co/storag... |
+| ❌ | AP211A | FemiVitamins | — |
 
 ---
 
