@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       })),
       estimatedDeliveryWindow: order.fulfillmentType === "pickup"
         ? "Ready for pickup within 24 hours"
-        : "2-3 business days"
+        : "Same-day delivery for orders within Kampala CBD placed before 12 PM.\nOther locations: 24–48 hours."
     });
 
     if (result.status === "failed") {

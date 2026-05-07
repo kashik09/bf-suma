@@ -239,7 +239,13 @@ export default async function OrderConfirmationPage({
             </a>
           </div>
         ) : (
-          <p className="text-slate-700">{order.deliveryAddress}</p>
+          <div>
+            <p className="text-slate-700">{order.deliveryAddress}</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Same-day delivery for orders within Kampala CBD placed before 12 PM.<br />
+              Other locations: 24–48 hours.
+            </p>
+          </div>
         )}
       </Card>
 
