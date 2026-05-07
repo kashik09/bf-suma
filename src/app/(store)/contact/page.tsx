@@ -1,66 +1,38 @@
-import { ContactForm } from "@/components/storefront/client";
-import { PageContainer } from "@/components/layout/page-container";
-import { Card } from "@/components/ui/card";
-import { SectionHeader } from "@/components/ui/section-header";
-import { ADDRESS, MAPS_URL } from "@/config/contact";
-import { SUPPORT_EMAIL, SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { CONTACT } from "@/config/contact";
-import { buildStorefrontMetadata } from "@/lib/seo";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { Metadata } from "next";
+import { APP_NAME } from "@/lib/constants";
+import { ContactForm } from "@/components/storefront/contact-form";
+import { QuickContactCard } from "@/components/storefront/quick-contact-card";
 
-export const dynamic = "force-static";
-
-export const metadata = buildStorefrontMetadata({
-  title: "Contact Support",
-  description:
-    "Contact BF Suma for product guidance, order help, and delivery questions. Reach us by form, phone, email, or quick WhatsApp support.",
-  path: "/contact"
-});
+export const metadata: Metadata = {
+  title: `Contact Us | ${APP_NAME}`,
+  description: "Get in touch with BF Suma Uganda. Send us a message or reach out via WhatsApp, email, or phone."
+};
 
 export default function ContactPage() {
   return (
-    <PageContainer className="space-y-6 py-10 sm:py-12">
-      <h1 className="sr-only">Contact BF Suma support</h1>
-      <section className="rounded-2xl border border-pink-200/60 bg-logo-spectrum-pink p-5 shadow-soft sm:p-6">
-        <SectionHeader
-          title="Contact"
-          description="Reach support through the form, phone, email, or direct WhatsApp."
-        />
-      </section>
-
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <ContactForm />
-
-        <Card className="space-y-3 rounded-2xl p-5">
-          <h2 className="text-lg font-bold text-slate-900">Direct Support</h2>
-          <p className="text-sm text-slate-600">For urgent restock checks, WhatsApp gives the fastest response.</p>
-          <a className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800" href={buildWhatsAppUrl("Hello BF Suma, I need support.", SUPPORT_WHATSAPP_PHONE)} rel="noreferrer" target="_blank">
-            WhatsApp Us
-          </a>
-          <div className="space-y-1 border-t border-slate-200 pt-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Visit Us</p>
-            <a
-              className="block text-sm font-medium text-slate-700 hover:text-slate-900"
-              href={MAPS_URL}
-              rel="noreferrer"
-              target="_blank"
-            >
-              {ADDRESS.line1}<br />
-              {ADDRESS.line2}<br />
-              {ADDRESS.city}, {ADDRESS.country}
-            </a>
-          </div>
-          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`mailto:${SUPPORT_EMAIL}`}>
-            {SUPPORT_EMAIL}
-          </a>
-          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${CONTACT.whatsappPrimaryDisplay.replace(/\s/g, "")}`}>
-            {CONTACT.whatsappPrimaryLabel}: {CONTACT.whatsappPrimaryDisplay}
-          </a>
-          <a className="block text-sm font-medium text-slate-700 hover:text-slate-900" href={`tel:${CONTACT.whatsappSecondaryDisplay.replace(/\s/g, "")}`}>
-            {CONTACT.whatsappSecondaryLabel}: {CONTACT.whatsappSecondaryDisplay}
-          </a>
-        </Card>
+    <div className="mx-auto max-w-5xl px-4 py-12">
+      {/* Hero */}
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Get in touch</h1>
+        <p className="mt-3 text-lg text-slate-600">
+          Whether you have a quick question or a longer message, we're here to help.
+        </p>
       </div>
-    </PageContainer>
+
+      {/* Two-column grid */}
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* Left - Form */}
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Send us a message</h2>
+          <ContactForm />
+        </div>
+
+        {/* Right - Quick contact */}
+        <div>
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Quick contact</h2>
+          <QuickContactCard />
+        </div>
+      </div>
+    </div>
   );
 }
