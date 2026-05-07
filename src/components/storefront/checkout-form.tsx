@@ -532,7 +532,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
             </div>
             <div className="mb-1 flex items-center justify-between">
               <span className="text-slate-600">{isPickup ? "Pickup Fee" : "Delivery Fee"}</span>
-              <span className="font-medium">{deliveryFee === 0 ? "Free" : formatCurrency(deliveryFee, items[0]?.currency)}</span>
+              <span className="font-medium">{formatCurrency(deliveryFee, items[0]?.currency)}</span>
             </div>
             <div className="flex items-center justify-between text-base font-semibold">
               <span>Total</span>
