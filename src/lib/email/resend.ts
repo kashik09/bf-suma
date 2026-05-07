@@ -161,16 +161,16 @@ export async function sendNewsletterWelcomeEmail({
 }: SendNewsletterWelcomeEmailInput): Promise<EmailDeliveryResult> {
   const bodyHtml = `
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
-      Thanks for subscribing. You'll receive concise wellness tips, product updates, and useful guidance without inbox noise.
+      You're in. Expect occasional wellness tips, new product alerts, and practical health guidance — no spam, just useful stuff.
     </p>
     <p style="margin:0;font-size:15px;line-height:1.6;color:#334155;">
-      We focus on practical advice that helps you choose products with confidence.
+      Questions anytime? Just reply to this email or reach us on WhatsApp.
     </p>
   `.trim();
 
   const html = renderEmailLayout({
-    preheader: "You are now subscribed to BF Suma wellness updates.",
-    heading: "Welcome to BF Suma updates",
+    preheader: "You're now subscribed to BF Suma wellness updates.",
+    heading: "You're on the list",
     bodyHtml,
     ctaText: "Browse Products",
     ctaUrl: "https://bfsumauganda.com/shop",
@@ -179,9 +179,9 @@ export async function sendNewsletterWelcomeEmail({
   });
 
   const text = [
-    "Welcome to BF Suma updates.",
+    "You're on the list.",
     "",
-    "Thanks for subscribing. You'll receive concise wellness tips, product updates, and useful guidance.",
+    "Expect occasional wellness tips, new product alerts, and practical health guidance — no spam, just useful stuff.",
     "",
     "Browse products: https://bfsumauganda.com/shop",
     `Need help? WhatsApp: ${getWhatsAppPrimaryUrl()}`
@@ -202,29 +202,29 @@ export async function sendStorefrontWelcomeEmail({
 }: SendStorefrontWelcomeEmailInput): Promise<EmailDeliveryResult> {
   const bodyHtml = `
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
-      Hi ${escapeHtml(firstName)}, thanks for your first order. We're glad you chose BF Suma.
+      Hi ${escapeHtml(firstName)}, thanks for ordering with us. Your first order means a lot — we'll make sure it goes smoothly.
     </p>
     <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
-      What makes us different: clear product guidance, transparent pricing, and direct support when you need it.
+      If you ever have questions about a product or need help, just WhatsApp us. We're quick to respond.
     </p>
   `.trim();
 
   const html = renderEmailLayout({
-    preheader: "Thanks for your first BF Suma order. Here's what to expect next.",
-    heading: "Welcome to BF Suma",
+    preheader: "Your first BF Suma order — here's what to expect.",
+    heading: "Welcome aboard",
     bodyHtml,
-    ctaText: "Read wellness guides",
+    ctaText: "Browse wellness guides",
     ctaUrl: "https://bfsumauganda.com/blog",
     recipientEmail: email
   });
 
   const text = [
-    "Welcome to BF Suma.",
+    "Welcome aboard.",
     "",
-    `Hi ${firstName}, thanks for your first order. We're glad you chose BF Suma.`,
-    "What makes us different: clear product guidance, transparent pricing, and direct support.",
+    `Hi ${firstName}, thanks for ordering with us. Your first order means a lot — we'll make sure it goes smoothly.`,
+    "Questions about a product? Just WhatsApp us. We're quick to respond.",
     "",
-    "Read wellness guides: https://bfsumauganda.com/blog"
+    "Browse wellness guides: https://bfsumauganda.com/blog"
   ].join("\n");
 
   return sendEmail({
@@ -304,7 +304,7 @@ export async function sendOrderConfirmationEmail({
       Delivery estimate: <strong>${escapeHtml(estimatedDeliveryWindow)}</strong>
     </p>
     <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:#334155;">
-      A note from us: Each product comes with usage guidance on the label — give it a read for the best results. Have questions? WhatsApp us anytime.
+      Tip: Check the usage guidance on each label for best results. Questions? WhatsApp us anytime.
     </p>
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:12px 0 0;">
       <tr>
@@ -340,7 +340,7 @@ export async function sendOrderConfirmationEmail({
     "",
     `Delivery estimate: ${estimatedDeliveryWindow}`,
     "",
-    "A note from us: Each product comes with usage guidance on the label — give it a read for the best results. Have questions? WhatsApp us anytime.",
+    "Tip: Check the usage guidance on each label for best results. Questions? WhatsApp us anytime.",
     `WhatsApp us: ${genericInquiryWhatsAppUrl}`,
     "",
     `Need help? WhatsApp: ${supportWhatsAppUrl}`
@@ -363,7 +363,7 @@ export async function sendAbandonedCartReminderEmail({
 }: SendAbandonedCartReminderEmailInput): Promise<EmailDeliveryResult> {
   const bodyHtml = `
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
-      Hi ${escapeHtml(firstName)}, your selected item is still in your cart.
+      Hi ${escapeHtml(firstName)}, you've still got items in your cart. No rush — just a heads-up in case you meant to finish.
     </p>
     <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
       ${escapeHtml(cartSummary)}
@@ -371,21 +371,21 @@ export async function sendAbandonedCartReminderEmail({
   `.trim();
 
   const html = renderEmailLayout({
-    preheader: "Your BF Suma cart is waiting for you.",
-    heading: "You left something behind",
+    preheader: "Your BF Suma cart is still waiting.",
+    heading: "Still interested?",
     bodyHtml,
-    ctaText: "Return to cart",
+    ctaText: "Complete your order",
     ctaUrl: cartUrl,
     recipientEmail: email
   });
 
   const text = [
-    "You left something behind.",
+    "Still interested?",
     "",
-    `${firstName}, your selected item is still in your cart.`,
+    `${firstName}, you've still got items in your cart. No rush — just a heads-up in case you meant to finish.`,
     cartSummary,
     "",
-    `Return to cart: ${cartUrl}`
+    `Complete your order: ${cartUrl}`
   ].join("\n");
 
   return sendEmail({
@@ -405,16 +405,16 @@ export async function sendPostPurchaseReviewRequestEmail({
 }: SendPostPurchaseReviewRequestEmailInput): Promise<EmailDeliveryResult> {
   const bodyHtml = `
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
-      Hi ${escapeHtml(firstName)}, we hope your ${escapeHtml(productName)} is working well for you.
+      Hi ${escapeHtml(firstName)}, how's the ${escapeHtml(productName)} treating you?
     </p>
     <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
-      Your feedback helps other customers choose with confidence.
+      A quick review helps other customers decide — and we'd genuinely appreciate it.
     </p>
   `.trim();
 
   const html = renderEmailLayout({
-    preheader: "Share your product experience in one quick review.",
-    heading: "How are you getting on?",
+    preheader: "Quick favor: share your experience with your recent purchase.",
+    heading: "Quick check-in",
     bodyHtml,
     ctaText: "Leave a review",
     ctaUrl: reviewUrl,
@@ -422,10 +422,10 @@ export async function sendPostPurchaseReviewRequestEmail({
   });
 
   const text = [
-    "How are you getting on?",
+    "Quick check-in",
     "",
-    `${firstName}, we hope your ${productName} is working well for you.`,
-    "Your feedback helps other customers choose with confidence.",
+    `${firstName}, how's the ${productName} treating you?`,
+    "A quick review helps other customers decide — and we'd genuinely appreciate it.",
     "",
     `Leave a review: ${reviewUrl}`
   ].join("\n");
@@ -446,29 +446,29 @@ export async function sendReengagementEmail({
 }: SendReengagementEmailInput): Promise<EmailDeliveryResult> {
   const bodyHtml = `
     <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#334155;">
-      Hi ${escapeHtml(firstName)}, we've refreshed our bestsellers and wellness picks since your last visit.
+      Hi ${escapeHtml(firstName)}, it's been a while. We've added new products and restocked popular items since your last visit.
     </p>
     <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">
-      Explore what's trending now and pick up where you left off.
+      Here's what customers are buying now.
     </p>
   `.trim();
 
   const html = renderEmailLayout({
-    preheader: "See what BF Suma customers are choosing now.",
-    heading: "We miss you at BF Suma",
+    preheader: "New arrivals and restocks at BF Suma.",
+    heading: "See what's new",
     bodyHtml,
-    ctaText: "See bestsellers",
+    ctaText: "View bestsellers",
     ctaUrl: bestSellersUrl,
     recipientEmail: email,
     showUnsubscribe: true
   });
 
   const text = [
-    "We miss you at BF Suma.",
+    "See what's new at BF Suma.",
     "",
-    `${firstName}, we've refreshed our bestsellers and wellness picks since your last visit.`,
+    `${firstName}, it's been a while. We've added new products and restocked popular items since your last visit.`,
     "",
-    `See bestsellers: ${bestSellersUrl}`
+    `View bestsellers: ${bestSellersUrl}`
   ].join("\n");
 
   return sendEmail({
