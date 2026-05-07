@@ -461,6 +461,9 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
                     </option>
                   ))}
                 </Select>
+                <p className="mt-1 text-xs text-slate-500">
+                  {DELIVERY_ZONES.find((z) => z.id === zoneId)?.description}
+                </p>
               </FormField>
 
               <FormField
@@ -480,11 +483,9 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           <fieldset className="space-y-2">
             <p className="text-sm font-medium text-slate-700">Payment Method</p>
             <div className="grid gap-2 sm:grid-cols-1">
-              <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} />
-                <span>
-                  <span className="block font-medium text-slate-900">{isPickup ? "Pay on order" : "Pay on delivery"}</span>
-                </span>
+                <span className="font-medium text-slate-900">{isPickup ? "Pay on order" : "Pay on delivery"}</span>
               </label>
             </div>
           </fieldset>
@@ -538,7 +539,6 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
               <span>{formatCurrency(total, items[0]?.currency)}</span>
             </div>
           </div>
-          <p className="mt-1 text-xs font-medium text-slate-700">{estimatedDeliveryWindow}</p>
 
           <ul className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
             <li className="flex items-start gap-1.5">

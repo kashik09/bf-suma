@@ -32,7 +32,7 @@ const badges = [
 
 export function StoreTrustBadges({ className, onDark = false }: StoreTrustBadgesProps) {
   return (
-    <ul className={cn("grid gap-2 sm:grid-cols-3", className)}>
+    <ul className={cn("grid grid-cols-2 gap-2", className)}>
       {badges.map((badge) => (
         <li
           className={cn(
