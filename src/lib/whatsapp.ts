@@ -5,40 +5,6 @@ export function buildWhatsAppUrl(message: string, phone: string = WHATSAPP_PHONE
 }
 
 /**
- * Clean context (especially blog slugs → readable text)
- */
-function formatContext(context?: string) {
-  if (!context) return "";
-
-  let clean = context.trim();
-
-  // convert blog:slug → readable title
-  if (clean.startsWith("blog:")) {
-    clean = clean.replace("blog:", "");
-  }
-
-  // slug → sentence
-  clean = clean
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-
-  return clean;
-}
-
-/**
- * GENERAL HELP (from anywhere, incl. blog)
- */
-export function buildWhatsAppGeneralHelpMessage(context?: string) {
-  const formatted = formatContext(context);
-
-  if (formatted) {
-    return `Hi! I was reading about "${formatted}" and I’d like help choosing the right product. What would you recommend?`;
-  }
-
-  return `Hi! I’m looking for help choosing the right product. What would you recommend?`;
-}
-
-/**
  * PRODUCT INTEREST (soft intent)
  */
 export function buildWhatsAppProductInterestMessage(productName: string) {
@@ -99,18 +65,6 @@ export function buildWhatsAppHomepageCtaMessage() {
  */
 export function buildWhatsAppBlogFallbackMessage() {
   return "Hi! I was reading on the BF Suma site and would like to ask a question.";
-}
-
-/**
- * PAYMENT CONFIRMATION (post-checkout)
- * Used on order confirmation page after till payment
- * @deprecated Use buildWhatsAppMtnPaymentMessage, buildWhatsAppAirtelPaymentMessage, or buildWhatsAppCashPaymentMessage instead
- */
-export function buildWhatsAppPaymentConfirmationMessage(
-  orderNumber: string,
-  totalFormatted: string
-) {
-  return `Hi! I just paid ${totalFormatted} for order ${orderNumber}. Confirming my payment — please check and process my order. Thank you!`;
 }
 
 export interface PaymentConfirmationOrder {
