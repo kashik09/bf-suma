@@ -18,17 +18,6 @@ const badges = [
     )
   },
   {
-    label: "7-day returns",
-    icon: (
-      <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
-        <path
-          d="M12 4a8 8 0 1 0 7.8 6h-2.2A6 6 0 1 1 12 6v2l4-3-4-3v2Z"
-          fill="currentColor"
-        />
-      </svg>
-    )
-  },
-  {
     label: "Local delivery",
     icon: (
       <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">

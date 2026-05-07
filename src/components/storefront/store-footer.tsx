@@ -62,11 +62,6 @@ export function StoreFooter() {
               {CONTACT.whatsappSecondaryLabel}: {CONTACT.whatsappSecondaryDisplay}
             </a>
           </div>
-          <h4 className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">Mobile Money</h4>
-          <div className="mt-2 flex flex-col space-y-1 text-sm text-slate-100/85">
-            <p>MTN Till: <span className="font-medium text-white">{CONTACT.mtnTill}</span></p>
-            <p>Airtel Till: <span className="font-medium text-white">{CONTACT.airtelTill}</span></p>
-          </div>
         </div>
 
         <div>
