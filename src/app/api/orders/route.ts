@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { orderIntakeSchema } from "@/lib/validation";
 import { ORDER_STATUSES } from "@/lib/constants";
 import { assertAdminRequest } from "@/lib/admin-request";
-import { sendOrderConfirmationEmail, sendStorefrontWelcomeEmail } from "@/lib/email/resend";
+import { sendOrderConfirmationEmail, sendStorefrontWelcomeEmail, sendInternalOrderNotification } from "@/lib/email/resend";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { deleteAbandonedCartByEmail } from "@/services/abandoned-carts";
 import { enqueueOrderCreatedNotification } from "@/services/order-notifications";
@@ -463,6 +463,45 @@ export async function POST(request: Request) {
             orderId: result.orderId,
             status: emailDelivery.status,
             reason: emailDelivery.reason || "unknown"
+          });
+        }
+
+        try {
+          const internalNotification = await sendInternalOrderNotification({
+            orderNumber: result.orderNumber,
+            customerName: `${parsed.data.firstName.trim()} ${parsed.data.lastName.trim()}`.trim(),
+            customerEmail: normalizedEmail,
+            customerPhone: parsed.data.phone.trim(),
+            fulfillmentType: isPickup ? "pickup" : "delivery",
+            deliveryAddress: deliveryAddress || "Address not provided",
+            subtotal: result.subtotal,
+            deliveryFee: result.deliveryFee,
+            total: result.total,
+            currency: result.currency,
+            items: confirmationItems.length > 0 ? confirmationItems : fallbackItems,
+            notes: parsed.data.notes?.trim() || undefined,
+            createdAt: result.receivedAt
+          });
+
+          if (internalNotification.status === "sent") {
+            logEvent("info", "order.internal_notification_sent", {
+              correlationId,
+              orderId: result.orderId,
+              messageId: internalNotification.messageId || null
+            });
+          } else {
+            logEvent("warn", "order.internal_notification_not_sent", {
+              correlationId,
+              orderId: result.orderId,
+              status: internalNotification.status,
+              reason: internalNotification.reason || "unknown"
+            });
+          }
+        } catch (internalNotificationError) {
+          logEvent("warn", "order.internal_notification_error", {
+            correlationId,
+            orderId: result.orderId,
+            message: internalNotificationError instanceof Error ? internalNotificationError.message : "Unknown error"
           });
         }
 

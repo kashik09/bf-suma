@@ -301,7 +301,7 @@ export async function sendOrderConfirmationEmail({
       Delivery estimate: <strong>${escapeHtml(estimatedDeliveryWindow)}</strong>
     </p>
     <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#334155;">
-      While you wait: start with consistent daily use, hydrate well, and check product guidance on the label for best results.
+      While you wait: check product guidance on the label for best results.
     </p>
   `.trim();
 
@@ -465,5 +465,170 @@ export async function sendReengagementEmail({
     html,
     text,
     purpose: "transactional"
+  });
+}
+
+interface SendInternalOrderNotificationInput {
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  fulfillmentType: "delivery" | "pickup";
+  deliveryAddress: string;
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  currency: string;
+  items: Array<{
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    lineTotal: number;
+  }>;
+  notes?: string;
+  createdAt: string;
+}
+
+export async function sendInternalOrderNotification({
+  orderNumber,
+  customerName,
+  customerEmail,
+  customerPhone,
+  fulfillmentType,
+  deliveryAddress,
+  subtotal,
+  deliveryFee,
+  total,
+  currency,
+  items,
+  notes,
+  createdAt
+}: SendInternalOrderNotificationInput): Promise<EmailDeliveryResult> {
+  const internalEmail = process.env.INTERNAL_ORDERS_EMAIL || "orders@bfsumauganda.com";
+  const fulfillmentLabel = fulfillmentType === "pickup" ? "PICKUP" : "DELIVERY";
+
+  const itemsHtml = items
+    .map((item) => {
+      const safeName = escapeHtml(item.name);
+      return `<tr>
+      <td style="padding:8px 12px;font-size:14px;color:#0f172a;border-bottom:1px solid #e2e8f0;">${safeName}</td>
+      <td style="padding:8px 12px;font-size:14px;color:#334155;text-align:center;border-bottom:1px solid #e2e8f0;">${item.quantity}</td>
+      <td style="padding:8px 12px;font-size:14px;color:#334155;text-align:right;border-bottom:1px solid #e2e8f0;">${escapeHtml(formatCurrency(item.unitPrice, currency))}</td>
+      <td style="padding:8px 12px;font-size:14px;color:#334155;text-align:right;border-bottom:1px solid #e2e8f0;">${escapeHtml(formatCurrency(item.lineTotal, currency))}</td>
+    </tr>`;
+    })
+    .join("");
+
+  const itemsText = items
+    .map((item) => `- ${item.name} x${item.quantity} @ ${formatCurrency(item.unitPrice, currency)} = ${formatCurrency(item.lineTotal, currency)}`)
+    .join("\n");
+
+  const orderTime = new Date(createdAt).toLocaleString("en-UG", {
+    timeZone: "Africa/Kampala",
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+
+  const bodyHtml = `
+    <div style="background:#f1f5f9;padding:16px;border-radius:8px;margin-bottom:16px;">
+      <p style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">${escapeHtml(orderNumber)}</p>
+      <p style="margin:4px 0 0;font-size:14px;color:#64748b;">${orderTime}</p>
+    </div>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:16px;">
+      <tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;width:100px;">Customer</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:600;">${escapeHtml(customerName)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;">Email</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;">${escapeHtml(customerEmail)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;">Phone</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;">${escapeHtml(customerPhone)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;">Fulfillment</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:600;">${fulfillmentLabel}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;vertical-align:top;">Address</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;">${escapeHtml(deliveryAddress)}</td>
+      </tr>
+      ${notes ? `<tr>
+        <td style="padding:8px 0;font-size:14px;color:#64748b;vertical-align:top;">Notes</td>
+        <td style="padding:8px 0;font-size:14px;color:#0f172a;">${escapeHtml(notes)}</td>
+      </tr>` : ""}
+    </table>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">
+      <thead>
+        <tr style="background:#f8fafc;">
+          <th align="left" style="padding:10px 12px;font-size:12px;font-weight:600;text-transform:uppercase;color:#64748b;">Item</th>
+          <th align="center" style="padding:10px 12px;font-size:12px;font-weight:600;text-transform:uppercase;color:#64748b;">Qty</th>
+          <th align="right" style="padding:10px 12px;font-size:12px;font-weight:600;text-transform:uppercase;color:#64748b;">Unit</th>
+          <th align="right" style="padding:10px 12px;font-size:12px;font-weight:600;text-transform:uppercase;color:#64748b;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHtml}
+      </tbody>
+    </table>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f8fafc;border-radius:8px;padding:12px;">
+      <tr>
+        <td style="padding:6px 12px;font-size:14px;color:#64748b;">Subtotal</td>
+        <td style="padding:6px 12px;font-size:14px;color:#0f172a;text-align:right;">${escapeHtml(formatCurrency(subtotal, currency))}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px;font-size:14px;color:#64748b;">Delivery</td>
+        <td style="padding:6px 12px;font-size:14px;color:#0f172a;text-align:right;">${deliveryFee === 0 ? "Free" : escapeHtml(formatCurrency(deliveryFee, currency))}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px;font-size:16px;font-weight:700;color:#0f172a;">Total</td>
+        <td style="padding:6px 12px;font-size:16px;font-weight:700;color:#0f172a;text-align:right;">${escapeHtml(formatCurrency(total, currency))}</td>
+      </tr>
+    </table>
+  `.trim();
+
+  const html = renderEmailLayout({
+    preheader: `New order ${orderNumber} - ${formatCurrency(total, currency)} - ${fulfillmentLabel}`,
+    heading: `New Order: ${orderNumber}`,
+    bodyHtml,
+    ctaText: "View in Admin",
+    ctaUrl: `https://bfsumauganda.com/admin/orders`,
+    recipientEmail: internalEmail
+  });
+
+  const text = [
+    `NEW ORDER: ${orderNumber}`,
+    `Received: ${orderTime}`,
+    "",
+    "CUSTOMER",
+    `Name: ${customerName}`,
+    `Email: ${customerEmail}`,
+    `Phone: ${customerPhone}`,
+    "",
+    `FULFILLMENT: ${fulfillmentLabel}`,
+    `Address: ${deliveryAddress}`,
+    notes ? `Notes: ${notes}` : "",
+    "",
+    "ITEMS",
+    itemsText,
+    "",
+    `Subtotal: ${formatCurrency(subtotal, currency)}`,
+    `Delivery: ${deliveryFee === 0 ? "Free" : formatCurrency(deliveryFee, currency)}`,
+    `TOTAL: ${formatCurrency(total, currency)}`,
+    "",
+    "View in admin: https://bfsumauganda.com/admin/orders"
+  ].filter(Boolean).join("\n");
+
+  return sendEmail({
+    to: internalEmail,
+    subject: `New Order ${orderNumber} - ${formatCurrency(total, currency)}`,
+    html,
+    text,
+    purpose: "order"
   });
 }
