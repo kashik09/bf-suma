@@ -23,16 +23,10 @@ Source: data/BF_SUMA_Website_Prices.xlsx (May 2026 retail prices)
 | BFS-GYM-016 | Gym Ease Tea | 284,400 | UGX |
 | BFS-PUR-040 | Purewell Water Purifier | 648,000 | UGX |
 
-### Recommendation
+### Status
 
 These 5 products use the legacy `BFS-*` SKU format (not official AP/CP codes).
-They appear to be old test data and should be **archived** (`status = 'ARCHIVED'`).
-
-```sql
-UPDATE public.products
-SET status = 'ARCHIVED', updated_at = NOW()
-WHERE sku LIKE 'BFS-%';
-```
+✅ **Already archived** - all have `status = 'ARCHIVED'`. No action needed.
 
 ## ✅ Matches (51)
 
