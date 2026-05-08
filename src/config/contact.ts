@@ -46,10 +46,10 @@ export function getWhatsAppSecondaryUrl(message?: string): string {
 
 export const ADDRESS = {
   line1: "Plot 1 Entebbe Road",
-  line2: "Lloyds Mall, Shop No. 1",
+  line2: "Lloyds Mall, 2nd Floor Room F9",
   city: "Kampala",
   country: "Uganda",
-  full: "Plot 1 Entebbe Road, Lloyds Mall, Shop No. 1, Kampala, Uganda"
+  full: "Plot 1 Entebbe Road, Lloyds Mall, 2nd Floor Room F9, Kampala, Uganda"
 } as const;
 
 export const MAPS_URL = `https://maps.google.com/?q=${encodeURIComponent(ADDRESS.full)}`;
