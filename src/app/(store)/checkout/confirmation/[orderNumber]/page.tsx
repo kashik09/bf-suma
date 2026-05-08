@@ -292,6 +292,23 @@ export default async function OrderConfirmationPage({
         </div>
       </Card>
 
+      {/* Order Assurance */}
+      <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
+        <p>
+          At BF Suma, we are committed to providing you with a smooth and reliable shopping experience.
+          Once your order is placed, our team will promptly contact you to confirm your order details,
+          delivery arrangements, and payment information where applicable. If you do not hear from us
+          within a reasonable period, please contact us directly at{" "}
+          <a
+            href={`tel:${CONTACT.whatsappPrimary}`}
+            className="font-medium text-brand-700 hover:underline"
+          >
+            {CONTACT.whatsappPrimaryDisplay}
+          </a>{" "}
+          for immediate assistance.
+        </p>
+      </div>
+
       {/* Email Receipt Form */}
       <Card className="mb-6">
         <EmailReceiptForm orderNumber={order.orderNumber} defaultEmail={order.customer.email} />
