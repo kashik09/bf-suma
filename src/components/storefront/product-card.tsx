@@ -59,7 +59,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
         <p className="mt-1.5 line-clamp-2 text-sm text-slate-600">{product.description}</p>
 
         <div className="mt-auto pt-2">
-          <p className="text-2xl font-bold text-brand-600">{formatPrice(convertedPrice, selectedCurrency)}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatPrice(convertedPrice, selectedCurrency)}</p>
           <button
             aria-label={`View details for ${product.name}`}
             className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-60"
