@@ -28,3 +28,9 @@ pnpm-debug.log*
 .vercel
 .env*.local
 tests/.tmp/
+
+# folders
+public/bfsumapackages/
+public/package-images/og/
+public/package-images/png/
+public/package-images/scraps/
