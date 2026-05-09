@@ -58,7 +58,7 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
           className="block"
           href={`/packages/${pkg.slug}`}
         >
-          <div className={`relative w-full bg-gradient-to-br from-slate-50 to-slate-100 ${featured ? "h-56" : "h-44"}`}>
+          <div className={`relative w-full bg-white ${featured ? "h-56" : "h-44"}`}>
             <Image
               alt={`${pkg.name} health package`}
               className="object-contain transition duration-500 group-hover:scale-105"
