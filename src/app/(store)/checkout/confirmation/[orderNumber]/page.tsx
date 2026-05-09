@@ -71,6 +71,11 @@ export default async function OrderConfirmationPage({
     CONTACT.whatsappPrimary
   );
 
+  // Cash payment only available for pickup or central Kampala delivery
+  const showCashOption =
+    order.fulfillmentType === "pickup" ||
+    (order.fulfillmentType === "delivery" && order.deliveryZone === "central");
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
       {/* Success Header */}
@@ -178,7 +183,7 @@ export default async function OrderConfirmationPage({
 
         {/* Payment method buttons */}
         <p className="mb-3 font-medium text-slate-700">Choose your payment method:</p>
-        <div className="grid gap-3">
+        <div className={`grid gap-3 ${showCashOption ? "" : "sm:grid-cols-2"}`}>
           <a
             href={mtnWaUrl}
             target="_blank"
@@ -205,21 +210,29 @@ export default async function OrderConfirmationPage({
             </div>
             <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
           </a>
-          <a
-            href={cashWaUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
-          >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100">
-              <Banknote className="h-6 w-6 text-slate-600" />
+          {showCashOption ? (
+            <a
+              href={cashWaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand-500 hover:shadow-sm"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                <Banknote className="h-6 w-6 text-slate-600" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-slate-900">Cash on Arrival</p>
+                <p className="text-sm text-slate-500">Pay when you receive</p>
+              </div>
+              <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
+            </a>
+          ) : (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-center sm:col-span-2">
+              <p className="text-xs text-slate-600">
+                Cash payment is only available for pickup orders or deliveries within Kampala CBD.
+              </p>
             </div>
-            <div className="flex-1">
-              <p className="font-semibold text-slate-900">Cash on Arrival</p>
-              <p className="text-sm text-slate-500">Pay when you receive</p>
-            </div>
-            <MessageCircle className="h-5 w-5 shrink-0 text-slate-400" />
-          </a>
+          )}
         </div>
         <p className="mt-3 text-center text-xs text-slate-500">
           Tapping a button opens WhatsApp with your payment details.

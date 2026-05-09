@@ -82,6 +82,7 @@ export interface Order {
   total: number;
   currency: CurrencyCode;
   delivery_address: string;
+  delivery_zone?: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

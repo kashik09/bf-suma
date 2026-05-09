@@ -285,6 +285,9 @@ function buildOrderNotes(payload: OrderIntakeInput): string {
   }
 
   notesParts.push(`Fulfillment: ${payload.fulfillmentType === "pickup" ? "PICKUP" : "DELIVERY"}`);
+  if (payload.deliveryZone && payload.fulfillmentType !== "pickup") {
+    notesParts.push(`Zone: ${payload.deliveryZone}`);
+  }
   notesParts.push("Payment: PAY_ON_DELIVERY");
 
   if (payload.fulfillmentType === "pickup" && payload.pickupLocation?.trim()) {
@@ -726,7 +729,8 @@ async function executeAtomicOrderWrite(
     p_delivery_fee: computed.deliveryFee,
     p_total: computed.total,
     p_currency: computed.currency,
-    p_items: orderItemsPayload as unknown as Json
+    p_items: orderItemsPayload as unknown as Json,
+    p_delivery_zone: payload.deliveryZone || null
   });
 
   if (error) throw error;
@@ -807,6 +811,7 @@ export interface ConfirmationOrderDetail {
   currency: Order["currency"];
   deliveryAddress: string;
   fulfillmentType: "delivery" | "pickup";
+  deliveryZone: string | null;
   createdAt: string;
   customer: ConfirmationOrderCustomer;
   items: ConfirmationOrderItem[];
@@ -816,6 +821,8 @@ export async function getOrderByNumberForConfirmation(
   orderNumber: string
 ): Promise<ConfirmationOrderDetail | null> {
   const supabase = createServiceRoleSupabaseClient();
+  // Note: delivery_zone column added in migration 20260509160000
+  // Using raw query to support column before Supabase types are regenerated
   const { data: orderRow, error: orderError } = await supabase
     .from("orders")
     .select(
@@ -842,6 +849,12 @@ export async function getOrderByNumberForConfirmation(
   const deliveryAddress = row.delivery_address || "";
   const isPickup = deliveryAddress.toLowerCase().startsWith("pickup:");
 
+  // Parse delivery zone from notes (format: "... | Zone: central | ...")
+  // This handles orders before delivery_zone column was added
+  const notes = row.notes || "";
+  const zoneMatch = notes.match(/Zone:\s*(\w+)/i);
+  const deliveryZone = (row as { delivery_zone?: string | null }).delivery_zone || zoneMatch?.[1] || null;
+
   return {
     orderNumber: row.order_number,
     status: row.status,
@@ -852,6 +865,7 @@ export async function getOrderByNumberForConfirmation(
     currency: row.currency,
     deliveryAddress,
     fulfillmentType: isPickup ? "pickup" : "delivery",
+    deliveryZone,
     createdAt: row.created_at,
     customer: {
       firstName: customer.first_name,
