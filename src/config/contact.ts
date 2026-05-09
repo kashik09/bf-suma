@@ -25,11 +25,11 @@ export const CONTACT = {
 } as const;
 
 export const SOCIAL_LINKS = [
-  { label: "Facebook", href: "https://facebook.com/bfsumauganda" },
-  { label: "Instagram", href: "https://instagram.com/bfsumauganda" },
-  { label: "TikTok", href: "https://tiktok.com/@bfsumauganda" },
-  { label: "X", href: "https://x.com/bfsumauganda" },
-  { label: "YouTube", href: "https://youtube.com/@bfsumauganda" },
+  { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61568820027321" },
+  { label: "Instagram", href: "https://instagram.com/bfsumaugandaoriginal" },
+  { label: "TikTok", href: "https://tiktok.com/bfsuma_ugandaoriginal" },
+  { label: "X", href: "https://x.com/BfsumaUga" },
+  { label: "YouTube", href: "https://youtube.com/@Bfsumaugandaoriginal" },
 ] as const;
 
 /** Build wa.me URL for primary WhatsApp */
