@@ -188,3 +188,28 @@ I'd like to pay cash for my order:
 
 Please confirm. Thanks!`;
 }
+
+export interface CheckoutCartItem {
+  name: string;
+  quantity: number;
+}
+
+/**
+ * Checkout page WhatsApp order request (for hesitant customers)
+ */
+export function buildWhatsAppCheckoutOrderRequestMessage(
+  cartItems: CheckoutCartItem[],
+  totalFormatted: string
+) {
+  const itemLines = cartItems
+    .map((item) => `• ${item.name} (×${item.quantity})`)
+    .join("\n");
+
+  return `Hi BF Suma! I'd like to place an order but would prefer to confirm via WhatsApp. Here's what I want:
+
+${itemLines}
+
+Total estimate: ${totalFormatted}
+
+Could you guide me through the rest?`;
+}

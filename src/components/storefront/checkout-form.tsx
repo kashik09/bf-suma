@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, Info, ShieldCheck, Truck } from "lucide-react";
+import { CheckCircle2, Info, MessageCircle, ShieldCheck, Truck } from "lucide-react";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,8 @@ import { checkoutSchema, type CheckoutInput, type OrderIntakeInput } from "@/lib
 import { formatCurrency, fromMinorUnits, STORE_CURRENCY } from "@/lib/utils";
 import { ApiRequestError, submitOrderIntake } from "@/services/storefront-api";
 import type { OrderIntakeResponse, OrderIntakeResultCode } from "@/types";
-import { ADDRESS } from "@/config/contact";
+import { ADDRESS, CONTACT } from "@/config/contact";
+import { buildWhatsAppUrl, buildWhatsAppCheckoutOrderRequestMessage } from "@/lib/whatsapp";
 import {
   DELIVERY_ZONES,
   DEFAULT_ZONE_ID,
@@ -573,6 +574,28 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           </ul>
 
           <StoreTrustBadges className="mt-3" />
+
+          {/* WhatsApp fallback for hesitant customers */}
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
+            <p className="mb-3 text-sm text-slate-700">
+              Not ready to place the order? You can also WhatsApp us your order request and we&apos;ll handle it from there.
+            </p>
+            <a
+              href={buildWhatsAppUrl(
+                buildWhatsAppCheckoutOrderRequestMessage(
+                  items.map((item) => ({ name: item.name, quantity: item.quantity })),
+                  formatCurrency(total, STORE_CURRENCY)
+                ),
+                CONTACT.whatsappPrimary
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md bg-[#25D366] px-4 py-2 text-sm font-medium text-white hover:bg-[#1ebe5d]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp your order
+            </a>
+          </div>
 
           <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
             {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
