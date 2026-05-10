@@ -6,7 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
-import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
+import { canDelete, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { fromMinorUnits, toMinorUnits } from "@/lib/utils";
 import {
@@ -65,7 +65,7 @@ export default async function AdminProductDetailPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string }>;
 }) {
-  await requireAdminSession(OPERATIONAL_ROLES);
+  const session = await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const [product, categories, query] = await Promise.all([
     getAdminProductById(id),
@@ -135,7 +135,11 @@ export default async function AdminProductDetailPage({
   async function deleteProductAction() {
     "use server";
 
-    await requireAdminSession(OPERATIONAL_ROLES);
+    const session = await requireAdminSession(OPERATIONAL_ROLES);
+
+    if (!canDelete(session.role)) {
+      redirect(`/admin/products/${id}?error=${encodeURIComponent("Forbidden: Only super admins can delete products.")}`);
+    }
 
     try {
       await deleteAdminProduct(id);
@@ -254,17 +258,19 @@ export default async function AdminProductDetailPage({
         </form>
       </Card>
 
-      <Card>
-        <p className="text-sm text-slate-600">
-          Delete this product if it was created by mistake and has no order history.
-        </p>
-        <ConfirmDeleteForm
-          action={deleteProductAction}
-          triggerLabel="Delete Product"
-          title="Delete Product"
-          message="Delete this product? This cannot be undone."
-        />
-      </Card>
+      {canDelete(session.role) && (
+        <Card>
+          <p className="text-sm text-slate-600">
+            Delete this product if it was created by mistake and has no order history.
+          </p>
+          <ConfirmDeleteForm
+            action={deleteProductAction}
+            triggerLabel="Delete Product"
+            title="Delete Product"
+            message="Delete this product? This cannot be undone."
+          />
+        </Card>
+      )}
     </div>
   );
 }
