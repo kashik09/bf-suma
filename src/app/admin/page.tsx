@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { QuickActions, RecentOrders, StatsCard } from "@/components/admin";
 import { Badge, Card, SectionHeader } from "@/components/ui";
+import { canEdit } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { formatCurrency } from "@/lib/utils";
 import { getAdminDashboardSnapshot } from "@/services/admin-dashboard";
@@ -88,7 +89,7 @@ function priorityBadgeVariant(priority: "high" | "medium" | "low"): "danger" | "
 
 export default async function AdminDashboardPage() {
   const session = await requireAdminSession();
-  const canManageContent = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
+  const canManageContent = canEdit(session.role);
   const resolvedQuickActions = canManageContent ? [...managementActions, ...quickActions] : quickActions;
   const snapshot = await getAdminDashboardSnapshot();
 

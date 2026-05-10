@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ALL_ADMIN_ROLES, canEdit } from "@/lib/admin-permissions";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { AdminBlogUnavailableError, listAdminBlogPosts } from "@/services/admin-blog";
@@ -39,8 +40,8 @@ export default async function AdminBlogPage({
 }: {
   searchParams?: BlogSearchParams;
 }) {
-  const session = await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
-  const canManageBlog = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
+  const session = await requireAdminSession(ALL_ADMIN_ROLES);
+  const canManageBlog = canEdit(session.role);
 
   const query = searchParams ? await searchParams : {};
   const searchTerm = typeof query.search === "string" ? query.search : "";

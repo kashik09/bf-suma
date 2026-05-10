@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { ALL_ADMIN_ROLES, canEdit } from "@/lib/admin-permissions";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { formatCurrency } from "@/lib/utils";
@@ -19,8 +20,8 @@ export default async function AdminPackagesPage({
 }: {
   searchParams?: Promise<{ deleted?: string }>;
 }) {
-  const session = await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
-  const canManagePackages = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
+  const session = await requireAdminSession(ALL_ADMIN_ROLES);
+  const canManagePackages = canEdit(session.role);
   const query = searchParams ? await searchParams : {};
 
   let packages: Awaited<ReturnType<typeof listPackagesForAdmin>> = [];

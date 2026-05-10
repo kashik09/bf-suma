@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { assertAdminRequest } from "@/lib/admin-request";
 import { orderStatusUpdateRequestSchema } from "@/lib/validation";
 import {
@@ -51,7 +52,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const adminAccess = await assertAdminRequest(request, ["SUPER_ADMIN", "OPERATIONS"]);
+  const adminAccess = await assertAdminRequest(request, OPERATIONAL_ROLES);
   if (!adminAccess.ok) {
     return NextResponse.json({ message: adminAccess.message }, { status: adminAccess.status });
   }

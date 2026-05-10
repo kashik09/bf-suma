@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { PackageForm } from "@/components/admin/package-form";
 import { Card, SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { deletePackage, getPackageById, updatePackage } from "@/services/packages";
 import { listAdminProductOptions } from "@/services/admin-products";
@@ -56,7 +57,7 @@ export default async function AdminEditPackagePage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string; created?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const query = searchParams ? await searchParams : {};
 
@@ -72,7 +73,7 @@ export default async function AdminEditPackagePage({
   async function updatePackageAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = updatePackageSchema.safeParse({
       name: formData.get("name"),
@@ -131,7 +132,7 @@ export default async function AdminEditPackagePage({
   async function deletePackageAction() {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     try {
       await deletePackage(id);

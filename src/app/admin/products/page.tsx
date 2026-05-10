@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ALL_ADMIN_ROLES, canEdit } from "@/lib/admin-permissions";
 import { Badge, Card, SectionHeader } from "@/components/ui";
 import { requireAdminSession } from "@/lib/admin-server";
 import { AdminProductsUnavailableError, getAdminProducts } from "@/services/admin-products";
@@ -47,8 +48,8 @@ export default async function AdminProductsPage({
 }: {
   searchParams?: ProductsSearchParams;
 }) {
-  const session = await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
-  const canManageProducts = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
+  const session = await requireAdminSession(ALL_ADMIN_ROLES);
+  const canManageProducts = canEdit(session.role);
   const query = searchParams ? await searchParams : {};
   const searchTerm = typeof query.search === "string" ? query.search : "";
   const statusFilter =

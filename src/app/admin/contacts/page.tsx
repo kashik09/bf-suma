@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { FormSubmitButton } from "@/components/forms";
 import { Badge, Card, SectionHeader } from "@/components/ui";
+import { ALL_ADMIN_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { INQUIRY_STATUSES } from "@/lib/constants";
 import { listAdminInquiries, updateAdminInquiryStatus } from "@/services/admin-inquiries";
@@ -58,7 +59,7 @@ export default async function AdminContactsPage({
 }: {
   searchParams?: ContactsSearchParams;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
+  await requireAdminSession(ALL_ADMIN_ROLES);
   const query = searchParams ? await searchParams : {};
 
   const searchTerm = typeof query.search === "string" ? query.search : "";
@@ -68,7 +69,7 @@ export default async function AdminContactsPage({
   async function updateStatusAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
+    await requireAdminSession(ALL_ADMIN_ROLES);
 
     const parsed = updateInquirySchema.safeParse({
       inquiryId: formData.get("inquiryId"),

@@ -6,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { fromMinorUnits, toMinorUnits } from "@/lib/utils";
 import {
@@ -64,7 +65,7 @@ export default async function AdminProductDetailPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const [product, categories, query] = await Promise.all([
     getAdminProductById(id),
@@ -81,7 +82,7 @@ export default async function AdminProductDetailPage({
   async function updateProductAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = updateProductSchema.safeParse({
       name: formData.get("name"),
@@ -134,7 +135,7 @@ export default async function AdminProductDetailPage({
   async function deleteProductAction() {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     try {
       await deleteAdminProduct(id);

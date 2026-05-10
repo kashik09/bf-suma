@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Star } from "lucide-react";
 import { Badge, Card, SectionHeader } from "@/components/ui";
+import { ALL_ADMIN_ROLES, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { getAdminReviews, updateReviewStatus } from "@/services/product-reviews";
 
@@ -63,7 +64,7 @@ export default async function AdminReviewsPage({
 }: {
   searchParams?: Promise<{ status?: string; updated?: string; error?: string; page?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
+  await requireAdminSession(ALL_ADMIN_ROLES);
   const query = searchParams ? await searchParams : {};
   const statusFilter: ReviewStatusFilter =
     typeof query.status === "string" && isReviewStatus(query.status) ? query.status : "all";
@@ -79,7 +80,7 @@ export default async function AdminReviewsPage({
 
   async function approveAction(formData: FormData) {
     "use server";
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
     const reviewId = String(formData.get("reviewId") || "").trim();
     const returnPage = getSafePage(String(formData.get("page") || "1"));
     const returnStatusRaw = String(formData.get("statusFilter") || "all");
@@ -97,7 +98,7 @@ export default async function AdminReviewsPage({
 
   async function rejectAction(formData: FormData) {
     "use server";
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
     const reviewId = String(formData.get("reviewId") || "").trim();
     const notes = String(formData.get("notes") || "");
     const returnPage = getSafePage(String(formData.get("page") || "1"));

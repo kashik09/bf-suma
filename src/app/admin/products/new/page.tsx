@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { toMinorUnits } from "@/lib/utils";
 import {
@@ -56,14 +57,14 @@ export default async function AdminNewProductPage({
 }: {
   searchParams?: Promise<{ error?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const categories = await listAdminCategoryOptions();
   const query = searchParams ? await searchParams : {};
 
   async function createProductAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = createProductSchema.safeParse({
       name: formData.get("name"),

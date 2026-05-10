@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
+import { canEdit, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { ORDER_STATUSES } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
@@ -34,7 +35,7 @@ export default async function AdminOrderDetailPage({
 }) {
   const { id } = await params;
   const session = await requireAdminSession();
-  const canManageOrders = session.role === "SUPER_ADMIN" || session.role === "OPERATIONS";
+  const canManageOrders = canEdit(session.role);
   const query = searchParams ? await searchParams : {};
   const detail = await getOrderDetailForAdmin(id);
 
@@ -45,7 +46,7 @@ export default async function AdminOrderDetailPage({
   async function updateStatusAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const rawStatus = String(formData.get("status") || "").trim();
     const note = String(formData.get("note") || "").trim();

@@ -1,11 +1,12 @@
 import { Card, SectionHeader } from "@/components/ui";
+import { ALL_ADMIN_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminGuidePage() {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
+  await requireAdminSession(ALL_ADMIN_ROLES);
 
   return (
     <div className="space-y-6">

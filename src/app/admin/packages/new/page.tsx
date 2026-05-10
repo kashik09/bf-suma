@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { PackageForm } from "@/components/admin/package-form";
 import { SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { createPackage } from "@/services/packages";
 import { listAdminProductOptions } from "@/services/admin-products";
@@ -53,14 +54,14 @@ export default async function AdminNewPackagePage({
 }: {
   searchParams?: Promise<{ error?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const query = searchParams ? await searchParams : {};
   const products = await listAdminProductOptions();
 
   async function createPackageAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = createPackageSchema.safeParse({
       name: formData.get("name"),

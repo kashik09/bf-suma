@@ -6,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import {
   BlogSlugConflictError,
@@ -80,7 +81,7 @@ export default async function AdminBlogDetailPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const post = await getAdminBlogPostById(id);
   if (!post) {
@@ -93,7 +94,7 @@ export default async function AdminBlogDetailPage({
   async function updateBlogPostAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = updateBlogPostSchema.safeParse({
       title: formData.get("title"),
@@ -146,7 +147,7 @@ export default async function AdminBlogDetailPage({
   async function deleteBlogPostAction() {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     try {
       await deleteAdminBlogPost(id);

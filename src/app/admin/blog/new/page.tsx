@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { Card, SectionHeader } from "@/components/ui";
+import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { BlogSlugConflictError, createAdminBlogPost } from "@/services/admin-blog";
 import type { BlogChannelTarget, BlogPostStatus } from "@/types";
@@ -72,13 +73,13 @@ export default async function AdminNewBlogPostPage({
 }: {
   searchParams?: Promise<{ error?: string }>;
 }) {
-  await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+  await requireAdminSession(OPERATIONAL_ROLES);
   const query = searchParams ? await searchParams : {};
 
   async function createBlogPostAction(formData: FormData) {
     "use server";
 
-    await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
+    await requireAdminSession(OPERATIONAL_ROLES);
 
     const parsed = createBlogPostSchema.safeParse({
       title: formData.get("title"),
