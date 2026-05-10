@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { PackageForm } from "@/components/admin/package-form";
 import { Card, SectionHeader } from "@/components/ui";
-import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
+import { canDelete, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import { deletePackage, getPackageById, updatePackage } from "@/services/packages";
 import { listAdminProductOptions } from "@/services/admin-products";
@@ -57,7 +57,7 @@ export default async function AdminEditPackagePage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string; created?: string }>;
 }) {
-  await requireAdminSession(OPERATIONAL_ROLES);
+  const session = await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const query = searchParams ? await searchParams : {};
 
@@ -132,7 +132,11 @@ export default async function AdminEditPackagePage({
   async function deletePackageAction() {
     "use server";
 
-    await requireAdminSession(OPERATIONAL_ROLES);
+    const session = await requireAdminSession(OPERATIONAL_ROLES);
+
+    if (!canDelete(session.role)) {
+      redirect(`/admin/packages/${id}?error=${encodeURIComponent("Forbidden: Only super admins can delete packages.")}`);
+    }
 
     try {
       await deletePackage(id);
@@ -182,17 +186,19 @@ export default async function AdminEditPackagePage({
         submitLabel="Save Changes"
       />
 
-      <Card>
-        <p className="text-sm text-slate-600">
-          Delete this package if it was created by mistake. This will not affect the individual products.
-        </p>
-        <ConfirmDeleteForm
-          action={deletePackageAction}
-          triggerLabel="Delete Package"
-          title="Delete Package"
-          message="Delete this package? This cannot be undone."
-        />
-      </Card>
+      {canDelete(session.role) && (
+        <Card>
+          <p className="text-sm text-slate-600">
+            Delete this package if it was created by mistake. This will not affect the individual products.
+          </p>
+          <ConfirmDeleteForm
+            action={deletePackageAction}
+            triggerLabel="Delete Package"
+            title="Delete Package"
+            message="Delete this package? This cannot be undone."
+          />
+        </Card>
+      )}
     </div>
   );
 }
