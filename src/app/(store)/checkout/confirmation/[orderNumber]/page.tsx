@@ -318,6 +318,13 @@ export default async function OrderConfirmationPage({
           >
             {CONTACT.whatsappPrimaryDisplay}
           </a>{" "}
+          or{" "}
+          <a
+            href={`tel:${CONTACT.whatsappSecondary}`}
+            className="font-medium text-brand-700 hover:underline"
+          >
+            {CONTACT.whatsappSecondaryDisplay}
+          </a>{" "}
           for immediate assistance.
         </p>
       </div>
