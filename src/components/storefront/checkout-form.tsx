@@ -144,11 +144,17 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
   const { items, subtotal, clear } = useCart();
   const { toast } = useToast();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [resultMessage, setResultMessage] = useState<string | null>(null);
   const [resultStatus, setResultStatus] = useState<"success" | "error" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const lastSubmissionRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
   const beginCheckoutTrackedRef = useRef(false);
+
+  // Hydration guard: wait for client-side cart state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const form = useForm<CheckoutInput>({
     resolver: zodResolver(checkoutSchema),
@@ -350,6 +356,20 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
     }
   }
 
+  // Wait for hydration before checking cart state
+  if (!mounted) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-soft">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-1/3 rounded bg-slate-200" />
+          <div className="h-4 w-2/3 rounded bg-slate-200" />
+          <div className="h-10 w-full rounded bg-slate-200" />
+          <div className="h-10 w-full rounded bg-slate-200" />
+        </div>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center shadow-soft">
@@ -463,7 +483,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
                 <Select id="deliveryZone" {...form.register("deliveryZone")}>
                   {DELIVERY_ZONES.map((zone) => (
                     <option key={zone.id} value={zone.id}>
-                      {zone.name}
+                      {zone.name} — {formatCurrency(zone.feeMinor)}
                     </option>
                   ))}
                 </Select>
@@ -489,7 +509,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           {(isPickup || zoneId === "central") && (
             <fieldset className="space-y-2">
               <p className="text-sm font-medium text-slate-700">Payment Method</p>
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-sm transition hover:border-slate-300">
                 <input type="radio" value="pay_on_delivery" {...form.register("paymentMethod")} defaultChecked />
                 <span className="font-medium text-slate-900">
                   {isPickup ? "Pay on collection" : "Cash on delivery"}
@@ -578,29 +598,7 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
           </ul>
 
           <StoreTrustBadges className="mt-3" />
-
-          {/* WhatsApp fallback for hesitant customers */}
-          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
-            <p className="mb-3 text-sm text-slate-700">
-              Not ready to place the order? You can also WhatsApp us your order request and we&apos;ll handle it from there.
-            </p>
-            <a
-              href={buildWhatsAppUrl(
-                buildWhatsAppCheckoutOrderRequestMessage(
-                  items.map((item) => ({ name: item.name, quantity: item.quantity })),
-                  formatCurrency(total, STORE_CURRENCY)
-                ),
-                CONTACT.whatsappPrimary
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-[#25D366] px-4 py-2 text-sm font-medium text-white hover:bg-[#1ebe5d]"
-            >
-              <MessageCircle className="h-4 w-4" />
-              WhatsApp your order
-            </a>
-          </div>
-
+          
           <Button className="mt-4 w-full" disabled={isSubmitting || !commerceReady} type="submit">
             {!commerceReady ? "Checkout Unavailable" : isSubmitting ? "Placing order..." : "Place Order"}
           </Button>
