@@ -9,7 +9,8 @@ type LoginErrorCode =
   | "auth_unavailable"
   | "forbidden"
   | "session_expired"
-  | "password_reset_required";
+  | "password_reset_required"
+  | "rate_limited";
 
 type ResetPasswordErrorCode =
   | "weak_password"

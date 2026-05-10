@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -21,6 +21,28 @@ import { getAdminSessionFromCookies } from "@/lib/admin-server";
 import { AdminAuthUnavailableError, authenticateAdminUser } from "@/services/admin-auth";
 import { PasswordInput } from "@/components/forms/password-input";
 
+// Rate limiting: 5 attempts per 15 minutes per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return true;
+  }
+
+  entry.count++;
+  return false;
+}
+
 function getErrorMessage(error: string | null) {
   if (!error) return null;
   if (error === "invalid_credentials") return "Invalid email or password.";
@@ -28,6 +50,7 @@ function getErrorMessage(error: string | null) {
   if (error === "forbidden") return "You do not have permission for that admin action.";
   if (error === "password_reset_required") return "Password reset required. Please set a new password.";
   if (error === "session_expired") return "Session expired. Please log in again.";
+  if (error === "rate_limited") return "Too many login attempts. Please try again in 15 minutes.";
   return "Unable to sign in. Please try again.";
 }
 
@@ -50,6 +73,17 @@ export default async function AdminLoginPage() {
     const email = String(formData.get("email") || "").trim().toLowerCase();
     const password = String(formData.get("password") || "");
     const submittedNext = normalizeAdminRedirect(String(formData.get("next") || ""));
+
+    // Get IP for rate limiting
+    const headersList = await headers();
+    const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    // Check rate limit before any authentication attempt
+    if (checkRateLimit(ip)) {
+      await setFlashError("rate_limited");
+      await setFlashRedirect(submittedNext);
+      redirect("/admin/login");
+    }
 
     if (!email || !password) {
       await setFlashError("invalid_credentials");
