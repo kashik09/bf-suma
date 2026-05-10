@@ -27,6 +27,19 @@ function resolveServiceRoleKey() {
   return key;
 }
 
+/**
+ * Custom fetch for server-side Supabase client.
+ * Disables keepAlive to prevent stale TCP connection reuse on Vercel serverless.
+ */
+const serverFetch: typeof fetch = (input, init) => {
+  return fetch(input, {
+    ...init,
+    cache: "no-store",
+    // 8-second timeout to fail fast on stale connections
+    signal: AbortSignal.timeout(8000),
+  });
+};
+
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
   const url = resolveSupabaseUrl();
@@ -56,6 +69,7 @@ export function createServiceRoleSupabaseClient() {
   const key = resolveServiceRoleKey();
 
   serviceRoleClient = createClient<Database>(url, key, {
+    global: { fetch: serverFetch },
     auth: {
       autoRefreshToken: false,
       persistSession: false
