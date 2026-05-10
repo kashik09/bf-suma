@@ -39,7 +39,7 @@ export const DELIVERY_STATUSES: DeliveryStatus[] = [
   "FAILED"
 ];
 export const INQUIRY_STATUSES: InquiryStatus[] = ["NEW", "IN_PROGRESS", "RESOLVED", "CLOSED"];
-export const ADMIN_ROLES: AdminRole[] = ["SUPER_ADMIN", "OPERATIONS", "SUPPORT"];
+export const ADMIN_ROLES: AdminRole[] = ["SUPER_ADMIN", "OPERATIONS", "EXECUTIVE", "SUPPORT"];
 
 export const STORE_NAV_LINKS = [
   { label: "Home", href: "/" },

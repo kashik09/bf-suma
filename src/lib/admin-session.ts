@@ -55,7 +55,7 @@ function base64UrlToBytes(value: string): Uint8Array {
 }
 
 function isAdminRole(value: unknown): value is AdminRole {
-  return value === "SUPER_ADMIN" || value === "OPERATIONS" || value === "SUPPORT";
+  return value === "SUPER_ADMIN" || value === "OPERATIONS" || value === "EXECUTIVE" || value === "SUPPORT";
 }
 
 async function hmacSha256(message: string, secret: string): Promise<Uint8Array> {

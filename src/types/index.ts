@@ -20,7 +20,7 @@ export type DeliveryStatus =
   | "FAILED";
 export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 export type NewsletterSubscriberStatus = "ACTIVE" | "UNSUBSCRIBED";
-export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "SUPPORT";
+export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "EXECUTIVE" | "SUPPORT";
 export type BlogPostStatus = "DRAFT" | "REVIEW" | "PUBLISHED";
 export type BlogChannelTarget = "SHOP" | "WHATSAPP" | "NEWSLETTER" | "SOCIAL";
 
