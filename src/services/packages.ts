@@ -9,6 +9,7 @@ import type {
   PackageWithItems,
   ProductStatus
 } from "@/types";
+import type { TablesUpdate } from "@/types/database";
 
 interface PackageRow {
   id: string;
@@ -422,7 +423,7 @@ export async function updatePackage(id: string, input: UpdatePackageInput): Prom
   const supabase = createServiceRoleSupabaseClient();
 
   // Update package fields
-  const updateFields: Record<string, unknown> = {};
+  const updateFields: TablesUpdate<"packages"> = {};
   if (input.slug !== undefined) updateFields.slug = input.slug;
   if (input.name !== undefined) updateFields.name = input.name;
   if (input.tagline !== undefined) updateFields.tagline = input.tagline;
