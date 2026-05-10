@@ -38,6 +38,9 @@ export function normalizeAdminRedirect(path: string | null | undefined): string 
   const normalized = cleaned.replace(/\/+/g, "/").replace(/\.\./g, "");
   if (!normalized.startsWith("/admin")) return "/admin";
 
+  // Never redirect back to login or reset-password pages
+  if (normalized === "/admin/login" || normalized === "/admin/reset-password") return "/admin";
+
   return normalized;
 }
 
