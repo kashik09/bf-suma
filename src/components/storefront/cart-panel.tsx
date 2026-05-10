@@ -146,25 +146,28 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                           unoptimized
                         />
                       </div>
-                      <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="min-w-0 flex-1">
                         <h3 className="text-sm font-semibold text-slate-900">{item.name}</h3>
-                        <p className="text-sm text-slate-500">
+                      </div>
+
+                      <div className="flex flex-col items-end gap-1.5">
+                        <p className="text-sm font-medium text-slate-900">
                           {formatPrice(convertPrice(item.price, item.currency, currency), currency)}
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <button
                             aria-label={`Decrease quantity for ${item.name}`}
-                            className="h-7 w-7 rounded-md border border-slate-200 bg-white text-sm font-semibold transition hover:bg-slate-50"
+                            className="h-6 w-6 rounded border border-slate-200 bg-white text-xs font-semibold transition hover:bg-slate-50 disabled:opacity-50"
                             disabled={item.quantity <= 1}
                             onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                             type="button"
                           >
                             -
                           </button>
-                          <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
+                          <span className="w-6 text-center text-xs font-medium text-slate-700">{item.quantity}</span>
                           <button
                             aria-label={`Increase quantity for ${item.name}`}
-                            className="h-7 w-7 rounded-md border border-slate-200 bg-white text-sm font-semibold transition hover:bg-slate-50"
+                            className="h-6 w-6 rounded border border-slate-200 bg-white text-xs font-semibold transition hover:bg-slate-50 disabled:opacity-50"
                             disabled={item.availability === "out_of_stock" || item.quantity >= item.max_quantity}
                             title={
                               item.availability === "out_of_stock"
@@ -179,15 +182,14 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                             +
                           </button>
                         </div>
+                        <button
+                          className="text-xs font-medium text-rose-600 transition hover:text-rose-700"
+                          onClick={() => removeItem(item.product_id)}
+                          type="button"
+                        >
+                          Remove
+                        </button>
                       </div>
-
-                      <button
-                        className="text-xs font-semibold text-rose-600 transition hover:text-rose-700"
-                        onClick={() => removeItem(item.product_id)}
-                        type="button"
-                      >
-                        Remove
-                      </button>
                     </div>
                   </div>
                 );
