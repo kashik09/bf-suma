@@ -1,6 +1,6 @@
 # BF Suma Admin Roles — Permission Reference
 
-Generated: 2026-05-10
+Generated: 2026-05-10 (Updated with EXECUTIVE role)
 
 ---
 
@@ -10,13 +10,13 @@ Generated: 2026-05-10
 |------|-------------|
 | `SUPER_ADMIN` | Full access to all admin features. Can manage other admin users. |
 | `OPERATIONS` | Full operational access: products, orders, blog, packages, contacts, reviews. Cannot manage admin users. |
+| `EXECUTIVE` | Same operational access as OPERATIONS. Used to distinguish the client (business owner) from internal team in audit logs. |
 | `SUPPORT` | View-only access to operational data. Cannot create, edit, or delete records. |
 
-**Source:** `admin_users.role` CHECK constraint in `supabase/migrations/20260404170000_admin_auth_and_schema_reconcile.sql:7-8`
+**Source:** `admin_users.role` CHECK constraint in `supabase/migrations/20260510120000_add_executive_admin_role.sql`
 
 ```sql
-role text not null default 'OPERATIONS'
-  check (role in ('SUPER_ADMIN', 'OPERATIONS', 'SUPPORT'))
+CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 ```
 
 ---
@@ -25,86 +25,86 @@ role text not null default 'OPERATIONS'
 
 ### Dashboard & Navigation
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View dashboard | ✅ | ✅ | ✅ |
-| See management quick actions | ✅ | ✅ | ❌ |
-| View system health checks | ✅ | ✅ | ✅ |
-| View revenue intelligence | ✅ | ✅ | ✅ |
-| View decision board | ✅ | ✅ | ✅ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View dashboard | ✅ | ✅ | ✅ | ✅ |
+| See management quick actions | ✅ | ✅ | ✅ | ❌ |
+| View system health checks | ✅ | ✅ | ✅ | ✅ |
+| View revenue intelligence | ✅ | ✅ | ✅ | ✅ |
+| View decision board | ✅ | ✅ | ✅ | ✅ |
 
 ### Products
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View product list | ✅ | ✅ | ✅ |
-| View product details | ✅ | ✅ | ✅ |
-| Create product | ✅ | ✅ | ❌ |
-| Edit product | ✅ | ✅ | ❌ |
-| Delete product | ✅ | ✅ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View product list | ✅ | ✅ | ✅ | ✅ |
+| View product details | ✅ | ✅ | ✅ | ✅ |
+| Create product | ✅ | ✅ | ✅ | ❌ |
+| Edit product | ✅ | ✅ | ✅ | ❌ |
+| Delete product | ✅ | ✅ | ✅ | ❌ |
 
 ### Orders
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View order list | ✅ | ✅ | ✅ |
-| View order details | ✅ | ✅ | ✅ |
-| Update order status | ✅ | ✅ | ❌ |
-| Cancel order | ✅ | ✅ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View order list | ✅ | ✅ | ✅ | ✅ |
+| View order details | ✅ | ✅ | ✅ | ✅ |
+| Update order status | ✅ | ✅ | ✅ | ❌ |
+| Cancel order | ✅ | ✅ | ✅ | ❌ |
 
 ### Packages
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View package list | ✅ | ✅ | ✅ |
-| View package details | ✅ | ✅ | ❌ |
-| Create package | ✅ | ✅ | ❌ |
-| Edit package | ✅ | ✅ | ❌ |
-| Delete package | ✅ | ✅ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View package list | ✅ | ✅ | ✅ | ✅ |
+| View package details | ✅ | ✅ | ✅ | ❌ |
+| Create package | ✅ | ✅ | ✅ | ❌ |
+| Edit package | ✅ | ✅ | ✅ | ❌ |
+| Delete package | ✅ | ✅ | ✅ | ❌ |
 
 ### Blog
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View blog list | ✅ | ✅ | ✅ |
-| View blog post details | ✅ | ✅ | ❌ |
-| Create blog post | ✅ | ✅ | ❌ |
-| Edit blog post | ✅ | ✅ | ❌ |
-| Delete blog post | ✅ | ✅ | ❌ |
-| Publish/unpublish post | ✅ | ✅ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View blog list | ✅ | ✅ | ✅ | ✅ |
+| View blog post details | ✅ | ✅ | ✅ | ❌ |
+| Create blog post | ✅ | ✅ | ✅ | ❌ |
+| Edit blog post | ✅ | ✅ | ✅ | ❌ |
+| Delete blog post | ✅ | ✅ | ✅ | ❌ |
+| Publish/unpublish post | ✅ | ✅ | ✅ | ❌ |
 
 ### Contacts
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View contact list | ✅ | ✅ | ✅ |
-| Update contact status | ✅ | ✅ | ✅ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View contact list | ✅ | ✅ | ✅ | ✅ |
+| Update contact status | ✅ | ✅ | ✅ | ✅ |
 
 ### Reviews
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View reviews list | ✅ | ✅ | ✅ |
-| Approve review | ✅ | ✅ | ❌ |
-| Reject review | ✅ | ✅ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View reviews list | ✅ | ✅ | ✅ | ✅ |
+| Approve review | ✅ | ✅ | ✅ | ❌ |
+| Reject review | ✅ | ✅ | ✅ | ❌ |
 
 ### Admin Users
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View admin users | ⚠️ | ❌ | ❌ |
-| Create admin user | ⚠️ | ❌ | ❌ |
-| Edit admin user | ⚠️ | ❌ | ❌ |
-| Delete admin user | ⚠️ | ❌ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View admin users | ⚠️ | ❌ | ❌ | ❌ |
+| Create admin user | ⚠️ | ❌ | ❌ | ❌ |
+| Edit admin user | ⚠️ | ❌ | ❌ | ❌ |
+| Delete admin user | ⚠️ | ❌ | ❌ | ❌ |
 
 ⚠️ **Note:** No admin user management UI exists in the codebase. Admin users are created via CLI scripts only (`scripts/bootstrap-admin.ts`). This is a security feature, not a gap.
 
 ### System & Settings
 
-| Capability | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|------------|-------------|------------|---------|
-| View admin guide | ✅ | ✅ | ✅ |
-| Access settings page | ❌ | ❌ | ❌ |
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| View admin guide | ✅ | ✅ | ✅ | ✅ |
+| Access settings page | ❌ | ❌ | ❌ | ❌ |
 
 **Note:** `/admin/settings` route is disabled via middleware unless `ALLOW_ADMIN_SCAFFOLD_ROUTES=true`.
 
@@ -114,28 +114,28 @@ role text not null default 'OPERATIONS'
 
 ### Page Routes
 
-| Route | SUPER_ADMIN | OPERATIONS | SUPPORT | Notes |
-|-------|-------------|------------|---------|-------|
-| `/admin` | ✅ | ✅ | ✅ | Dashboard (no explicit role check) |
-| `/admin/login` | — | — | — | Public (auth page) |
-| `/admin/reset-password` | — | — | — | Auth-gated (session required) |
-| `/admin/guide` | ✅ | ✅ | ✅ | Explicit: all 3 roles |
-| `/admin/products` | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
-| `/admin/products/new` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/products/[id]` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/orders` | ✅ | ✅ | ✅ | No explicit role check (all authenticated) |
-| `/admin/orders/[id]` | ✅ | ✅ | 👁️ | View all, status buttons hidden for SUPPORT |
-| `/admin/packages` | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
-| `/admin/packages/new` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/packages/[id]` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/blog` | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
-| `/admin/blog/new` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/blog/[id]` | ✅ | ✅ | ❌ | Explicit: SUPER_ADMIN, OPERATIONS |
-| `/admin/contacts` | ✅ | ✅ | ✅ | Explicit: all 3 roles |
-| `/admin/reviews` | ✅ | ✅ | 👁️ | View all, approve/reject for SUPER_ADMIN/OPS |
-| `/admin/customers` | ❌ | ❌ | ❌ | Disabled (scaffold route) |
-| `/admin/analytics` | ❌ | ❌ | ❌ | Disabled (scaffold route) |
-| `/admin/settings` | ❌ | ❌ | ❌ | Disabled (scaffold route) |
+| Route | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT | Notes |
+|-------|-------------|------------|-----------|---------|-------|
+| `/admin` | ✅ | ✅ | ✅ | ✅ | Dashboard |
+| `/admin/login` | — | — | — | — | Public (auth page) |
+| `/admin/reset-password` | — | — | — | — | Auth-gated (session required) |
+| `/admin/guide` | ✅ | ✅ | ✅ | ✅ | Explicit: ALL_ADMIN_ROLES |
+| `/admin/products` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
+| `/admin/products/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/products/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/orders` | ✅ | ✅ | ✅ | ✅ | No explicit role check (all authenticated) |
+| `/admin/orders/[id]` | ✅ | ✅ | ✅ | 👁️ | View all, status buttons hidden for SUPPORT |
+| `/admin/packages` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
+| `/admin/packages/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/packages/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/blog` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
+| `/admin/blog/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/blog/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/contacts` | ✅ | ✅ | ✅ | ✅ | Explicit: ALL_ADMIN_ROLES |
+| `/admin/reviews` | ✅ | ✅ | ✅ | 👁️ | View all, approve/reject for OPERATIONAL_ROLES |
+| `/admin/customers` | ❌ | ❌ | ❌ | ❌ | Disabled (scaffold route) |
+| `/admin/analytics` | ❌ | ❌ | ❌ | ❌ | Disabled (scaffold route) |
+| `/admin/settings` | ❌ | ❌ | ❌ | ❌ | Disabled (scaffold route) |
 
 **Legend:**
 - ✅ Full access
@@ -151,46 +151,46 @@ All admin Server Actions are inline in page components (no separate `/api/admin`
 
 ### Products
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `createProduct` | `products/new/page.tsx:66` | ✅ | ✅ | ❌ |
-| `updateProduct` | `products/[id]/page.tsx:84` | ✅ | ✅ | ❌ |
-| `deleteProduct` | `products/[id]/page.tsx:137` | ✅ | ✅ | ❌ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `createProduct` | `products/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `updateProduct` | `products/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deleteProduct` | `products/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 
 ### Orders
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `updateOrderStatus` | `orders/[id]/page.tsx:48` | ✅ | ✅ | ❌ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `updateOrderStatus` | `orders/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 
 ### Packages
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `createPackage` | `packages/new/page.tsx:63` | ✅ | ✅ | ❌ |
-| `updatePackage` | `packages/[id]/page.tsx:75` | ✅ | ✅ | ❌ |
-| `deletePackage` | `packages/[id]/page.tsx:134` | ✅ | ✅ | ❌ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `createPackage` | `packages/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `updatePackage` | `packages/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deletePackage` | `packages/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 
 ### Blog
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `createPost` | `blog/new/page.tsx:81` | ✅ | ✅ | ❌ |
-| `updatePost` | `blog/[id]/page.tsx:96` | ✅ | ✅ | ❌ |
-| `deletePost` | `blog/[id]/page.tsx:149` | ✅ | ✅ | ❌ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `createPost` | `blog/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `updatePost` | `blog/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deletePost` | `blog/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 
 ### Contacts
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `updateContactStatus` | `contacts/page.tsx:71` | ✅ | ✅ | ✅ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `updateContactStatus` | `contacts/page.tsx` | ✅ | ✅ | ✅ | ✅ |
 
 ### Reviews
 
-| Action | File:Line | SUPER_ADMIN | OPERATIONS | SUPPORT |
-|--------|-----------|-------------|------------|---------|
-| `approveReview` | `reviews/page.tsx:82` | ✅ | ✅ | ❌ |
-| `rejectReview` | `reviews/page.tsx:100` | ✅ | ✅ | ❌ |
+| Action | File | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|--------|------|-------------|------------|-----------|---------|
+| `approveReview` | `reviews/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `rejectReview` | `reviews/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 
 ---
 
@@ -219,49 +219,19 @@ Most admin-relevant tables use **service-role-only access** (RLS disabled or ser
 
 ---
 
-## Gaps / Inconsistencies
+## Implementation Details
 
-### 1. Dashboard has no explicit role check
+### Role Constants (src/lib/admin-permissions.ts)
 
-**File:** `src/app/admin/page.tsx:90`
 ```typescript
-const session = await requireAdminSession(); // No role array = any authenticated admin
+export const OPERATIONAL_ROLES: AdminRole[] = ["SUPER_ADMIN", "OPERATIONS", "EXECUTIVE"];
+export const VIEW_ONLY_ROLES: AdminRole[] = ["SUPPORT"];
+export const ALL_ADMIN_ROLES: AdminRole[] = [...OPERATIONAL_ROLES, ...VIEW_ONLY_ROLES];
+
+export function canEdit(role): boolean {
+  return OPERATIONAL_ROLES.includes(role);
+}
 ```
-
-**Impact:** Low. All three roles should see the dashboard. The `canManageContent` flag hides management shortcuts for SUPPORT.
-
-### 2. Orders list has no explicit role check
-
-**File:** `src/app/admin/orders/page.tsx:48`
-```typescript
-await requireAdminSession(); // No role array
-```
-
-**Impact:** Low. All roles can view orders. Edit actions are gated at the detail page level.
-
-### 3. No admin user management UI
-
-**Status:** Intentional. Admin users are created via CLI scripts only.
-
-**Recommendation:** If UI-based admin management is needed later, add `/admin/admin-users` route with `requireAdminSession(["SUPER_ADMIN"])`.
-
-### 4. SUPPORT can update contact status
-
-**File:** `src/app/admin/contacts/page.tsx:71`
-```typescript
-await requireAdminSession(["SUPER_ADMIN", "OPERATIONS", "SUPPORT"]);
-```
-
-**Impact:** This is likely intentional — SUPPORT should handle customer inquiries.
-
-### 5. Package detail page blocks SUPPORT entirely
-
-**File:** `src/app/admin/packages/[id]/page.tsx:59`
-```typescript
-await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
-```
-
-**Impact:** SUPPORT cannot even view package details. Consider changing to view-only access like products/orders if SUPPORT needs to answer customer questions about packages.
 
 ---
 
@@ -271,7 +241,10 @@ await requireAdminSession(["SUPER_ADMIN", "OPERATIONS"]);
 |------|-------------|-----------|-----------|
 | `SUPER_ADMIN` | Everything | — | — |
 | `OPERATIONS` | Products, Orders, Packages, Blog, Contacts, Reviews | — | Admin Users (no UI exists) |
+| `EXECUTIVE` | Products, Orders, Packages, Blog, Contacts, Reviews | — | Admin Users (no UI exists) |
 | `SUPPORT` | Contacts | Products, Orders, Reviews, Blog list, Packages list | Create/Edit/Delete anything, Package details, Blog details |
+
+**Key difference:** EXECUTIVE and OPERATIONS have identical permissions. EXECUTIVE is used for client/business owner accounts to distinguish them from internal team members in audit logs and admin user lists.
 
 ---
 
