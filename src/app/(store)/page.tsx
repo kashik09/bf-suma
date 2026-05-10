@@ -10,8 +10,8 @@ import { getStorefrontCustomerCount } from "@/services/customers";
 import { getFeaturedPackages } from "@/services/packages";
 import { listFeaturedCategories, listFeaturedProducts } from "@/services/products";
 
-// Revalidate every 60 seconds for fast subsequent loads
-export const revalidate = 60;
+// Force dynamic rendering - requires env vars at runtime
+export const dynamic = "force-dynamic";
 
 export const metadata = buildStorefrontMetadata({
   title: "Premium Wellness Store",
