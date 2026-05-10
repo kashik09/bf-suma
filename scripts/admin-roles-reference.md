@@ -1,6 +1,6 @@
 # BF Suma Admin Roles — Permission Reference
 
-Generated: 2026-05-10 (Updated with EXECUTIVE role)
+Generated: 2026-05-10 (Updated with delete restrictions)
 
 ---
 
@@ -8,9 +8,9 @@ Generated: 2026-05-10 (Updated with EXECUTIVE role)
 
 | Role | Description |
 |------|-------------|
-| `SUPER_ADMIN` | Full access to all admin features. Can manage other admin users. |
-| `OPERATIONS` | Full operational access: products, orders, blog, packages, contacts, reviews. Cannot manage admin users. |
-| `EXECUTIVE` | Same operational access as OPERATIONS. Used to distinguish the client (business owner) from internal team in audit logs. |
+| `SUPER_ADMIN` | Full access to all admin features including deletion. Can manage other admin users. |
+| `OPERATIONS` | Full operational access: create/edit products, orders, blog, packages, contacts, reviews. Cannot delete records or manage admin users. |
+| `EXECUTIVE` | Same operational access as OPERATIONS. Used to distinguish the client (business owner) from internal team in audit logs. Cannot delete records. |
 | `SUPPORT` | View-only access to operational data. Cannot create, edit, or delete records. |
 
 **Source:** `admin_users.role` CHECK constraint in `supabase/migrations/20260510120000_add_executive_admin_role.sql`
@@ -41,7 +41,7 @@ CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 | View product details | ✅ | ✅ | ✅ | ✅ |
 | Create product | ✅ | ✅ | ✅ | ❌ |
 | Edit product | ✅ | ✅ | ✅ | ❌ |
-| Delete product | ✅ | ✅ | ✅ | ❌ |
+| Delete product | ✅ | ❌ | ❌ | ❌ |
 
 ### Orders
 
@@ -60,7 +60,7 @@ CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 | View package details | ✅ | ✅ | ✅ | ❌ |
 | Create package | ✅ | ✅ | ✅ | ❌ |
 | Edit package | ✅ | ✅ | ✅ | ❌ |
-| Delete package | ✅ | ✅ | ✅ | ❌ |
+| Delete package | ✅ | ❌ | ❌ | ❌ |
 
 ### Blog
 
@@ -70,7 +70,7 @@ CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 | View blog post details | ✅ | ✅ | ✅ | ❌ |
 | Create blog post | ✅ | ✅ | ✅ | ❌ |
 | Edit blog post | ✅ | ✅ | ✅ | ❌ |
-| Delete blog post | ✅ | ✅ | ✅ | ❌ |
+| Delete blog post | ✅ | ❌ | ❌ | ❌ |
 | Publish/unpublish post | ✅ | ✅ | ✅ | ❌ |
 
 ### Contacts
@@ -87,6 +87,16 @@ CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 | View reviews list | ✅ | ✅ | ✅ | ✅ |
 | Approve review | ✅ | ✅ | ✅ | ❌ |
 | Reject review | ✅ | ✅ | ✅ | ❌ |
+
+### Deletion (Restricted)
+
+| Capability | SUPER_ADMIN | OPERATIONS | EXECUTIVE | SUPPORT |
+|------------|-------------|------------|-----------|---------|
+| Delete product | ✅ | ❌ | ❌ | ❌ |
+| Delete package | ✅ | ❌ | ❌ | ❌ |
+| Delete blog post | ✅ | ❌ | ❌ | ❌ |
+
+**Note:** Delete operations are restricted to SUPER_ADMIN only. This prevents accidental data loss by operational staff. Records can be archived or deactivated instead of deleted.
 
 ### Admin Users
 
@@ -122,15 +132,15 @@ CHECK (role IN ('SUPER_ADMIN', 'OPERATIONS', 'EXECUTIVE', 'SUPPORT'))
 | `/admin/guide` | ✅ | ✅ | ✅ | ✅ | Explicit: ALL_ADMIN_ROLES |
 | `/admin/products` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
 | `/admin/products/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
-| `/admin/products/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/products/[id]` | ✅ | ✅ | ✅ | ❌ | Delete button hidden for non-SUPER_ADMIN |
 | `/admin/orders` | ✅ | ✅ | ✅ | ✅ | No explicit role check (all authenticated) |
 | `/admin/orders/[id]` | ✅ | ✅ | ✅ | 👁️ | View all, status buttons hidden for SUPPORT |
 | `/admin/packages` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
 | `/admin/packages/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
-| `/admin/packages/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/packages/[id]` | ✅ | ✅ | ✅ | ❌ | Delete button hidden for non-SUPER_ADMIN |
 | `/admin/blog` | ✅ | ✅ | ✅ | 👁️ | View all, edit buttons hidden for SUPPORT |
 | `/admin/blog/new` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
-| `/admin/blog/[id]` | ✅ | ✅ | ✅ | ❌ | Explicit: OPERATIONAL_ROLES |
+| `/admin/blog/[id]` | ✅ | ✅ | ✅ | ❌ | Delete button hidden for non-SUPER_ADMIN |
 | `/admin/contacts` | ✅ | ✅ | ✅ | ✅ | Explicit: ALL_ADMIN_ROLES |
 | `/admin/reviews` | ✅ | ✅ | ✅ | 👁️ | View all, approve/reject for OPERATIONAL_ROLES |
 | `/admin/customers` | ❌ | ❌ | ❌ | ❌ | Disabled (scaffold route) |
@@ -155,7 +165,7 @@ All admin Server Actions are inline in page components (no separate `/api/admin`
 |--------|------|-------------|------------|-----------|---------|
 | `createProduct` | `products/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 | `updateProduct` | `products/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
-| `deleteProduct` | `products/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deleteProduct` | `products/[id]/page.tsx` | ✅ | ❌ | ❌ | ❌ |
 
 ### Orders
 
@@ -169,7 +179,7 @@ All admin Server Actions are inline in page components (no separate `/api/admin`
 |--------|------|-------------|------------|-----------|---------|
 | `createPackage` | `packages/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 | `updatePackage` | `packages/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
-| `deletePackage` | `packages/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deletePackage` | `packages/[id]/page.tsx` | ✅ | ❌ | ❌ | ❌ |
 
 ### Blog
 
@@ -177,7 +187,7 @@ All admin Server Actions are inline in page components (no separate `/api/admin`
 |--------|------|-------------|------------|-----------|---------|
 | `createPost` | `blog/new/page.tsx` | ✅ | ✅ | ✅ | ❌ |
 | `updatePost` | `blog/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
-| `deletePost` | `blog/[id]/page.tsx` | ✅ | ✅ | ✅ | ❌ |
+| `deletePost` | `blog/[id]/page.tsx` | ✅ | ❌ | ❌ | ❌ |
 
 ### Contacts
 
@@ -231,20 +241,27 @@ export const ALL_ADMIN_ROLES: AdminRole[] = [...OPERATIONAL_ROLES, ...VIEW_ONLY_
 export function canEdit(role): boolean {
   return OPERATIONAL_ROLES.includes(role);
 }
+
+export function canDelete(role): boolean {
+  return role === "SUPER_ADMIN";
+}
 ```
 
 ---
 
 ## Summary
 
-| Role | Full Access | View-Only | No Access |
-|------|-------------|-----------|-----------|
-| `SUPER_ADMIN` | Everything | — | — |
-| `OPERATIONS` | Products, Orders, Packages, Blog, Contacts, Reviews | — | Admin Users (no UI exists) |
-| `EXECUTIVE` | Products, Orders, Packages, Blog, Contacts, Reviews | — | Admin Users (no UI exists) |
-| `SUPPORT` | Contacts | Products, Orders, Reviews, Blog list, Packages list | Create/Edit/Delete anything, Package details, Blog details |
+| Role | Create/Edit | Delete | View-Only | No Access |
+|------|-------------|--------|-----------|-----------|
+| `SUPER_ADMIN` | Everything | Everything | — | — |
+| `OPERATIONS` | Products, Orders, Packages, Blog, Contacts, Reviews | ❌ Nothing | — | Admin Users, Delete actions |
+| `EXECUTIVE` | Products, Orders, Packages, Blog, Contacts, Reviews | ❌ Nothing | — | Admin Users, Delete actions |
+| `SUPPORT` | ❌ Nothing | ❌ Nothing | Products, Orders, Reviews, Blog list, Packages list | Create/Edit/Delete anything, Package details, Blog details |
 
-**Key difference:** EXECUTIVE and OPERATIONS have identical permissions. EXECUTIVE is used for client/business owner accounts to distinguish them from internal team members in audit logs and admin user lists.
+**Key differences:**
+- **SUPER_ADMIN** is the only role that can delete products, packages, or blog posts.
+- **EXECUTIVE** and **OPERATIONS** have identical create/edit permissions but cannot delete.
+- **EXECUTIVE** is used for client/business owner accounts to distinguish them from internal team members in audit logs.
 
 ---
 
