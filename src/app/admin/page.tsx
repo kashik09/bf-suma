@@ -184,7 +184,7 @@ export default async function AdminDashboardPage() {
         <p className="mb-3 text-sm text-slate-700">
           Health checks detect missing tables, schema mismatches, degraded APIs, and missing environment config.
         </p>
-        <ul className="space-y-2">
+        <ul className="max-h-80 space-y-2 overflow-y-auto">
           {snapshot.systemHealth.checks.map((check) => (
             <li className="rounded-md border border-slate-200 bg-white px-3 py-2.5" key={check.id}>
               <div className="flex items-start justify-between gap-3">
