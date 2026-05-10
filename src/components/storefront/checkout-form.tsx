@@ -520,9 +520,9 @@ export function CheckoutForm({ commerceReady = true, degradedReason = null }: Ch
 
           <div className="mt-3 space-y-2 border-t border-slate-200 pt-3">
             {items.map((item) => (
-              <div className="flex items-center justify-between text-sm" key={item.product_id}>
-                <span className="line-clamp-1 text-slate-600">
-                  {item.name} x {item.quantity}
+              <div className="flex items-baseline justify-between text-sm" key={item.product_id}>
+                <span className="line-clamp-1 text-slate-700">
+                  {item.name} × {item.quantity}
                 </span>
                 <span className="font-medium text-slate-900">{formatCurrency(item.price * item.quantity, item.currency)}</span>
               </div>
