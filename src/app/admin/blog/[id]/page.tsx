@@ -6,7 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Card, SectionHeader } from "@/components/ui";
-import { OPERATIONAL_ROLES } from "@/lib/admin-permissions";
+import { canDelete, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
 import {
   BlogSlugConflictError,
@@ -81,7 +81,7 @@ export default async function AdminBlogDetailPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ error?: string; updated?: string }>;
 }) {
-  await requireAdminSession(OPERATIONAL_ROLES);
+  const session = await requireAdminSession(OPERATIONAL_ROLES);
   const { id } = await params;
   const post = await getAdminBlogPostById(id);
   if (!post) {
@@ -147,7 +147,11 @@ export default async function AdminBlogDetailPage({
   async function deleteBlogPostAction() {
     "use server";
 
-    await requireAdminSession(OPERATIONAL_ROLES);
+    const session = await requireAdminSession(OPERATIONAL_ROLES);
+
+    if (!canDelete(session.role)) {
+      redirect(`/admin/blog/${id}?error=${encodeURIComponent("Forbidden: Only super admins can delete blog posts.")}`);
+    }
 
     try {
       await deleteAdminBlogPost(id);
@@ -256,15 +260,17 @@ export default async function AdminBlogDetailPage({
         </form>
       </Card>
 
-      <Card>
-        <p className="text-sm text-slate-600">Delete this post permanently if it is no longer needed.</p>
-        <ConfirmDeleteForm
-          action={deleteBlogPostAction}
-          triggerLabel="Delete Post"
-          title="Delete Post"
-          message="Delete this post? This cannot be undone."
-        />
-      </Card>
+      {canDelete(session.role) && (
+        <Card>
+          <p className="text-sm text-slate-600">Delete this post permanently if it is no longer needed.</p>
+          <ConfirmDeleteForm
+            action={deleteBlogPostAction}
+            triggerLabel="Delete Post"
+            title="Delete Post"
+            message="Delete this post? This cannot be undone."
+          />
+        </Card>
+      )}
     </div>
   );
 }
