@@ -339,7 +339,25 @@ export function ProductDetail({
               >
                 -
               </button>
-              <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
+              <input
+                aria-label={`Quantity for ${product.name}`}
+                className="h-8 w-14 rounded border border-slate-200 bg-white text-center text-sm font-semibold text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                max={maxQuantity}
+                min={1}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (!isNaN(val) && val >= 1 && val <= maxQuantity) {
+                    setQuantity(val);
+                  }
+                }}
+                onBlur={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (isNaN(val) || val < 1) setQuantity(1);
+                  else if (val > maxQuantity) setQuantity(maxQuantity);
+                }}
+                type="number"
+                value={quantity}
+              />
               <button
                 aria-label={`Increase quantity for ${product.name}`}
                 className="h-9 w-9 rounded-md bg-slate-100 font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-200"

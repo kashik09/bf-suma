@@ -164,7 +164,25 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                           >
                             -
                           </button>
-                          <span className="w-6 text-center text-xs font-medium text-slate-700">{item.quantity}</span>
+                          <input
+                            aria-label={`Quantity for ${item.name}`}
+                            className="h-6 w-12 rounded border border-slate-200 bg-white text-center text-xs font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                            max={item.max_quantity}
+                            min={1}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (!isNaN(val) && val >= 1 && val <= item.max_quantity) {
+                                updateQuantity(item.product_id, val);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (isNaN(val) || val < 1) updateQuantity(item.product_id, 1);
+                              else if (val > item.max_quantity) updateQuantity(item.product_id, item.max_quantity);
+                            }}
+                            type="number"
+                            value={item.quantity}
+                          />
                           <button
                             aria-label={`Increase quantity for ${item.name}`}
                             className="h-6 w-6 rounded border border-slate-200 bg-white text-xs font-semibold transition hover:bg-slate-50 disabled:opacity-50"
