@@ -31,7 +31,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes, scryptSync } from "node:crypto";
 
-const VALID_ROLES = ["SUPER_ADMIN", "OPERATIONS", "SUPPORT"] as const;
+const VALID_ROLES = ["SUPER_ADMIN", "OPERATIONS", "EXECUTIVE", "SUPPORT"] as const;
 type AdminRole = (typeof VALID_ROLES)[number];
 
 interface AdminUserInput {
@@ -175,7 +175,7 @@ async function main() {
       name: execName,
       email: execEmail,
       password: execPassword,
-      role: "SUPER_ADMIN" // Executive gets full access
+      role: "EXECUTIVE" // Client/business owner — same permissions as OPERATIONS
     }
   ];
 
