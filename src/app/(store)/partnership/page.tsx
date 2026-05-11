@@ -1,20 +1,8 @@
 import Image from "next/image";
-import { Car, DollarSign, Heart, ImageIcon, Mail, MessageCircle, Plane, Sprout, TrendingUp, Wallet } from "lucide-react";
+import { Car, DollarSign, Heart, Mail, MessageCircle, Plane, Sprout, TrendingUp, Wallet } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { buildStorefrontMetadata } from "@/lib/seo";
-
-/** Image placeholder component for future replacement */
-function ImagePlaceholder({ label, className }: { label: string; className?: string }) {
-  return (
-    <div className={`flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 ${className}`}>
-      <div className="text-center text-slate-400">
-        <ImageIcon className="mx-auto mb-2 h-10 w-10" />
-        <p className="text-xs font-medium">{label}</p>
-      </div>
-    </div>
-  );
-}
 
 export const metadata = buildStorefrontMetadata({
   title: "Become a Distributor",
@@ -104,9 +92,13 @@ export default function PartnershipPage() {
             </a>
           </div>
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <ImagePlaceholder
-              label="Team / Lifestyle Photo"
-              className="aspect-[4/3] rounded-2xl shadow-2xl"
+            <Image
+              src="/partnership-images/partnership-hero-lifestyle.jpg"
+              alt="BF Suma distributor team lifestyle"
+              width={600}
+              height={450}
+              className="aspect-[4/3] rounded-2xl object-cover shadow-2xl"
+              priority
             />
           </div>
         </PageContainer>
@@ -116,9 +108,12 @@ export default function PartnershipPage() {
       <PageContainer className="py-12 sm:py-16">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <div className="order-2 lg:order-1">
-            <ImagePlaceholder
-              label="Products / Training Photo"
-              className="aspect-[4/3] rounded-2xl"
+            <Image
+              src="/partnership-images/partnership-products-training.jpg"
+              alt="BF Suma products and training session"
+              width={600}
+              height={450}
+              className="aspect-[4/3] rounded-2xl object-cover"
             />
           </div>
           <div className="order-1 lg:order-2">
@@ -178,9 +173,12 @@ export default function PartnershipPage() {
                 With training, support, and a proven system, you&apos;ll never walk alone.
               </p>
             </div>
-            <ImagePlaceholder
-              label="Community / Event Photo"
-              className="aspect-[4/3] rounded-2xl"
+            <Image
+              src="/partnership-images/partnership-community-event.jpg"
+              alt="BF Suma distributor community event"
+              width={600}
+              height={450}
+              className="aspect-[4/3] rounded-2xl object-cover"
             />
           </div>
         </PageContainer>
@@ -244,9 +242,12 @@ export default function PartnershipPage() {
               </p>
             </div>
             <div className="mx-auto w-full max-w-sm lg:max-w-none">
-              <ImagePlaceholder
-                label="Success / Award Photo"
-                className="aspect-square rounded-2xl"
+              <Image
+                src="/partnership-images/partnership-success-award.jpg"
+                alt="BF Suma distributor success and awards"
+                width={500}
+                height={500}
+                className="aspect-square rounded-2xl object-cover"
               />
             </div>
           </div>
