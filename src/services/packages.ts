@@ -266,10 +266,16 @@ export async function getPackageBySlug(slug: string): Promise<PackageDisplayData
 
 /**
  * List only featured packages
+ * Returns empty array on error to prevent homepage crash
  */
 export async function getFeaturedPackages(limit: number = 3): Promise<PackageDisplayData[]> {
-  const packages = await getPackages();
-  return packages.filter((pkg) => pkg.is_featured).slice(0, limit);
+  try {
+    const packages = await getPackages();
+    return packages.filter((pkg) => pkg.is_featured).slice(0, limit);
+  } catch (error) {
+    console.warn("getFeaturedPackages: failed to load packages, returning empty array", error);
+    return [];
+  }
 }
 
 /**
