@@ -34,17 +34,8 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
 
   return (
     <Card
-      className={`group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100 ${
-        !pkg.is_in_stock ? "opacity-75" : ""
-      }`}
+      className="group relative h-full overflow-hidden rounded-2xl p-0 ring-1 ring-slate-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-100"
     >
-      {!pkg.is_in_stock && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60">
-          <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">
-            Currently Unavailable
-          </span>
-        </div>
-      )}
 
       <div className="relative overflow-hidden">
         {convertedSavings && (
