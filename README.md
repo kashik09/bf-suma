@@ -2,8 +2,6 @@
 
 BF Suma is a Next.js storefront and admin dashboard for managing products, orders, blog content, contacts, and reviews.
 
-**Live Demo:** [hustledesk.vercel.app](https://hustledesk.vercel.app/)
-
 ## Local Setup
 
 1. Install dependencies:
