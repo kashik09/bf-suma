@@ -43,6 +43,7 @@ export const ADMIN_ROLES: AdminRole[] = ["SUPER_ADMIN", "OPERATIONS", "EXECUTIVE
 
 export const STORE_NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "Categories", href: "/categories" },
   { label: "Health Goals", href: "/packages" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
