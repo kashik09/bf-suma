@@ -43,7 +43,7 @@ export function StoreAccountMenu() {
 
   if (loading) {
     return (
-      <span className="inline-flex h-9 items-center rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-500">
+      <span className="inline-flex h-9 items-center whitespace-nowrap rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-500">
         Account
       </span>
     );
@@ -52,7 +52,7 @@ export function StoreAccountMenu() {
   if (!isSignedIn) {
     return (
       <Link
-        className="inline-flex h-9 items-center rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        className="inline-flex h-9 items-center whitespace-nowrap rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
         href="/account/login"
       >
         Sign In
@@ -62,7 +62,7 @@ export function StoreAccountMenu() {
 
   return (
     <details className="relative">
-      <summary className="inline-flex h-9 cursor-pointer list-none items-center rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+      <summary className="inline-flex h-9 cursor-pointer list-none items-center whitespace-nowrap rounded-md border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
         {displayName}
       </summary>
       <div className="absolute right-0 z-30 mt-2 w-44 rounded-md border border-slate-200 bg-white p-1.5 shadow-card">
