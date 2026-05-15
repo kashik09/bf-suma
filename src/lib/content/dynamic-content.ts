@@ -43,7 +43,7 @@ export const dynamicContent = {
     body: "Start with one clear goal, not a long product list. If your main issue is energy crashes, choose one product pathway focused on daily energy support and stick to it consistently. If your priority is immunity, choose one immune-focused option and track how you feel over time. Avoid stacking too many new items at once. Clarity plus consistency usually beats complexity.",
     cta: {
       label: "Shop by Goal",
-      href: "/shop"
+      href: "/packages"
     }
   },
 
