@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { PaymentDeliveryActions } from "@/components/admin/payment-delivery-actions";
 import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
 import { canEdit, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
@@ -241,6 +242,23 @@ export default async function AdminOrderDetailPage({
           )}
         </Card>
       </div>
+
+      {canManageOrders && (
+        <Card className="space-y-3">
+          <h3 className="text-base font-semibold text-slate-900">Payment & Delivery</h3>
+          <PaymentDeliveryActions
+            orderId={id}
+            paymentStatus={detail.order.payment_status}
+            orderStatus={detail.order.status}
+            paymentMethod={detail.order.payment_method}
+            paymentReference={detail.order.payment_reference}
+            paymentReceivedAt={detail.order.payment_received_at}
+            deliveredAt={detail.order.delivered_at}
+            markPaidAction={markPaidAction}
+            markDeliveredAction={markDeliveredAction}
+          />
+        </Card>
+      )}
 
       <Card className="space-y-3">
         <h3 className="text-base font-semibold text-slate-900">Customer</h3>

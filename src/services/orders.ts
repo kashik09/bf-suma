@@ -561,10 +561,11 @@ export async function listOrdersForAdmin(filters: AdminOrderListFilters = {}): P
 
 export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrderDetail | null> {
   const supabase = createServiceRoleSupabaseClient();
+  // Include new payment/delivery fields - use * to avoid TS errors until types are regenerated
   const { data: orderRow, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_id, status, payment_status, subtotal, delivery_fee, total, currency, delivery_address, notes, created_at, updated_at, customers:customer_id(id, first_name, last_name, email, phone)"
+      "*, customers:customer_id(id, first_name, last_name, email, phone)"
     )
     .eq("id", orderId)
     .maybeSingle();
@@ -595,7 +596,16 @@ export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrde
     throw statusHistoryError;
   })();
 
-  const row = orderRow as OrderWithCustomerRow;
+  // Type assertion for new fields not yet in generated Supabase types
+  const row = orderRow as unknown as OrderWithCustomerRow & {
+    payment_method?: string | null;
+    payment_reference?: string | null;
+    payment_received_at?: string | null;
+    payment_received_by?: string | null;
+    payment_notes?: string | null;
+    delivered_at?: string | null;
+    delivered_by?: string | null;
+  };
   return {
     order: {
       id: row.id,
@@ -603,6 +613,13 @@ export async function getOrderDetailForAdmin(orderId: string): Promise<AdminOrde
       customer_id: row.customer_id,
       status: row.status,
       payment_status: row.payment_status,
+      payment_method: row.payment_method || null,
+      payment_reference: row.payment_reference || null,
+      payment_received_at: row.payment_received_at || null,
+      payment_received_by: row.payment_received_by || null,
+      payment_notes: row.payment_notes || null,
+      delivered_at: row.delivered_at || null,
+      delivered_by: row.delivered_by || null,
       subtotal: toInt(row.subtotal),
       delivery_fee: toInt(row.delivery_fee),
       total: toInt(row.total),
