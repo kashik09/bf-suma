@@ -70,6 +70,8 @@ export interface Customer {
   updated_at: string;
 }
 
+export type PaymentMethodCode = "CASH" | "MTN_MOMO" | "AIRTEL_MONEY" | "BANK_TRANSFER" | "OTHER";
+
 export interface Order {
   id: string;
   order_number: string;
@@ -84,6 +86,15 @@ export interface Order {
   delivery_address: string;
   delivery_zone?: string | null;
   notes: string | null;
+  // Payment tracking
+  payment_method: PaymentMethodCode | null;
+  payment_reference: string | null;
+  payment_received_at: string | null;
+  payment_received_by: string | null;
+  payment_notes: string | null;
+  // Delivery tracking
+  delivered_at: string | null;
+  delivered_by: string | null;
   created_at: string;
   updated_at: string;
 }

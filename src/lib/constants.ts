@@ -71,3 +71,21 @@ export const SHOP_SORT_OPTIONS = [
 ] as const;
 
 export const DELIVERY_ESTIMATE_TEXT = "Delivery estimate: same day in city, 1-2 days nearby areas.";
+
+export const PAYMENT_METHODS = {
+  CASH: "CASH",
+  MTN_MOMO: "MTN_MOMO",
+  AIRTEL_MONEY: "AIRTEL_MONEY",
+  BANK_TRANSFER: "BANK_TRANSFER",
+  OTHER: "OTHER"
+} as const;
+
+export type PaymentMethod = (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  CASH: "Cash",
+  MTN_MOMO: "MTN Mobile Money",
+  AIRTEL_MONEY: "Airtel Money",
+  BANK_TRANSFER: "Bank Transfer",
+  OTHER: "Other"
+};
