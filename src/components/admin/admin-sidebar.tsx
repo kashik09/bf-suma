@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import {
   BookOpen,
   LayoutDashboard,
+  Mail,
   ShoppingBag,
   Boxes,
   FileText,
@@ -23,7 +24,8 @@ const adminNav = [
   { href: "/admin/products", label: "Products", icon: Boxes, exact: false },
   { href: "/admin/reviews", label: "Reviews", icon: Star, exact: false },
   { href: "/admin/blog", label: "Blog", icon: FileText, exact: false },
-  { href: "/admin/contacts", label: "Contacts", icon: MessagesSquare, exact: false }
+  { href: "/admin/contacts", label: "Contacts", icon: MessagesSquare, exact: false },
+  { href: "/admin/contact-submissions", label: "Form Messages", icon: Mail, exact: false }
 ];
 
 const bottomNav = [

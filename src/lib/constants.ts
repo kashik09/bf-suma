@@ -1,5 +1,6 @@
 import type {
   AdminRole,
+  ContactSubmissionStatus,
   DeliveryStatus,
   InquiryStatus,
   OrderStatus,
@@ -39,6 +40,7 @@ export const DELIVERY_STATUSES: DeliveryStatus[] = [
   "FAILED"
 ];
 export const INQUIRY_STATUSES: InquiryStatus[] = ["NEW", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+export const CONTACT_SUBMISSION_STATUSES: ContactSubmissionStatus[] = ["new", "responded", "spam"];
 export const ADMIN_ROLES: AdminRole[] = ["SUPER_ADMIN", "OPERATIONS", "EXECUTIVE", "SUPPORT"];
 
 export const STORE_NAV_LINKS = [
