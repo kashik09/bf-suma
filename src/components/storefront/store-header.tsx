@@ -10,7 +10,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { STORE_NAV_LINKS } from "@/lib/constants";
 
 export function StoreHeader() {
-  const navLinks = STORE_NAV_LINKS.filter((item) => item.href !== "/contact");
+  const navLinks = STORE_NAV_LINKS;
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">

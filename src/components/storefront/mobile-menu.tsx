@@ -7,7 +7,7 @@ import { STORE_NAV_LINKS } from "@/lib/constants";
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = STORE_NAV_LINKS.filter((item) => item.href !== "/contact");
+  const navLinks = STORE_NAV_LINKS;
 
   return (
     <>
