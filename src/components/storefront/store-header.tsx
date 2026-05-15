@@ -1,5 +1,6 @@
 import SearchAutocomplete from "@/components/storefront/search-autocomplete";
 import { CurrencySwitcher } from "@/components/storefront/currency-switcher";
+import { MobileMenu } from "@/components/storefront/mobile-menu";
 import { StoreAccountMenu } from "@/components/storefront/store-account-menu";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
 import { StoreWishlistButton } from "@/components/storefront/store-wishlist-button";
@@ -28,7 +29,8 @@ export function StoreHeader() {
           <SearchAutocomplete placeholder="Search products, category, or benefit..." />
         </div>
 
-        <div className="flex items-center justify-end gap-2 sm:gap-4">
+        <div className="flex items-center justify-end gap-2 sm:gap-3">
+          <MobileMenu />
           <nav aria-label="Main navigation" className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 md:flex">
             {navLinks.map((item) => (
               <Link className="transition hover:text-slate-900" href={item.href} key={item.href}>
@@ -58,17 +60,6 @@ export function StoreHeader() {
         </PageContainer>
       </div>
 
-      <div className="border-t border-slate-100 bg-white md:hidden lg:hidden">
-        <PageContainer className="flex items-center gap-4 overflow-x-auto pb-2 pt-0 text-sm font-semibold text-slate-700">
-          <nav aria-label="Mobile quick links" className="flex items-center gap-4">
-            {navLinks.map((item) => (
-              <Link className="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-slate-100" href={item.href} key={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </PageContainer>
-      </div>
     </header>
   );
 }
