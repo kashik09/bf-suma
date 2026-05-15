@@ -49,10 +49,10 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-green-200 bg-green-50 p-8 text-center">
-        <CheckCircle2 className="mb-3 h-12 w-12 text-green-600" />
-        <h3 className="text-lg font-semibold text-slate-900">Message sent!</h3>
-        <p className="mt-1 text-sm text-slate-600">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-green-200 bg-green-50 p-12 text-center">
+        <CheckCircle2 className="mb-4 h-16 w-16 text-green-600" />
+        <h3 className="text-2xl font-bold text-slate-900">Message sent!</h3>
+        <p className="mt-2 text-base text-slate-600">
           Thanks — we'll respond within 24 hours. Check your email for a copy.
         </p>
       </div>
