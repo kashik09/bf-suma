@@ -7,16 +7,19 @@ import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
 import { canEdit, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
-import { ORDER_STATUSES } from "@/lib/constants";
+import { ORDER_STATUSES, PAYMENT_METHODS } from "@/lib/constants";
+import { logEvent } from "@/lib/logger";
 import { formatCurrency } from "@/lib/utils";
 import {
   getOrderDetailForAdmin,
+  markOrderDelivered,
+  markOrderPaid,
   OrderNotFoundError,
   OrderStatusConflictError,
   OrderStatusTransitionError,
   updateOrderStatus
 } from "@/services/orders";
-import type { OrderStatus } from "@/types";
+import type { OrderStatus, PaymentMethodCode } from "@/types";
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString();
@@ -68,6 +71,78 @@ export default async function AdminOrderDetailPage({
         redirect(`/admin/orders/${id}?error=${encodeURIComponent(error.message)}`);
       }
       redirect(`/admin/orders/${id}?error=${encodeURIComponent("Status update failed.")}`);
+    }
+
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin/orders/${id}`);
+    redirect(`/admin/orders/${id}?updated=1`);
+  }
+
+  async function markPaidAction(formData: FormData) {
+    "use server";
+
+    const adminSession = await requireAdminSession(OPERATIONAL_ROLES);
+
+    const rawMethod = String(formData.get("payment_method") || "").trim();
+    const reference = String(formData.get("payment_reference") || "").trim();
+    const notes = String(formData.get("payment_notes") || "").trim();
+
+    const validMethods = Object.values(PAYMENT_METHODS);
+    if (!validMethods.includes(rawMethod as PaymentMethodCode)) {
+      redirect(`/admin/orders/${id}?error=${encodeURIComponent("Invalid payment method.")}`);
+    }
+
+    if (reference.length > 200) {
+      redirect(`/admin/orders/${id}?error=${encodeURIComponent("Reference too long (max 200 chars).")}`);
+    }
+
+    if (notes.length > 500) {
+      redirect(`/admin/orders/${id}?error=${encodeURIComponent("Notes too long (max 500 chars).")}`);
+    }
+
+    try {
+      await markOrderPaid(id, {
+        paymentMethod: rawMethod as PaymentMethodCode,
+        paymentReference: reference || null,
+        paymentNotes: notes || null
+      }, adminSession.userId);
+
+      logEvent("info", "order.marked_paid", {
+        orderId: id,
+        paymentMethod: rawMethod,
+        userId: adminSession.userId
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to mark as paid.";
+      redirect(`/admin/orders/${id}?error=${encodeURIComponent(message)}`);
+    }
+
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin/orders/${id}`);
+    redirect(`/admin/orders/${id}?updated=1`);
+  }
+
+  async function markDeliveredAction() {
+    "use server";
+
+    const adminSession = await requireAdminSession(OPERATIONAL_ROLES);
+
+    try {
+      await markOrderDelivered(id, adminSession.userId);
+
+      logEvent("info", "order.marked_delivered", {
+        orderId: id,
+        userId: adminSession.userId
+      });
+    } catch (error) {
+      if (error instanceof OrderNotFoundError) {
+        redirect(`/admin/orders/${id}?error=${encodeURIComponent("Order not found.")}`);
+      }
+      if (error instanceof OrderStatusTransitionError || error instanceof OrderStatusConflictError) {
+        redirect(`/admin/orders/${id}?error=${encodeURIComponent(error.message)}`);
+      }
+      const message = error instanceof Error ? error.message : "Failed to mark as delivered.";
+      redirect(`/admin/orders/${id}?error=${encodeURIComponent(message)}`);
     }
 
     revalidatePath("/admin/orders");

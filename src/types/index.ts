@@ -86,15 +86,15 @@ export interface Order {
   delivery_address: string;
   delivery_zone?: string | null;
   notes: string | null;
-  // Payment tracking
-  payment_method: PaymentMethodCode | null;
-  payment_reference: string | null;
-  payment_received_at: string | null;
-  payment_received_by: string | null;
-  payment_notes: string | null;
-  // Delivery tracking
-  delivered_at: string | null;
-  delivered_by: string | null;
+  // Payment tracking (optional - added in later migration)
+  payment_method?: PaymentMethodCode | null;
+  payment_reference?: string | null;
+  payment_received_at?: string | null;
+  payment_received_by?: string | null;
+  payment_notes?: string | null;
+  // Delivery tracking (optional - added in later migration)
+  delivered_at?: string | null;
+  delivered_by?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -1,4 +1,4 @@
-import type { Customer, Order, OrderItem, OrderStatus } from "@/types";
+import type { Customer, Order, OrderItem, OrderStatus, PaymentMethodCode } from "@/types";
 import type { Json } from "@/types/database";
 import { createHash } from "node:crypto";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
@@ -885,4 +885,93 @@ export async function getOrderByNumberForConfirmation(
       lineTotal: toInt(item.line_total)
     }))
   };
+}
+
+export interface MarkOrderPaidInput {
+  paymentMethod: PaymentMethodCode;
+  paymentReference?: string | null;
+  paymentNotes?: string | null;
+}
+
+export async function markOrderPaid(
+  orderId: string,
+  input: MarkOrderPaidInput,
+  adminUserId: string
+): Promise<{ success: true }> {
+  const supabase = createServiceRoleSupabaseClient();
+
+  // Use type assertion for new columns not yet in generated types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await supabase
+    .from("orders")
+    .update({
+      payment_status: "PAID",
+      payment_method: input.paymentMethod,
+      payment_reference: input.paymentReference || null,
+      payment_notes: input.paymentNotes || null,
+      payment_received_at: new Date().toISOString(),
+      payment_received_by: adminUserId
+    } as any)
+    .eq("id", orderId);
+
+  if (error) {
+    throw new Error(`Failed to mark order as paid: ${error.message}`);
+  }
+
+  return { success: true };
+}
+
+export async function markOrderDelivered(
+  orderId: string,
+  adminUserId: string
+): Promise<{ success: true }> {
+  const supabase = createServiceRoleSupabaseClient();
+
+  const { data: existing, error: existingError } = await supabase
+    .from("orders")
+    .select("status")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (existingError) throw existingError;
+  if (!existing) throw new OrderNotFoundError("Order not found.");
+
+  const currentStatus = existing.status as OrderStatus;
+
+  // Use the existing status transition logic
+  assertStatusTransition(currentStatus, "DELIVERED");
+
+  const { error: updateError } = await supabase.rpc("update_order_status_with_history", {
+    p_order_id: orderId,
+    p_expected_status: currentStatus,
+    p_new_status: "DELIVERED",
+    p_changed_by: "admin_delivery",
+    p_note: "Marked as delivered via admin UI"
+  });
+
+  if (updateError) {
+    if (updateError.message.includes("ORDER_NOT_FOUND")) {
+      throw new OrderNotFoundError("Order not found.");
+    }
+    if (updateError.message.includes("ORDER_STATUS_CONFLICT")) {
+      throw new OrderStatusConflictError("Order status changed. Refresh and retry.");
+    }
+    throw updateError;
+  }
+
+  // Update delivered_at and delivered_by (type assertion for new columns)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: deliveryError } = await supabase
+    .from("orders")
+    .update({
+      delivered_at: new Date().toISOString(),
+      delivered_by: adminUserId
+    } as any)
+    .eq("id", orderId);
+
+  if (deliveryError) {
+    console.warn("Failed to update delivery tracking fields:", deliveryError.message);
+  }
+
+  return { success: true };
 }
