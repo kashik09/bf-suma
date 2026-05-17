@@ -1,5 +1,6 @@
 import SearchAutocomplete from "@/components/storefront/search-autocomplete";
 import { CurrencySwitcher } from "@/components/storefront/currency-switcher";
+import { MULTI_CURRENCY_ENABLED } from "@/lib/currency";
 import { MobileMenu } from "@/components/storefront/mobile-menu";
 import { StoreAccountMenu } from "@/components/storefront/store-account-menu";
 import { StoreCartButton } from "@/components/storefront/store-cart-button";
@@ -45,7 +46,7 @@ export function StoreHeader() {
           </nav>
 
           <StoreAccountMenu />
-          <CurrencySwitcher />
+          {MULTI_CURRENCY_ENABLED && <CurrencySwitcher />}
           <div className="flex shrink-0 items-center gap-2">
             <StoreWishlistButton />
             <StoreCartButton />
