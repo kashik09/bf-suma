@@ -143,22 +143,22 @@ export function Hero() {
         )}
 
         {slide.id !== "catalog" && (
-          <div className="flex w-full max-w-md flex-col gap-2 sm:max-w-none sm:flex-row sm:justify-center">
+          <div className="flex flex-row justify-center gap-2 px-2 sm:gap-3">
             <Link
-              className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-sm font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-7 sm:text-base"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-white px-3 text-xs font-semibold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl sm:h-12 sm:px-6 sm:text-sm"
               href="/shop"
             >
-              <ShoppingBag className="mr-2 h-5 w-5" />
-              Shop Now - Fast Delivery
+              <ShoppingBag className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" />
+              Shop Now
             </Link>
             <a
-              className="inline-flex h-12 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-6 text-sm font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-7 sm:text-base"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-3 text-xs font-semibold text-brand-800 shadow-soft transition hover:bg-brand-100 sm:h-12 sm:px-6 sm:text-sm"
               href={buildWhatsAppUrl(slide.whatsappMessage || "", SUPPORT_WHATSAPP_PHONE)}
               rel="noreferrer"
               target="_blank"
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Ask on WhatsApp
+              <MessageCircle className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" />
+              WhatsApp
             </a>
           </div>
         )}
