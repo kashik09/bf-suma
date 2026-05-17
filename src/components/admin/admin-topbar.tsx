@@ -17,7 +17,6 @@ function getSectionLabel(pathname: string): string {
   if (pathname.startsWith("/admin/contacts")) return "Contacts";
   if (pathname.startsWith("/admin/guide")) return "Guide";
   if (pathname.startsWith("/admin/reset-password")) return "Reset Password";
-  if (pathname.startsWith("/admin/login")) return "Login";
   return "Dashboard";
 }
 

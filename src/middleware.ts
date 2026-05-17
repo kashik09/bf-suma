@@ -133,13 +133,14 @@ export async function middleware(request: NextRequest) {
     return applySecurityHeaders(NextResponse.redirect(new URL("/", request.url)));
   }
 
-  if (isAdminRoute(pathname) && !isAdminLoginRoute && !isAdminLogoutRoute && !isAdminResetPasswordRoute) {
+  // Admin routes (except logout/reset-password) - let /admin handle auth check itself
+  if (isAdminRoute(pathname) && !isAdminLogoutRoute && !isAdminResetPasswordRoute && pathname !== "/admin") {
     const token = request.cookies.get(ADMIN_SESSION_COOKIE_NAME)?.value;
     const adminSession = await verifyAdminSessionToken(token);
 
     if (!adminSession) {
-      const loginUrl = new URL("/admin/login", request.url);
-      const response = NextResponse.redirect(loginUrl);
+      // Redirect to /admin which will show login form
+      const response = NextResponse.redirect(new URL("/admin", request.url));
       setFlashRedirectCookie(response, pathname);
       return applySecurityHeaders(response);
     }
@@ -159,7 +160,7 @@ export async function middleware(request: NextRequest) {
     const adminSession = await verifyAdminSessionToken(token);
 
     if (!adminSession) {
-      return applySecurityHeaders(NextResponse.redirect(new URL("/admin/login", request.url)));
+      return applySecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)));
     }
 
     if (!adminSession.mustResetPassword) {
@@ -168,13 +169,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Redirect /admin/login to /admin (login is now at /admin)
   if (isAdminLoginRoute) {
-    const token = request.cookies.get(ADMIN_SESSION_COOKIE_NAME)?.value;
-    const adminSession = await verifyAdminSessionToken(token);
-    if (adminSession) {
-      const destination = adminSession.mustResetPassword ? "/admin/reset-password" : "/admin";
-      return applySecurityHeaders(NextResponse.redirect(new URL(destination, request.url)));
-    }
+    return applySecurityHeaders(NextResponse.redirect(new URL("/admin", request.url), 301));
   }
 
   if (isAdminRoute(pathname) && isLegacyScaffoldAdminPath(pathname) && !allowAdminScaffoldRoutes) {

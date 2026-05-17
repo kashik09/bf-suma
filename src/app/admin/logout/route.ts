@@ -4,7 +4,7 @@ import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/admin-session";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const redirectUrl = new URL("/admin/login", request.url);
+  const redirectUrl = new URL("/admin", request.url);
   const response = NextResponse.redirect(redirectUrl);
 
   response.cookies.set(ADMIN_SESSION_COOKIE_NAME, "", {

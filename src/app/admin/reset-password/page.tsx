@@ -37,7 +37,7 @@ export default async function AdminResetPasswordPage() {
   // Must have a valid session with mustResetPassword flag
   if (!session) {
     await setFlashError("session_expired");
-    redirect("/admin/login");
+    redirect("/admin");
   }
 
   if (!session.mustResetPassword) {
@@ -63,7 +63,7 @@ export default async function AdminResetPasswordPage() {
 
     if (!session || !session.mustResetPassword) {
       await setFlashError("session_expired");
-      redirect("/admin/login");
+      redirect("/admin");
     }
 
     if (newPassword !== confirmPassword) {

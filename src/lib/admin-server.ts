@@ -13,7 +13,7 @@ export async function getAdminSessionFromCookies() {
 export async function requireAdminSession(allowedRoles?: AdminRole[]) {
   const session = await getAdminSessionFromCookies();
   if (!session) {
-    redirect("/admin/login");
+    redirect("/admin");
   }
 
   if (session.mustResetPassword) {
@@ -22,7 +22,7 @@ export async function requireAdminSession(allowedRoles?: AdminRole[]) {
 
   if (allowedRoles && !hasAdminRole(session.role, allowedRoles)) {
     await setFlashError("forbidden");
-    redirect("/admin/login");
+    redirect("/admin");
   }
 
   return session;
