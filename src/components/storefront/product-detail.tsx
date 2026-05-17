@@ -374,45 +374,37 @@ export function ProductDetail({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              className="sm:flex-1"
-              disabled={isUnavailable || justAdded}
-              onClick={handleAddToCart}
-              title={isUnavailable ? "Currently unavailable" : "Add item to cart"}
-            >
-              {justAdded ? (
-                <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Added to Cart
-                </>
-              ) : !commerceReady ? (
-                "Checkout unavailable"
-              ) : isUnavailable ? (
-                "Currently Unavailable"
-              ) : (
-                "Add to Cart - Fast Checkout"
-              )}
-            </Button>
+          <Button
+            className="w-full"
+            disabled={isUnavailable || justAdded}
+            onClick={handleAddToCart}
+            title={isUnavailable ? "Currently unavailable" : "Add item to cart"}
+          >
+            {justAdded ? (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Added to Cart
+              </>
+            ) : !commerceReady ? (
+              "Checkout unavailable"
+            ) : isUnavailable ? (
+              "Currently Unavailable"
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
+
+          <p className="text-center text-xs text-slate-600">
+            Questions?{" "}
             <a
-              className="inline-flex h-11 items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 sm:flex-1"
+              className="font-medium text-brand-700 hover:text-brand-800"
               href={buildWhatsAppUrl(productWhatsAppInterestMessage)}
               rel="noreferrer"
               target="_blank"
             >
-              <MessageCircle className="mr-1 h-4 w-4" />
               Ask on WhatsApp
             </a>
-          </div>
-
-          <p className="text-xs text-slate-600">Need quick guidance before checkout? Tap WhatsApp for fast help.</p>
-
-          <Link
-            className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
-            href="/checkout"
-          >
-            Continue to Checkout
-          </Link>
+          </p>
 
           <ul className="space-y-1.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
             <li className="flex items-start gap-2">
@@ -437,7 +429,8 @@ export function ProductDetail({
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2 lg:items-start">
+      <section className="grid gap-4 lg:grid-cols-2">
+        {/* Row 1: Solution + Newsletter */}
         <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Solution</p>
           <h2 className="mt-1 text-xl font-semibold text-slate-900">How this product helps</h2>
@@ -462,61 +455,58 @@ export function ProductDetail({
           ) : null}
         </article>
 
-        <div className="space-y-4">
+        <NewsletterSignup
+          source="product_page"
+          context={product.slug}
+          compact
+          title="Get notified about this product"
+          description="Restock alerts and product updates."
+          ctaLabel="Notify Me"
+        />
+
+        {/* Row 2: Ingredients + Usage */}
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Ingredients</p>
+          <h2 className="mt-1 text-xl font-semibold text-slate-900">Key actives and formula cues</h2>
+          <ul className="mt-3 space-y-2.5">
+            {ingredients.map((ingredient) => (
+              <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={ingredient}>
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
+                <span>{ingredient}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-slate-500">
+            Always verify complete ingredient and usage details on the package label.
+          </p>
+        </article>
+
+        {usageInstructions || warnings.length > 0 ? (
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Ingredients</p>
-            <h2 className="mt-1 text-xl font-semibold text-slate-900">Key actives and formula cues</h2>
-            <ul className="mt-3 space-y-2.5">
-              {ingredients.map((ingredient) => (
-                <li className="flex items-start gap-2 text-sm leading-relaxed text-slate-700" key={ingredient}>
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
-                  <span>{ingredient}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-xs text-slate-500">
-              Always verify complete ingredient and usage details on the package label.
-            </p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Usage and cautions</p>
+
+            {usageInstructions ? (
+              <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/40 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Suggested usage</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-700">{usageInstructions}</p>
+              </div>
+            ) : null}
+
+            {warnings.length > 0 ? (
+              <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-800">
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  Important use notes
+                </p>
+                <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
+                  {warnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </article>
-
-          {usageInstructions || warnings.length > 0 ? (
-            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Usage and cautions</p>
-
-              {usageInstructions ? (
-                <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/40 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">Suggested usage</p>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-700">{usageInstructions}</p>
-                </div>
-              ) : null}
-
-              {warnings.length > 0 ? (
-                <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
-                  <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-amber-800">
-                    <AlertTriangle className="h-3.5 w-3.5" />
-                    Important use notes
-                  </p>
-                  <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
-                    {warnings.map((warning) => (
-                      <li key={warning}>{warning}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </article>
-          ) : null}
-        </div>
-
-        <div className="lg:col-span-2">
-          <NewsletterSignup
-            source="product_page"
-            context={product.slug}
-            compact
-            title="Get notified about this product"
-            description="Restock alerts and product updates."
-            ctaLabel="Notify Me"
-          />
-        </div>
+        ) : null}
       </section>
 
     </div>
