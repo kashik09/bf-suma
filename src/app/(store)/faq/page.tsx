@@ -5,7 +5,7 @@ import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { listPdfFaqEntries } from "@/lib/catalog/pdf-catalog-content";
-import { buildStorefrontMetadata } from "@/lib/seo";
+import { buildFaqPageJsonLd, buildStorefrontMetadata } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const dynamic = "force-static";
@@ -116,8 +116,16 @@ export default function FaqPage() {
     {} as Record<string, FaqItem[]>
   );
 
+  const faqJsonLd = buildFaqPageJsonLd(
+    allFaqs.map((faq) => ({ question: faq.question, answer: faq.answer }))
+  );
+
   return (
     <PageContainer className="space-y-6 py-10 sm:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <h1 className="sr-only">Frequently asked questions</h1>
       <StoreBreadcrumbs
         items={[
