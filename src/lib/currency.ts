@@ -1,6 +1,12 @@
 export const SUPPORTED_CURRENCIES = ["UGX", "USD", "KES"] as const;
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
+/**
+ * Feature flag: set to true to re-enable multi-currency support.
+ * When false, all prices display in UGX only with no conversion overhead.
+ */
+export const MULTI_CURRENCY_ENABLED = false;
+
 const CURRENCY_STORAGE_KEY = "storefront-currency";
 export const CURRENCY_CHANGE_EVENT = "storefront-currency-changed";
 export const DEFAULT_CURRENCY: SupportedCurrency = "UGX";
@@ -58,6 +64,8 @@ export function formatPrice(amount: number, currency: string): string {
 }
 
 export function convertPrice(amountMinor: number, fromCurrency: string, toCurrency: string): number {
+  if (!MULTI_CURRENCY_ENABLED) return amountMinor;
+
   const source = normalizeCurrency(fromCurrency);
   const target = normalizeCurrency(toCurrency);
   if (!source || !target) return amountMinor;
@@ -79,6 +87,7 @@ export function convertPrice(amountMinor: number, fromCurrency: string, toCurren
 }
 
 export function getCurrency(): SupportedCurrency {
+  if (!MULTI_CURRENCY_ENABLED) return DEFAULT_CURRENCY;
   if (typeof window === "undefined") return DEFAULT_CURRENCY;
   const value = window.localStorage.getItem(CURRENCY_STORAGE_KEY);
   if (value === "UGX" || value === "USD" || value === "KES") return value;
