@@ -67,7 +67,7 @@ export const STORE_NAV_LINKS = [
   { label: "Categories", href: "/categories" },
   { label: "Health Goals", href: "/packages" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact Us", href: "/contact" },
   { label: "Join Us", href: "/partnership" }
 ] as const;
 
