@@ -11,22 +11,26 @@ export function MobileMenu() {
 
   return (
     <>
-      {/* Hamburger Button */}
+      {/* Menu Button */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 transition hover:bg-slate-100 md:hidden"
+        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 transition hover:bg-slate-100 lg:hidden"
         aria-label="Open menu"
       >
-        <svg className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <Image
+          src="/favicon.ico"
+          alt="Menu"
+          width={20}
+          height={20}
+          className="h-5 w-5"
+        />
       </button>
 
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-slate-900/40 md:hidden"
+          className="fixed inset-0 z-50 bg-slate-900/40 lg:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -34,7 +38,7 @@ export function MobileMenu() {
 
       {/* Slide-out Menu */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white shadow-xl transition-transform duration-200 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

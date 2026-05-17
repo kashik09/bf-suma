@@ -30,8 +30,7 @@ export function StoreHeader() {
         </div>
 
         <div className="flex items-center justify-end gap-2 sm:gap-3">
-          <MobileMenu />
-          <nav aria-label="Main navigation" className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 md:flex">
+          <nav aria-label="Main navigation" className="hidden items-center justify-end gap-5 text-sm font-semibold text-slate-700 lg:flex">
             {navLinks.map((item) => (
               <Link className="transition hover:text-slate-900" href={item.href} key={item.href}>
                 {item.label}
@@ -50,6 +49,7 @@ export function StoreHeader() {
           <div className="flex shrink-0 items-center gap-2">
             <StoreWishlistButton />
             <StoreCartButton />
+            <MobileMenu />
           </div>
         </div>
       </PageContainer>
