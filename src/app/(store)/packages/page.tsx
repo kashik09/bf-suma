@@ -66,7 +66,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pac
           {featuredPackages.length > 0 && (
             <h2 className="text-xl font-semibold text-slate-900">All Packages</h2>
           )}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {otherPackages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
