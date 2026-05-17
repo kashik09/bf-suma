@@ -10,7 +10,13 @@ import { ProductReviewsList } from "@/components/storefront/product-reviews-list
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { getPdfProductContentForCatalogSlug } from "@/lib/catalog/pdf-catalog-content";
 import { getCommerceDegradedMessage } from "@/lib/catalog-health";
-import { buildProductMetaDescription, buildStorefrontMetadata, toAbsoluteUrl } from "@/lib/seo";
+import {
+  buildBreadcrumbJsonLd,
+  buildProductJsonLd,
+  buildProductMetaDescription,
+  buildStorefrontMetadata,
+  toAbsoluteUrl
+} from "@/lib/seo";
 import { listPublishedBlogPosts, type BlogPostListItem } from "@/services/blog";
 import {
   getApprovedReviewsForProduct,
@@ -23,11 +29,6 @@ import {
   getStorefrontProductBySlug,
   listRelatedProducts
 } from "@/services/products";
-
-function toSchemaAvailability(availability: "in_stock" | "low_stock" | "out_of_stock") {
-  if (availability === "out_of_stock") return "https://schema.org/OutOfStock";
-  return "https://schema.org/InStock";
-}
 
 function pickFeaturedReview(reviews: ProductReview[]): ProductReview | null {
   if (reviews.length === 0) return null;
@@ -112,35 +113,37 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const pdfContent = getPdfProductContentForCatalogSlug(product.slug);
   const featuredReview = pickFeaturedReview(reviews);
   const relatedLearningPosts = listRelatedLearningPosts(publishedPosts, product.name, product.category_name);
-  const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
+
+  const productJsonLd = buildProductJsonLd({
     name: product.name,
     description: product.description,
-    image: [toAbsoluteUrl(product.image_url)],
     sku: product.sku,
     category: product.category_name,
-    offers: {
-      "@type": "Offer",
-      priceCurrency: product.currency,
-      price: (product.price / 100).toFixed(2),
-      availability: toSchemaAvailability(product.availability),
-      url: toAbsoluteUrl(`/shop/${product.slug}`)
-    },
-    aggregateRating: ratingSummary.count > 0
-      ? {
-          "@type": "AggregateRating",
-          ratingValue: ratingSummary.average,
-          reviewCount: ratingSummary.count
-        }
-      : undefined
-  };
+    slug: product.slug,
+    images: product.gallery_urls.length > 0 ? product.gallery_urls : [product.image_url],
+    price: product.price,
+    currency: product.currency,
+    availability: product.availability === "out_of_stock" ? "out_of_stock" : "in_stock",
+    ratingValue: ratingSummary.average,
+    reviewCount: ratingSummary.count
+  });
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: toAbsoluteUrl("/") },
+    { name: "Shop", url: toAbsoluteUrl("/shop") },
+    { name: product.category_name, url: toAbsoluteUrl(`/category/${product.category_slug}`) },
+    { name: product.name, url: toAbsoluteUrl(`/shop/${product.slug}`) }
+  ]);
 
   return (
     <PageContainer className="space-y-8 py-10 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <StoreBreadcrumbs
         items={[
