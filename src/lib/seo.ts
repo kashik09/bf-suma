@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants";
+import { ADDRESS } from "@/config/contact";
 
 const DEFAULT_SITE_URL = "https://bfsumauganda.com";
 const DEFAULT_SOCIAL_IMAGE = "/bf-suma-logo.png";
@@ -158,5 +159,114 @@ export function buildOrganizationJsonLd() {
         telephone: SUPPORT_PHONE
       }
     ]
+  };
+}
+
+export function buildLocalBusinessJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "BF Suma Uganda",
+    image: toAbsoluteUrl("/bf-suma-logo.png"),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: ADDRESS.line1 + ", " + ADDRESS.line2,
+      addressLocality: ADDRESS.city,
+      addressCountry: "UG"
+    },
+    telephone: SUPPORT_PHONE,
+    email: SUPPORT_EMAIL,
+    url: getSiteUrl(),
+    priceRange: "$$"
+  };
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url
+    }))
+  };
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export function buildFaqPageJsonLd(faqs: FaqItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer
+      }
+    }))
+  };
+}
+
+export interface ProductJsonLdParams {
+  name: string;
+  description: string;
+  sku: string;
+  category: string;
+  slug: string;
+  images: string[];
+  price: number;
+  currency: string;
+  availability: "in_stock" | "out_of_stock" | "preorder";
+  ratingValue?: number;
+  reviewCount?: number;
+}
+
+export function buildProductJsonLd(params: ProductJsonLdParams) {
+  const availabilityMap = {
+    in_stock: "https://schema.org/InStock",
+    out_of_stock: "https://schema.org/OutOfStock",
+    preorder: "https://schema.org/PreOrder"
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: params.name,
+    description: params.description,
+    sku: params.sku,
+    category: params.category,
+    image: params.images.map((img) => toAbsoluteUrl(img)),
+    brand: {
+      "@type": "Brand",
+      name: "BF Suma"
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: params.currency,
+      price: (params.price / 100).toFixed(2),
+      availability: availabilityMap[params.availability],
+      url: toAbsoluteUrl(`/shop/${params.slug}`)
+    },
+    ...(params.reviewCount && params.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: params.ratingValue,
+            reviewCount: params.reviewCount
+          }
+        }
+      : {})
   };
 }
