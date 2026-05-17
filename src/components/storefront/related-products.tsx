@@ -7,7 +7,7 @@ export function RelatedProducts({ products }: { products: StorefrontProduct[] })
     <section className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-soft sm:p-6">
       <SectionHeader
         title="Complete Your Routine"
-        description="A short list of relevant options to reduce decision overload."
+        description="Products that pair well with this item."
       />
       <ProductGrid
         emptyDescription="No related products available yet."

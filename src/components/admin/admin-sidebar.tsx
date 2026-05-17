@@ -115,7 +115,7 @@ function SidebarContent({ onLinkClick }: SidebarContentProps) {
 
 export function AdminSidebar() {
   return (
-    <aside className="hidden w-64 flex-col border-r border-slate-200 bg-white lg:flex">
+    <aside className="hidden w-64 flex-col overflow-y-auto border-r border-slate-200 bg-white lg:flex">
       <SidebarContent />
     </aside>
   );

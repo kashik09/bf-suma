@@ -407,15 +407,6 @@ export function ProductDetail({
 
           <p className="text-xs text-slate-600">Need quick guidance before checkout? Tap WhatsApp for fast help.</p>
 
-          <NewsletterSignup
-            source="product_page"
-            context={product.slug}
-            compact
-            title="Get updates for products like this"
-            description="Receive concise restock and product update emails."
-            ctaLabel="Notify Me"
-          />
-
           <Link
             className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
             href="/checkout"
@@ -461,7 +452,7 @@ export function ProductDetail({
 
           {problemFrame.length > 1 ? (
             <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/70 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Problem context</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Who it helps</p>
               <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
                 {problemFrame.slice(1, 3).map((frame) => (
                   <li key={frame}>{frame}</li>
@@ -516,6 +507,15 @@ export function ProductDetail({
           ) : null}
         </div>
       </section>
+
+      <NewsletterSignup
+        source="product_page"
+        context={product.slug}
+        compact
+        title="Get notified about this product"
+        description="Restock alerts and product updates."
+        ctaLabel="Notify Me"
+      />
 
     </div>
   );
