@@ -319,11 +319,6 @@ export function ProductDetail({
             </div>
           ) : null}
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Problem Fit</p>
-            <p className="mt-1 text-sm text-slate-700">{problemFrame[0]}</p>
-          </div>
-
           <div className="flex items-center gap-2">
             <p className="text-2xl font-bold text-slate-900">{formatPrice(displayPrice, currency)}</p>
           </div>
@@ -442,17 +437,6 @@ export function ProductDetail({
               </li>
             ))}
           </ul>
-
-          {problemFrame.length > 1 ? (
-            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/70 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Who it helps</p>
-              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-slate-700">
-                {problemFrame.slice(1, 3).map((frame) => (
-                  <li key={frame}>{frame}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </article>
 
         <NewsletterSignup
