@@ -24,12 +24,31 @@ export const WHATSAPP_PHONE = CONTACT.whatsappPrimary;
 export const PRODUCT_STATUSES: ProductStatus[] = ["DRAFT", "ACTIVE", "ARCHIVED", "OUT_OF_STOCK"];
 export const ORDER_STATUSES: OrderStatus[] = [
   "PENDING",
+  "PENDING_PAYMENT",
+  "PAYMENT_CONFIRMED",
   "CONFIRMED",
   "PROCESSING",
+  "READY_FOR_PICKUP",
   "OUT_FOR_DELIVERY",
   "DELIVERED",
   "CANCELED"
 ];
+
+export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  PENDING: ["PENDING_PAYMENT", "CONFIRMED", "CANCELED"],
+  PENDING_PAYMENT: ["PAYMENT_CONFIRMED", "CANCELED"],
+  PAYMENT_CONFIRMED: ["PROCESSING", "CANCELED"],
+  CONFIRMED: ["PROCESSING", "CANCELED"],
+  PROCESSING: ["READY_FOR_PICKUP", "OUT_FOR_DELIVERY", "CANCELED"],
+  READY_FOR_PICKUP: ["DELIVERED", "CANCELED"],
+  OUT_FOR_DELIVERY: ["DELIVERED", "CANCELED"],
+  DELIVERED: [],
+  CANCELED: []
+};
+
+export function getValidNextStatuses(currentStatus: OrderStatus): OrderStatus[] {
+  return ORDER_STATUS_TRANSITIONS[currentStatus] || [];
+}
 export const PAYMENT_STATUSES: PaymentStatus[] = ["UNPAID", "PAID", "FAILED", "REFUNDED"];
 export const DELIVERY_STATUSES: DeliveryStatus[] = [
   "UNASSIGNED",

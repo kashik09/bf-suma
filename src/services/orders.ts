@@ -1,6 +1,7 @@
 import type { Customer, Order, OrderItem, OrderStatus, PaymentMethodCode } from "@/types";
 import type { Json } from "@/types/database";
 import { createHash } from "node:crypto";
+import { ORDER_STATUS_TRANSITIONS } from "@/lib/constants";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import type { OrderIntakeInput, OrderIntakeItemInput } from "@/lib/validation";
 import {
@@ -15,18 +16,6 @@ import {
   computeZoneDeliveryFee,
   DEFAULT_ZONE_ID
 } from "@/config/delivery-zones";
-
-const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  PENDING: ["PENDING_PAYMENT", "CONFIRMED", "CANCELED"],
-  PENDING_PAYMENT: ["PAYMENT_CONFIRMED", "CANCELED"],
-  PAYMENT_CONFIRMED: ["PROCESSING", "CANCELED"],
-  CONFIRMED: ["PROCESSING", "CANCELED"],
-  PROCESSING: ["READY_FOR_PICKUP", "OUT_FOR_DELIVERY", "CANCELED"],
-  READY_FOR_PICKUP: ["DELIVERED", "CANCELED"],
-  OUT_FOR_DELIVERY: ["DELIVERED", "CANCELED"],
-  DELIVERED: [],
-  CANCELED: []
-};
 
 interface AtomicOrderItemPayload {
   product_id: string;

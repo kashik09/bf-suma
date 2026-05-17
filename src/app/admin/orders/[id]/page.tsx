@@ -8,7 +8,7 @@ import { FormSubmitButton } from "@/components/forms";
 import { Card, SectionHeader } from "@/components/ui";
 import { canEdit, OPERATIONAL_ROLES } from "@/lib/admin-permissions";
 import { requireAdminSession } from "@/lib/admin-server";
-import { ORDER_STATUSES, PAYMENT_METHODS } from "@/lib/constants";
+import { getValidNextStatuses, ORDER_STATUSES, PAYMENT_METHODS } from "@/lib/constants";
 import { logEvent } from "@/lib/logger";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -196,51 +196,65 @@ export default async function AdminOrderDetailPage({
           ) : null}
         </Card>
 
-        <Card className="space-y-3">
-          <h3 className="text-base font-semibold text-slate-900">Update Status</h3>
-          {canManageOrders ? (
-            <form action={updateStatusAction} className="space-y-3">
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status">
-                  Next Status
-                </label>
-                <select
-                  className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900"
-                  defaultValue={detail.order.status}
-                  id="status"
-                  name="status"
-                >
-                  {ORDER_STATUSES.map((status) => (
-                    <option key={status} value={status}>
-                      {formatStatus(status)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="note">
-                  Note (Optional)
-                </label>
-                <textarea
-                  className="min-h-24 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-                  id="note"
-                  name="note"
-                  placeholder="Reason for this status change"
-                />
-              </div>
-              <FormSubmitButton
-                className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
-                pendingLabel="Saving..."
-              >
-                Save Status
-              </FormSubmitButton>
-            </form>
-          ) : (
-            <p className="text-sm text-slate-600">
-              Your role has read-only access for orders. Contact Operations or Super Admin to change status.
-            </p>
-          )}
-        </Card>
+        {(() => {
+          const validNextStatuses = getValidNextStatuses(detail.order.status);
+          const isTerminalState = validNextStatuses.length === 0;
+
+          return (
+            <Card className="space-y-3">
+              <h3 className="text-base font-semibold text-slate-900">Update Status</h3>
+              <p className="text-sm text-slate-600">
+                Current: <span className="font-medium">{formatStatus(detail.order.status)}</span>
+              </p>
+              {isTerminalState ? (
+                <p className="text-sm text-slate-600">
+                  This order is in a terminal state and cannot be updated further.
+                </p>
+              ) : canManageOrders ? (
+                <form action={updateStatusAction} className="space-y-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="status">
+                      Change to
+                    </label>
+                    <select
+                      className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900"
+                      defaultValue={validNextStatuses[0]}
+                      id="status"
+                      name="status"
+                    >
+                      {validNextStatuses.map((status) => (
+                        <option key={status} value={status}>
+                          {formatStatus(status)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" htmlFor="note">
+                      Note (Optional)
+                    </label>
+                    <textarea
+                      className="min-h-24 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                      id="note"
+                      name="note"
+                      placeholder="Reason for this status change"
+                    />
+                  </div>
+                  <FormSubmitButton
+                    className="inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
+                    pendingLabel="Saving..."
+                  >
+                    Save Status
+                  </FormSubmitButton>
+                </form>
+              ) : (
+                <p className="text-sm text-slate-600">
+                  Your role has read-only access for orders. Contact Operations or Super Admin to change status.
+                </p>
+              )}
+            </Card>
+          );
+        })()}
       </div>
 
       {canManageOrders && (
