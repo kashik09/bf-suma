@@ -4,12 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import {
   CURRENCY_CHANGE_EVENT,
   DEFAULT_CURRENCY,
+  MULTI_CURRENCY_ENABLED,
   type SupportedCurrency,
   getCurrency,
   setCurrency as persistCurrency
 } from "@/lib/currency";
 
 export function useSelectedCurrency() {
+  // When multi-currency is disabled, return UGX with no state/effects overhead
+  if (!MULTI_CURRENCY_ENABLED) {
+    return {
+      currency: DEFAULT_CURRENCY,
+      setCurrency: () => {}
+    };
+  }
+
   // Start with SSR-safe default so server and hydration markup match.
   const [currency, setCurrencyState] = useState<SupportedCurrency>(DEFAULT_CURRENCY);
 
