@@ -506,16 +506,18 @@ export function ProductDetail({
             </article>
           ) : null}
         </div>
-      </section>
 
-      <NewsletterSignup
-        source="product_page"
-        context={product.slug}
-        compact
-        title="Get notified about this product"
-        description="Restock alerts and product updates."
-        ctaLabel="Notify Me"
-      />
+        <div className="lg:col-span-2">
+          <NewsletterSignup
+            source="product_page"
+            context={product.slug}
+            compact
+            title="Get notified about this product"
+            description="Restock alerts and product updates."
+            ctaLabel="Notify Me"
+          />
+        </div>
+      </section>
 
     </div>
   );
