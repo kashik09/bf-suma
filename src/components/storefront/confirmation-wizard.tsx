@@ -68,7 +68,10 @@ export function ConfirmationWizard({
   cashWaUrl,
   showCashOption,
   supportPhone,
-  supportPhoneDisplay
+  supportPhoneDisplay,
+  supportPhoneSecondary,
+  supportPhoneSecondaryDisplay,
+  supportEmail
 }: ConfirmationWizardProps) {
   const [step, setStep] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null);
@@ -117,27 +120,27 @@ export function ConfirmationWizard({
     <div className="mx-auto max-w-lg px-4 py-8 sm:py-12">
       {/* Progress Indicator */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="relative flex items-center justify-between">
+          {/* Background line */}
+          <div className="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 bg-slate-200" />
+          {/* Progress line */}
+          <div
+            className="absolute left-0 top-1/2 h-1 -translate-y-1/2 bg-green-500 transition-all duration-300"
+            style={{ width: `${((step - 1) / (totalSteps - 1)) * 100}%` }}
+          />
+          {/* Step circles */}
           {[1, 2, 3, 4].map((s) => (
-            <div key={s} className="flex items-center">
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                  s < step
-                    ? "bg-green-500 text-white"
-                    : s === step
-                      ? "bg-brand-600 text-white"
-                      : "bg-slate-200 text-slate-500"
-                }`}
-              >
-                {s < step ? <Check className="h-5 w-5" /> : s}
-              </div>
-              {s < totalSteps && (
-                <div
-                  className={`h-1 w-8 sm:w-12 ${
-                    s < step ? "bg-green-500" : "bg-slate-200"
-                  }`}
-                />
-              )}
+            <div
+              key={s}
+              className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                s < step
+                  ? "bg-green-500 text-white"
+                  : s === step
+                    ? "bg-brand-600 text-white"
+                    : "bg-slate-200 text-slate-500"
+              }`}
+            >
+              {s < step ? <Check className="h-5 w-5" /> : s}
             </div>
           ))}
         </div>
@@ -296,7 +299,9 @@ export function ConfirmationWizard({
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-slate-900">Cash on Arrival</p>
-                  <p className="text-sm text-slate-500">Pay when you receive</p>
+                  <p className="text-sm text-slate-500">
+                    {fulfillmentType === "pickup" ? "Pay when you pick up" : "Pay on delivery"}
+                  </p>
                 </div>
                 <div
                   className={`h-5 w-5 rounded-full border-2 ${
@@ -376,7 +381,9 @@ export function ConfirmationWizard({
             </h1>
             <p className="mt-1 text-slate-600">
               {selectedPayment === "cash"
-                ? "Let us know you'll pay cash on arrival"
+                ? fulfillmentType === "pickup"
+                  ? "Let us know you'll pay cash at pickup"
+                  : "Let us know you'll pay cash on delivery"
                 : "Send us your payment confirmation on WhatsApp"}
             </p>
           </div>
@@ -387,7 +394,7 @@ export function ConfirmationWizard({
             </div>
             <p className="mb-4 text-sm text-slate-600">
               {selectedPayment === "cash"
-                ? "Tap the button below to confirm your cash payment preference"
+                ? `Tap below to confirm you'll pay cash at ${fulfillmentType === "pickup" ? "pickup" : "delivery"}`
                 : "Tap the button below to send your payment details"}
             </p>
             <a
@@ -482,12 +489,24 @@ export function ConfirmationWizard({
           </Card>
 
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
-            <p>
-              Questions? Call us at{" "}
-              <a href={`tel:${supportPhone}`} className="font-medium text-brand-700">
-                {supportPhoneDisplay}
-              </a>
-            </p>
+            <p className="font-medium text-slate-900">Questions? Contact us:</p>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <a href={`tel:${supportPhone}`} className="font-medium text-brand-700 hover:underline">
+                  {supportPhoneDisplay}
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${supportPhoneSecondary}`} className="font-medium text-brand-700 hover:underline">
+                  {supportPhoneSecondaryDisplay}
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${supportEmail}`} className="font-medium text-brand-700 hover:underline">
+                  {supportEmail}
+                </a>
+              </li>
+            </ul>
           </div>
 
           <Link
