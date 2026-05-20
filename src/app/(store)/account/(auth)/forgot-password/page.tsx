@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { sendPasswordReset } from "@/lib/auth/customer-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +17,25 @@ export default function ForgotPasswordPage() {
     setSuccess(null);
     setPending(true);
 
-    const { error: resetError } = await sendPasswordReset(email.trim());
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() })
+      });
 
-    if (resetError) {
+      if (response.status === 429) {
+        setError("Too many requests. Please try again in 15 minutes.");
+        setPending(false);
+        return;
+      }
+
+      if (!response.ok) {
+        setError("We couldn't send a reset link right now. Please try again.");
+        setPending(false);
+        return;
+      }
+    } catch {
       setError("We couldn't send a reset link right now. Please try again.");
       setPending(false);
       return;
