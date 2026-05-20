@@ -4,7 +4,7 @@ import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/componen
 import { PageContainer } from "@/components/layout/page-container";
 import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildLocalBusinessJsonLd, buildOrganizationJsonLd, buildStorefrontMetadata } from "@/lib/seo";
+import { buildLocalBusinessJsonLd, buildOrganizationJsonLd, buildStorefrontMetadata, buildWebSiteJsonLd } from "@/lib/seo";
 import { buildWhatsAppHomepageCtaMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getStorefrontCustomerCount } from "@/services/customers";
 import { getFeaturedPackages } from "@/services/packages";
@@ -29,6 +29,7 @@ export default async function HomePage() {
   ]);
   const organizationJsonLd = buildOrganizationJsonLd();
   const localBusinessJsonLd = buildLocalBusinessJsonLd();
+  const webSiteJsonLd = buildWebSiteJsonLd();
 
   return (
     <>
@@ -39,6 +40,10 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
       <Hero />
 

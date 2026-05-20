@@ -181,6 +181,24 @@ export function buildLocalBusinessJsonLd() {
   };
 }
 
+export function buildWebSiteJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "BF Suma Uganda",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/shop?search={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+}
+
 export interface BreadcrumbItem {
   name: string;
   url: string;
