@@ -37,6 +37,7 @@ import {
   ADMIN_SESSION_MAX_AGE_SECONDS,
   createAdminSessionToken
 } from "@/lib/admin-session";
+import { logEvent } from "@/lib/logger";
 import { formatCurrency } from "@/lib/utils";
 import { AdminAuthUnavailableError, authenticateAdminUser } from "@/services/admin-auth";
 import { getAdminDashboardSnapshot } from "@/services/admin-dashboard";
@@ -153,12 +154,14 @@ export default async function AdminDashboardPage() {
       const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
       if (checkRateLimit(ip)) {
+        logEvent("warn", "admin.login_failed", { email, reason: "rate_limited", ip });
         await setFlashError("rate_limited");
         await setFlashRedirect(submittedNext);
         redirect("/admin");
       }
 
       if (!email || !password) {
+        logEvent("warn", "admin.login_failed", { email, reason: "missing_credentials" });
         await setFlashError("invalid_credentials");
         await setFlashRedirect(submittedNext);
         redirect("/admin");
@@ -167,6 +170,7 @@ export default async function AdminDashboardPage() {
       try {
         const user = await authenticateAdminUser(email, password);
         if (!user) {
+          logEvent("warn", "admin.login_failed", { email, reason: "invalid_credentials" });
           await setFlashError("invalid_credentials");
           await setFlashRedirect(submittedNext);
           redirect("/admin");
@@ -211,15 +215,18 @@ export default async function AdminDashboardPage() {
           path: "/"
         });
 
+        logEvent("info", "admin.login_success", { email });
         await clearFlashError();
         await clearFlashRedirect();
         redirect(submittedNext);
       } catch (error) {
         if (error instanceof AdminAuthUnavailableError) {
+          logEvent("warn", "admin.login_failed", { email, reason: "auth_unavailable" });
           await setFlashError("auth_unavailable");
           await setFlashRedirect(submittedNext);
           redirect("/admin");
         }
+        logEvent("warn", "admin.login_failed", { email, reason: "invalid_credentials" });
         await setFlashError("invalid_credentials");
         await setFlashRedirect(submittedNext);
         redirect("/admin");
