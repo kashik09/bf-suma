@@ -2,27 +2,19 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { buildRateLimitKey } from "@/lib/request-ip";
+import { checkRateLimit, type RateLimitResult } from "@/lib/rate-limit";
+import { resolveClientIp } from "@/lib/request-ip";
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import {
   deleteAbandonedCartByEmail,
   upsertAbandonedCart
 } from "@/services/abandoned-carts";
 
-const RATE_LIMIT_MAX_REQUESTS = 10;
-const RATE_LIMIT_WINDOW_SECONDS = 60;
-
-interface RateLimitDecision {
-  retryAfterSeconds: number;
-  fingerprint: string;
-}
-
-interface InMemoryRateLimitState {
-  count: number;
-  windowStartMs: number;
-}
-
-const inMemoryRateLimits = new Map<string, InMemoryRateLimitState>();
+const RATE_LIMIT_CONFIG = {
+  endpoint: "abandoned-cart",
+  maxRequests: 10,
+  windowSeconds: 60
+} as const;
 
 const cartItemSchema = z.object({
   product_id: z.string().min(1),
@@ -50,114 +42,6 @@ function lifecycleEnabled() {
   return process.env.LIFECYCLE_EMAILS_ENABLED === "true";
 }
 
-function getWindowStartIso(nowMs: number): string {
-  const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-  const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-  return new Date(windowStartMs).toISOString();
-}
-
-function getRetryAfterSeconds(nowMs: number): number {
-  const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-  const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-  const remainingMs = windowStartMs + windowMs - nowMs;
-  return Math.max(1, Math.ceil(remainingMs / 1000));
-}
-
-function buildClientFingerprint(request: Request): string {
-  return buildRateLimitKey(request.headers, "abandoned-cart");
-}
-
-async function enforceMutationRateLimit(request: Request, endpoint: string): Promise<RateLimitDecision | null> {
-  const fingerprint = buildClientFingerprint(request);
-  const nowMs = Date.now();
-
-  const fallbackInMemory = (): RateLimitDecision | null => {
-    const key = `${endpoint}:${fingerprint}`;
-    const windowMs = RATE_LIMIT_WINDOW_SECONDS * 1000;
-    const windowStartMs = Math.floor(nowMs / windowMs) * windowMs;
-    const retryAfterSeconds = getRetryAfterSeconds(nowMs);
-
-    const state = inMemoryRateLimits.get(key);
-    if (!state || state.windowStartMs !== windowStartMs) {
-      inMemoryRateLimits.set(key, { count: 1, windowStartMs });
-      return null;
-    }
-
-    if (state.count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
-    }
-
-    state.count += 1;
-    inMemoryRateLimits.set(key, state);
-    return null;
-  };
-
-  try {
-    const supabase = createServiceRoleSupabaseClient();
-    const windowStart = getWindowStartIso(nowMs);
-    const retryAfterSeconds = getRetryAfterSeconds(nowMs);
-    const nowIso = new Date(nowMs).toISOString();
-
-    const { data: existing, error: fetchError } = await supabase
-      .from("api_rate_limits")
-      .select("request_count")
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .maybeSingle();
-
-    if (fetchError) return fallbackInMemory();
-
-    if (!existing) {
-      const { error: insertError } = await supabase.from("api_rate_limits").insert({
-        endpoint,
-        fingerprint,
-        window_start: windowStart,
-        request_count: 1,
-        created_at: nowIso,
-        updated_at: nowIso
-      });
-
-      if (insertError) return fallbackInMemory();
-      return null;
-    }
-
-    if (existing.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
-    }
-
-    const nextCount = existing.request_count + 1;
-    const { error: updateError } = await supabase
-      .from("api_rate_limits")
-      .update({
-        request_count: nextCount,
-        updated_at: nowIso
-      })
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .eq("request_count", existing.request_count);
-
-    if (!updateError) return null;
-
-    const { data: latest } = await supabase
-      .from("api_rate_limits")
-      .select("request_count")
-      .eq("endpoint", endpoint)
-      .eq("fingerprint", fingerprint)
-      .eq("window_start", windowStart)
-      .maybeSingle();
-
-    if (latest && latest.request_count >= RATE_LIMIT_MAX_REQUESTS) {
-      return { retryAfterSeconds, fingerprint };
-    }
-
-    return fallbackInMemory();
-  } catch {
-    return fallbackInMemory();
-  }
-}
-
 function unauthorizedResponse() {
   return NextResponse.json(
     { message: "Authentication required to sync abandoned carts." },
@@ -165,7 +49,7 @@ function unauthorizedResponse() {
   );
 }
 
-function tooManyRequestsResponse(rateLimit: RateLimitDecision) {
+function tooManyRequestsResponse(rateLimit: RateLimitResult) {
   return NextResponse.json(
     {
       message: "Too many requests. Please retry later.",
@@ -218,8 +102,9 @@ export async function POST(request: Request) {
     return unauthorizedResponse();
   }
 
-  const rateLimit = await enforceMutationRateLimit(request, "abandoned-cart");
-  if (rateLimit) {
+  const ip = resolveClientIp(request.headers);
+  const rateLimit = await checkRateLimit(ip, RATE_LIMIT_CONFIG);
+  if (rateLimit.limited) {
     return tooManyRequestsResponse(rateLimit);
   }
 
@@ -262,8 +147,9 @@ export async function DELETE(request: Request) {
     return unauthorizedResponse();
   }
 
-  const rateLimit = await enforceMutationRateLimit(request, "abandoned-cart");
-  if (rateLimit) {
+  const ip = resolveClientIp(request.headers);
+  const rateLimit = await checkRateLimit(ip, RATE_LIMIT_CONFIG);
+  if (rateLimit.limited) {
     return tooManyRequestsResponse(rateLimit);
   }
 
