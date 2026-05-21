@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { sendContactFormSubmissionEmail } from "@/lib/email/resend";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { resolveClientIp } from "@/lib/request-ip";
 
 const contactSchema = z.object({
   name: z.string().min(2).max(120),
@@ -13,27 +15,11 @@ const contactSchema = z.object({
   honeypot: z.string().max(0)
 });
 
-// TODO: In production, replace with Vercel KV or Redis for distributed rate limiting
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 3;
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return true;
-  }
-
-  entry.count++;
-  return false;
-}
+const RATE_LIMIT_CONFIG = {
+  endpoint: "contact",
+  maxRequests: 3,
+  windowSeconds: 60 * 60 // 1 hour
+} as const;
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,14 +38,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ status: "sent" });
     }
 
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const ip = resolveClientIp(request.headers);
     const userAgent = request.headers.get("user-agent") || "";
 
     // Rate limit check
-    if (isRateLimited(ip)) {
+    const rateLimit = await checkRateLimit(ip, RATE_LIMIT_CONFIG);
+    if (rateLimit.limited) {
       return NextResponse.json(
         { message: "Too many requests. Please try again later." },
-        { status: 429 }
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
       );
     }
 

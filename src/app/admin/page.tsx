@@ -38,26 +38,17 @@ import {
   createAdminSessionToken
 } from "@/lib/admin-session";
 import { logEvent } from "@/lib/logger";
+import { checkRateLimitInMemory } from "@/lib/rate-limit";
+import { resolveClientIp } from "@/lib/request-ip";
 import { formatCurrency } from "@/lib/utils";
 import { AdminAuthUnavailableError, authenticateAdminUser } from "@/services/admin-auth";
 import { getAdminDashboardSnapshot } from "@/services/admin-dashboard";
 
-// Rate limiting for login
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return true;
-  entry.count++;
-  return false;
-}
+const ADMIN_LOGIN_RATE_LIMIT = {
+  endpoint: "admin-login",
+  maxRequests: 5,
+  windowSeconds: 15 * 60 // 15 minutes
+} as const;
 
 function getLoginErrorMessage(error: string | null) {
   if (!error) return null;
@@ -151,9 +142,10 @@ export default async function AdminDashboardPage() {
       const submittedNext = normalizeAdminRedirect(String(formData.get("next") || ""));
 
       const headersList = await headers();
-      const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+      const ip = resolveClientIp(headersList);
 
-      if (checkRateLimit(ip)) {
+      const rateLimit = checkRateLimitInMemory(ip, ADMIN_LOGIN_RATE_LIMIT);
+      if (rateLimit.limited) {
         logEvent("warn", "admin.login_failed", { email, reason: "rate_limited", ip });
         await setFlashError("rate_limited");
         await setFlashRedirect(submittedNext);

@@ -2,35 +2,23 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { resolveClientIp } from "@/lib/request-ip";
 
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 3;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return true;
-  }
-
-  entry.count++;
-  return false;
-}
+const RATE_LIMIT_CONFIG = {
+  endpoint: "forgot-password",
+  maxRequests: 3,
+  windowSeconds: 15 * 60 // 15 minutes
+} as const;
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ip = resolveClientIp(request.headers);
+  const rateLimit = await checkRateLimit(ip, RATE_LIMIT_CONFIG);
 
-  if (isRateLimited(ip)) {
+  if (rateLimit.limited) {
     return NextResponse.json(
       { error: "Too many password reset requests. Please try again in 15 minutes." },
-      { status: 429 }
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
     );
   }
 
