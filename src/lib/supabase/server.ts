@@ -29,14 +29,14 @@ function resolveServiceRoleKey() {
 
 /**
  * Custom fetch for server-side Supabase client.
- * Disables keepAlive to prevent stale TCP connection reuse on Vercel serverless.
+ * Fresh connection each time to avoid stale TCP issues on Vercel serverless.
  */
 const serverFetch: typeof fetch = (input, init) => {
   return fetch(input, {
     ...init,
     cache: "no-store",
-    // 15-second timeout for catalog queries that may be slow on cold start
-    signal: AbortSignal.timeout(15000),
+    // 30-second timeout for slow queries
+    signal: AbortSignal.timeout(30000),
   });
 };
 
@@ -59,22 +59,19 @@ export async function createServerSupabaseClient() {
   });
 }
 
-// Singleton service role client - reused across requests
-let serviceRoleClient: ReturnType<typeof createClient<Database>> | null = null;
-
+/**
+ * Creates a fresh service role client for each request.
+ * Avoids stale connection issues on Vercel serverless.
+ */
 export function createServiceRoleSupabaseClient() {
-  if (serviceRoleClient) return serviceRoleClient;
-
   const url = resolveSupabaseUrl();
   const key = resolveServiceRoleKey();
 
-  serviceRoleClient = createClient<Database>(url, key, {
+  return createClient<Database>(url, key, {
     global: { fetch: serverFetch },
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
   });
-
-  return serviceRoleClient;
 }
