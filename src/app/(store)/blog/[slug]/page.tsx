@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { BlogProse } from "@/components/content/blog-prose";
 import { PageContainer } from "@/components/layout/page-container";
+import { ProductCard } from "@/components/storefront/product-card";
 import { StoreBreadcrumbs } from "@/components/storefront/store-breadcrumbs";
 import { Badge } from "@/components/ui";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
@@ -16,7 +17,6 @@ import {
   getBlogSeoTitle,
   toAbsoluteUrl
 } from "@/lib/seo";
-import { formatCurrency } from "@/lib/utils";
 import { buildWhatsAppBlogFallbackMessage, buildWhatsAppBlogMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import {
   getBlogReadiness,
@@ -266,30 +266,9 @@ export default async function BlogDetailPage({
       {relatedProducts.length > 0 ? (
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-slate-900">Related products</h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {relatedProducts.map((product) => (
-              <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft" key={product.id}>
-                <Image
-                  alt={`BF Suma ${product.name} related product image`}
-                  className="h-40 w-full object-cover"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  src={product.image_url}
-                  unoptimized
-                  width={960}
-                  height={540}
-                />
-                <div className="space-y-2 p-4">
-                  <h3 className="text-base font-semibold text-slate-900">{product.name}</h3>
-                  <p className="line-clamp-2 text-sm text-slate-600">{product.description}</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(product.price, product.currency)}</p>
-                  <Link
-                    className="inline-flex h-9 items-center justify-center rounded-md bg-brand-600 px-3 text-sm font-semibold text-white transition hover:bg-brand-700"
-                    href={`/shop/${product.slug}`}
-                  >
-                    View Product
-                  </Link>
-                </div>
-              </article>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </section>
