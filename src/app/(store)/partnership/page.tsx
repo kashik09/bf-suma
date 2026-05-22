@@ -247,7 +247,7 @@ export default function PartnershipPage() {
                 alt="BF Suma distributor success and awards"
                 width={500}
                 height={500}
-                className="aspect-square rounded-2xl object-cover"
+                className="aspect-square rounded-2xl object-cover object-bottom"
               />
             </div>
           </div>

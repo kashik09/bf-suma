@@ -35,8 +35,8 @@ const serverFetch: typeof fetch = (input, init) => {
   return fetch(input, {
     ...init,
     cache: "no-store",
-    // 8-second timeout to fail fast on stale connections
-    signal: AbortSignal.timeout(8000),
+    // 15-second timeout for catalog queries that may be slow on cold start
+    signal: AbortSignal.timeout(15000),
   });
 };
 
