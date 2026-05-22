@@ -241,7 +241,18 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
   ]);
 
   if (categoriesRes.error || productsRes.error || imagesRes.error) {
-    throw categoriesRes.error || productsRes.error || imagesRes.error;
+    const failedError = categoriesRes.error || productsRes.error || imagesRes.error;
+    console.error("[CATALOG_FETCH_FAILED]", {
+      where: "fetchCatalogFromSupabase",
+      categoriesError: categoriesRes.error,
+      productsError: productsRes.error,
+      imagesError: imagesRes.error,
+      code: failedError?.code,
+      message: failedError?.message,
+      details: failedError?.details,
+      hint: failedError?.hint
+    });
+    throw failedError;
   }
 
   const categories = (categoriesRes.data || []) as Category[];
@@ -320,12 +331,25 @@ async function fetchCatalogData(): Promise<CatalogData> {
     const liveCatalog = await fetchCatalogFromSupabase();
     return enrichCatalogData(liveCatalog);
   } catch (error) {
+    console.error("[CATALOG_FETCH_FAILED]", {
+      where: "fetchCatalogData",
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+      code: (error as { code?: string }).code,
+      details: (error as { details?: unknown }).details,
+      hint: (error as { hint?: unknown }).hint,
+      rawError: error
+    });
+
     logCatalogFallback("getCatalogData", error, {
       fallbackCategories: FALLBACK_CATEGORIES.length,
       fallbackProducts: FALLBACK_PRODUCTS.length
     });
 
-    const degradedReason = error instanceof Error ? error.message : "Unknown catalog error";
+    const degradedReason = error instanceof Error
+      ? error.message
+      : (error as { message?: string }).message || "Unknown catalog error";
 
     return enrichCatalogData({
       categories: withDerivedProductCounts(FALLBACK_CATEGORIES, FALLBACK_PRODUCTS),
