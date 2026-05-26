@@ -1,16 +1,12 @@
 import { unstable_cache } from "next/cache";
+import * as Sentry from "@sentry/nextjs";
 import { SHOP_SORT_OPTIONS } from "@/lib/constants";
-import { BFSUMA_CATALOG, resolveCategoryImageBySlug } from "@/lib/catalog";
+import { resolveCategoryImageBySlug } from "@/lib/catalog";
 import {
   getPdfCategoryContentForStorefrontSlug,
   getPdfShortDescriptionForCatalogSlug
 } from "@/lib/catalog/pdf-catalog-content";
-import {
-  buildFallbackCatalogHealth,
-  buildLiveCatalogHealth,
-  coerceProductsToReadOnly,
-  type CatalogHealth
-} from "@/lib/catalog-health";
+import { buildLiveCatalogHealth, type CatalogHealth } from "@/lib/catalog-health";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { STORE_CURRENCY } from "@/lib/utils";
 import type {
@@ -51,66 +47,7 @@ export interface StorefrontCatalogSnapshot {
   health: CatalogHealth;
 }
 
-function asString(value: unknown): string | undefined {
-  if (typeof value === "string") return value;
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
-  return undefined;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object";
-}
-
-function extractCatalogErrorLogFields(error: unknown) {
-  if (error instanceof Error) {
-    return {
-      message: error.message,
-      errorName: error.name
-    };
-  }
-
-  if (isRecord(error)) {
-    const message =
-      asString(error.message) ||
-      asString(error.error_description) ||
-      asString(error.details) ||
-      "Unknown error";
-
-    return {
-      message,
-      errorCode: asString(error.code),
-      errorDetails: asString(error.details),
-      errorHint: asString(error.hint),
-      errorRaw: message === "Unknown error" ? error : undefined
-    };
-  }
-
-  if (typeof error === "string") {
-    return { message: error };
-  }
-
-  return {
-    message: "Unknown error",
-    errorRaw: error
-  };
-}
-
-function logCatalogFallback(scope: string, error: unknown, context: Record<string, unknown> = {}) {
-  const errorInfo = extractCatalogErrorLogFields(error);
-
-  console.warn(JSON.stringify({
-    event: "catalog.fallback_activated",
-    timestamp: new Date().toISOString(),
-    correlationId: "catalog-service",
-    scope,
-    ...errorInfo,
-    ...context
-  }));
-}
-
 const LOW_STOCK_THRESHOLD = 10;
-const FALLBACK_CATEGORIES = BFSUMA_CATALOG.categories;
-const FALLBACK_PRODUCTS = BFSUMA_CATALOG.products;
 const GENERIC_CATEGORY_DESCRIPTIONS = new Set(["", "Browse curated essentials in this category."]);
 
 const SORT_ORDER: ProductSort[] = ["featured", "price_asc", "price_desc", "name_asc"];
@@ -252,6 +189,20 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
       details: failedError?.details,
       hint: failedError?.hint
     });
+
+    Sentry.captureException(failedError, {
+      tags: {
+        scope: "catalog",
+        severity: "critical",
+        impact: "site_unavailable"
+      },
+      extra: {
+        categoriesError: categoriesRes.error?.message,
+        productsError: productsRes.error?.message,
+        imagesError: imagesRes.error?.message
+      }
+    });
+
     throw failedError;
   }
 
@@ -305,18 +256,28 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
         category_id: category.id,
         category_name: category.name,
         category_slug: category.slug,
-        image_url:
-          imageUrls[0] ||
-          FALLBACK_PRODUCTS.find((fallbackProduct) => fallbackProduct.slug === product.slug)?.image_url ||
-          FALLBACK_PRODUCTS[0].image_url,
-        gallery_urls: imageUrls.length > 0 ? imageUrls : [FALLBACK_PRODUCTS[0].image_url],
+        // All active products have DB images; placeholder is for future products without images
+        image_url: imageUrls[0] || "/catalog-images/placeholder.svg",
+        gallery_urls: imageUrls.length > 0 ? imageUrls : ["/catalog-images/placeholder.svg"],
         availability: resolveAvailability(status, Number(product.stock_qty))
       };
     })
     .filter((product): product is StorefrontProduct => Boolean(product));
 
   if (mappedProducts.length === 0 || mappedCategories.length === 0) {
-    throw new Error("Supabase catalog incomplete");
+    const incompleteError = new Error("Supabase catalog incomplete");
+    Sentry.captureException(incompleteError, {
+      tags: {
+        scope: "catalog",
+        severity: "critical",
+        impact: "site_unavailable"
+      },
+      extra: {
+        productCount: mappedProducts.length,
+        categoryCount: mappedCategories.length
+      }
+    });
+    throw incompleteError;
   }
 
   return {
@@ -327,36 +288,10 @@ async function fetchCatalogFromSupabase(): Promise<CatalogData> {
 }
 
 async function fetchCatalogData(): Promise<CatalogData> {
-  try {
-    const liveCatalog = await fetchCatalogFromSupabase();
-    return enrichCatalogData(liveCatalog);
-  } catch (error) {
-    console.error("[CATALOG_FETCH_FAILED]", {
-      where: "fetchCatalogData",
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined,
-      code: (error as { code?: string }).code,
-      details: (error as { details?: unknown }).details,
-      hint: (error as { hint?: unknown }).hint,
-      rawError: error
-    });
-
-    logCatalogFallback("getCatalogData", error, {
-      fallbackCategories: FALLBACK_CATEGORIES.length,
-      fallbackProducts: FALLBACK_PRODUCTS.length
-    });
-
-    const degradedReason = error instanceof Error
-      ? error.message
-      : (error as { message?: string }).message || "Unknown catalog error";
-
-    return enrichCatalogData({
-      categories: withDerivedProductCounts(FALLBACK_CATEGORIES, FALLBACK_PRODUCTS),
-      products: coerceProductsToReadOnly(FALLBACK_PRODUCTS),
-      health: buildFallbackCatalogHealth(degradedReason)
-    });
-  }
+  // No try/catch - errors propagate to Next.js error boundary.
+  // Sentry captures in fetchCatalogFromSupabase (added in Phase 5).
+  const liveCatalog = await fetchCatalogFromSupabase();
+  return enrichCatalogData(liveCatalog);
 }
 
 // Cache catalog data for 60 seconds to reduce database calls
@@ -367,78 +302,32 @@ const getCatalogData = unstable_cache(
 );
 
 export async function listProducts(filters: ProductFilters = {}): Promise<Product[]> {
-  try {
-    const supabase = createServiceRoleSupabaseClient();
-    let query = supabase.from("products").select("*").order("created_at", { ascending: false });
+  const supabase = createServiceRoleSupabaseClient();
+  let query = supabase.from("products").select("*").order("created_at", { ascending: false });
 
-    if (filters.status) query = query.eq("status", filters.status);
-    if (filters.search) query = query.ilike("name", `%${filters.search}%`);
+  if (filters.status) query = query.eq("status", filters.status);
+  if (filters.search) query = query.ilike("name", `%${filters.search}%`);
 
-    const { data, error } = await query;
-    if (error) throw error;
+  const { data, error } = await query;
+  if (error) throw error;
 
-    return (data ?? []).map((p) => ({
-      ...p,
-      status: p.status as ProductStatus,
-      currency: p.currency as CurrencyCode
-    }));
-  } catch (error) {
-    logCatalogFallback("listProducts", error, {
-      hasStatusFilter: Boolean(filters.status),
-      hasSearchFilter: Boolean(filters.search)
-    });
-
-    return FALLBACK_PRODUCTS.map((product) => ({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      price: product.price,
-      compare_at_price: product.compare_at_price,
-      currency: product.currency,
-      sku: product.sku,
-      stock_qty: 0,
-      status: "OUT_OF_STOCK",
-      category_id: product.category_id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }));
-  }
+  return (data ?? []).map((p) => ({
+    ...p,
+    status: p.status as ProductStatus,
+    currency: p.currency as CurrencyCode
+  }));
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  try {
-    const supabase = createServiceRoleSupabaseClient();
-    const { data, error } = await supabase.from("products").select("*").eq("slug", slug).single();
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase.from("products").select("*").eq("slug", slug).single();
 
-    if (error || !data) return null;
-    return {
-      ...data,
-      status: data.status as ProductStatus,
-      currency: data.currency as CurrencyCode
-    };
-  } catch (error) {
-    logCatalogFallback("getProductBySlug", error, { slug });
-
-    const fallbackProduct = FALLBACK_PRODUCTS.find((product) => product.slug === slug);
-    if (!fallbackProduct) return null;
-
-    return {
-      id: fallbackProduct.id,
-      name: fallbackProduct.name,
-      slug: fallbackProduct.slug,
-      description: fallbackProduct.description,
-      price: fallbackProduct.price,
-      compare_at_price: fallbackProduct.compare_at_price,
-      currency: fallbackProduct.currency,
-      sku: fallbackProduct.sku,
-      stock_qty: 0,
-      status: "OUT_OF_STOCK",
-      category_id: fallbackProduct.category_id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-  }
+  if (error || !data) return null;
+  return {
+    ...data,
+    status: data.status as ProductStatus,
+    currency: data.currency as CurrencyCode
+  };
 }
 
 export async function getStorefrontCatalogSnapshot(
@@ -534,7 +423,7 @@ export async function getProductUnitsSoldThisWeek(productId: string): Promise<nu
       return sum + Math.max(0, Math.round(quantity));
     }, 0);
   } catch (error) {
-    logCatalogFallback("getProductUnitsSoldThisWeek", error, { productId });
+    console.error("[UNITS_SOLD_FETCH_FAILED]", { productId, error });
     return null;
   }
 }

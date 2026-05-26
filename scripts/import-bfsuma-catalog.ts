@@ -1,4 +1,12 @@
 #!/usr/bin/env npx tsx
+// ⚠️ NOTE (2026-05-25): This script imports from
+// data/catalog/catalog_manifest.json which was deleted along with
+// the stale Kenyan fallback catalog. The script is kept as a
+// future template — to run again, generate a new manifest from a
+// valid source first, OR refactor to import directly from Supabase
+// / the BF Suma spreadsheet.
+// See: docs/fallback-bug-plan-2026-05-25.md
+
 /**
  * BF Suma Catalog Import Script
  *

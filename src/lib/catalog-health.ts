@@ -30,33 +30,6 @@ export function buildLiveCatalogHealth(): CatalogHealth {
   };
 }
 
-export function buildFallbackCatalogHealth(reason: unknown): CatalogHealth {
-  const message = typeof reason === "string" && reason.trim().length > 0
-    ? reason.trim()
-    : "Live catalog is unavailable.";
-
-  return {
-    source: "fallback",
-    commerceReady: false,
-    degradedReason: message
-  };
-}
-
-type ReadOnlyProductShape = {
-  status: string;
-  stock_qty: number;
-  availability: string;
-};
-
-export function coerceProductsToReadOnly<T extends ReadOnlyProductShape>(products: T[]): T[] {
-  return products.map((product) => ({
-    ...product,
-    status: "OUT_OF_STOCK",
-    stock_qty: 0,
-    availability: "out_of_stock"
-  }));
-}
-
 export function getCommerceDegradedMessage(health: CatalogHealth): string {
   if (health.commerceReady) return "";
 
