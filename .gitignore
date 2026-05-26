@@ -34,3 +34,5 @@ public/bfsumapackages/
 public/package-images/og/
 public/package-images/png/
 public/package-images/scraps/
+# Sentry Config File
+.env.sentry-build-plugin
