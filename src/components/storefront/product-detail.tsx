@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
 import { useCart } from "@/hooks/use-cart";
+import { useCartDrawer } from "@/components/storefront/cart-drawer-context";
 import { trackEvent } from "@/lib/analytics";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import { buildProductLeadDescription } from "@/lib/seo";
@@ -199,7 +199,7 @@ export function ProductDetail({
 }: ProductDetailProps) {
   const { currency } = useSelectedCurrency();
   const { addItem } = useCart();
-  const { toast } = useToast();
+  const { open: openDrawer } = useCartDrawer();
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
 
@@ -247,11 +247,7 @@ export function ProductDetail({
         }
       ]
     });
-    toast({
-      title: "Added to cart",
-      description: `${product.name} x${quantity}`,
-      variant: "success"
-    });
+    openDrawer();
 
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 800);

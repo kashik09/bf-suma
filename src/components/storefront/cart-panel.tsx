@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Package } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { useCartDrawer } from "@/components/storefront/cart-drawer-context";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
@@ -70,6 +71,7 @@ function groupCartItems(items: CartItem[]): CartGroup[] {
 export function CartPanel({ commerceReady = true, degradedReason = null }: CartPanelProps) {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
   const { currency } = useSelectedCurrency();
+  const { close: closeDrawer } = useCartDrawer();
 
   const cartGroups = useMemo(() => groupCartItems(items), [items]);
 
@@ -101,27 +103,9 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
           <div key={group.bundle_id || `standalone-${groupIndex}`}>
             {/* Bundle Header */}
             {group.bundle_id && group.bundle_name && (
-              <div className="mb-2 flex items-center gap-3 rounded-t-xl border border-b-0 border-brand-200 bg-brand-50 px-4 py-2.5">
-                {group.bundle_image_url ? (
-                  <div className="relative h-8 w-8 overflow-hidden rounded-md border border-brand-200 bg-white">
-                    <Image
-                      alt={group.bundle_name}
-                      className="object-contain"
-                      fill
-                      sizes="32px"
-                      src={group.bundle_image_url}
-                      unoptimized
-                    />
-                  </div>
-                ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md border border-brand-200 bg-white">
-                    <Package className="h-4 w-4 text-brand-600" />
-                  </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-brand-600">Part of package</p>
-                  <p className="truncate text-sm font-semibold text-brand-800">{group.bundle_name}</p>
-                </div>
+              <div className="mb-2 flex items-center gap-2 rounded-t-xl border border-b-0 border-brand-200 bg-brand-50 px-4 py-2">
+                <Package className="h-4 w-4 shrink-0 text-brand-600" />
+                <p className="truncate text-sm font-semibold text-brand-800">{group.bundle_name}</p>
               </div>
             )}
 
@@ -231,6 +215,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
           <Link
             className="inline-flex h-11 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/checkout"
+            onClick={closeDrawer}
           >
             Checkout
           </Link>

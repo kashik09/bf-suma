@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
+import { useCartDrawer } from "@/components/storefront/cart-drawer-context";
 
 export function StoreCartButton() {
   const { count } = useCart();
+  const { open } = useCartDrawer();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -14,10 +15,11 @@ export function StoreCartButton() {
   }, []);
 
   return (
-    <Link
-      aria-label="View cart"
+    <button
+      aria-label="Open cart"
       className="relative z-20 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
-      href="/cart"
+      onClick={open}
+      type="button"
     >
       <ShoppingCart className="h-5 w-5" />
       {mounted && count > 0 && (
@@ -25,6 +27,6 @@ export function StoreCartButton() {
           {count}
         </span>
       )}
-    </Link>
+    </button>
   );
 }

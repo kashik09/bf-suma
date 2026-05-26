@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { CheckCircle2, ShoppingCart, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
 import { useSelectedCurrency } from "@/hooks/use-selected-currency";
+import { useCartDrawer } from "@/components/storefront/cart-drawer-context";
 import { trackEvent } from "@/lib/analytics";
 import { addBundleToCart } from "@/lib/cart";
 import { convertPrice, formatPrice } from "@/lib/currency";
@@ -21,7 +21,7 @@ interface PackageAddToCartProps {
 
 export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
   const { currency: selectedCurrency } = useSelectedCurrency();
-  const { toast } = useToast();
+  const { open: openDrawer } = useCartDrawer();
   const [justAdded, setJustAdded] = useState(false);
 
   const convertedFinalPrice = convertPrice(pkg.final_price, pkg.currency, selectedCurrency);
@@ -65,12 +65,7 @@ export function PackageAddToCart({ pkg }: PackageAddToCartProps) {
         item_variant: pkg.name
       }))
     });
-
-    toast({
-      title: "Package added to cart",
-      description: `${pkg.name} (${pkg.item_count} items)`,
-      variant: "success"
-    });
+    openDrawer();
 
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 800);
