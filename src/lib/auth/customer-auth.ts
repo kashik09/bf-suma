@@ -55,7 +55,8 @@ export async function signIn(email: string, password: string) {
   const result = await supabase.auth.signInWithPassword({ email, password });
 
   if (!result.error) {
-    await syncWishlistAfterLogin();
+    // Fire-and-forget: don't block login on wishlist sync
+    syncWishlistAfterLogin();
   }
 
   return result;
