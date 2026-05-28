@@ -31,17 +31,26 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createServiceRoleSupabaseClient();
+
+    // Check if user exists
+    const { data: users } = await supabase.auth.admin.listUsers();
+    const userExists = users?.users?.some((u) => u.email?.toLowerCase() === email.toLowerCase());
+
+    if (!userExists) {
+      return NextResponse.json({ error: "No account found with this email address." }, { status: 404 });
+    }
+
     const redirectTo = request.headers.get("origin")
-      ? `${request.headers.get("origin")}/account/login`
+      ? `${request.headers.get("origin")}/auth/callback`
       : undefined;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo
     });
 
-    // Always return success to prevent email enumeration
     if (error) {
       console.error("Password reset error:", error.message);
+      return NextResponse.json({ error: "Failed to send reset email. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

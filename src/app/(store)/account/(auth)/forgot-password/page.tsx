@@ -30,6 +30,12 @@ export default function ForgotPasswordPage() {
         return;
       }
 
+      if (response.status === 404) {
+        setError("No account found with this email address.");
+        setPending(false);
+        return;
+      }
+
       if (!response.ok) {
         setError("We couldn't send a reset link right now. Please try again.");
         setPending(false);
