@@ -1,9 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { createBrowserClient } from "@supabase/ssr";
+
+function getSupabase() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -14,6 +21,16 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [pending, setPending] = useState(false);
+  const [hasSession, setHasSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    async function checkSession() {
+      const supabase = getSupabase();
+      const { data } = await supabase.auth.getSession();
+      setHasSession(!!data.session);
+    }
+    checkSession();
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,11 +48,7 @@ export default function ResetPasswordPage() {
 
     setPending(true);
 
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
+    const supabase = getSupabase();
     const { error: updateError } = await supabase.auth.updateUser({
       password
     });
@@ -62,6 +75,35 @@ export default function ResetPasswordPage() {
     setTimeout(() => {
       router.push("/account/dashboard");
     }, 2000);
+  }
+
+  if (hasSession === null) {
+    return (
+      <div className="mx-auto w-full max-w-md py-10 sm:py-14">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft sm:p-7">
+          <p className="text-sm text-slate-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (hasSession === false) {
+    return (
+      <div className="mx-auto w-full max-w-md py-10 sm:py-14">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft sm:p-7">
+          <h1 className="text-2xl font-semibold text-slate-900">Session Expired</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Your password reset link has expired or is invalid. Please request a new one.
+          </p>
+          <a
+            href="/account/forgot-password"
+            className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+          >
+            Request New Link
+          </a>
+        </div>
+      </div>
+    );
   }
 
   if (success) {

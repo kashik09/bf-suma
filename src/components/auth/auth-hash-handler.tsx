@@ -42,16 +42,27 @@ export function AuthHashHandler() {
       try {
         const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
-        const { error } = await supabase.auth.setSession({
+        const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken
         });
 
-        if (error) {
-          console.error("AuthHashHandler: setSession failed:", error.message);
+        if (error || !data.session) {
+          console.error("AuthHashHandler: setSession failed:", error?.message);
           window.location.href = "/account/login?error=session_failed";
           return;
         }
+
+        // Verify session is accessible before redirecting
+        const { data: verifyData } = await supabase.auth.getSession();
+        if (!verifyData.session) {
+          console.error("AuthHashHandler: Session not persisted");
+          window.location.href = "/account/login?error=session_not_persisted";
+          return;
+        }
+
+        // Small delay to ensure cookies are written
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Success - redirect based on type
         if (type === "recovery" || type === "invite") {
