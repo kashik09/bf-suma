@@ -22,10 +22,15 @@ export function AuthHashHandler() {
 
       if (!accessToken || !refreshToken) return;
 
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        console.error("Missing Supabase environment variables");
+        return;
+      }
+
+      const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
       const { error } = await supabase.auth.setSession({
         access_token: accessToken,
