@@ -28,7 +28,7 @@ function getBrowserSupabaseClient() {
 
 function getEmailRedirectTo() {
   if (typeof window === "undefined") return undefined;
-  return `${window.location.origin}/account/login`;
+  return `${window.location.origin}/auth/callback`;
 }
 
 async function syncWishlistAfterLogin() {

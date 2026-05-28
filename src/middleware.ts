@@ -109,8 +109,16 @@ async function getSupabaseUserFromRequest(request: NextRequest) {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const method = request.method.toUpperCase();
+
+  // Redirect auth code to callback handler (for email confirmation, password reset, etc.)
+  const authCode = searchParams.get("code");
+  if (authCode && pathname === "/") {
+    const callbackUrl = new URL("/auth/callback", request.url);
+    callbackUrl.searchParams.set("code", authCode);
+    return NextResponse.redirect(callbackUrl);
+  }
   const allowAdminScaffoldRoutes = process.env.ALLOW_ADMIN_SCAFFOLD_ROUTES === "true";
   const allowScaffoldApis = process.env.ALLOW_SCAFFOLD_API_ROUTES === "true";
   const allowFaqPage = process.env.ALLOW_FAQ_PAGE === "true";
@@ -207,5 +215,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*", "/checkout/:path*", "/api/:path*"]
+  matcher: ["/", "/admin/:path*", "/account/:path*", "/checkout/:path*", "/api/:path*", "/auth/:path*"]
 };
