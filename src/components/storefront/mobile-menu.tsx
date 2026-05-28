@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Menu } from "lucide-react";
 import { STORE_NAV_LINKS } from "@/lib/constants";
 
 export function MobileMenu() {
@@ -18,13 +19,7 @@ export function MobileMenu() {
         className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 transition hover:bg-slate-100 lg:hidden"
         aria-label="Open menu"
       >
-        <Image
-          src="/favicon.ico"
-          alt="Menu"
-          width={20}
-          height={20}
-          className="h-5 w-5"
-        />
+        <Menu className="h-5 w-5 text-slate-700" />
       </button>
 
       {/* Backdrop */}
