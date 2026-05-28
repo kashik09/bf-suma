@@ -24,7 +24,14 @@ export default function AccountLoginPage() {
     const { error: authError } = await signIn(email.trim(), password);
 
     if (authError) {
-      setError("We couldn't sign you in. Check your email and password, then try again.");
+      const message = authError.message?.toLowerCase() || "";
+      if (message.includes("invalid login") || message.includes("invalid credentials")) {
+        setError("Invalid email or password. Please try again.");
+      } else if (message.includes("email not confirmed")) {
+        setError("Please confirm your email address before signing in.");
+      } else {
+        setError(authError.message || "We couldn't sign you in. Please try again.");
+      }
       setPending(false);
       return;
     }

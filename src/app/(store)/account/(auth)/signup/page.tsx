@@ -45,7 +45,16 @@ export default function AccountSignupPage() {
     );
 
     if (authError) {
-      setError("We couldn't create your account. Please check your details and try again.");
+      const message = authError.message?.toLowerCase() || "";
+      if (message.includes("already registered") || message.includes("already exists")) {
+        setError("An account with this email already exists. Try signing in instead.");
+      } else if (message.includes("password") && message.includes("breach")) {
+        setError("This password has been found in a data breach. Please choose a different password.");
+      } else if (message.includes("password") && message.includes("weak")) {
+        setError("Password is too weak. Use a mix of letters, numbers, and symbols.");
+      } else {
+        setError(authError.message || "We couldn't create your account. Please try again.");
+      }
       setPending(false);
       return;
     }
