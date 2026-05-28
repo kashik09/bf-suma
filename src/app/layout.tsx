@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
+import { AuthHashHandler } from "@/components/auth/auth-hash-handler";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
 import { getSiteMetadataBase } from "@/lib/seo";
 import "./globals.css";
@@ -51,6 +52,7 @@ export default function RootLayout({
         ) : null}
       </head>
       <body>
+        <AuthHashHandler />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
