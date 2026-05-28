@@ -40,9 +40,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No account found with this email address." }, { status: 404 });
     }
 
-    const redirectTo = request.headers.get("origin")
-      ? `${request.headers.get("origin")}/auth/callback`
-      : undefined;
+    // Use root URL - AuthHashHandler will detect #access_token and redirect appropriately
+    const redirectTo = request.headers.get("origin") || undefined;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo

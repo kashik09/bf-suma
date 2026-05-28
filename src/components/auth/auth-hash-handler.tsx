@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 
 export function AuthHashHandler() {
-  const router = useRouter();
-
   useEffect(() => {
     async function handleAuthHash() {
       if (typeof window === "undefined") return;
@@ -39,25 +36,22 @@ export function AuthHashHandler() {
 
       if (error) {
         console.error("Failed to set session from hash:", error);
-        router.push("/account/login?error=session_failed");
+        window.location.href = "/account/login?error=session_failed";
         return;
       }
 
-      // Clear the hash from URL
-      window.history.replaceState(null, "", window.location.pathname);
-
-      // Redirect based on type
+      // Full page redirect to clear hash and ensure clean navigation
       if (type === "recovery") {
-        router.push("/account/reset-password");
+        window.location.href = "/account/reset-password";
       } else if (type === "invite") {
-        router.push("/account/set-password");
+        window.location.href = "/account/reset-password";
       } else {
-        router.push("/account/dashboard");
+        window.location.href = "/account/dashboard";
       }
     }
 
     handleAuthHash();
-  }, [router]);
+  }, []);
 
   return null;
 }
