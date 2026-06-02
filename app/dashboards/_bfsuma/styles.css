@@ -4,11 +4,14 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: inherit;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "ss01", "cv01";
+}
+.bf-root {
+  font-family: inherit;
 }
 .bf-num { font-variant-numeric: tabular-nums; }
 
