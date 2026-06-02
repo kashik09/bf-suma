@@ -411,13 +411,6 @@ export function ConfirmationWizard({
               Opens WhatsApp with your {getPaymentLabel()} details pre-filled
             </p>
           </Card>
-
-          <button
-            onClick={() => setStep(4)}
-            className="w-full text-center text-sm text-slate-500 hover:text-slate-700"
-          >
-            Skip for now →
-          </button>
         </div>
       )}
 
@@ -489,24 +482,16 @@ export function ConfirmationWizard({
           </Card>
 
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
-            <p className="font-medium text-slate-900">Questions? Contact us:</p>
-            <ul className="mt-2 space-y-1">
-              <li>
-                <a href={`tel:${supportPhone}`} className="font-medium text-brand-700 hover:underline">
-                  {supportPhoneDisplay}
-                </a>
-              </li>
-              <li>
-                <a href={`tel:${supportPhoneSecondary}`} className="font-medium text-brand-700 hover:underline">
-                  {supportPhoneSecondaryDisplay}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${supportEmail}`} className="font-medium text-brand-700 hover:underline">
-                  {supportEmail}
-                </a>
-              </li>
-            </ul>
+            <p>
+              At BF Suma, we are committed to providing you with a smooth and reliable shopping experience.
+              Once your order is placed, our team will promptly contact you to confirm your order details,
+              delivery arrangements, and payment information where applicable. If you do not hear from us
+              within a reasonable period, please contact us directly at{" "}
+              <a href={`tel:${supportPhone}`} className="font-medium text-brand-700">
+                {supportPhoneDisplay}
+              </a>{" "}
+              for immediate assistance.
+            </p>
           </div>
 
           <Link
