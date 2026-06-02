@@ -31,6 +31,7 @@ tests/.tmp/
 
 # folders
 public/bfsumapackages/
+public/assets/bfsuma/
 public/package-images/og/
 public/package-images/png/
 public/package-images/scraps/
