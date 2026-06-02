@@ -1,15 +1,19 @@
-/* BF Suma — app shell, routing, role switch, tweaks */
-const { useState: sUse, useEffect: sEff } = React;
+"use client";
 
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "direction": "fresh",
-  "primary": "#1E9E5A",
-  "radius": 16,
-  "startRole": "Admin",
-  "showPartner": false
-}/*EDITMODE-END*/;
+/* BF Suma — app shell, routing, role switch */
+import React, { useState, useEffect } from "react";
+import { BF } from "./data";
+import { Icon, Avatar, useToast } from "./ui";
+import { ADMIN_NAV, ADMIN_VIEWS } from "./admin";
+import { CUSTOMER_NAV, CUSTOMER_NAV_PARTNER, CUSTOMER_VIEWS } from "./customer";
 
-const DIRECTIONS = { Fresh: "fresh", Premium: "premium", Vibrant: "vibrant" };
+const THEME = {
+  direction: "fresh",
+  primary: "#1E9E5A",
+  radius: 16,
+  startRole: "Admin",
+  showPartner: false
+};
 
 function Sidebar({ nav, route, navigate, brandLabel, open, onClose, foot }) {
   return (
@@ -17,7 +21,7 @@ function Sidebar({ nav, route, navigate, brandLabel, open, onClose, foot }) {
       <div className={"bf-backdrop" + (open ? " show" : "")} onClick={onClose} />
       <aside className={"bf-sidebar" + (open ? " open" : "")}>
         <div className="bf-side-head">
-          <img className="bf-side-mark" src="assets/bf-suma-mark.png" alt="BF Suma" />
+          <img className="bf-side-mark" src="/bfsuma/bf-suma-mark.png" alt="BF Suma" />
           <div className="bf-side-word"><b>BF Suma</b><span>{brandLabel}</span></div>
         </div>
         <nav className="bf-nav">
@@ -39,38 +43,39 @@ function Sidebar({ nav, route, navigate, brandLabel, open, onClose, foot }) {
   );
 }
 
-function App() {
-  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [role, setRole] = sUse(TWEAK_DEFAULTS.startRole === "Customer" ? "customer" : "admin");
-  const [adminRoute, setAdminRoute] = sUse("overview");
-  const [custRoute, setCustRoute] = sUse("home");
-  const [drawer, setDrawer] = sUse(false);
+export default function DashboardApp() {
+  const [role, setRole] = useState(THEME.startRole === "Customer" ? "customer" : "admin");
+  const [adminRoute, setAdminRoute] = useState("overview");
+  const [custRoute, setCustRoute] = useState("home");
+  const [drawer, setDrawer] = useState(false);
   const [toastNode, toast] = useToast();
 
   // apply theme tokens
-  sEff(() => {
+  useEffect(() => {
     const r = document.documentElement;
-    r.setAttribute("data-theme", t.direction || "fresh");
-  }, [t.direction]);
-
-  sEff(() => {
-    if (TWEAK_DEFAULTS.startRole) setRole(t.startRole === "Customer" ? "customer" : "admin");
-  }, [t.startRole]);
+    r.setAttribute("data-theme", THEME.direction || "fresh");
+  }, []);
 
   const rootStyle = {};
-  if (t.primary) { rootStyle["--primary"] = t.primary; rootStyle["--accent"] = t.primary;
-    rootStyle["--primary-deep"] = `color-mix(in oklab, ${t.primary} 82%, black)`;
-    rootStyle["--primary-soft"] = `color-mix(in oklab, ${t.primary} 14%, white)`; }
-  if (t.radius != null) { rootStyle["--radius"] = t.radius + "px"; rootStyle["--radius-sm"] = (t.radius - 5) + "px"; rootStyle["--radius-lg"] = (t.radius + 6) + "px"; }
+  if (THEME.primary) {
+    rootStyle["--primary"] = THEME.primary;
+    rootStyle["--accent"] = THEME.primary;
+    rootStyle["--primary-deep"] = `color-mix(in oklab, ${THEME.primary} 82%, black)`;
+    rootStyle["--primary-soft"] = `color-mix(in oklab, ${THEME.primary} 14%, white)`;
+  }
+  if (THEME.radius != null) {
+    rootStyle["--radius"] = THEME.radius + "px";
+    rootStyle["--radius-sm"] = (THEME.radius - 5) + "px";
+    rootStyle["--radius-lg"] = (THEME.radius + 6) + "px";
+  }
 
   const isAdmin = role === "admin";
-  const nav = isAdmin ? ADMIN_NAV : (t.showPartner ? CUSTOMER_NAV_PARTNER : CUSTOMER_NAV);
+  const nav = isAdmin ? ADMIN_NAV : (THEME.showPartner ? CUSTOMER_NAV_PARTNER : CUSTOMER_NAV);
   const route = isAdmin ? adminRoute : custRoute;
   const setRoute = isAdmin ? setAdminRoute : setCustRoute;
   const views = isAdmin ? ADMIN_VIEWS : CUSTOMER_VIEWS;
   const navigate = (id) => { setRoute(id); setDrawer(false); };
 
-  // partner-earnings view (added when toggle on)
   const ViewComp = (views[route] || (isAdmin ? ADMIN_VIEWS.overview : CUSTOMER_VIEWS.home));
 
   const sideFoot = isAdmin ? (
@@ -123,20 +128,6 @@ function App() {
       </nav>
 
       {toastNode}
-
-      <TweaksPanel>
-        <TweakSection label="Visual direction" />
-        <TweakRadio label="Theme" value={Object.keys(DIRECTIONS).find((k) => DIRECTIONS[k] === t.direction) || "Fresh"}
-          options={["Fresh", "Premium", "Vibrant"]} onChange={(v) => setTweak("direction", DIRECTIONS[v])} />
-        <TweakColor label="Primary" value={t.primary}
-          options={["#1E9E5A", "#0F5132", "#15A05A", "#0C8478"]} onChange={(v) => setTweak("primary", v)} />
-        <TweakSlider label="Corner radius" value={t.radius} min={6} max={26} step={2} unit="px" onChange={(v) => setTweak("radius", v)} />
-        <TweakSection label="Preview" />
-        <TweakRadio label="Start as" value={t.startRole} options={["Admin", "Customer"]} onChange={(v) => setTweak("startRole", v)} />
-        <TweakToggle label="Customer is a Partner" value={t.showPartner} onChange={(v) => setTweak("showPartner", v)} />
-      </TweaksPanel>
     </div>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);

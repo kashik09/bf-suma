@@ -1,5 +1,6 @@
-/* BF Suma — shared UI primitives. Exposes components on window. */
-const { useState, useEffect, useRef, useMemo } = React;
+/* BF Suma — shared UI primitives */
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { BF } from "./data";
 
 /* ---------------- Icons (lucide-style, 24px stroke) ---------------- */
 const ICON_PATHS = {
@@ -53,7 +54,7 @@ const ICON_PATHS = {
   award: "M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM8.21 13.89 7 23l5-3 5 3-1.21-9.12",
 };
 
-function Icon({ name, size = 18, stroke = 2, fill = "none", style, className }) {
+export function Icon({ name, size = 18, stroke = 2, fill = "none", style, className }) {
   const d = ICON_PATHS[name] || "";
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={fill === "current" ? "currentColor" : "none"}
@@ -65,9 +66,9 @@ function Icon({ name, size = 18, stroke = 2, fill = "none", style, className }) 
 }
 
 /* ---------------- helpers ---------------- */
-const accentColor = (a) => `var(--c-${a || "green"})`;
-const accentSoft = (a) => `var(--c-${a || "green"}-soft)`;
-const shortMoney = (n) => {
+export const accentColor = (a) => `var(--c-${a || "green"})`;
+export const accentSoft = (a) => `var(--c-${a || "green"}-soft)`;
+export const shortMoney = (n) => {
   if (n >= 1000000) return "UGX " + (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + "M";
   if (n >= 1000) return "UGX " + Math.round(n / 1000) + "K";
   return "UGX " + n;
@@ -81,7 +82,7 @@ const TONE = {
   Scheduled: "blue", Expired: "muted", New: "blue", Bestseller: "orange",
   "Low stock": "rose", Kids: "blue",
 };
-function Badge({ children, tone, dot }) {
+export function Badge({ children, tone, dot }) {
   const t = tone || TONE[children] || "muted";
   return (
     <span className="bf-badge" data-tone={t}>
@@ -92,7 +93,7 @@ function Badge({ children, tone, dot }) {
 }
 
 /* ---------------- Avatar ---------------- */
-function Avatar({ initials, accent, size = 38 }) {
+export function Avatar({ initials, accent, size = 38 }) {
   return (
     <span className="bf-avatar" style={{ width: size, height: size, fontSize: size * 0.36,
       background: accentSoft(accent || "green"), color: accentColor(accent || "green") }}>
@@ -102,7 +103,7 @@ function Avatar({ initials, accent, size = 38 }) {
 }
 
 /* ---------------- Product thumbnail placeholder ---------------- */
-function ProductThumb({ pid, size = 52, radius = 14 }) {
+export function ProductThumb({ pid, size = 52, radius = 14 }) {
   const p = BF.productById[pid] || { name: "?", cat: "living" };
   const cat = BF.CATEGORIES.find((c) => c.id === p.cat) || { accent: "green" };
   const initials = p.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -117,12 +118,12 @@ function ProductThumb({ pid, size = 52, radius = 14 }) {
 }
 
 /* ---------------- Card ---------------- */
-function Card({ children, className = "", style, pad = true, ...rest }) {
+export function Card({ children, className = "", style, pad = true, ...rest }) {
   return <div className={"bf-card " + className} style={{ padding: pad ? undefined : 0, ...style }} {...rest}>{children}</div>;
 }
 
 /* ---------------- Stat card ---------------- */
-function Stat({ label, value, delta, icon, accent = "green", spark, footer }) {
+export function Stat({ label, value, delta, icon, accent = "green", spark, footer }) {
   const up = delta >= 0;
   return (
     <Card className="bf-stat">
@@ -145,7 +146,7 @@ function Stat({ label, value, delta, icon, accent = "green", spark, footer }) {
 }
 
 /* ---------------- Sparkline ---------------- */
-function Sparkline({ data, accent = "green", h = 34 }) {
+export function Sparkline({ data, accent = "green", h = 34 }) {
   const w = 120;
   const min = Math.min(...data), max = Math.max(...data);
   const rng = max - min || 1;
@@ -166,7 +167,7 @@ function Sparkline({ data, accent = "green", h = 34 }) {
 }
 
 /* ---------------- Bar chart ---------------- */
-function BarChart({ data, labels, accent = "green", h = 200, format }) {
+export function BarChart({ data, labels, accent = "green", h = 200, format }) {
   const max = Math.max(...data) * 1.1;
   return (
     <div className="bf-bars" style={{ height: h }}>
@@ -186,7 +187,7 @@ function BarChart({ data, labels, accent = "green", h = 200, format }) {
 }
 
 /* ---------------- Donut ---------------- */
-function Donut({ data, size = 168, thickness = 26 }) {
+export function Donut({ data, size = 168, thickness = 26 }) {
   const total = data.reduce((s, d) => s + d.value, 0);
   const r = (size - thickness) / 2;
   const c = 2 * Math.PI * r;
@@ -217,7 +218,7 @@ function Donut({ data, size = 168, thickness = 26 }) {
 }
 
 /* ---------------- Button ---------------- */
-function Btn({ children, variant = "primary", size = "md", icon, iconRight, onClick, full, type, style }) {
+export function Btn({ children, variant = "primary", size = "md", icon, iconRight, onClick, full, type, style }) {
   return (
     <button type={type || "button"} className={`bf-btn v-${variant} s-${size}` + (full ? " full" : "")} onClick={onClick} style={style}>
       {icon && <Icon name={icon} size={size === "sm" ? 15 : 17} />}
@@ -228,7 +229,7 @@ function Btn({ children, variant = "primary", size = "md", icon, iconRight, onCl
 }
 
 /* ---------------- Progress ---------------- */
-function Progress({ value, accent = "green", h = 8 }) {
+export function Progress({ value, accent = "green", h = 8 }) {
   return (
     <div className="bf-prog" style={{ height: h }}>
       <div className="bf-prog-fill" style={{ width: value + "%", background: accentColor(accent) }} />
@@ -237,7 +238,7 @@ function Progress({ value, accent = "green", h = 8 }) {
 }
 
 /* ---------------- Segmented ---------------- */
-function Segmented({ options, value, onChange }) {
+export function Segmented({ options, value, onChange }) {
   return (
     <div className="bf-seg">
       {options.map((o) => (
@@ -248,7 +249,7 @@ function Segmented({ options, value, onChange }) {
 }
 
 /* ---------------- Section header ---------------- */
-function PageHead({ title, sub, children }) {
+export function PageHead({ title, sub, children }) {
   return (
     <div className="bf-pagehead">
       <div>
@@ -261,14 +262,9 @@ function PageHead({ title, sub, children }) {
 }
 
 /* ---------------- Empty toast helper ---------------- */
-function useToast() {
+export function useToast() {
   const [msg, setMsg] = useState(null);
   const show = (m) => { setMsg(m); setTimeout(() => setMsg(null), 2200); };
   const node = msg ? <div className="bf-toast"><Icon name="checkCircle" size={17} />{msg}</div> : null;
   return [node, show];
 }
-
-Object.assign(window, {
-  Icon, accentColor, accentSoft, shortMoney, Badge, Avatar, ProductThumb, Card, Stat,
-  Sparkline, BarChart, Donut, Btn, Progress, Segmented, PageHead, useToast,
-});

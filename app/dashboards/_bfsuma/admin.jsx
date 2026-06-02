@@ -1,7 +1,12 @@
 /* BF Suma — Admin dashboard views */
-const { useState: aUse } = React;
+import React, { useState } from "react";
+import { BF } from "./data";
+import {
+  Icon, accentColor, accentSoft, shortMoney, Badge, Avatar, ProductThumb,
+  Card, Stat, Sparkline, BarChart, Donut, Btn, Progress, Segmented, PageHead
+} from "./ui";
 
-const ADMIN_NAV = [
+export const ADMIN_NAV = [
   { group: "Overview" },
   { id: "overview", label: "Dashboard", icon: "home" },
   { id: "analytics", label: "Reports & Analytics", icon: "chart" },
@@ -22,7 +27,7 @@ function AdminOverview({ navigate }) {
   const M = BF.ADMIN_METRICS;
   return (
     <div className="bf-page fade-in">
-      <PageHead title="Good morning, Admin 👋" sub="Here's how BF Suma Uganda is performing this month.">
+      <PageHead title="Good morning, Admin" sub="Here's how BF Suma Uganda is performing this month.">
         <Btn variant="outline" icon="download" size="md">Export</Btn>
         <Btn variant="primary" icon="plus" size="md" onClick={() => navigate("products")}>Add product</Btn>
       </PageHead>
@@ -93,9 +98,9 @@ function AdminOverview({ navigate }) {
 
 /* ---------------- Orders ---------------- */
 function AdminOrders() {
-  const [filter, setFilter] = aUse("All");
-  const [q, setQ] = aUse("");
-  const [open, setOpen] = aUse(null);
+  const [filter, setFilter] = useState("All");
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState(null);
   const tabs = ["All", "Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
   const rows = BF.ORDERS.filter((o) => (filter === "All" || o.status === filter) && (o.customer.toLowerCase().includes(q.toLowerCase()) || o.id.toLowerCase().includes(q.toLowerCase())));
   return (
@@ -195,8 +200,8 @@ function OrderDrawer({ order, onClose }) {
 
 /* ---------------- Products ---------------- */
 function AdminProducts() {
-  const [cat, setCat] = aUse("all");
-  const [q, setQ] = aUse("");
+  const [cat, setCat] = useState("all");
+  const [q, setQ] = useState("");
   const cats = [{ id: "all", name: "All" }, ...BF.CATEGORIES.filter((c) => BF.PRODUCTS.some((p) => p.cat === c.id))];
   const rows = BF.PRODUCTS.filter((p) => (cat === "all" || p.cat === cat) && p.name.toLowerCase().includes(q.toLowerCase()));
   return (
@@ -318,7 +323,7 @@ function AdminPackages() {
 
 /* ---------------- Customers ---------------- */
 function AdminCustomers() {
-  const [q, setQ] = aUse("");
+  const [q, setQ] = useState("");
   const rows = BF.CUSTOMERS.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()));
   return (
     <div className="bf-page fade-in">
@@ -455,9 +460,7 @@ function AdminAnalytics() {
   );
 }
 
-const ADMIN_VIEWS = {
+export const ADMIN_VIEWS = {
   overview: AdminOverview, orders: AdminOrders, products: AdminProducts, partners: AdminPartners,
   packages: AdminPackages, customers: AdminCustomers, blog: AdminBlog, discounts: AdminDiscounts, analytics: AdminAnalytics,
 };
-
-Object.assign(window, { ADMIN_NAV, ADMIN_VIEWS });

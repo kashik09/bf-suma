@@ -1,7 +1,12 @@
 /* BF Suma — Customer (shopper) dashboard views */
-const { useState: cUse } = React;
+import React, { useState } from "react";
+import { BF } from "./data";
+import {
+  Icon, accentColor, accentSoft, shortMoney, Badge, Avatar, ProductThumb,
+  Card, Stat, Btn, Progress, PageHead
+} from "./ui";
 
-const CUSTOMER_NAV = [
+export const CUSTOMER_NAV = [
   { group: "My Wellness" },
   { id: "home", label: "Dashboard", icon: "home" },
   { id: "goals", label: "Wellness Goals", icon: "zap" },
@@ -128,7 +133,7 @@ function CustGoals({ toast }) {
 
 /* ---------------- Orders ---------------- */
 function CustOrders() {
-  const [open, setOpen] = cUse(BF.MY_ORDERS[0]);
+  const [open, setOpen] = useState(BF.MY_ORDERS[0]);
   const steps = ["Confirmed", "Packed", "Out for delivery", "Delivered"];
   return (
     <div className="bf-page fade-in">
@@ -242,7 +247,7 @@ function CustSubs({ toast }) {
 
 /* ---------------- Wishlist ---------------- */
 function CustWishlist({ toast }) {
-  const [items, setItems] = cUse(BF.MY_WISHLIST);
+  const [items, setItems] = useState(BF.MY_WISHLIST);
   const remove = (pid) => { setItems(items.filter((x) => x !== pid)); toast("Removed from wishlist"); };
   return (
     <div className="bf-page fade-in">
@@ -370,16 +375,14 @@ function CustPartner({ toast }) {
   );
 }
 
-const CUSTOMER_VIEWS = {
+export const CUSTOMER_VIEWS = {
   home: CustHome, goals: CustGoals, orders: CustOrders, subscriptions: CustSubs,
   wishlist: CustWishlist, addresses: CustAddresses, partner: CustPartner,
 };
 
-const CUSTOMER_NAV_PARTNER = [
+export const CUSTOMER_NAV_PARTNER = [
   ...CUSTOMER_NAV.slice(0, 5),
   { group: "Partner" },
   { id: "partner", label: "Partner Earnings", icon: "award" },
   ...CUSTOMER_NAV.slice(5),
 ];
-
-Object.assign(window, { CUSTOMER_NAV, CUSTOMER_NAV_PARTNER, CUSTOMER_VIEWS });
