@@ -1,84 +1,48 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo } from "react";
-import { Menu, User } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Bell, Menu, Search } from "lucide-react";
+import { RoleSwitcher } from "@/components/dashboard";
 
 interface AdminTopbarProps {
   onMenuClick?: () => void;
 }
 
-function getSectionLabel(pathname: string): string {
-  if (pathname.startsWith("/admin/orders")) return "Orders";
-  if (pathname.startsWith("/admin/products")) return "Products";
-  if (pathname.startsWith("/admin/reviews")) return "Reviews";
-  if (pathname.startsWith("/admin/blog")) return "Blog";
-  if (pathname.startsWith("/admin/contacts")) return "Contacts";
-  if (pathname.startsWith("/admin/guide")) return "Guide";
-  if (pathname.startsWith("/admin/reset-password")) return "Reset Password";
-  return "Dashboard";
-}
-
 export function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
-  const pathname = usePathname();
-  const sectionLabel = useMemo(() => getSectionLabel(pathname), [pathname]);
-
   return (
     <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onMenuClick}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
-            aria-label="Open navigation menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+      <div className="flex h-16 items-center gap-4 px-4 sm:px-6">
+        {/* Mobile menu button */}
+        <button
+          onClick={onMenuClick}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
+          aria-label="Open navigation menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
 
-          <div>
-            <p className="text-xs uppercase tracking-wide text-slate-400">Admin</p>
-            <p className="text-sm font-semibold text-slate-900">{sectionLabel}</p>
-          </div>
+        {/* Search bar */}
+        <div className="relative flex-1 max-w-xl">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            type="search"
+            placeholder="Search orders, products, partners..."
+            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link
-            className="hidden rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 sm:inline-flex"
-            href="/admin/orders?status=PENDING"
-          >
-            Pending Orders
-          </Link>
-          <Link
-            className="hidden rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 sm:inline-flex"
-            href="/admin/contacts?status=NEW"
-          >
-            New Contacts
-          </Link>
+        {/* Right side actions */}
+        <div className="flex items-center gap-3">
+          {/* Role switcher */}
+          <RoleSwitcher />
 
-          <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-1.5 pr-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-600">
-              <User className="h-4 w-4 text-white" />
-            </div>
-            <div className="hidden items-center gap-2 text-left sm:flex">
-              <div>
-                <p className="text-xs font-medium text-slate-700">Admin Console</p>
-                <p className="text-[10px] text-slate-500">Protected mode</p>
-              </div>
-              <Link
-                className="rounded-md border border-slate-300 px-2 py-1 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-100"
-                href="/admin/logout"
-              >
-                Logout
-              </Link>
-            </div>
-          </div>
-          <Link
-            className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 sm:hidden"
-            href="/admin/logout"
+          {/* Notifications */}
+          <button
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+            aria-label="Notifications"
           >
-            Logout
-          </Link>
+            <Bell className="h-5 w-5" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
+          </button>
         </div>
       </div>
     </div>
