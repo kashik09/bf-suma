@@ -887,6 +887,66 @@ export type Database = {
           },
         ]
       }
+      partners: {
+        Row: {
+          commission_earned: number
+          created_at: string | null
+          customer_id: string
+          id: string
+          joined_at: string | null
+          partner_code: string
+          payout_status: string
+          rank: string
+          region: string | null
+          sponsor_id: string | null
+          total_volume: number
+          updated_at: string | null
+        }
+        Insert: {
+          commission_earned?: number
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          joined_at?: string | null
+          partner_code: string
+          payout_status?: string
+          rank?: string
+          region?: string | null
+          sponsor_id?: string | null
+          total_volume?: number
+          updated_at?: string | null
+        }
+        Update: {
+          commission_earned?: number
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          joined_at?: string | null
+          partner_code?: string
+          payout_status?: string
+          rank?: string
+          region?: string | null
+          sponsor_id?: string | null
+          total_volume?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partners_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partners_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category_id: string

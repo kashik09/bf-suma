@@ -24,6 +24,12 @@ export type AdminRole = "SUPER_ADMIN" | "OPERATIONS" | "EXECUTIVE" | "SUPPORT";
 export type BlogPostStatus = "DRAFT" | "REVIEW" | "PUBLISHED";
 export type BlogChannelTarget = "SHOP" | "WHATSAPP" | "NEWSLETTER" | "SOCIAL";
 
+// Partner/Distributor system
+export type PartnerRank = "DISTRIBUTOR" | "SILVER" | "GOLD" | "DIAMOND";
+export type PayoutStatus = "PENDING" | "PROCESSING" | "PAID";
+export type LoyaltyTier = "BRONZE" | "SILVER" | "GOLD" | "PLATINUM";
+export type WellnessGoalType = "DAILY_ENERGY" | "IMMUNE_RESILIENCE" | "DIGESTIVE_HEALTH" | "HEART_HEALTH" | "CUSTOM";
+
 export interface Category {
   id: string;
   name: string;
@@ -390,6 +396,102 @@ export interface ContactSubmission {
 }
 
 export type ContactSubmissionInsert = Omit<ContactSubmission, "id" | "created_at" | "status" | "email_sent_at">;
+
+// Partner/Distributor types
+export interface Partner {
+  id: string;
+  customer_id: string;
+  partner_code: string;
+  rank: PartnerRank;
+  sponsor_id: string | null;
+  region: string | null;
+  total_volume: number;
+  commission_earned: number;
+  payout_status: PayoutStatus;
+  joined_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PartnerWithCustomer extends Partner {
+  customer: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+}
+
+export interface PartnerLeaderboardItem {
+  id: string;
+  partner_code: string;
+  customer_name: string;
+  region: string | null;
+  rank: PartnerRank;
+  downline_count: number;
+  total_volume: number;
+  commission_earned: number;
+  payout_status: PayoutStatus;
+}
+
+export interface PartnerStats {
+  total_partners: number;
+  active_partners: number;
+  network_volume: number;
+  commissions_due: number;
+  pending_payouts: number;
+  total_downline: number;
+}
+
+// Loyalty system types (for future backend implementation)
+export interface CustomerLoyalty {
+  id: string;
+  customer_id: string;
+  points_balance: number;
+  tier: LoyaltyTier;
+  points_earned_total: number;
+  points_redeemed_total: number;
+  tier_progress: number;
+  tier_threshold: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WellnessGoal {
+  id: string;
+  customer_id: string;
+  goal_name: string;
+  goal_type: WellnessGoalType;
+  target_value: number;
+  current_value: number;
+  is_active: boolean;
+  streak_days?: number;
+  routine_note?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Chart data types
+export interface WeeklyRevenue {
+  week_start: string;
+  week_label: string;
+  revenue: number;
+}
+
+export interface CategorySales {
+  category_id: string;
+  category_name: string;
+  total_sales: number;
+  percentage: number;
+}
+
+export interface ActiveOrderTracking {
+  order_id: string;
+  order_number: string;
+  status: OrderStatus;
+  estimated_delivery: string | null;
+  last_update: string;
+  items_count: number;
+}
 
 export interface Database {
   public: {
