@@ -39,3 +39,4 @@ public/assets/
 
 # Sentry Config File
 .env.sentry-build-plugin
+app.bak/
