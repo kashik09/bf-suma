@@ -8,9 +8,9 @@
   --surface: #ffffff;
   --surface-muted: #eee9e1;
   --border: #d6ddd3;
-  --brand: #50b748;
+  --brand: #1E9E5A;
   --brand-foreground: #ffffff;
-  --logo-green: #50b748;
+  --logo-green: #1E9E5A;
   --logo-blue: #00aadb;
   --logo-orange: #f48132;
   --logo-amber: #f9a533;
@@ -52,8 +52,8 @@ a {
 }
 
 ::selection {
-  background: rgba(80, 183, 72, 0.24);
-  color: #1a2b18;
+  background: rgba(30, 158, 90, 0.24);
+  color: #0f3d23;
 }
 
 /* Respect user preference for reduced motion */
@@ -71,7 +71,7 @@ a {
 @layer utilities {
   /* Single-color gradients based on favicon brand colors */
   .bg-logo-spectrum-soft {
-    background: linear-gradient(135deg, rgba(80, 183, 72, 0.08) 0%, rgba(80, 183, 72, 0.02) 100%);
+    background: linear-gradient(135deg, rgba(30, 158, 90, 0.08) 0%, rgba(30, 158, 90, 0.02) 100%);
   }
 
   .bg-logo-spectrum-warm {
@@ -93,7 +93,7 @@ a {
   .bg-logo-spectrum-footer {
     background-color: #071224;
     background-image:
-      radial-gradient(circle at 8% 12%, rgba(80, 183, 72, 0.32) 0%, transparent 30%),
+      radial-gradient(circle at 8% 12%, rgba(30, 158, 90, 0.32) 0%, transparent 30%),
       radial-gradient(circle at 28% 0%, rgba(249, 165, 51, 0.28) 0%, transparent 31%),
       radial-gradient(circle at 49% 8%, rgba(244, 129, 50, 0.24) 0%, transparent 31%),
       radial-gradient(circle at 72% 2%, rgba(236, 41, 123, 0.24) 0%, transparent 30%),

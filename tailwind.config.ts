@@ -7,13 +7,22 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#eef9ef",
-          100: "#dcf2db",
-          200: "#bbe4b8",
-          500: "#50b748",
-          600: "#3d9f38",
-          700: "#2f7f2d",
-          800: "#236224"
+          50: "#e8f5ec",
+          100: "#d1ead9",
+          200: "#a3d5b3",
+          500: "#1E9E5A",
+          600: "#1a8a4f",
+          700: "#156e3f",
+          800: "#10522f"
+        },
+        chart: {
+          green: "#1E9E5A",
+          blue: "#00aadb",
+          orange: "#f48132",
+          amber: "#f9a533",
+          pink: "#ec297b",
+          purple: "#8b5cf6",
+          teal: "#14b8a6"
         },
         sky: {
           50: "#ecf9fe",
