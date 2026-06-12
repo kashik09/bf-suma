@@ -9,9 +9,9 @@ import { getStorefrontCatalogSnapshot } from "@/services/products";
 
 export const dynamic = "force-dynamic";
 export const metadata = buildStorefrontMetadata({
-  title: "Shop Wellness Products",
+  title: "Shop BF Suma Products in Uganda | Supplements & Wellness",
   description:
-    "Browse BF Suma wellness products in Uganda by category, availability, and price. Compare trusted formulations and check out with transparent totals.",
+    "Browse 24+ authentic BF Suma health products in Uganda. From immune boosters and digestive health to men's and women's wellness. Clear prices in UGX. Order today.",
   path: "/shop"
 });
 

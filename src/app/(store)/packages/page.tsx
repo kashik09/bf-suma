@@ -9,9 +9,9 @@ import { getPackages } from "@/services/packages";
 export const dynamic = "force-dynamic";
 
 export const metadata = buildStorefrontMetadata({
-  title: "Wellness Bundles",
+  title: "BF Suma Health Packages Uganda | Bundled Wellness Solutions",
   description:
-    "Save with BF Suma Wellness Bundles. Curated bundles for immunity, weight loss, detox, and more. Each package includes multiple products at a discounted price.",
+    "Save with BF Suma wellness bundles in Uganda. Curated packages for weight loss, men's vitality, and women's health. Delivered in Kampala.",
   path: "/packages"
 });
 

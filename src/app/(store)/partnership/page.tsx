@@ -5,9 +5,9 @@ import { getWhatsAppPrimaryUrl } from "@/config/contact";
 import { buildStorefrontMetadata } from "@/lib/seo";
 
 export const metadata = buildStorefrontMetadata({
-  title: "Become a Distributor",
+  title: "Become a BF Suma Distributor in Uganda | Join the Wellness Network",
   description:
-    "Join BF Suma as a distributor. Earn with every sale, grow your network, and unlock travel rewards, car incentives, and financial independence.",
+    "Join BF Suma Uganda as a distributor or wellness partner. Earn from a growing health supplements business in Uganda. Learn about partnership opportunities today.",
   path: "/partnership"
 });
 

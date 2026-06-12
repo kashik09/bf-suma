@@ -1,12 +1,13 @@
-import { Metadata } from "next";
-import { APP_NAME } from "@/lib/constants";
 import { ContactForm } from "@/components/storefront/contact-form";
 import { QuickContactCard } from "@/components/storefront/quick-contact-card";
+import { buildStorefrontMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `Contact Us | ${APP_NAME}`,
-  description: "Get in touch with BF Suma Uganda. Send us a message or reach out via WhatsApp, email, or phone."
-};
+export const metadata = buildStorefrontMetadata({
+  title: "Contact BF Suma Uganda | Kampala Wellness Store",
+  description:
+    "Reach BF Suma Uganda at Lloyds Mall, Kampala. MTN: +256 778 928 815, Airtel: +256 747 928 920. WhatsApp us for fast support and product guidance.",
+  path: "/contact"
+});
 
 export default function ContactPage() {
   return (

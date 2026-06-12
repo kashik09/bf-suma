@@ -7,9 +7,9 @@ import { listStorefrontCategories } from "@/services/products";
 export const dynamic = "force-dynamic";
 
 export const metadata = buildStorefrontMetadata({
-  title: "Browse by Category",
+  title: "BF Suma Product Categories Uganda | Browse by Health Goal",
   description:
-    "Explore BF Suma wellness products by category. Find supplements, skincare, beverages, and more for your health goals.",
+    "Explore BF Suma Uganda product categories: Immune Boosters, Digestive Health, Cardiovascular, Skincare, Men's & Women's Health. Find the right supplement for your goal.",
   path: "/categories"
 });
 

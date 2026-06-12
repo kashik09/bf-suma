@@ -12,9 +12,9 @@ import { listPublishedBlogPosts } from "@/services/blog";
 export const dynamic = "force-dynamic";
 
 export const metadata = buildStorefrontMetadata({
-  title: "Wellness Blog",
+  title: "BF Suma Uganda Wellness Blog | Health Tips & Product Guides",
   description:
-    "Read practical wellness guides in Uganda, product education, and daily health insights from BF Suma to make faster, more confident buying decisions.",
+    "Read expert wellness tips from BF Suma Uganda. Learn about immune health, ginseng benefits, gut health, and more to make smarter choices for your daily wellness routine.",
   path: "/blog"
 });
 
