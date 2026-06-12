@@ -1,7 +1,8 @@
 import type { AdminRole } from "@/types";
 
 export const ADMIN_SESSION_COOKIE_NAME = "bf_admin_session";
-export const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
+export const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 12; // 12 hours
+export const ADMIN_SESSION_REMEMBER_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 export interface AdminSessionClaims {
   userId: string;

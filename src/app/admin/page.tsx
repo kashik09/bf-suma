@@ -28,6 +28,7 @@ import { getAdminSessionFromCookies } from "@/lib/admin-server";
 import {
   ADMIN_SESSION_COOKIE_NAME,
   ADMIN_SESSION_MAX_AGE_SECONDS,
+  ADMIN_SESSION_REMEMBER_MAX_AGE_SECONDS,
   createAdminSessionToken
 } from "@/lib/admin-session";
 import { logEvent } from "@/lib/logger";
@@ -102,6 +103,7 @@ export default async function AdminDashboardPage() {
 
       const email = String(formData.get("email") || "").trim().toLowerCase();
       const password = String(formData.get("password") || "");
+      const rememberMe = formData.get("remember") === "on";
       const submittedNext = normalizeAdminRedirect(String(formData.get("next") || ""));
 
       const headersList = await headers();
@@ -153,20 +155,24 @@ export default async function AdminDashboardPage() {
           redirect("/admin/reset-password");
         }
 
+        const sessionMaxAge = rememberMe
+          ? ADMIN_SESSION_REMEMBER_MAX_AGE_SECONDS
+          : ADMIN_SESSION_MAX_AGE_SECONDS;
+
         const token = await createAdminSessionToken({
           userId: user.id,
           email: user.email,
           role: user.role,
           passwordVersion: user.passwordVersion,
           mustResetPassword: false
-        });
+        }, sessionMaxAge);
 
         const cookieStore = await cookies();
         cookieStore.set(ADMIN_SESSION_COOKIE_NAME, token, {
           httpOnly: true,
           sameSite: "strict",
           secure: true,
-          maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
+          maxAge: sessionMaxAge,
           path: "/"
         });
 
@@ -220,6 +226,17 @@ export default async function AdminDashboardPage() {
                 Password
               </label>
               <PasswordInput id="password" name="password" autoComplete="current-password" required />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="remember"
+                name="remember"
+                className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              />
+              <label htmlFor="remember" className="text-sm text-slate-600">
+                Remember me for 30 days
+              </label>
             </div>
             <button
               className="inline-flex h-10 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
