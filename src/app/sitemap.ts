@@ -31,8 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     "",
     "/shop",
+    "/categories",
+    "/packages",
     "/blog",
     "/contact",
+    "/partnership",
     "/faq",
     "/cart",
     "/checkout",
@@ -43,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}${path}`,
     lastModified: now,
     changeFrequency: path === "" ? "daily" : "weekly",
-    priority: path === "" ? 1 : 0.7
+    priority: path === "" ? 1 : path === "/shop" || path === "/categories" || path === "/packages" ? 0.9 : 0.7
   }));
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
