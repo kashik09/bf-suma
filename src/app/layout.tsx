@@ -3,7 +3,7 @@ import { Ubuntu } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
 import { AuthHashHandler } from "@/components/auth/auth-hash-handler";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
-import { getSiteMetadataBase } from "@/lib/seo";
+import { buildLocalBusinessJsonLd, getSiteMetadataBase } from "@/lib/seo";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -44,12 +44,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const localBusinessJsonLd = buildLocalBusinessJsonLd();
+
   return (
     <html lang="en" className={ubuntu.variable}>
       <head>
         {gscVerificationToken ? (
           <meta content={gscVerificationToken} name="google-site-verification" />
         ) : null}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
       </head>
       <body>
         <AuthHashHandler />
