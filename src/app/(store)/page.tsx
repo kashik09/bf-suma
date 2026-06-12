@@ -4,7 +4,7 @@ import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/componen
 import { PageContainer } from "@/components/layout/page-container";
 import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
-import { buildLocalBusinessJsonLd, buildOrganizationJsonLd, buildStorefrontMetadata, buildWebSiteJsonLd } from "@/lib/seo";
+import { buildLocalBusinessJsonLd, buildOrganizationJsonLd, buildStaticPageMetadata, buildWebSiteJsonLd } from "@/lib/seo";
 import { buildWhatsAppHomepageCtaMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { getStorefrontCustomerCount } from "@/services/customers";
 import { getFeaturedPackages } from "@/services/packages";
@@ -13,12 +13,7 @@ import { listFeaturedCategories, listFeaturedProducts } from "@/services/product
 // Force dynamic rendering - requires env vars at runtime
 export const dynamic = "force-dynamic";
 
-export const metadata = buildStorefrontMetadata({
-  title: "Premium Wellness Store",
-  description:
-    "Shop trusted wellness essentials with clear pricing, fast support, and mobile-first checkout. Discover products designed for daily vitality and confidence.",
-  path: "/"
-});
+export const metadata = buildStaticPageMetadata("home");
 
 export default async function HomePage() {
   const [categories, products, featuredPackages, customerCount] = await Promise.all([
