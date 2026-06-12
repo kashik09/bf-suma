@@ -110,7 +110,7 @@ export function Hero() {
           key={s.id}
         >
           <Image
-            alt={`${s.badge} - ${s.headline}`}
+            alt={s.alt}
             className="object-cover"
             fill
             priority={index === 0}
