@@ -1,0 +1,87 @@
+/**
+ * BF Suma Design Tokens
+ *
+ * Brand colors extracted from tailwind.config.ts and globals.css
+ * This file serves as a reference. Primary usage is via Tailwind classes.
+ */
+
+:root {
+  /* ========================================
+   * BRAND COLORS
+   * Primary palette from BF Suma branding
+   * ======================================== */
+
+  /* Primary Green */
+  --brand-50: #e8f5ec;
+  --brand-100: #d1ead9;
+  --brand-200: #a3d5b3;
+  --brand-500: #1E9E5A;
+  --brand-600: #1a8a4f;
+  --brand-700: #156e3f;
+  --brand-800: #10522f;
+
+  /* Sky Blue */
+  --sky-50: #ecf9fe;
+  --sky-100: #d1f1fc;
+  --sky-200: #a9e4f8;
+  --sky-500: #00aadb;
+  --sky-600: #008db7;
+  --sky-700: #006f92;
+
+  /* Earth Orange */
+  --earth-50: #fff7ec;
+  --earth-100: #feecd2;
+  --earth-200: #fdd6a5;
+  --earth-500: #f48132;
+  --earth-600: #de6e22;
+  --earth-700: #b7581a;
+
+  /* Accent Colors */
+  --accent-sun: #f9a533;
+  --accent-berry: #ec297b;
+  --accent-ink: #231f20;
+
+  /* ========================================
+   * SEMANTIC COLORS
+   * ======================================== */
+
+  --background: #f7f6f2;
+  --foreground: #231f20;
+  --surface: #ffffff;
+  --surface-muted: #eee9e1;
+  --border: #d6ddd3;
+
+  /* Status Colors */
+  --status-success: #198754;
+  --status-warning: #c2881e;
+  --status-danger: #b7473d;
+  --status-info: #2e7bc2;
+
+  /* ========================================
+   * CHART COLORS
+   * For Recharts and data visualization
+   * ======================================== */
+
+  --chart-green: #1E9E5A;
+  --chart-blue: #00aadb;
+  --chart-orange: #f48132;
+  --chart-amber: #f9a533;
+  --chart-pink: #ec297b;
+  --chart-purple: #8b5cf6;
+  --chart-teal: #14b8a6;
+
+  /* ========================================
+   * SPACING & RADIUS
+   * ======================================== */
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  /* ========================================
+   * SHADOWS
+   * ======================================== */
+
+  --shadow-card: 0 10px 30px rgba(22, 27, 33, 0.08);
+  --shadow-soft: 0 3px 12px rgba(22, 27, 33, 0.06);
+}
