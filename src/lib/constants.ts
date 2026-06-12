@@ -10,7 +10,7 @@ import type {
 import { CONTACT } from "@/config/contact";
 
 export const APP_NAME = "BF Suma";
-export const APP_DESCRIPTION = "Trusted wellness essentials with clear pricing and fast local support.";
+export const APP_DESCRIPTION = "Trusted wellness essentials in Uganda with clear pricing and fast Kampala delivery.";
 
 export const SUPPORT_EMAIL = "support@bfsumauganda.com";
 
