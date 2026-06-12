@@ -2,19 +2,133 @@ import type { Metadata } from "next";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants";
 import { ADDRESS } from "@/config/contact";
 
-const DEFAULT_SITE_URL = "https://bfsumauganda.com";
+const SITE_NAME = "BF Suma Uganda";
+const BRAND_NAME = "BF Suma";
+const DEFAULT_SITE_URL = "https://www.bfsumauganda.com";
 const DEFAULT_SOCIAL_IMAGE = "/bf-suma-logo.png";
 const META_DESCRIPTION_LIMIT = 160;
 
+interface SeoEntry {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  keywords?: string[];
+}
+
+export const STATIC_PAGE_SEO = {
+  home: {
+    path: "/",
+    title: "BF Suma Uganda | Health Supplements & Wellness in Kampala",
+    description:
+      "Shop authentic BF Suma wellness products in Uganda: immune support, digestive health, skincare and daily wellness. Order in Kampala by phone or WhatsApp."
+  },
+  shop: {
+    path: "/shop",
+    title: "Shop BF Suma Supplements Uganda | Clear UGX Prices",
+    description:
+      "Browse authentic BF Suma supplements in Uganda for immune support, digestion, men's and women's wellness. See clear UGX prices and order today."
+  },
+  categories: {
+    path: "/categories",
+    title: "BF Suma Product Categories Uganda | Shop by Health Goal",
+    description:
+      "Explore BF Suma Uganda by health goal: immune support, digestive health, cardiovascular wellness, skincare, men's health and women's wellness."
+  },
+  packages: {
+    path: "/packages",
+    title: "BF Suma Wellness Packages Uganda | Bundled Health Support",
+    description:
+      "Shop BF Suma wellness bundles in Uganda for immune support, men's vitality, women's wellness and daily health routines. Clear UGX prices."
+  },
+  blog: {
+    path: "/blog",
+    title: "BF Suma Uganda Wellness Blog | Health Tips & Product Guides",
+    description:
+      "Read BF Suma Uganda wellness guides on immune support, gut health, ginseng, reishi and daily nutrition habits before choosing your products."
+  },
+  contact: {
+    path: "/contact",
+    title: "Contact BF Suma Uganda | Kampala Wellness Store",
+    description:
+      "Visit BF Suma Uganda at Lloyds Mall, Kampala. Call MTN +256 778 928 815, Airtel +256 747 928 920, or WhatsApp for product guidance."
+  },
+  partnership: {
+    path: "/partnership",
+    title: "Become a BF Suma Distributor in Uganda | Join the Network",
+    description:
+      "Become a BF Suma distributor or wellness partner in Uganda. Join a growing supplements business with product support and local market opportunity."
+  }
+} as const;
+
+export const CATEGORY_SEO = {
+  "immune-boosters": {
+    path: "/category/immune-boosters",
+    title: "Immune Support Supplements Uganda | BF Suma Immune Range",
+    description:
+      "Shop BF Suma immune support supplements in Uganda, including Reishi Coffee, Cordyceps Coffee and Ganoderma products. Order online or WhatsApp."
+  },
+  "digestive-health": {
+    path: "/category/digestive-health",
+    title: "Digestive Health Supplements Uganda | BF Suma Gut Support",
+    description:
+      "Browse BF Suma digestive health supplements in Uganda for gut comfort, regularity and daily digestive support. Clear prices and local support."
+  },
+  "cardiovascular-health": {
+    path: "/category/cardiovascular-health",
+    title: "Heart & Cardiovascular Wellness Uganda | BF Suma",
+    description:
+      "Support everyday heart and circulation wellness with BF Suma cardiovascular products in Uganda, including Detoxilive Pro Oil and MicrO2 Cycle."
+  },
+  "skincare-youth-series": {
+    path: "/category/skincare-youth-series",
+    title: "BF Suma Skincare Uganda | Youth Series for Healthy Skin",
+    description:
+      "Explore BF Suma Youth Series skincare in Uganda for cleansing, hydration and healthy-looking skin. Shop authentic products with local support."
+  },
+  "womens-health": {
+    path: "/category/womens-health",
+    title: "Women's Wellness Supplements Uganda | BF Suma",
+    description:
+      "Shop BF Suma women's wellness products in Uganda, including FemiBiotics, FemiVitamins and FemiCare Cleanser. Clear prices and guidance."
+  },
+  "mens-health": {
+    path: "/category/mens-health",
+    title: "Men's Wellness Supplements Uganda | BF Suma Vitality Range",
+    description:
+      "Shop BF Suma men's wellness supplements in Uganda for energy, prostate support and vitality, including ProstatRelax and X Power products."
+  },
+  "bone-joint-care": {
+    path: "/category/bone-joint-care",
+    title: "Bone & Joint Supplements Uganda | BF Suma Joint Support",
+    description:
+      "Shop BF Suma bone and joint care products in Uganda, including Arthro Xtra and GluzoJoint-Ultra Pro. Support mobility, comfort and strength."
+  },
+  "premium-selected": {
+    path: "/category/premium-selected",
+    title: "Premium BF Suma Supplements Uganda | Advanced Wellness",
+    description:
+      "Explore BF Suma premium supplements in Uganda, including NMN Coffee, NMN Sharp Mind and advanced formulas for daily wellness support."
+  }
+} as const;
+
 const BLOG_SEO_TITLE_OVERRIDES: Record<string, string> = {
-  "understanding-power-reishi-mushrooms-immune-health": "Reishi Mushroom Benefits for Immune Health",
-  "complete-guide-ginseng-energy-focus-vitality": "Ginseng Benefits for Energy and Focus",
-  "skin-health-within-science-youth-essence": "Skin Health Tips: Nutrition, Routine, and Youth Essence",
-  "building-strong-immune-system-complete-wellness-guide": "How to Build a Strong Immune System Naturally",
-  "natural-ways-boost-energy-levels-throughout-day": "Natural Ways to Boost Energy Levels",
-  "gut-health-connection-why-digestive-system-matters": "Gut Health Guide: Digestion, Immunity, and Daily Habits",
-  "sleep-better-tonight-science-backed-tips-quality-rest": "How to Sleep Better Naturally: Practical Tips",
-  "stress-management-practical-tools-modern-life": "Stress Management Tips for Modern Life"
+  "understanding-power-reishi-mushrooms-immune-health":
+    "Reishi Mushroom Benefits: Immune Support Guide",
+  "complete-guide-ginseng-energy-focus-vitality":
+    "Ginseng Benefits for Energy, Focus & Vitality",
+  "skin-health-within-science-youth-essence":
+    "Skin Health Tips: Nutrition, Routine & Youth Essence",
+  "building-strong-immune-system-complete-wellness-guide":
+    "How to Support Your Immune System Naturally",
+  "natural-ways-boost-energy-levels-throughout-day":
+    "Natural Ways to Boost Energy Levels",
+  "gut-health-connection-why-digestive-system-matters":
+    "Gut Health Guide: Digestion, Immunity & Daily Habits",
+  "sleep-better-tonight-science-backed-tips-quality-rest":
+    "How to Sleep Better Naturally: Practical Tips",
+  "stress-management-practical-tools-modern-life":
+    "Stress Management Tips for Everyday Life"
 };
 
 function toValidUrl(input?: string | null): URL | null {
@@ -36,19 +150,67 @@ function normalizeSeoCopy(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
-export function clampMetaDescription(text: string, maxLength: number = META_DESCRIPTION_LIMIT): string {
+function normalizeCanonicalPath(path: string): string {
+  const clean = path.trim() || "/";
+
+  if (/^https?:\/\//i.test(clean)) {
+    const url = new URL(clean);
+    return `${url.pathname}${url.search}` || "/";
+  }
+
+  return clean.startsWith("/") ? clean : `/${clean}`;
+}
+
+function withSiteName(title: string): string {
+  const clean = normalizeSeoCopy(title);
+  const lower = clean.toLowerCase();
+
+  if (
+    lower.includes(SITE_NAME.toLowerCase()) ||
+    lower.includes(BRAND_NAME.toLowerCase()) ||
+    lower.includes(APP_NAME.toLowerCase())
+  ) {
+    return clean;
+  }
+
+  return `${clean} | ${SITE_NAME}`;
+}
+
+export function clampMetaDescription(
+  text: string,
+  maxLength: number = META_DESCRIPTION_LIMIT
+): string {
   const clean = normalizeSeoCopy(text);
   if (clean.length <= maxLength) return clean;
 
-  const clipped = clean.slice(0, Math.max(0, maxLength - 1)).replace(/[,\s:;.-]+$/g, "");
+  const clipped = clean
+    .slice(0, Math.max(0, maxLength - 1))
+    .replace(/[,\s:;.-]+$/g, "");
+
   return `${clipped}…`;
 }
 
+export function toComplianceSafeSnippet(text: string): string {
+  return normalizeSeoCopy(text)
+    .replace(/\b(cure|cures|cured|curing)\b/gi, "support")
+    .replace(/\b(treat|treats|treated|treating)\b/gi, "support")
+    .replace(/\b(heal|heals|healed|healing)\b/gi, "support")
+    .replace(/\b(reverse|reverses|reversed|reversing)\b/gi, "support")
+    .replace(/\b(prevent|prevents|prevented|preventing)\b/gi, "support")
+    .replace(/\bguaranteed\b/gi, "")
+    .replace(/\banti[-\s]?cancer\b/gi, "wellness support")
+    .replace(/\brelieve(s|d)?\b/gi, "support");
+}
+
 export function getSiteMetadataBase(): URL {
-  const envUrl = toValidUrl(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL);
+  const envUrl = toValidUrl(
+    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL
+  );
+
   if (envUrl) {
     return new URL(`${envUrl.origin}/`);
   }
+
   return new URL(`${DEFAULT_SITE_URL}/`);
 }
 
@@ -67,6 +229,7 @@ interface BuildStorefrontMetadataInput {
   type?: "website" | "article";
   image?: string;
   keywords?: string[];
+  noIndex?: boolean;
 }
 
 export function buildStorefrontMetadata({
@@ -75,33 +238,105 @@ export function buildStorefrontMetadata({
   path,
   type = "website",
   image = DEFAULT_SOCIAL_IMAGE,
-  keywords
+  keywords,
+  noIndex = false
 }: BuildStorefrontMetadataInput): Metadata {
-  const canonicalPath = path.startsWith("/") ? path : `/${path}`;
-  const fullTitle = title.includes(APP_NAME) ? title : `${title} | ${APP_NAME}`;
+  const canonicalPath = normalizeCanonicalPath(path);
+  const fullTitle = withSiteName(title);
+  const cleanDescription = clampMetaDescription(
+    toComplianceSafeSnippet(description)
+  );
+  const absoluteImage = toAbsoluteUrl(image);
 
   return {
+    metadataBase: getSiteMetadataBase(),
     title: fullTitle,
-    description,
-    keywords,
+    description: cleanDescription,
+    ...(keywords?.length ? { keywords } : {}),
     alternates: {
       canonical: canonicalPath
     },
+    robots: {
+      index: !noIndex,
+      follow: !noIndex,
+      googleBot: {
+        index: !noIndex,
+        follow: !noIndex,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1
+      }
+    },
     openGraph: {
       title: fullTitle,
-      description,
+      description: cleanDescription,
       type,
       url: canonicalPath,
-      siteName: APP_NAME,
-      images: [{ url: image, alt: fullTitle }]
+      siteName: SITE_NAME,
+      locale: "en_UG",
+      images: [
+        {
+          url: absoluteImage,
+          alt: fullTitle,
+          width: 1200,
+          height: 630
+        }
+      ]
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
-      images: [image]
+      description: cleanDescription,
+      images: [absoluteImage]
     }
   };
+}
+
+export type StaticSeoKey = keyof typeof STATIC_PAGE_SEO;
+
+export function buildStaticPageMetadata(key: StaticSeoKey): Metadata {
+  const seo = STATIC_PAGE_SEO[key];
+
+  return buildStorefrontMetadata({
+    title: seo.title,
+    description: seo.description,
+    path: seo.path
+  });
+}
+
+export function getCategorySeo(slug: string, fallbackName: string): SeoEntry {
+  const known = CATEGORY_SEO[slug as keyof typeof CATEGORY_SEO];
+
+  if (known) {
+    return {
+      title: known.title,
+      description: known.description,
+      path: known.path
+    };
+  }
+
+  const categoryName = normalizeSeoCopy(fallbackName);
+
+  return {
+    path: `/category/${slug}`,
+    title: `${categoryName} Products Uganda | ${SITE_NAME}`,
+    description: clampMetaDescription(
+      `Shop BF Suma ${categoryName.toLowerCase()} products in Uganda. Compare options, see clear UGX prices and order with local support.`
+    )
+  };
+}
+
+export function buildCategoryMetadata(
+  slug: string,
+  fallbackName: string
+): Metadata {
+  const seo = getCategorySeo(slug, fallbackName);
+
+  return buildStorefrontMetadata({
+    title: seo.title,
+    description: seo.description,
+    path: seo.path
+  });
 }
 
 export function buildProductMetaDescription(params: {
@@ -110,9 +345,12 @@ export function buildProductMetaDescription(params: {
   description: string;
 }): string {
   const category = params.categoryName.trim().toLowerCase();
-  const benefit = normalizeSeoCopy(params.description || `Trusted ${category} support for daily routines.`);
+  const benefit = toComplianceSafeSnippet(
+    params.description || `Daily ${category} wellness support.`
+  );
+
   return clampMetaDescription(
-    `${params.name} in Uganda by BF Suma. ${benefit} Order online with transparent pricing and fast support.`
+    `${params.name} by BF Suma Uganda. ${benefit} Shop with clear UGX pricing, Kampala support and WhatsApp ordering.`
   );
 }
 
@@ -121,14 +359,16 @@ export function buildProductLeadDescription(params: {
   categoryName: string;
   description: string;
 }): string {
-  const source = normalizeSeoCopy(params.description);
+  const source = toComplianceSafeSnippet(params.description);
+
   if (!source) {
-    return `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} product in Uganda for daily wellness routines.`;
+    return `${params.name} is an authentic BF Suma ${params.categoryName.toLowerCase()} product available in Uganda for daily wellness routines.`;
   }
 
-  const prefix = `${params.name} is a BF Suma ${params.categoryName.toLowerCase()} option in Uganda.`;
+  const prefix = `${params.name} is an authentic BF Suma ${params.categoryName.toLowerCase()} product available in Uganda.`;
+
   if (source.toLowerCase().startsWith(params.name.toLowerCase())) {
-    return `${source} Shop with clear pricing and local support.`;
+    return `${source} Shop with clear pricing, Kampala support and WhatsApp ordering.`;
   }
 
   return `${prefix} ${source}`;
@@ -138,56 +378,104 @@ export function getBlogSeoTitle(slug: string, fallbackTitle: string): string {
   return BLOG_SEO_TITLE_OVERRIDES[slug] || fallbackTitle;
 }
 
-export function buildBlogMetaDescription(params: { title: string; excerpt: string }): string {
+export function buildBlogMetaDescription(params: {
+  title: string;
+  excerpt: string;
+}): string {
+  const excerpt = toComplianceSafeSnippet(params.excerpt);
+
   return clampMetaDescription(
-    `${params.title} from BF Suma. ${normalizeSeoCopy(params.excerpt)}`
+    `${params.title}. BF Suma Uganda guide: ${excerpt}`
   );
 }
 
+function compactAddress(...parts: Array<string | null | undefined>): string {
+  return parts
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
 export function buildOrganizationJsonLd() {
+  const siteUrl = getSiteUrl();
+
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: APP_NAME,
-    url: getSiteUrl(),
+    "@type": "OnlineStore",
+    "@id": `${siteUrl}/#organization`,
+    name: SITE_NAME,
+    alternateName: BRAND_NAME,
+    url: siteUrl,
     logo: toAbsoluteUrl("/bf-suma-logo.png"),
+    image: toAbsoluteUrl(DEFAULT_SOCIAL_IMAGE),
+    email: SUPPORT_EMAIL,
+    telephone: SUPPORT_PHONE,
+    areaServed: [
+      {
+        "@type": "Country",
+        name: "Uganda"
+      },
+      {
+        "@type": "City",
+        name: "Kampala"
+      }
+    ],
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "customer support",
         email: SUPPORT_EMAIL,
-        telephone: SUPPORT_PHONE
+        telephone: SUPPORT_PHONE,
+        areaServed: "UG",
+        availableLanguage: ["English"]
       }
     ]
   };
 }
 
 export function buildLocalBusinessJsonLd() {
+  const siteUrl = getSiteUrl();
+
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "BF Suma Uganda",
-    image: toAbsoluteUrl("/bf-suma-logo.png"),
+    "@type": "HealthAndBeautyBusiness",
+    "@id": `${siteUrl}/#localbusiness`,
+    name: SITE_NAME,
+    image: toAbsoluteUrl(DEFAULT_SOCIAL_IMAGE),
+    logo: toAbsoluteUrl("/bf-suma-logo.png"),
     address: {
       "@type": "PostalAddress",
-      streetAddress: ADDRESS.line1 + ", " + ADDRESS.line2,
+      streetAddress: compactAddress(ADDRESS.line1, ADDRESS.line2),
       addressLocality: ADDRESS.city,
       addressCountry: "UG"
     },
     telephone: SUPPORT_PHONE,
     email: SUPPORT_EMAIL,
-    url: getSiteUrl(),
-    priceRange: "$$"
+    url: siteUrl,
+    priceRange: "$",
+    parentOrganization: {
+      "@id": `${siteUrl}/#organization`
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "Uganda"
+    }
   };
 }
 
 export function buildWebSiteJsonLd() {
   const siteUrl = getSiteUrl();
+
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "BF Suma Uganda",
+    "@id": `${siteUrl}/#website`,
+    name: SITE_NAME,
+    alternateName: BRAND_NAME,
     url: siteUrl,
+    publisher: {
+      "@id": `${siteUrl}/#organization`
+    },
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -212,7 +500,7 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url
+      item: toAbsoluteUrl(item.url)
     }))
   };
 }
@@ -231,9 +519,51 @@ export function buildFaqPageJsonLd(faqs: FaqItem[]) {
       name: faq.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.answer
+        text: toComplianceSafeSnippet(faq.answer)
       }
     }))
+  };
+}
+
+export interface ArticleJsonLdParams {
+  title: string;
+  description: string;
+  slug: string;
+  image?: string;
+  datePublished: string;
+  dateModified?: string;
+  authorName?: string;
+  authorUrl?: string;
+}
+
+export function buildArticleJsonLd(params: ArticleJsonLdParams) {
+  const siteUrl = getSiteUrl();
+  const articleUrl = toAbsoluteUrl(`/blog/${params.slug}`);
+  const authorName = params.authorName || `${SITE_NAME} Health Team`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${articleUrl}#article`,
+    headline: params.title,
+    description: clampMetaDescription(
+      toComplianceSafeSnippet(params.description)
+    ),
+    image: [toAbsoluteUrl(params.image || DEFAULT_SOCIAL_IMAGE)],
+    datePublished: params.datePublished,
+    dateModified: params.dateModified || params.datePublished,
+    author: {
+      "@type": params.authorUrl ? "Person" : "Organization",
+      name: authorName,
+      ...(params.authorUrl ? { url: toAbsoluteUrl(params.authorUrl) } : {})
+    },
+    publisher: {
+      "@id": `${siteUrl}/#organization`
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl
+    }
   };
 }
 
@@ -252,32 +582,46 @@ export interface ProductJsonLdParams {
 }
 
 export function buildProductJsonLd(params: ProductJsonLdParams) {
+  const siteUrl = getSiteUrl();
+
   const availabilityMap = {
     in_stock: "https://schema.org/InStock",
     out_of_stock: "https://schema.org/OutOfStock",
     preorder: "https://schema.org/PreOrder"
   };
 
+  const productUrl = toAbsoluteUrl(`/shop/${params.slug}`);
+  const hasValidRating =
+    typeof params.ratingValue === "number" &&
+    typeof params.reviewCount === "number" &&
+    params.reviewCount > 0;
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${productUrl}#product`,
     name: params.name,
-    description: params.description,
+    description: toComplianceSafeSnippet(params.description),
     sku: params.sku,
     category: params.category,
     image: params.images.map((img) => toAbsoluteUrl(img)),
     brand: {
       "@type": "Brand",
-      name: "BF Suma"
+      name: BRAND_NAME
     },
+    url: productUrl,
     offers: {
       "@type": "Offer",
+      url: productUrl,
       priceCurrency: params.currency,
-      price: (params.price / 100).toFixed(2),
+      price: params.price.toFixed(2),
       availability: availabilityMap[params.availability],
-      url: toAbsoluteUrl(`/shop/${params.slug}`)
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@id": `${siteUrl}/#organization`
+      }
     },
-    ...(params.reviewCount && params.reviewCount > 0
+    ...(hasValidRating
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
