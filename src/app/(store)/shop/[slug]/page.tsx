@@ -70,13 +70,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!product) {
     return buildStorefrontMetadata({
       title: "Product not found",
-      description: "The requested product could not be found. Browse the BF Suma catalog for available wellness essentials.",
+      description: "The requested product could not be found. Browse the BF Suma Uganda catalog for available wellness essentials.",
       path: "/shop"
     });
   }
 
   return buildStorefrontMetadata({
-    title: `${product.name}`,
+    title: `${product.name} Uganda | BF Suma ${product.category_name}`,
     description: buildProductMetaDescription({
       name: product.name,
       categoryName: product.category_name,
@@ -85,8 +85,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     path: `/shop/${product.slug}`,
     keywords: [
       `${product.name} Uganda`,
+      `BF Suma ${product.name}`,
       `${product.category_name} Uganda`,
-      "BF Suma products"
+      "BF Suma products Uganda"
     ]
   });
 }

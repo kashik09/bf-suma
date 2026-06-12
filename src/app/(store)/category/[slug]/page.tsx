@@ -21,14 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!category) {
     return buildStorefrontMetadata({
       title: "Category not found",
-      description: "The requested category is unavailable. Browse all BF Suma wellness products in the full shop catalog.",
+      description: "The requested category is unavailable. Browse all BF Suma Uganda wellness products in the full shop catalog.",
       path: "/shop"
     });
   }
 
   return buildStorefrontMetadata({
-    title: `${category.name} Products`,
-    description: category.description,
+    title: `${category.name} Products Uganda | BF Suma ${category.name}`,
+    description: `Shop BF Suma ${category.name.toLowerCase()} products in Uganda. ${category.description} Clear UGX prices and Kampala delivery.`,
     path: `/category/${category.slug}`
   });
 }
