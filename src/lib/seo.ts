@@ -19,45 +19,45 @@ interface SeoEntry {
 export const STATIC_PAGE_SEO = {
   home: {
     path: "/",
-    title: "BF Suma Uganda | Health Supplements & Wellness in Kampala",
+    title: "BF Suma Uganda | Health Supplements & Wellness Products in Kampala",
     description:
-      "Shop authentic BF Suma wellness products in Uganda: immune support, digestive health, skincare and daily wellness. Order in Kampala by phone or WhatsApp."
+      "Buy authentic BF Suma wellness products in Uganda. Immune boosters, digestive health, skincare & more. Fast delivery in Kampala. WhatsApp: +256 778 928 815."
   },
   shop: {
     path: "/shop",
-    title: "Shop BF Suma Supplements Uganda | Clear UGX Prices",
+    title: "Shop BF Suma Products in Uganda | Supplements & Wellness",
     description:
-      "Browse authentic BF Suma supplements in Uganda for immune support, digestion, men's and women's wellness. See clear UGX prices and order today."
+      "Browse 24+ authentic BF Suma health products in Uganda. From immune boosters and digestive health to men's and women's wellness. Clear prices in UGX. Order today."
   },
   categories: {
     path: "/categories",
-    title: "BF Suma Product Categories Uganda | Shop by Health Goal",
+    title: "BF Suma Product Categories Uganda | Browse by Health Goal",
     description:
-      "Explore BF Suma Uganda by health goal: immune support, digestive health, cardiovascular wellness, skincare, men's health and women's wellness."
+      "Explore BF Suma Uganda product categories: Immune Boosters, Digestive Health, Cardiovascular, Skincare, Men's & Women's Health. Find the right supplement for your goal."
   },
   packages: {
     path: "/packages",
-    title: "BF Suma Wellness Packages Uganda | Bundled Health Support",
+    title: "BF Suma Health Packages Uganda | Bundled Wellness Solutions",
     description:
-      "Shop BF Suma wellness bundles in Uganda for immune support, men's vitality, women's wellness and daily health routines. Clear UGX prices."
+      "Save with BF Suma wellness bundles in Uganda. Curated packages for weight loss, men's vitality, and women's health. Delivered in Kampala."
   },
   blog: {
     path: "/blog",
     title: "BF Suma Uganda Wellness Blog | Health Tips & Product Guides",
     description:
-      "Read BF Suma Uganda wellness guides on immune support, gut health, ginseng, reishi and daily nutrition habits before choosing your products."
+      "Read expert wellness tips from BF Suma Uganda. Learn about immune health, ginseng benefits, gut health, and more to make smarter choices for your daily wellness routine."
   },
   contact: {
     path: "/contact",
     title: "Contact BF Suma Uganda | Kampala Wellness Store",
     description:
-      "Visit BF Suma Uganda at Lloyds Mall, Kampala. Call MTN +256 778 928 815, Airtel +256 747 928 920, or WhatsApp for product guidance."
+      "Reach BF Suma Uganda at Lloyds Mall, Kampala. MTN: +256 778 928 815, Airtel: +256 747 928 920. WhatsApp us for fast support and product guidance."
   },
   partnership: {
     path: "/partnership",
-    title: "Become a BF Suma Distributor in Uganda | Join the Network",
+    title: "Become a BF Suma Distributor in Uganda | Join the Wellness Network",
     description:
-      "Become a BF Suma distributor or wellness partner in Uganda. Join a growing supplements business with product support and local market opportunity."
+      "Join BF Suma Uganda as a distributor or wellness partner. Earn from a growing health supplements business in Uganda. Learn about partnership opportunities today."
   }
 } as const;
 
@@ -438,21 +438,29 @@ export function buildLocalBusinessJsonLd() {
 
   return {
     "@context": "https://schema.org",
-    "@type": "HealthAndBeautyBusiness",
+    "@type": "LocalBusiness",
     "@id": `${siteUrl}/#localbusiness`,
     name: SITE_NAME,
     image: toAbsoluteUrl(DEFAULT_SOCIAL_IMAGE),
     logo: toAbsoluteUrl("/bf-suma-logo.png"),
+    url: siteUrl,
+    telephone: ["+256778928815", "+256747928920"],
+    email: SUPPORT_EMAIL,
     address: {
       "@type": "PostalAddress",
-      streetAddress: compactAddress(ADDRESS.line1, ADDRESS.line2),
-      addressLocality: ADDRESS.city,
+      streetAddress: "Plot 1 Entebbe Road, Lloyds Mall, 2nd Floor Room F9",
+      addressLocality: "Kampala",
       addressCountry: "UG"
     },
-    telephone: SUPPORT_PHONE,
-    email: SUPPORT_EMAIL,
-    url: siteUrl,
-    priceRange: "$",
+    openingHours: "Mo-Sa 09:00-18:00",
+    priceRange: "UGX 4,500 - UGX 783,000",
+    sameAs: [
+      "https://www.facebook.com/profile.php?id=61568820027321",
+      "https://instagram.com/bfsumaugandaoriginal",
+      "https://tiktok.com/bfsuma_ugandaoriginal",
+      "https://x.com/BfsumaUga",
+      "https://youtube.com/@Bfsumaugandaoriginal"
+    ],
     parentOrganization: {
       "@id": `${siteUrl}/#organization`
     },
