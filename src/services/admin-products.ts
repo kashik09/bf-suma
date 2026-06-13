@@ -6,6 +6,7 @@ export interface AdminProductListItem {
   name: string;
   slug: string;
   sku: string;
+  description: string | null;
   price: number;
   currency: string;
   stock_qty: number;
@@ -74,7 +75,7 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
 
   let query = supabase
     .from("products")
-    .select("id, name, slug, sku, price, currency, stock_qty, status, created_at", { count: "exact" })
+    .select("id, name, slug, sku, description, price, currency, stock_qty, status, created_at", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(rangeStart, rangeEnd);
 
@@ -127,6 +128,7 @@ export async function getAdminProducts(input: GetAdminProductsInput = {}): Promi
       name: row.name,
       slug: row.slug,
       sku: row.sku,
+      description: row.description,
       price: row.price,
       currency: row.currency,
       stock_qty: row.stock_qty,

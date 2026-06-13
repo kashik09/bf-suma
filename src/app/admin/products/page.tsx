@@ -22,6 +22,20 @@ const STATUS_VARIANTS: Record<ProductStatus, "success" | "warning" | "neutral" |
   OUT_OF_STOCK: "danger"
 };
 
+function getSeoHealth(description: string | null): { label: string; color: string } {
+  if (!description) {
+    return { label: "No desc", color: "text-rose-600" };
+  }
+  const wordCount = description.trim().split(/\s+/).length;
+  if (wordCount < 30) {
+    return { label: `${wordCount}w`, color: "text-rose-600" };
+  }
+  if (wordCount < 80) {
+    return { label: `${wordCount}w`, color: "text-amber-600" };
+  }
+  return { label: `${wordCount}w`, color: "text-emerald-600" };
+}
+
 type ProductsSearchParams = Promise<{
   search?: string;
   status?: ProductStatus | "all";
@@ -160,6 +174,12 @@ export default async function AdminProductsPage({
       </Card>
 
       <Card className="overflow-x-auto">
+        <div className="mb-3 flex items-center gap-4 text-xs text-slate-500">
+          <span>SEO: </span>
+          <span className="text-rose-600">● &lt;30w needs work</span>
+          <span className="text-amber-600">● 30-79w okay</span>
+          <span className="text-emerald-600">● 80w+ good</span>
+        </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left border-b">
@@ -167,6 +187,7 @@ export default async function AdminProductsPage({
               <th className="p-3">Price</th>
               <th className="p-3">Stock</th>
               <th className="p-3">Status</th>
+              <th className="p-3">SEO</th>
               <th className="p-3">Created</th>
               <th className="p-3"></th>
             </tr>
@@ -200,6 +221,11 @@ export default async function AdminProductsPage({
                     {STATUS_LABELS[p.status]}
                   </Badge>
                 </td>
+                <td className="p-3">
+                  <span className={`text-xs font-medium ${getSeoHealth(p.description).color}`}>
+                    {getSeoHealth(p.description).label}
+                  </span>
+                </td>
                 <td className="p-3">{formatDate(p.created_at)}</td>
                 <td className="p-3 text-right">
                   {canManageProducts ? (
@@ -218,7 +244,7 @@ export default async function AdminProductsPage({
 
             {productResult.products.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-gray-500">
+                <td colSpan={7} className="p-6 text-center text-gray-500">
                   No products match this filter.
                 </td>
               </tr>
