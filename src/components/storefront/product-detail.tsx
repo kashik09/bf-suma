@@ -207,6 +207,7 @@ export function ProductDetail({
   const maxQuantity = useMemo(() => Math.max(1, Math.min(product.stock_qty, 99)), [product.stock_qty]);
   const problemFrame = resolveProblemFrame(product);
   const descriptionText = pdfContent?.description || product.description;
+  const shortDescription = pdfContent?.shortDescription || null;
   const seoLeadDescription = buildProductLeadDescription({
     name: product.name,
     categoryName: product.category_name,
@@ -217,6 +218,37 @@ export function ProductDetail({
   const usageInstructions = pdfContent?.usageInstructions || null;
   const warnings = pdfContent?.warnings || [];
   const availabilityStatus = availabilitySignal(product.availability);
+
+  // Build comprehensive product description for SEO and user understanding
+  const hasRichContent = Boolean(shortDescription || (benefits.length > 0 && pdfContent?.benefits.length));
+  const productOverviewParagraphs = useMemo(() => {
+    const paragraphs: string[] = [];
+
+    // Opening context paragraph
+    paragraphs.push(seoLeadDescription);
+
+    // Add short description if different from lead
+    if (shortDescription && !seoLeadDescription.toLowerCase().includes(shortDescription.toLowerCase().slice(0, 30))) {
+      paragraphs.push(shortDescription);
+    }
+
+    // Build benefits paragraph if we have PDF-sourced benefits
+    if (pdfContent?.benefits.length && pdfContent.benefits.length > 0) {
+      const cleanBenefits = pdfContent.benefits.slice(0, 3).map((b) => b.toLowerCase().replace(/\.$/, ""));
+      const benefitsList = cleanBenefits.length === 1
+        ? cleanBenefits[0]
+        : cleanBenefits.length === 2
+          ? `${cleanBenefits[0]} and ${cleanBenefits[1]}`
+          : `${cleanBenefits.slice(0, -1).join(", ")}, and ${cleanBenefits[cleanBenefits.length - 1]}`;
+      paragraphs.push(`Key benefits include ${benefitsList}.`);
+    }
+
+    // Add category context
+    const categoryContext = `This product is part of the BF Suma ${product.category_name} range, designed for users in Uganda seeking quality wellness support with transparent pricing and local availability.`;
+    paragraphs.push(categoryContext);
+
+    return paragraphs;
+  }, [seoLeadDescription, shortDescription, pdfContent?.benefits, product.category_name]);
   const productWhatsAppInterestMessage = buildWhatsAppProductInterestMessage(product.name);
   const lowStockCount = product.stock_qty > 0 && product.stock_qty < 10 ? product.stock_qty : null;
   const hasReviewData = reviewCount > 0;
@@ -299,7 +331,11 @@ export function ProductDetail({
               </span>
             ) : null}
           </div>
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{seoLeadDescription}</p>
+          <div className="space-y-2 text-sm leading-relaxed text-slate-600 sm:text-base">
+            {productOverviewParagraphs.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
 
           {featuredReview ? (
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
@@ -417,6 +453,35 @@ export function ProductDetail({
               {degradedReason || "Live inventory validation is unavailable. Checkout is temporarily disabled."}
             </p>
           ) : null}
+        </div>
+      </section>
+
+      {/* About This Product - SEO-rich narrative section */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
+        <h2 className="text-xl font-semibold text-slate-900">About {product.name}</h2>
+        <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+          <p>
+            {product.name} is an authentic BF Suma {product.category_name.toLowerCase()} product available in Uganda.
+            {shortDescription ? ` ${shortDescription}` : ""} This product is formulated to support daily wellness routines
+            with a focus on {product.category_name.toLowerCase().replace(/-/g, " ")} needs.
+          </p>
+          {pdfContent?.description && pdfContent.description !== shortDescription ? (
+            <p>{pdfContent.description}</p>
+          ) : null}
+          <p>
+            BF Suma products are distributed through authorized channels in Uganda, with support available via WhatsApp
+            for product guidance and ordering assistance. All prices are displayed in Ugandan Shillings (UGX) with
+            transparent totals before checkout.
+          </p>
+          {usageInstructions ? (
+            <p>
+              <strong>Suggested use:</strong> {usageInstructions}
+            </p>
+          ) : null}
+          <p>
+            For questions about {product.name}, ingredient details, or suitability for your wellness goals,
+            contact our support team via WhatsApp or visit our Kampala location at Lloyds Mall.
+          </p>
         </div>
       </section>
 
