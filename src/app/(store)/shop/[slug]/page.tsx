@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
@@ -29,6 +30,9 @@ import {
   getStorefrontProductBySlug,
   listRelatedProducts
 } from "@/services/products";
+
+// Cache product fetch so generateMetadata and page component share the same request
+const getCachedProduct = cache(getStorefrontProductBySlug);
 
 function pickFeaturedReview(reviews: ProductReview[]): ProductReview | null {
   if (reviews.length === 0) return null;
@@ -65,7 +69,7 @@ function listRelatedLearningPosts(posts: BlogPostListItem[], productName: string
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getStorefrontProductBySlug(slug);
+  const product = await getCachedProduct(slug);
 
   if (!product) {
     return buildStorefrontMetadata({
@@ -95,7 +99,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [product, health] = await Promise.all([
-    getStorefrontProductBySlug(slug),
+    getCachedProduct(slug),
     getStorefrontCatalogHealth()
   ]);
 
