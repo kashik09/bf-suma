@@ -172,6 +172,22 @@ export default async function AdminProductDetailPage({
         </div>
       ) : null}
 
+      <Card className="border-sky-200 bg-sky-50/50">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-sky-700">Google Search Preview</p>
+        <div className="rounded-md border border-slate-200 bg-white p-3">
+          <p className="text-lg text-blue-800 hover:underline">{product.name} Uganda | BF Suma {categories.find((c) => c.id === product.category_id)?.name || "Products"}</p>
+          <p className="text-xs text-green-700">https://www.bfsumauganda.com/shop/{product.slug}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-slate-600">
+            {product.description
+              ? `${product.name} by BF Suma Uganda. ${product.description.slice(0, 120)}${product.description.length > 120 ? "..." : ""}`
+              : `${product.name} by BF Suma Uganda. Shop with clear UGX pricing, Kampala support and WhatsApp ordering.`}
+          </p>
+        </div>
+        <p className="mt-2 text-xs text-slate-500">
+          This preview shows how your product may appear in Google search results. A detailed description improves click-through rates.
+        </p>
+      </Card>
+
       <Card>
         <form action={updateProductAction} className="grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2">
@@ -245,9 +261,27 @@ export default async function AdminProductDetailPage({
             ) : null}
           </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="description">Description</label>
-            <textarea className="min-h-28 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" defaultValue={product.description || ""} id="description" name="description" />
+          <div className="md:col-span-2 space-y-2">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="description">
+              Product Description
+              <span className="ml-2 text-xs font-normal text-slate-500">(SEO important)</span>
+            </label>
+            <textarea
+              className="min-h-36 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              defaultValue={product.description || ""}
+              id="description"
+              name="description"
+              placeholder="Describe the product benefits, ingredients, and usage. Include 'Uganda' or 'Kampala' for local SEO. Aim for 100-300 words."
+            />
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+              <p className="font-semibold">SEO Tips for Product Descriptions:</p>
+              <ul className="mt-1 list-inside list-disc space-y-0.5">
+                <li>Aim for 100-300 words (currently products average ~28 words)</li>
+                <li>Include &quot;Uganda&quot; or &quot;Kampala&quot; naturally in the text</li>
+                <li>Mention key benefits, ingredients, and how to use</li>
+                <li>Avoid medical claims like &quot;cures&quot; or &quot;treats&quot; - use &quot;supports&quot;</li>
+              </ul>
+            </div>
           </div>
 
           <div className="md:col-span-2">
