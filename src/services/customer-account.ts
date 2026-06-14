@@ -26,6 +26,7 @@ interface CustomerDashboardSnapshot {
   totalSpent: number;
   statusCounts: OrderStatusCounts;
   recentOrders: CustomerOrderListItem[];
+  wishlistCount: number;
 }
 
 interface CustomerOrderDetail {
@@ -87,6 +88,17 @@ async function listOrdersWithItemsByCustomerEmail(email: string): Promise<Orders
   }));
 }
 
+async function getWishlistCountByCustomerId(customerId: string): Promise<number> {
+  const supabase = createServiceRoleSupabaseClient();
+  const { count, error } = await supabase
+    .from("wishlists")
+    .select("*", { count: "exact", head: true })
+    .eq("customer_id", customerId);
+
+  if (error) return 0;
+  return count || 0;
+}
+
 export async function getCustomerDashboardSnapshot(email: string): Promise<CustomerDashboardSnapshot | null> {
   const normalized = normalizeEmail(email);
 
@@ -96,6 +108,8 @@ export async function getCustomerDashboardSnapshot(email: string): Promise<Custo
   ]);
 
   if (!customer) return null;
+
+  const wishlistCount = await getWishlistCountByCustomerId(customer.id);
 
   const recentOrders = ordersWithItems.slice(0, 5).map((order) => ({
     id: order.id,
@@ -130,7 +144,8 @@ export async function getCustomerDashboardSnapshot(email: string): Promise<Custo
     totalOrders: ordersWithItems.length,
     totalSpent: ordersWithItems.reduce((sum, order) => sum + order.total, 0),
     statusCounts,
-    recentOrders
+    recentOrders,
+    wishlistCount
   };
 }
 
