@@ -310,9 +310,9 @@ export default async function AdminDashboardPage() {
         />
         <KpiCard
           icon={<Users className="h-5 w-5" />}
-          label="Active partners"
-          value={partnerStats ? `${partnerStats.active_partners} / ${partnerStats.total_partners}` : "0 / 0"}
-          subtext={partnerStats ? `${partnerStats.pending_payouts} payouts pending review` : "No partner data"}
+          label="Total customers"
+          value={snapshot.kpis.totalCustomers.toString()}
+          subtext={`${snapshot.kpis.activeProducts} active products`}
           variant="info"
         />
       </div>
@@ -420,73 +420,13 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Partners Section - Only show if partners table exists */}
+      {/* Partners Section - Temporarily disabled
       {hasPartnersTable && (
         <Card className="p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Partners & Distributors</h2>
-              <p className="text-sm text-slate-500">
-                BF Suma &quot;Join Us&quot; network — sales volume, downline and commissions.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                <Download className="h-4 w-4" />
-                Payout report
-              </button>
-              <Link
-                href="/admin/partners"
-                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
-              >
-                <Plus className="h-4 w-4" />
-                Invite partner
-              </Link>
-            </div>
-          </div>
-
-          {/* Partner Stats */}
-          {partnerStats && (
-            <div className="mb-6 grid gap-4 sm:grid-cols-4">
-              <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  <span className="text-xs font-medium text-emerald-600">+14.2%</span>
-                </div>
-                <p className="mt-2 text-2xl font-bold text-slate-900">
-                  {formatCurrency(partnerStats.network_volume)}
-                </p>
-                <p className="text-sm text-slate-500">Network volume (mo)</p>
-              </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
-                <p className="text-2xl font-bold text-slate-900">
-                  {formatCurrency(partnerStats.commissions_due)}
-                </p>
-                <p className="text-sm text-slate-500">Commissions due</p>
-                <p className="text-xs text-slate-400">{partnerStats.pending_payouts} pending approval</p>
-              </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
-                <p className="text-2xl font-bold text-slate-900">{partnerStats.active_partners}</p>
-                <p className="text-sm text-slate-500">Active partners</p>
-              </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
-                <p className="text-2xl font-bold text-slate-900">{partnerStats.total_downline}</p>
-                <p className="text-sm text-slate-500">Total downline</p>
-                <p className="text-xs text-slate-400">across all tiers</p>
-              </div>
-            </div>
-          )}
-
-          {/* Leaderboard */}
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-900">Partner leaderboard</h3>
-              <span className="text-xs text-slate-400">Ranked by monthly volume</span>
-            </div>
-            <PartnersLeaderboard partners={partnersLeaderboard} limit={6} />
-          </div>
+          ...
         </Card>
       )}
+      */}
 
       {/* Quick Stats Footer */}
       <div className="grid gap-4 sm:grid-cols-3">
