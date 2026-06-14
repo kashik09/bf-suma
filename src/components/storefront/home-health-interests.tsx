@@ -198,7 +198,7 @@ export function HomeHealthInterests({ categories }: { categories: StorefrontCate
                           }))}
                         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         src={slide.category.image_url}
-                        unoptimized
+                        loading="lazy"
                       />
                     ) : (
                       <div

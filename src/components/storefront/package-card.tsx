@@ -57,7 +57,7 @@ export function PackageCard({ pkg, featured = false }: PackageCardProps) {
               onError={() => setImgSrc(PLACEHOLDER_IMAGE)}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               src={imgSrc}
-              unoptimized
+              loading="lazy"
             />
           </div>
         </Link>

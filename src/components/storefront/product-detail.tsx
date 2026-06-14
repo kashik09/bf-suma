@@ -299,7 +299,7 @@ export function ProductDetail({
               priority
               sizes="(max-width: 1024px) 100vw, 52vw"
               src={product.image_url || "/catalog-images/placeholder.svg"}
-              unoptimized
+              loading="lazy"
             />
           </div>
         </div>

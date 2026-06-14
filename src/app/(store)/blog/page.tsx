@@ -86,13 +86,13 @@ export default async function BlogIndexPage({ searchParams }: { searchParams: Bl
               <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft" key={post.id}>
                 {post.cover_image_url ? (
                   <Image
-                  alt={`${seoTitle} article cover image`}
-                  className="h-48 w-full object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  src={post.cover_image_url}
-                  unoptimized
-                    width={1200}
-                    height={720}
+                    alt={`${seoTitle} article cover image`}
+                    className="h-48 w-full object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    src={post.cover_image_url}
+                    width={400}
+                    height={240}
+                    loading="lazy"
                   />
                 ) : (
                   <div className="h-48 w-full bg-gradient-to-r from-brand-100 via-brand-50 to-slate-100" />

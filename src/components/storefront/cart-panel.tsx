@@ -127,7 +127,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                           fill
                           sizes="64px"
                           src={item.image_url || "/catalog-images/placeholder.svg"}
-                          unoptimized
+                          loading="lazy"
                         />
                       </div>
                       <div className="min-w-0 flex-1">

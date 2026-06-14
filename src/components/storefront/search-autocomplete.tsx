@@ -263,7 +263,7 @@ export function SearchAutocomplete({
                         fill
                         sizes="40px"
                         src={product.image_url || "/catalog-images/placeholder.svg"}
-                        unoptimized
+                        loading="lazy"
                       />
                     </div>
                     <div className="min-w-0 flex-1">

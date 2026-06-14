@@ -43,7 +43,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
               onError={() => setImgSrc(PLACEHOLDER_IMAGE)}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
               src={imgSrc}
-              unoptimized
+              loading="lazy"
             />
           </div>
         </Link>

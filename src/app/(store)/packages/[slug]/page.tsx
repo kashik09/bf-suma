@@ -86,7 +86,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               priority
               sizes="(max-width: 1024px) 100vw, 55vw"
               src={pkg.hero_image_url}
-              unoptimized
+              loading="lazy"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
@@ -160,7 +160,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                   fill
                   sizes="64px"
                   src={item.product.image_url || "/catalog-images/placeholder.svg"}
-                  unoptimized
+                  loading="lazy"
                 />
               </div>
               <div className="min-w-0 flex-1">
@@ -184,7 +184,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               fill
               sizes="100vw"
               src={pkg.infographic_image_url}
-              unoptimized
+              loading="lazy"
             />
           </div>
         </section>

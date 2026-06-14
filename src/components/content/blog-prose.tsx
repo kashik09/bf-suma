@@ -97,7 +97,7 @@ const markdownComponents: Components = {
           sizes="(max-width: 768px) 100vw, 760px"
           className="h-auto w-full rounded-xl shadow-soft"
           src={src}
-          unoptimized
+          loading="lazy"
           width={1200}
           height={720}
         />

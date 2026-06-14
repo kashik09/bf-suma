@@ -200,7 +200,7 @@ export default async function BlogDetailPage({
             placeholder="blur"
             sizes="100vw"
             src={post.cover_image_url}
-            unoptimized
+            loading="lazy"
             width={1400}
             height={840}
             priority
