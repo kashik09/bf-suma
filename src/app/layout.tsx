@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Ubuntu } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
 import { AuthHashHandler } from "@/components/auth/auth-hash-handler";
@@ -12,6 +12,12 @@ const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
   display: "swap"
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5
+};
 
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
