@@ -1,22 +1,29 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Heart,
   Package,
   RefreshCw
 } from "lucide-react";
-import { LoyaltyBanner, OrderTrackerCard } from "@/components/account";
+import { OrderTrackerCard } from "@/components/account";
 import { requireCustomerUser } from "@/lib/auth/customer-server";
 import { getCustomerDashboardSnapshot } from "@/services/customer-account";
+import { listStorefrontProducts } from "@/services/products";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountDashboardPage() {
   const user = await requireCustomerUser();
-  const snapshot = await getCustomerDashboardSnapshot(user.email);
+  const [snapshot, products] = await Promise.all([
+    getCustomerDashboardSnapshot(user.email),
+    listStorefrontProducts({ sort: "featured" })
+  ]);
+  const recommendedProducts = products.slice(0, 3);
 
   const firstName = snapshot?.customer.first_name || user.firstName || "there";
   const recentOrders = snapshot?.recentOrders || [];
+  const wishlistCount = snapshot?.wishlistCount || 0;
   const statusCounts = snapshot?.statusCounts || {
     pending: 0,
     confirmed: 0,
@@ -31,14 +38,6 @@ export default async function AccountDashboardPage() {
     (o) => !["DELIVERED", "CANCELED"].includes(o.status)
   );
 
-  // Mock loyalty data - would come from database
-  const loyaltyData = {
-    tier: "GOLD" as const,
-    points: 1840,
-    nextTierPoints: 2500,
-    nextTier: "Platinum"
-  };
-
   const quickStats = [
     {
       label: "Active orders",
@@ -49,15 +48,14 @@ export default async function AccountDashboardPage() {
     },
     {
       label: "Auto-refills",
-      value: 2,
+      value: 0,
       icon: RefreshCw,
       href: "/account/refills",
       color: "bg-sky-100 text-sky-600"
     },
     {
       label: "Wishlist",
-      value: 5,
-      subtext: "2 back in stock",
+      value: wishlistCount,
       icon: Heart,
       href: "/account/wishlist",
       color: "bg-rose-100 text-rose-600"
@@ -66,14 +64,11 @@ export default async function AccountDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Loyalty Banner */}
-      <LoyaltyBanner
-        firstName={firstName}
-        tier={loyaltyData.tier}
-        points={loyaltyData.points}
-        nextTierPoints={loyaltyData.nextTierPoints}
-        nextTier={loyaltyData.nextTier}
-      />
+      {/* Welcome Header */}
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">Welcome back, {firstName}.</h1>
+        <p className="text-sm text-slate-500">Here&apos;s your account overview.</p>
+      </div>
 
       {/* Active Order Tracker */}
       {latestActiveOrder && (
@@ -102,9 +97,6 @@ export default async function AccountDashboardPage() {
               <div>
                 <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
                 <p className="text-xs text-slate-500">{stat.label}</p>
-                {stat.subtext && (
-                  <p className="text-[10px] text-brand-600">{stat.subtext}</p>
-                )}
               </div>
             </Link>
           );
@@ -112,44 +104,51 @@ export default async function AccountDashboardPage() {
       </div>
 
       {/* Recommended Products */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-900">Recommended for you</h3>
-          <Link
-            href="/shop"
-            className="text-xs font-medium text-brand-600 hover:underline"
-          >
-            View all
-          </Link>
-        </div>
-
-        <div className="space-y-3">
-          {[
-            { name: "Reishi Mushroom Extract", price: "UGX 85,000", reason: "Popular choice" },
-            { name: "Omega-3 Fish Oil", price: "UGX 65,000", reason: "Frequently bought" },
-            { name: "Vitamin D3 Drops", price: "UGX 45,000", reason: "Back in stock" }
-          ].map((product) => (
-            <div
-              key={product.name}
-              className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
+      {recommendedProducts.length > 0 && (
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-slate-900">Recommended for you</h3>
+            <Link
+              href="/shop"
+              className="text-xs font-medium text-brand-600 hover:underline"
             >
-              <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-lg bg-slate-200" />
-                <div>
-                  <p className="text-sm font-medium text-slate-900">{product.name}</p>
-                  <p className="text-xs text-slate-500">{product.reason}</p>
+              View all
+            </Link>
+          </div>
+
+          <div className="space-y-3">
+            {recommendedProducts.map((product) => (
+              <Link
+                key={product.id}
+                href={`/shop/${product.slug}`}
+                className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3 transition hover:bg-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-slate-200">
+                    {product.image_url && (
+                      <Image
+                        src={product.image_url}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">{product.name}</p>
+                    <p className="text-xs text-slate-500">{product.category_name || "Popular choice"}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-semibold text-slate-900">{product.price}</p>
-                <button className="mt-1 text-xs font-medium text-brand-600 hover:underline">
-                  Add to cart
-                </button>
-              </div>
-            </div>
-          ))}
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-slate-900">
+                    UGX {product.price.toLocaleString()}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recent Orders */}
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
