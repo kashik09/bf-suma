@@ -289,22 +289,21 @@ export default async function AdminDashboardPage() {
           icon={<TrendingUp className="h-5 w-5" />}
           label="Revenue this month"
           value={formatCurrency(snapshot.kpis.totalRevenue)}
-          trend={{ value: 12.4, isPositive: true }}
+          trend={snapshot.kpis.revenueTrend || undefined}
           variant="success"
         />
         <KpiCard
           icon={<ShoppingBag className="h-5 w-5" />}
           label="Orders"
           value={snapshot.kpis.totalOrders.toString()}
-          trend={{ value: 8.1, isPositive: true }}
+          trend={snapshot.kpis.ordersTrend || undefined}
           variant="default"
         />
         <KpiCard
           icon={<DollarSign className="h-5 w-5" />}
           label="Avg. order value"
           value={formatCurrency(avgOrderValue)}
-          subtext="3.7% checkout conversion"
-          trend={{ value: 3.9, isPositive: false }}
+          subtext={`${snapshot.kpis.ordersThisWeek} orders this week`}
           variant="warning"
         />
         <KpiCard
