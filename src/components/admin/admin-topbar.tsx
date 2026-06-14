@@ -1,7 +1,6 @@
 "use client";
 
 import { Bell, Menu, Search } from "lucide-react";
-import { RoleSwitcher } from "@/components/dashboard";
 
 interface AdminTopbarProps {
   onMenuClick?: () => void;
@@ -30,20 +29,17 @@ export function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
           />
         </div>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-3">
-          {/* Role switcher */}
-          <RoleSwitcher />
+        {/* Spacer to push notification to far right */}
+        <div className="flex-1" />
 
-          {/* Notifications */}
-          <button
-            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-            aria-label="Notifications"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
-          </button>
-        </div>
+        {/* Notifications */}
+        <button
+          className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+          aria-label="Notifications"
+        >
+          <Bell className="h-5 w-5" />
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
+        </button>
       </div>
     </div>
   );
