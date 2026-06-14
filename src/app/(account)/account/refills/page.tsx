@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, RefreshCw, Plus, Calendar, Package } from "lucide-react";
 import { requireCustomerUser } from "@/lib/auth/customer-server";
 
@@ -13,7 +14,8 @@ const mockRefills = [
     frequency: "Monthly",
     nextDelivery: "Jun 15, 2026",
     price: 170000,
-    status: "active"
+    status: "active",
+    image: "/products/quad-reishi.webp"
   },
   {
     id: "2",
@@ -22,7 +24,8 @@ const mockRefills = [
     frequency: "Every 2 months",
     nextDelivery: "Jul 1, 2026",
     price: 65000,
-    status: "active"
+    status: "active",
+    image: "/products/ginseng.webp"
   }
 ];
 
@@ -105,7 +108,14 @@ export default async function RefillsPage() {
               <div key={refill.id} className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex gap-4">
-                    <div className="h-16 w-16 rounded-lg bg-slate-100" />
+                    <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-slate-100">
+                      <Image
+                        src={refill.image}
+                        alt={refill.productName}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-900">{refill.productName}</p>
                       <p className="mt-1 text-xs text-slate-500">
