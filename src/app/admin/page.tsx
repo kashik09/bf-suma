@@ -117,10 +117,11 @@ export default async function AdminDashboardPage() {
           });
 
           const cookieStore = await cookies();
+          const isProduction = process.env.NODE_ENV === "production";
           cookieStore.set(ADMIN_SESSION_COOKIE_NAME, resetToken, {
             httpOnly: true,
-            sameSite: "strict",
-            secure: true,
+            sameSite: "lax",
+            secure: isProduction,
             maxAge: 60 * 15,
             path: "/"
           });
@@ -142,10 +143,11 @@ export default async function AdminDashboardPage() {
         }, sessionMaxAge);
 
         const cookieStore = await cookies();
+        const isProduction = process.env.NODE_ENV === "production";
         cookieStore.set(ADMIN_SESSION_COOKIE_NAME, token, {
           httpOnly: true,
-          sameSite: "strict",
-          secure: true,
+          sameSite: "lax",
+          secure: isProduction,
           maxAge: sessionMaxAge,
           path: "/"
         });
