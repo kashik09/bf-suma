@@ -114,6 +114,7 @@ export function Hero() {
             className="object-cover"
             fill
             priority={index === 0}
+            fetchPriority={index === 0 ? "high" : "auto"}
             sizes="100vw"
             src={s.image}
           />
