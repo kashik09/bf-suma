@@ -81,6 +81,19 @@ export interface DashboardProductPerformanceItem {
   href: string;
 }
 
+export interface WeeklyRevenueDataPoint {
+  week_label: string;
+  week_start: string;
+  revenue: number;
+}
+
+export interface CategorySalesDataPoint {
+  category_id: string;
+  category_name: string;
+  total_sales: number;
+  percentage: number;
+}
+
 export interface AdminDashboardSnapshot {
   kpis: {
     totalRevenue: number;
@@ -123,6 +136,8 @@ export interface AdminDashboardSnapshot {
     topProducts: DashboardProductPerformanceItem[];
     attentionNeeded: DashboardActionItem[];
   };
+  weeklyRevenue: WeeklyRevenueDataPoint[];
+  categorySales: CategorySalesDataPoint[];
   degraded: boolean;
   warnings: string[];
 }
@@ -872,6 +887,97 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
     });
   }
 
+  // Calculate weekly revenue from real orders (last 12 weeks)
+  const weeklyRevenue: WeeklyRevenueDataPoint[] = [];
+  const twelveWeeksMs = 12 * 7 * 24 * 60 * 60 * 1000;
+  const twelveWeeksAgo = new Date(nowMs - twelveWeeksMs);
+
+  for (let i = 11; i >= 0; i--) {
+    const weekStart = new Date(nowMs - i * 7 * 24 * 60 * 60 * 1000);
+    weekStart.setUTCHours(0, 0, 0, 0);
+    // Adjust to start of week (Monday)
+    const dayOfWeek = weekStart.getUTCDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    weekStart.setUTCDate(weekStart.getUTCDate() + diff);
+
+    const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const weekRevenue = orders
+      .filter((order) => {
+        const orderDate = new Date(order.created_at);
+        return orderDate >= weekStart && orderDate < weekEnd && order.status !== "CANCELED";
+      })
+      .reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+
+    weeklyRevenue.push({
+      week_label: `W${12 - i}`,
+      week_start: weekStart.toISOString(),
+      revenue: weekRevenue
+    });
+  }
+
+  // Calculate sales by category from order items
+  let categorySales: CategorySalesDataPoint[] = [];
+  const allOrderIds = orders
+    .filter((order) => order.status !== "CANCELED")
+    .map((order) => order.id);
+
+  if (allOrderIds.length > 0) {
+    // Get order items with product info
+    const { data: allOrderItems, error: allOrderItemsError } = await supabase
+      .from("order_items")
+      .select("product_id, line_total")
+      .in("order_id", allOrderIds);
+
+    if (!allOrderItemsError && allOrderItems) {
+      // Get product categories
+      const productIds = [...new Set(allOrderItems.map((item) => item.product_id))];
+      const { data: productCategories, error: productCategoriesError } = await supabase
+        .from("products")
+        .select("id, category_id")
+        .in("id", productIds);
+
+      if (!productCategoriesError && productCategories) {
+        // Get category names
+        const categoryIds = [...new Set(productCategories.map((p) => p.category_id).filter(Boolean))];
+        const { data: categories, error: categoriesError } = await supabase
+          .from("categories")
+          .select("id, name")
+          .in("id", categoryIds);
+
+        if (!categoriesError && categories) {
+          const categoryById = new Map(categories.map((c) => [c.id, c.name]));
+          const productCategoryMap = new Map(productCategories.map((p) => [p.id, p.category_id]));
+
+          // Aggregate sales by category
+          const categoryTotals = new Map<string, { name: string; total: number }>();
+
+          allOrderItems.forEach((item) => {
+            const categoryId = productCategoryMap.get(item.product_id);
+            if (categoryId) {
+              const categoryName = categoryById.get(categoryId) || "Uncategorized";
+              const current = categoryTotals.get(categoryId) || { name: categoryName, total: 0 };
+              current.total += Number(item.line_total) || 0;
+              categoryTotals.set(categoryId, current);
+            }
+          });
+
+          const totalAllCategories = [...categoryTotals.values()].reduce((sum, cat) => sum + cat.total, 0);
+
+          categorySales = [...categoryTotals.entries()]
+            .map(([categoryId, data]) => ({
+              category_id: categoryId,
+              category_name: data.name,
+              total_sales: data.total,
+              percentage: totalAllCategories > 0 ? Math.round((data.total / totalAllCategories) * 100) : 0
+            }))
+            .sort((a, b) => b.total_sales - a.total_sales)
+            .slice(0, 7);
+        }
+      }
+    }
+  }
+
   const decisions: DashboardDecisionItem[] = [];
 
   if (failedCheckoutAttempts24h > 0) {
@@ -971,6 +1077,8 @@ async function fetchAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
       topProducts,
       attentionNeeded: revenueAttention
     },
+    weeklyRevenue,
+    categorySales,
     degraded: warnings.length > 0 || overallHealthStatus !== "healthy",
     warnings
   };

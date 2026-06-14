@@ -63,32 +63,6 @@ function getGreeting() {
   return "Good evening";
 }
 
-// Generate mock weekly revenue data (will be replaced with real data)
-function generateMockWeeklyRevenue() {
-  const weeks = [];
-  for (let i = 11; i >= 0; i--) {
-    weeks.push({
-      week_label: `W${12 - i}`,
-      week_start: new Date(Date.now() - i * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      revenue: Math.floor(Math.random() * 5000000) + 2000000
-    });
-  }
-  return weeks;
-}
-
-// Generate mock category sales data (will be replaced with real data)
-function generateMockCategorySales() {
-  return [
-    { category_id: "1", category_name: "Immune Boosters", total_sales: 31000000, percentage: 31 },
-    { category_id: "2", category_name: "Men's Health", total_sales: 19000000, percentage: 19 },
-    { category_id: "3", category_name: "Bone & Joint", total_sales: 14000000, percentage: 14 },
-    { category_id: "4", category_name: "Digestive", total_sales: 12000000, percentage: 12 },
-    { category_id: "5", category_name: "Women's Health", total_sales: 11000000, percentage: 11 },
-    { category_id: "6", category_name: "Skincare", total_sales: 8000000, percentage: 8 },
-    { category_id: "7", category_name: "Other", total_sales: 5000000, percentage: 5 }
-  ];
-}
-
 export default async function AdminDashboardPage() {
   const session = await getAdminSessionFromCookies();
 
@@ -273,9 +247,9 @@ export default async function AdminDashboardPage() {
     ]);
   }
 
-  // Generate chart data (mock for now, will be replaced with real analytics)
-  const weeklyRevenue = generateMockWeeklyRevenue();
-  const categorySales = generateMockCategorySales();
+  // Use real chart data from snapshot
+  const weeklyRevenue = snapshot.weeklyRevenue;
+  const categorySales = snapshot.categorySales;
 
   // Calculate average order value
   const avgOrderValue = snapshot.kpis.totalOrders > 0
