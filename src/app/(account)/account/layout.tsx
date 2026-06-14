@@ -14,7 +14,6 @@ import {
   RefreshCw,
   Search,
   ShoppingBag,
-  Target,
   User,
   X
 } from "lucide-react";
@@ -23,10 +22,9 @@ import { cn } from "@/lib/utils";
 
 const NAV_SECTIONS = [
   {
-    title: "MY WELLNESS",
+    title: "OVERVIEW",
     items: [
-      { href: "/account/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/account/wellness", label: "Wellness Goals", icon: Target }
+      { href: "/account/dashboard", label: "Dashboard", icon: LayoutDashboard }
     ]
   },
   {
@@ -40,7 +38,7 @@ const NAV_SECTIONS = [
   {
     title: "ACCOUNT",
     items: [
-      { href: "/account/addresses", label: "Addresses & Payment", icon: MapPin },
+      { href: "/account/addresses", label: "Addresses", icon: MapPin },
       { href: "/account/profile", label: "Profile Settings", icon: User }
     ]
   }
