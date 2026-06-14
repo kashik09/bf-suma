@@ -352,6 +352,99 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
+      {/* Recent Orders & Top Products */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Recent Orders Table */}
+        <Card className="lg:col-span-2 p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Recent orders</h2>
+            <Link href="/admin/orders" className="text-sm font-medium text-brand-600 hover:text-brand-700">
+              View all
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="pb-3 pr-4">Order</th>
+                  <th className="pb-3 pr-4">Customer</th>
+                  <th className="pb-3 pr-4">Total</th>
+                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {snapshot.recentOrders.slice(0, 6).map((order) => (
+                  <tr key={order.id} className="hover:bg-slate-50">
+                    <td className="py-3 pr-4">
+                      <Link href={`/admin/orders/${order.id}`} className="font-medium text-brand-600 hover:text-brand-700">
+                        {order.orderNumber}
+                      </Link>
+                    </td>
+                    <td className="py-3 pr-4 text-slate-700">{order.customerName}</td>
+                    <td className="py-3 pr-4 font-medium text-slate-900">{formatCurrency(order.total)}</td>
+                    <td className="py-3 pr-4">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        order.status === "DELIVERED" ? "bg-emerald-50 text-emerald-700" :
+                        order.status === "OUT_FOR_DELIVERY" ? "bg-blue-50 text-blue-700" :
+                        order.status === "PROCESSING" ? "bg-amber-50 text-amber-700" :
+                        order.status === "PENDING" ? "bg-slate-100 text-slate-600" :
+                        order.status === "CANCELED" ? "bg-rose-50 text-rose-700" :
+                        "bg-slate-100 text-slate-600"
+                      }`}>
+                        {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
+                      </span>
+                    </td>
+                    <td className="py-3 text-slate-500">
+                      {new Date(order.createdAt).toLocaleDateString("en-UG", { month: "short", day: "numeric" })}
+                    </td>
+                  </tr>
+                ))}
+                {snapshot.recentOrders.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-500">No orders yet</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* Top Products */}
+        <Card className="p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Top products</h2>
+            <span className="text-xs text-slate-400">This week</span>
+          </div>
+          <div className="space-y-4">
+            {snapshot.revenueIntelligence.topProducts.slice(0, 5).map((product, index) => (
+              <Link
+                key={product.productId}
+                href={product.href}
+                className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-slate-50"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">
+                  {index + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-slate-900">{product.productName}</p>
+                  <p className="text-xs text-slate-500">{product.unitsSold} sold · {product.orderCount} orders</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-slate-900">{formatCurrency(product.revenue)}</p>
+                  {product.attention && (
+                    <span className="text-xs text-amber-600">Low stock</span>
+                  )}
+                </div>
+              </Link>
+            ))}
+            {snapshot.revenueIntelligence.topProducts.length === 0 && (
+              <p className="py-8 text-center text-sm text-slate-500">No sales data this week</p>
+            )}
+          </div>
+        </Card>
+      </div>
+
       {/* Partners Section - Only show if partners table exists */}
       {hasPartnersTable && (
         <Card className="p-5">
