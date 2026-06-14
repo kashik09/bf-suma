@@ -1,19 +1,26 @@
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/admin-session";
+import { logEvent } from "@/lib/logger";
 
-export const dynamic = "force-dynamic";
+export async function GET() {
+  const cookieStore = await cookies();
 
-export async function GET(request: Request) {
-  const redirectUrl = new URL("/admin", request.url);
-  const response = NextResponse.redirect(redirectUrl);
+  // Clear the admin session cookie
+  cookieStore.delete(ADMIN_SESSION_COOKIE_NAME);
 
-  response.cookies.set(ADMIN_SESSION_COOKIE_NAME, "", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    maxAge: 0,
-    path: "/"
-  });
+  logEvent("info", "admin.logout", { method: "GET" });
 
-  return response;
+  redirect("/admin");
+}
+
+export async function POST() {
+  const cookieStore = await cookies();
+
+  // Clear the admin session cookie
+  cookieStore.delete(ADMIN_SESSION_COOKIE_NAME);
+
+  logEvent("info", "admin.logout", { method: "POST" });
+
+  redirect("/admin");
 }
