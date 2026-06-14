@@ -120,9 +120,6 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="truncate text-sm font-medium text-slate-900">Customer</p>
-            <span className="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-              Gold Member
-            </span>
           </div>
           <form action="/account/logout" method="POST">
             <button
