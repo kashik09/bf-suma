@@ -3,21 +3,13 @@ import {
   ArrowRight,
   Heart,
   Package,
-  RefreshCw,
-  Target
+  RefreshCw
 } from "lucide-react";
-import { LoyaltyBanner, OrderTrackerCard, WellnessGoalsCard } from "@/components/account";
+import { LoyaltyBanner, OrderTrackerCard } from "@/components/account";
 import { requireCustomerUser } from "@/lib/auth/customer-server";
 import { getCustomerDashboardSnapshot } from "@/services/customer-account";
 
 export const dynamic = "force-dynamic";
-
-// Mock wellness goals - would come from database
-const mockWellnessGoals = [
-  { id: "1", name: "Daily vitamins", progress: 5, target: 7, unit: "days" },
-  { id: "2", name: "Water intake", progress: 6, target: 8, unit: "glasses" },
-  { id: "3", name: "Exercise", progress: 3, target: 5, unit: "sessions" }
-];
 
 export default async function AccountDashboardPage() {
   const user = await requireCustomerUser();
@@ -49,10 +41,10 @@ export default async function AccountDashboardPage() {
 
   const quickStats = [
     {
-      label: "Active goals",
-      value: mockWellnessGoals.length,
-      icon: Target,
-      href: "/account/wellness",
+      label: "Active orders",
+      value: activeOrdersCount,
+      icon: Package,
+      href: "/account/orders",
       color: "bg-brand-100 text-brand-600"
     },
     {
@@ -73,7 +65,7 @@ export default async function AccountDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-20 md:pb-0">
+    <div className="space-y-6">
       {/* Loyalty Banner */}
       <LoyaltyBanner
         firstName={firstName}
@@ -119,50 +111,43 @@ export default async function AccountDashboardPage() {
         })}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Wellness Goals */}
-        <WellnessGoalsCard goals={mockWellnessGoals} streak={7} />
+      {/* Recommended Products */}
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-900">Recommended for you</h3>
+          <Link
+            href="/shop"
+            className="text-xs font-medium text-brand-600 hover:underline"
+          >
+            View all
+          </Link>
+        </div>
 
-        {/* Recommended Products */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">Recommended for you</h3>
-            <Link
-              href="/shop"
-              className="text-xs font-medium text-brand-600 hover:underline"
+        <div className="space-y-3">
+          {[
+            { name: "Reishi Mushroom Extract", price: "UGX 85,000", reason: "Popular choice" },
+            { name: "Omega-3 Fish Oil", price: "UGX 65,000", reason: "Frequently bought" },
+            { name: "Vitamin D3 Drops", price: "UGX 45,000", reason: "Back in stock" }
+          ].map((product) => (
+            <div
+              key={product.name}
+              className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
             >
-              View all
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {/* Mock product recommendations */}
-            {[
-              { name: "Reishi Mushroom Extract", price: "UGX 85,000", reason: "Based on your goals" },
-              { name: "Omega-3 Fish Oil", price: "UGX 65,000", reason: "Frequently bought" },
-              { name: "Vitamin D3 Drops", price: "UGX 45,000", reason: "Low stock alert" }
-            ].map((product) => (
-              <div
-                key={product.name}
-                className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-slate-200" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">{product.name}</p>
-                    <p className="text-xs text-slate-500">{product.reason}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-slate-900">{product.price}</p>
-                  <button className="mt-1 text-xs font-medium text-brand-600 hover:underline">
-                    Add to cart
-                  </button>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-slate-200" />
+                <div>
+                  <p className="text-sm font-medium text-slate-900">{product.name}</p>
+                  <p className="text-xs text-slate-500">{product.reason}</p>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold text-slate-900">{product.price}</p>
+                <button className="mt-1 text-xs font-medium text-brand-600 hover:underline">
+                  Add to cart
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
