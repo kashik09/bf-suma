@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
-import { PageContainer } from "@/components/layout/page-container";
+import { Heart, ArrowLeft, ShoppingBag } from "lucide-react";
 import { ProductCard } from "@/components/storefront/product-card";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { listStorefrontProducts } from "@/services/products";
@@ -56,28 +56,40 @@ export default async function AccountWishlistPage() {
 
   if (!user?.email) {
     return (
-      <PageContainer className="space-y-5 py-10 sm:py-12">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-          <h1 className="text-2xl font-semibold text-slate-900">Wishlist</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Sign in to save your wishlist across devices.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/account/dashboard"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900">Wishlist</h1>
+            <p className="text-sm text-slate-500">Sign in to save your wishlist</p>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-soft">
+          <Heart className="mx-auto h-12 w-12 text-slate-300" />
+          <h2 className="mt-4 text-lg font-semibold text-slate-900">Sign in to view your wishlist</h2>
+          <p className="mt-1 text-sm text-slate-500">Save products and access them across devices.</p>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
               href="/account/login"
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
               Sign In
             </Link>
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
               href="/shop"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
             >
               Browse Products
             </Link>
           </div>
-        </section>
-      </PageContainer>
+        </div>
+      </div>
     );
   }
 
@@ -99,41 +111,53 @@ export default async function AccountWishlistPage() {
     .filter((product): product is NonNullable<typeof product> => Boolean(product));
 
   return (
-    <PageContainer className="space-y-5 py-10 sm:py-12">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-        <h1 className="text-2xl font-semibold text-slate-900">Wishlist</h1>
-        <p className="mt-2 text-sm text-slate-600">Saved products you can come back to anytime.</p>
-      </section>
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Link
+          href="/account/dashboard"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Wishlist</h1>
+          <p className="text-sm text-slate-500">
+            {wishlistProducts.length} saved {wishlistProducts.length === 1 ? "product" : "products"}
+          </p>
+        </div>
+      </div>
 
       {wishlistProducts.length === 0 ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-soft">
-          <h2 className="text-lg font-semibold text-slate-900">Your wishlist is empty.</h2>
-          <p className="mt-1 text-sm text-slate-600">Your wishlist is empty. Browse products to add some.</p>
+        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-soft">
+          <Heart className="mx-auto h-12 w-12 text-slate-300" />
+          <h2 className="mt-4 text-lg font-semibold text-slate-900">Your wishlist is empty</h2>
+          <p className="mt-1 text-sm text-slate-500">Save products you like by tapping the heart icon.</p>
           <Link
-            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/shop"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
           >
+            <ShoppingBag className="h-4 w-4" />
             Browse Products
           </Link>
-        </section>
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {wishlistProducts.map((product) => (
-            <div className="space-y-2" key={product.id}>
+            <div key={product.id} className="space-y-2">
               <ProductCard product={product} />
               <form action={removeWishlistItemAction}>
                 <input name="slug" type="hidden" value={product.slug} />
                 <button
-                  className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 transition hover:bg-slate-100"
                   type="submit"
+                  className="inline-flex h-9 w-full items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
-                  Remove
+                  Remove from wishlist
                 </button>
               </form>
             </div>
           ))}
         </div>
       )}
-    </PageContainer>
+    </div>
   );
 }
