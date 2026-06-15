@@ -25,19 +25,12 @@ const nextConfig: NextConfig = {
   // Security headers are set in src/middleware.ts (single source of truth)
 };
 
-// TEMPORARILY DISABLED SENTRY TO DEBUG 404 ISSUE
-export default nextConfig;
-
-// export default withSentryConfig(nextConfig, {
-//   org: "kashi-kweyu",
-//   project: "bf-suma",
-//   silent: !process.env.CI,
-//   widenClientFileUpload: true,
-//   tunnelRoute: "/monitoring",
-//   webpack: {
-//     automaticVercelMonitors: true,
-//     treeshake: {
-//       removeDebugLogging: true,
-//     },
-//   }
-// });
+export default withSentryConfig(nextConfig, {
+  org: "kashi-kweyu",
+  project: "bf-suma",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  disableLogger: true,
+  automaticVercelMonitors: true
+});
