@@ -103,8 +103,9 @@ export default async function AdminNewBlogPostPage({
       redirect("/admin/blog/new?error=Slug%20must%20include%20letters%20or%20numbers.");
     }
 
+    let created;
     try {
-      const created = await createAdminBlogPost({
+      created = await createAdminBlogPost({
         title: parsed.data.title,
         slug: normalizedSlug,
         author: parsed.data.author,
@@ -116,15 +117,15 @@ export default async function AdminNewBlogPostPage({
         internal_tags: parseTags(parsed.data.internalTags),
         channel_targets: channelTargets
       });
-
-      revalidateTag("blog");
-      revalidatePath("/blog");
-      revalidatePath(`/blog/${normalizedSlug}`);
-      revalidatePath("/admin/blog");
-      redirect(`/admin/blog/${created.id}?updated=1`);
     } catch (error) {
       redirect(`/admin/blog/new?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
+
+    revalidateTag("blog");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${normalizedSlug}`);
+    revalidatePath("/admin/blog");
+    redirect(`/admin/blog/${created.id}?updated=1`);
   }
 
   return (

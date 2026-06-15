@@ -88,8 +88,9 @@ export default async function AdminNewProductPage({
       redirect("/admin/products/new?error=Slug%20must%20include%20letters%20or%20numbers.");
     }
 
+    let created;
     try {
-      const created = await createAdminProduct({
+      created = await createAdminProduct({
         name: parsed.data.name,
         slug: normalizedSlug,
         description: parsed.data.description?.trim() || null,
@@ -108,13 +109,13 @@ export default async function AdminNewProductPage({
       if (parsed.data.imageUrl?.trim()) {
         await upsertProductImageUrl(created.id, parsed.data.imageUrl);
       }
-
-      revalidatePath("/admin/products");
-      revalidatePath("/shop");
-      redirect(`/admin/products/${created.id}?updated=1`);
     } catch (error) {
       redirect(`/admin/products/new?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
+
+    revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    redirect(`/admin/products/${created.id}?updated=1`);
   }
 
   return (

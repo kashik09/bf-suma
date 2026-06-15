@@ -89,8 +89,9 @@ export default async function AdminNewPackagePage({
       redirect(`/admin/packages/new?error=${encodeURIComponent("Slug must include letters or numbers.")}`);
     }
 
+    let created;
     try {
-      const created = await createPackage({
+      created = await createPackage({
         name: parsed.data.name,
         slug: normalizedSlug,
         tagline: parsed.data.tagline || null,
@@ -105,14 +106,14 @@ export default async function AdminNewPackagePage({
         sort_order: parsed.data.sortOrder,
         items: parsed.data.items
       });
-
-      revalidatePath("/admin/packages");
-      revalidatePath("/packages");
-      redirect(`/admin/packages/${created.id}?created=1`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create package.";
       redirect(`/admin/packages/new?error=${encodeURIComponent(message)}`);
     }
+
+    revalidatePath("/admin/packages");
+    revalidatePath("/packages");
+    redirect(`/admin/packages/${created.id}?created=1`);
   }
 
   return (

@@ -123,13 +123,14 @@ export default async function AdminProductDetailPage({
         category_id: parsed.data.categoryId
       });
       await upsertProductImageUrl(id, parsed.data.imageUrl || null);
-      revalidatePath("/admin/products");
-      revalidatePath(`/admin/products/${id}`);
-      revalidatePath("/shop");
-      redirect(`/admin/products/${id}?updated=1`);
     } catch (error) {
       redirect(`/admin/products/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
+
+    revalidatePath("/admin/products");
+    revalidatePath(`/admin/products/${id}`);
+    revalidatePath("/shop");
+    redirect(`/admin/products/${id}?updated=1`);
   }
 
   async function deleteProductAction() {
@@ -143,13 +144,14 @@ export default async function AdminProductDetailPage({
 
     try {
       await deleteAdminProduct(id);
-      revalidatePath("/admin/products");
-      revalidatePath(`/admin/products/${id}`);
-      revalidatePath("/shop");
-      redirect("/admin/products?deleted=1");
     } catch (error) {
       redirect(`/admin/products/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
+
+    revalidatePath("/admin/products");
+    revalidatePath(`/admin/products/${id}`);
+    revalidatePath("/shop");
+    redirect("/admin/products?deleted=1");
   }
 
   return (

@@ -117,16 +117,16 @@ export default async function AdminEditPackagePage({
         sort_order: parsed.data.sortOrder,
         items: parsed.data.items
       });
-
-      revalidatePath("/admin/packages");
-      revalidatePath(`/admin/packages/${id}`);
-      revalidatePath("/packages");
-      revalidatePath(`/packages/${normalizedSlug}`);
-      redirect(`/admin/packages/${id}?updated=1`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to update package.";
       redirect(`/admin/packages/${id}?error=${encodeURIComponent(message)}`);
     }
+
+    revalidatePath("/admin/packages");
+    revalidatePath(`/admin/packages/${id}`);
+    revalidatePath("/packages");
+    revalidatePath(`/packages/${normalizedSlug}`);
+    redirect(`/admin/packages/${id}?updated=1`);
   }
 
   async function deletePackageAction() {
@@ -140,13 +140,14 @@ export default async function AdminEditPackagePage({
 
     try {
       await deletePackage(id);
-      revalidatePath("/admin/packages");
-      revalidatePath("/packages");
-      redirect("/admin/packages?deleted=1");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to delete package.";
       redirect(`/admin/packages/${id}?error=${encodeURIComponent(message)}`);
     }
+
+    revalidatePath("/admin/packages");
+    revalidatePath("/packages");
+    redirect("/admin/packages?deleted=1");
   }
 
   return (

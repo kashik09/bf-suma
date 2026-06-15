@@ -118,8 +118,9 @@ export default async function AdminBlogDetailPage({
       redirect(`/admin/blog/${id}?error=Slug%20must%20include%20letters%20or%20numbers.`);
     }
 
+    let updated;
     try {
-      const updated = await updateAdminBlogPost(id, {
+      updated = await updateAdminBlogPost(id, {
         title: parsed.data.title,
         slug: normalizedSlug,
         author: parsed.data.author,
@@ -131,17 +132,17 @@ export default async function AdminBlogDetailPage({
         internal_tags: parseTags(parsed.data.internalTags),
         channel_targets: channelTargets
       });
-
-      revalidateTag("blog");
-      revalidatePath("/blog");
-      revalidatePath(`/blog/${previousSlug}`);
-      revalidatePath(`/blog/${updated.slug}`);
-      revalidatePath("/admin/blog");
-      revalidatePath(`/admin/blog/${id}`);
-      redirect(`/admin/blog/${id}?updated=1`);
     } catch (error) {
       redirect(`/admin/blog/${id}?error=${encodeURIComponent(parseErrorMessage(error))}`);
     }
+
+    revalidateTag("blog");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${previousSlug}`);
+    revalidatePath(`/blog/${updated.slug}`);
+    revalidatePath("/admin/blog");
+    revalidatePath(`/admin/blog/${id}`);
+    redirect(`/admin/blog/${id}?updated=1`);
   }
 
   async function deleteBlogPostAction() {
@@ -155,14 +156,15 @@ export default async function AdminBlogDetailPage({
 
     try {
       await deleteAdminBlogPost(id);
-      revalidateTag("blog");
-      revalidatePath("/blog");
-      revalidatePath(`/blog/${previousSlug}`);
-      revalidatePath("/admin/blog");
-      redirect("/admin/blog?deleted=1");
     } catch {
       redirect(`/admin/blog/${id}?error=${encodeURIComponent("We couldn't delete this blog post. Please try again.")}`);
     }
+
+    revalidateTag("blog");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${previousSlug}`);
+    revalidatePath("/admin/blog");
+    redirect("/admin/blog?deleted=1");
   }
 
   return (
