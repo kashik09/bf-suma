@@ -98,64 +98,9 @@ export default async function AdminDashboardPage() {
         redirect("/admin");
       }
 
+      let user;
       try {
-        const user = await authenticateAdminUser(email, password);
-        if (!user) {
-          logEvent("warn", "admin.login_failed", { email, reason: "invalid_credentials" });
-          await setFlashError("invalid_credentials");
-          await setFlashRedirect(submittedNext);
-          redirect("/admin");
-        }
-
-        if (user.mustResetPassword) {
-          const resetToken = await createAdminSessionToken({
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-            passwordVersion: user.passwordVersion,
-            mustResetPassword: true
-          });
-
-          const cookieStore = await cookies();
-          const isProduction = process.env.NODE_ENV === "production";
-          cookieStore.set(ADMIN_SESSION_COOKIE_NAME, resetToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: isProduction,
-            maxAge: 60 * 15,
-            path: "/"
-          });
-
-          await setFlashRedirect(submittedNext);
-          redirect("/admin/reset-password");
-        }
-
-        const sessionMaxAge = rememberMe
-          ? ADMIN_SESSION_REMEMBER_MAX_AGE_SECONDS
-          : ADMIN_SESSION_MAX_AGE_SECONDS;
-
-        const token = await createAdminSessionToken({
-          userId: user.id,
-          email: user.email,
-          role: user.role,
-          passwordVersion: user.passwordVersion,
-          mustResetPassword: false
-        }, sessionMaxAge);
-
-        const cookieStore = await cookies();
-        const isProduction = process.env.NODE_ENV === "production";
-        cookieStore.set(ADMIN_SESSION_COOKIE_NAME, token, {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: isProduction,
-          maxAge: sessionMaxAge,
-          path: "/"
-        });
-
-        logEvent("info", "admin.login_success", { email });
-        await clearFlashError();
-        await clearFlashRedirect();
-        redirect(submittedNext);
+        user = await authenticateAdminUser(email, password);
       } catch (error) {
         if (error instanceof AdminAuthUnavailableError) {
           logEvent("warn", "admin.login_failed", { email, reason: "auth_unavailable" });
@@ -163,11 +108,68 @@ export default async function AdminDashboardPage() {
           await setFlashRedirect(submittedNext);
           redirect("/admin");
         }
+        logEvent("warn", "admin.login_failed", { email, reason: "unexpected_error" });
+        await setFlashError("invalid_credentials");
+        await setFlashRedirect(submittedNext);
+        redirect("/admin");
+      }
+
+      if (!user) {
         logEvent("warn", "admin.login_failed", { email, reason: "invalid_credentials" });
         await setFlashError("invalid_credentials");
         await setFlashRedirect(submittedNext);
         redirect("/admin");
       }
+
+      if (user.mustResetPassword) {
+        const resetToken = await createAdminSessionToken({
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+          passwordVersion: user.passwordVersion,
+          mustResetPassword: true
+        });
+
+        const cookieStore = await cookies();
+        const isProduction = process.env.NODE_ENV === "production";
+        cookieStore.set(ADMIN_SESSION_COOKIE_NAME, resetToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: isProduction,
+          maxAge: 60 * 15,
+          path: "/"
+        });
+
+        await setFlashRedirect(submittedNext);
+        redirect("/admin/reset-password");
+      }
+
+      const sessionMaxAge = rememberMe
+        ? ADMIN_SESSION_REMEMBER_MAX_AGE_SECONDS
+        : ADMIN_SESSION_MAX_AGE_SECONDS;
+
+      const token = await createAdminSessionToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        passwordVersion: user.passwordVersion,
+        mustResetPassword: false
+      }, sessionMaxAge);
+
+      const cookieStore = await cookies();
+      const isProduction = process.env.NODE_ENV === "production";
+      cookieStore.set(ADMIN_SESSION_COOKIE_NAME, token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: isProduction,
+        maxAge: sessionMaxAge,
+        path: "/"
+      });
+
+      logEvent("info", "admin.login_success", { email });
+      await clearFlashError();
+      await clearFlashRedirect();
+      redirect(submittedNext);
     }
 
     return (
