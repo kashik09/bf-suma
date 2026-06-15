@@ -2,11 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { FormField } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Turnstile } from "@/components/ui/turnstile";
 import { trackEvent } from "@/lib/analytics";
 import { newsletterSignupSchema, type NewsletterSignupInput } from "@/lib/validation";
 import { submitNewsletterSignup } from "@/services/storefront-api";
@@ -35,6 +36,11 @@ export function NewsletterSignup({
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   const form = useForm<NewsletterSignupInput>({
     resolver: zodResolver(newsletterSignupSchema),
@@ -57,8 +63,9 @@ export function NewsletterSignup({
       const response = await submitNewsletterSignup({
         ...values,
         source,
-        context
-      });
+        context,
+        ...(turnstileToken && { turnstileToken })
+      } as NewsletterSignupInput & { turnstileToken?: string });
 
       form.reset({ email: "", source, context });
       setIsSuccess(true);
@@ -131,6 +138,8 @@ export function NewsletterSignup({
             {emailError ? <p className={onDark ? "text-xs font-medium text-rose-300" : "text-xs font-medium text-rose-700"}>{emailError}</p> : null}
           </div>
 
+          <Turnstile onVerify={handleTurnstileVerify} size="compact" theme={onDark ? "dark" : "light"} />
+
           <Button
             className={onDark ? "w-full bg-white text-slate-900 hover:bg-slate-100" : "w-full"}
             disabled={isSubmitting}
@@ -141,24 +150,27 @@ export function NewsletterSignup({
           </Button>
         </div>
       ) : (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <FormField error={emailError} htmlFor={`newsletter-email-${source}`} label="Email">
-            <Input
-              autoComplete="email"
-              id={`newsletter-email-${source}`}
-              placeholder="you@example.com"
-              type="email"
-              {...form.register("email")}
-            />
-          </FormField>
+        <div className="space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <FormField error={emailError} htmlFor={`newsletter-email-${source}`} label="Email">
+              <Input
+                autoComplete="email"
+                id={`newsletter-email-${source}`}
+                placeholder="you@example.com"
+                type="email"
+                {...form.register("email")}
+              />
+            </FormField>
 
-          <Button
-            className="w-full sm:w-auto"
-            disabled={isSubmitting}
-            type="submit"
-          >
-            {isSubmitting ? "Submitting..." : ctaLabel}
-          </Button>
+            <Button
+              className="w-full sm:w-auto"
+              disabled={isSubmitting}
+              type="submit"
+            >
+              {isSubmitting ? "Submitting..." : ctaLabel}
+            </Button>
+          </div>
+          <Turnstile onVerify={handleTurnstileVerify} size="normal" />
         </div>
       )}
 

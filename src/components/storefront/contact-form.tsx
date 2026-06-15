@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Turnstile } from "@/components/ui/turnstile";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(120),
@@ -19,11 +20,17 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", email: "", subject: "", message: "", honeypot: "" }
   });
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   const onSubmit = async (data: ContactFormData) => {
     setSubmitError(null);
@@ -31,7 +38,7 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ ...data, turnstileToken })
       });
 
       if (!res.ok) {
@@ -140,6 +147,10 @@ export function ContactForm() {
         tabIndex={-1}
         autoComplete="off"
       />
+
+      <div ref={turnstileRef}>
+        <Turnstile onVerify={handleTurnstileVerify} size="normal" />
+      </div>
 
       <button
         type="submit"
