@@ -6,6 +6,7 @@ import { markNewsletterWelcomeEmailSent, subscribeNewsletter } from "@/services/
 import { checkRateLimit } from "@/lib/rate-limit";
 import { resolveClientIp } from "@/lib/request-ip";
 import { logEvent } from "@/lib/logger";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,19 @@ export async function POST(request: Request) {
       },
       { status: 400 }
     );
+  }
+
+  // Verify Turnstile token if provided
+  const turnstileToken = body?.turnstileToken;
+  if (turnstileToken) {
+    const isValidToken = await verifyTurnstileToken(turnstileToken, ip);
+    if (!isValidToken) {
+      logEvent("warn", "newsletter.turnstile_failed", { correlationId });
+      return NextResponse.json(
+        { message: "Security verification failed. Please try again." },
+        { status: 400 }
+      );
+    }
   }
 
   try {

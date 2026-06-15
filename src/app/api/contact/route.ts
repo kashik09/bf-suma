@@ -6,13 +6,15 @@ import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 import { sendContactFormSubmissionEmail } from "@/lib/email/resend";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { resolveClientIp } from "@/lib/request-ip";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const contactSchema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email(),
   subject: z.string().min(3).max(120),
   message: z.string().min(10).max(1500),
-  honeypot: z.string().max(0)
+  honeypot: z.string().max(0),
+  turnstileToken: z.string().optional()
 });
 
 const RATE_LIMIT_CONFIG = {
@@ -39,6 +41,17 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = resolveClientIp(request.headers);
+
+    // Verify Turnstile token if provided
+    if (parsed.data.turnstileToken) {
+      const isValidToken = await verifyTurnstileToken(parsed.data.turnstileToken, ip);
+      if (!isValidToken) {
+        return NextResponse.json(
+          { message: "Security verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
+    }
     const userAgent = request.headers.get("user-agent") || "";
 
     // Rate limit check
