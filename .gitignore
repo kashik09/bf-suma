@@ -25,6 +25,7 @@ pnpm-debug.log*
 # local tooling
 .claude/
 .claude-preferences
+STATUS.md
 .vercel
 .env*.local
 tests/.tmp/
