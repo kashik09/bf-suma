@@ -11,18 +11,13 @@ import {
 } from "@/lib/currency";
 
 export function useSelectedCurrency() {
-  // When multi-currency is disabled, return UGX with no state/effects overhead
-  if (!MULTI_CURRENCY_ENABLED) {
-    return {
-      currency: DEFAULT_CURRENCY,
-      setCurrency: () => {}
-    };
-  }
-
+  // Hooks must be called unconditionally to satisfy React's rules of hooks.
   // Start with SSR-safe default so server and hydration markup match.
   const [currency, setCurrencyState] = useState<SupportedCurrency>(DEFAULT_CURRENCY);
 
   useEffect(() => {
+    if (!MULTI_CURRENCY_ENABLED) return;
+
     function syncCurrency() {
       const next = getCurrency();
       setCurrencyState((prev) => (prev === next ? prev : next));
@@ -39,9 +34,18 @@ export function useSelectedCurrency() {
   }, []);
 
   const setCurrency = useCallback((next: SupportedCurrency) => {
+    if (!MULTI_CURRENCY_ENABLED) return;
     setCurrencyState(next);
     persistCurrency(next);
   }, []);
+
+  // When multi-currency is disabled, return default with no-op setter
+  if (!MULTI_CURRENCY_ENABLED) {
+    return {
+      currency: DEFAULT_CURRENCY,
+      setCurrency: () => {}
+    };
+  }
 
   return {
     currency,
