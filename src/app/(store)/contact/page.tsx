@@ -16,7 +16,7 @@ export default function ContactPage() {
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Get in touch</h1>
         <p className="mt-3 text-lg text-slate-600">
-          Whether you have a quick question or a longer message, we're here to help.
+          Whether you have a quick question or a longer message, we&apos;re here to help.
         </p>
       </div>
 

@@ -34,7 +34,7 @@ export default function StorefrontError({
       />
 
       <h1 className="text-2xl font-semibold text-slate-900">
-        We're updating our catalog
+        We&apos;re updating our catalog
       </h1>
 
       <p className="mt-3 max-w-md text-slate-600">

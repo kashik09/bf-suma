@@ -173,7 +173,7 @@ export default function FaqPage() {
       <section className="rounded-xl border border-slate-200 bg-slate-50 p-5">
         <h2 className="text-lg font-semibold text-slate-900">Still have questions?</h2>
         <p className="mt-1 text-sm text-slate-600">
-          Can't find what you're looking for? Reach out to our support team.
+          Can&apos;t find what you&apos;re looking for? Reach out to our support team.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Link

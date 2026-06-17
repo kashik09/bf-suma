@@ -72,7 +72,7 @@ export default function CookiePolicyPage() {
       <p>You can update your cookie preference at any time using the panel below or by:</p>
       <ul>
         <li>Clicking <strong>Cookie Settings</strong> in the footer</li>
-        <li>Clearing your browser's site data to reset your choice</li>
+        <li>Clearing your browser&apos;s site data to reset your choice</li>
       </ul>
 
       <CookieSettingsPanel />

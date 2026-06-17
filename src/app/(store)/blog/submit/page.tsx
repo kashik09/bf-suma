@@ -90,7 +90,7 @@ export default async function BlogSubmitPage({
         <Card className="border-brand-200 bg-brand-50">
           <p className="font-medium text-brand-800">Your article has been submitted!</p>
           <p className="mt-1 text-sm text-brand-700">
-            We'll review it and notify you when it's published. Thank you for contributing!
+            We&apos;ll review it and notify you when it&apos;s published. Thank you for contributing!
           </p>
         </Card>
       )}
