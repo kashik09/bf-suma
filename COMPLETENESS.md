@@ -28,7 +28,7 @@
 |-------|--------|
 | `npm run build` | ✅ PASS |
 | `npm run typecheck` | ✅ PASS |
-| `npm run lint` | ⚠️ 22 warnings remain (was blocked, now runs) |
+| `npm run lint` | ⚠️ 20 warnings remain (was blocked, now runs) |
 | `npm run test` | ❌ 3/7 pass, 4 fail |
 
 ### Test Failures
@@ -54,6 +54,9 @@
 | `89dba54` | Removed unused imports/variables in UI files (6 files) |
 | `29d0838` | Removed unused SEO variables (`ADDRESS`, `compactAddress`) |
 | `8795ee2` | Removed unused sales chart variable (`total`) |
+| `2ee1160` | Updated completeness audit with cleanup progress |
+| `edc769b` | Removed unused cart availability helper |
+| `919083b` | Removed unused products count helper |
 
 ### Lint Categories Resolved
 
@@ -64,11 +67,21 @@
 
 | Rule | Count |
 |------|-------|
-| `@typescript-eslint/no-unused-vars` | 22 |
+| `@typescript-eslint/no-unused-vars` | 20 |
 | `@next/next/no-img-element` | 7 |
 | `@typescript-eslint/no-explicit-any` | 6 |
 | `@next/next/no-html-link-for-pages` | 2 |
 | `@typescript-eslint/no-empty-object-type` | 1 |
+
+### Remaining Unused-Vars by File
+
+| File | Count | Status |
+|------|-------|--------|
+| `admin/page.tsx` | 3 | Safe to review |
+| `admin-dashboard.ts` | 1 | Safe to review |
+| `checkout-form.tsx` | 5 | Deferred (payment) |
+| `confirmation-wizard.tsx` | 3 | Deferred (context review) |
+| `product-detail.tsx` | 8 | Deferred (context review) |
 
 ### Deferred Items
 
@@ -168,7 +181,7 @@
 ## Next 10 Actions
 
 1. ~~Fix ESLint config for CI compatibility~~ — ✅ Done (`c2c7a3b`)
-2. Continue reducing `no-unused-vars` warnings (22 remaining)
+2. Continue reducing `no-unused-vars` warnings (20 remaining)
 3. Create missing `src/lib/commerce-integrity.ts` or update tests
 4. Create missing `src/lib/idempotency-decision.ts` or update tests
 5. Fix `buildFallbackCatalogHealth` function export
