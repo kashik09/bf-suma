@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { APP_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants";
-import { ADDRESS } from "@/config/contact";
 
 const SITE_NAME = "BF Suma Uganda";
 const BRAND_NAME = "BF Suma";
@@ -387,13 +386,6 @@ export function buildBlogMetaDescription(params: {
   return clampMetaDescription(
     `${params.title}. BF Suma Uganda guide: ${excerpt}`
   );
-}
-
-function compactAddress(...parts: Array<string | null | undefined>): string {
-  return parts
-    .map((part) => part?.trim())
-    .filter(Boolean)
-    .join(", ");
 }
 
 export function buildOrganizationJsonLd() {
