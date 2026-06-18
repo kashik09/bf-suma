@@ -74,18 +74,6 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
 
   const cartGroups = useMemo(() => groupCartItems(items), [items]);
 
-  const getAvailabilityMeta = (availability: "in_stock" | "low_stock" | "out_of_stock") => {
-    if (availability === "in_stock") {
-      return { label: "In Stock", variant: "success" as const };
-    }
-
-    if (availability === "low_stock") {
-      return { label: "Low Stock", variant: "warning" as const };
-    }
-
-    return { label: "Out of Stock", variant: "danger" as const };
-  };
-
   if (items.length === 0) {
     return (
       <EmptyState
@@ -110,10 +98,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
 
             {/* Items */}
             <div className={`space-y-2 ${group.bundle_id ? "rounded-b-xl border border-t-0 border-slate-200 bg-white p-3" : ""}`}>
-              {group.items.map((item) => {
-                const availability = getAvailabilityMeta(item.availability);
-
-                return (
+              {group.items.map((item) => (
                   <div
                     className={`${group.bundle_id ? "rounded-lg border border-slate-100 bg-slate-50 p-3" : "rounded-2xl border border-slate-200 bg-white p-4 shadow-soft"}`}
                     key={item.product_id}
@@ -193,8 +178,7 @@ export function CartPanel({ commerceReady = true, degradedReason = null }: CartP
                       </div>
                     </div>
                   </div>
-                );
-              })}
+              ))}
             </div>
           </div>
         ))}
