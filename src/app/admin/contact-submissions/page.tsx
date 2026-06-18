@@ -188,7 +188,7 @@ export default async function AdminContactSubmissionsPage({
 
         {query.error === "1" && (
           <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-            We couldn't update this submission status. Please try again.
+            We couldn&apos;t update this submission status. Please try again.
           </div>
         )}
 
@@ -221,7 +221,7 @@ export default async function AdminContactSubmissionsPage({
 
       {query.error === "1" && (
         <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-          We couldn't update this submission status. Please try again.
+          We couldn&apos;t update this submission status. Please try again.
         </div>
       )}
 

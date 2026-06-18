@@ -421,7 +421,7 @@ export function ConfirmationWizard({
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">You're All Set!</h1>
+            <h1 className="text-2xl font-bold text-slate-900">You&apos;re All Set!</h1>
             <p className="mt-2 text-slate-600">
               Order <span className="font-semibold">{orderNumber}</span>
             </p>

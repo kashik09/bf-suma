@@ -186,7 +186,7 @@ export function PackageForm({ products, initialData, action, submitLabel }: Pack
               value={dmKeyword}
               onChange={(e) => setDmKeyword(e.target.value)}
             />
-            <p className="mt-1 text-xs text-slate-500">For "DM FIT to get started" pattern</p>
+            <p className="mt-1 text-xs text-slate-500">For &quot;DM FIT to get started&quot; pattern</p>
           </div>
 
           <div className="md:col-span-2">

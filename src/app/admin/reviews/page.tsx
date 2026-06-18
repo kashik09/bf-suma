@@ -130,7 +130,7 @@ export default async function AdminReviewsPage({
 
       {query.error === "1" && (
         <Card className="border-rose-200 bg-rose-50">
-          <p className="text-sm text-rose-800">We couldn't update this review. Please try again.</p>
+          <p className="text-sm text-rose-800">We couldn&apos;t update this review. Please try again.</p>
         </Card>
       )}
 

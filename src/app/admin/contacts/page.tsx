@@ -122,7 +122,7 @@ export default async function AdminContactsPage({
 
         {query.error === "1" ? (
           <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-            We couldn't update this contact status. Please try again.
+            We couldn&apos;t update this contact status. Please try again.
           </div>
         ) : null}
 
@@ -199,7 +199,7 @@ export default async function AdminContactsPage({
 
       {query.error === "1" ? (
         <div className="rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-          We couldn't update this contact status. Please try again.
+          We couldn&apos;t update this contact status. Please try again.
         </div>
       ) : null}
 
