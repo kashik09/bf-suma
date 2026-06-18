@@ -27,8 +27,6 @@ export function SalesByCategory({
   data,
   title = "Sales by category"
 }: SalesByCategoryProps) {
-  const total = data.reduce((sum, item) => sum + item.total_sales, 0);
-
   return (
     <div className="flex h-full flex-col">
       <h3 className="mb-4 text-sm font-semibold text-slate-900">{title}</h3>
