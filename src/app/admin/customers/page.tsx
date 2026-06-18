@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { Download, Users } from "lucide-react";
 import { getAdminSessionFromCookies } from "@/lib/admin-server";
 import { Card } from "@/components/ui";

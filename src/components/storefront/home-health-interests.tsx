@@ -41,11 +41,6 @@ function resolveCategoryBenefit(category: StorefrontCategory) {
   return "Targeted wellness support";
 }
 
-function formatProductCount(count: number | undefined) {
-  if (!count || count <= 0) return "No products yet";
-  return `${count} product${count === 1 ? "" : "s"}`;
-}
-
 export function HomeHealthInterests({ categories }: { categories: StorefrontCategory[] }) {
   const items = categories.slice(0, 8);
   const slides = [{ kind: "all" as const }, ...items.map((category) => ({ kind: "category" as const, category }))];

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { FeaturedInsight, MiniArticle, StoryBlock, WeeklyFeed } from "@/components/content";
+import { FeaturedInsight, MiniArticle, WeeklyFeed } from "@/components/content";
 import { PageContainer } from "@/components/layout/page-container";
-import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests, NewsletterSignup } from "@/components/storefront/client";
+import { Hero, HomeFeaturedPackages, HomeFeaturedProducts, HomeHealthInterests } from "@/components/storefront/client";
 import { SUPPORT_WHATSAPP_PHONE } from "@/lib/constants";
 import { buildLocalBusinessJsonLd, buildOrganizationJsonLd, buildStaticPageMetadata, buildWebSiteJsonLd } from "@/lib/seo";
 import { buildWhatsAppHomepageCtaMessage, buildWhatsAppUrl } from "@/lib/whatsapp";

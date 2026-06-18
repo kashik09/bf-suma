@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import Link from "next/link";
 import { Download, Plus, TrendingUp, Users, Wallet, Network } from "lucide-react";
 import { PartnersLeaderboard } from "@/components/admin/partners-leaderboard";
 import { KpiCard } from "@/components/dashboard";

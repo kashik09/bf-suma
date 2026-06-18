@@ -10,7 +10,6 @@ import { useCartDrawer } from "@/components/storefront/cart-drawer-context";
 import { convertPrice, formatPrice } from "@/lib/currency";
 import { STORE_CURRENCY } from "@/lib/utils";
 import { DELIVERY_ESTIMATE_TEXT } from "@/lib/constants";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { CartItem } from "@/types";
 

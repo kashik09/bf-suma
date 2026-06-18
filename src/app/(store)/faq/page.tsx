@@ -85,14 +85,6 @@ const additionalFaqs: FaqItem[] = [
   }
 ];
 
-const categoryColors: Record<string, string> = {
-  Products: "bg-brand-100 text-brand-800",
-  Orders: "bg-sky-100 text-sky-800",
-  Usage: "bg-amber-100 text-amber-800",
-  Support: "bg-pink-100 text-pink-800",
-  General: "bg-slate-100 text-slate-800"
-};
-
 export default function FaqPage() {
   const pdfFaqEntries = listPdfFaqEntries();
 
