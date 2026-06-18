@@ -83,22 +83,6 @@ function enrichCatalogData(catalog: CatalogData): CatalogData {
   };
 }
 
-function withDerivedProductCounts(
-  categories: StorefrontCategory[],
-  products: StorefrontProduct[]
-): StorefrontCategory[] {
-  const countsBySlug = products.reduce<Map<string, number>>((acc, product) => {
-    const nextCount = (acc.get(product.category_slug) || 0) + 1;
-    acc.set(product.category_slug, nextCount);
-    return acc;
-  }, new Map<string, number>());
-
-  return categories.map((category) => ({
-    ...category,
-    product_count: countsBySlug.get(category.slug) || 0
-  }));
-}
-
 function normalizeStatus(status: unknown): ProductStatus {
   if (status === "DRAFT" || status === "ACTIVE" || status === "ARCHIVED" || status === "OUT_OF_STOCK") {
     return status;
