@@ -1,7 +1,7 @@
 # BF Suma — Completeness Audit
 
 **Date:** 2026-06-16
-**Last Updated:** 2026-06-18
+**Last Updated:** 2026-06-19
 **Auditor:** Claude Code
 
 ---
@@ -28,7 +28,7 @@
 |-------|--------|
 | `npm run build` | ✅ PASS |
 | `npm run typecheck` | ✅ PASS |
-| `npm run lint` | ⚠️ 20 warnings remain (was blocked, now runs) |
+| `npm run lint` | ⚠️ 27 warnings remain (not build-blocking) |
 | `npm run test` | ❌ 3/7 pass, 4 fail |
 
 ### Test Failures
@@ -57,6 +57,30 @@
 | `2ee1160` | Updated completeness audit with cleanup progress |
 | `edc769b` | Removed unused cart availability helper |
 | `919083b` | Removed unused products count helper |
+| `a14a841` | Added partner starter kit fee to partnership page |
+| `e258027` | Fixed invalid data-turnstile-reset prop warning |
+| `6094ce8` | Fixed Next Link internal navigation |
+| `73e0e2b` | Fixed service layer build blockers |
+
+### Production Deploy (2026-06-19)
+
+| Item | Status |
+|------|--------|
+| Build | ✅ PASS |
+| Deploy | ✅ READY |
+| Production URL | https://bf-suma.vercel.app |
+
+### Price Update (2026-06-19)
+
+| Item | Status |
+|------|--------|
+| Products updated | 36/36 matched |
+| Backup exists | ✅ `_price-updates/current-product-prices-before-update.csv` |
+| Rollback exists | ✅ `_price-updates/rollback-product-prices.sql` |
+| Final SQL | ✅ `_price-updates/catalog-price-update-final.sql` |
+| Status | COMMITTED to Supabase |
+
+**Note:** `_price-updates/` folder is local/untracked — not committed to git.
 
 ### Lint Categories Resolved
 
@@ -67,11 +91,10 @@
 
 | Rule | Count |
 |------|-------|
-| `@typescript-eslint/no-unused-vars` | 20 |
-| `@next/next/no-img-element` | 7 |
-| `@typescript-eslint/no-explicit-any` | 6 |
-| `@next/next/no-html-link-for-pages` | 2 |
-| `@typescript-eslint/no-empty-object-type` | 1 |
+| `@typescript-eslint/no-unused-vars` | 22 |
+| `@next/next/no-img-element` | 5 |
+| ~~`@next/next/no-html-link-for-pages`~~ | ✅ Resolved |
+| ~~`@typescript-eslint/no-empty-object-type`~~ | ✅ Resolved |
 
 ### Remaining Unused-Vars by File
 
@@ -178,18 +201,26 @@
 
 ---
 
+## Follow-up Items
+
+| Item | Priority | Notes |
+|------|----------|-------|
+| Regenerate Supabase types | Medium | Payment/delivery columns need types |
+| Admin redirect issue | High | Still unresolved |
+| Reduce `no-unused-vars` warnings | Low | 22 remaining, not blocking |
+
 ## Next 10 Actions
 
 1. ~~Fix ESLint config for CI compatibility~~ — ✅ Done (`c2c7a3b`)
-2. Continue reducing `no-unused-vars` warnings (20 remaining)
-3. Create missing `src/lib/commerce-integrity.ts` or update tests
-4. Create missing `src/lib/idempotency-decision.ts` or update tests
-5. Fix `buildFallbackCatalogHealth` function export
-6. Review checkout/payment lint issues carefully before fixing
-7. Submit sitemap to Google Search Console
-8. Verify GA4 tracking is live
-9. Enable lifecycle emails after client testing
-10. Run e2e purchase test before go-live
+2. ~~Fix build blockers for production deploy~~ — ✅ Done (`6094ce8`, `73e0e2b`)
+3. **Diagnose admin redirect issue** — NEXT
+4. Regenerate Supabase types for orders payment/delivery columns
+5. Continue reducing `no-unused-vars` warnings (22 remaining)
+6. Create missing `src/lib/commerce-integrity.ts` or update tests
+7. Create missing `src/lib/idempotency-decision.ts` or update tests
+8. Submit sitemap to Google Search Console
+9. Verify GA4 tracking is live
+10. Enable lifecycle emails after client testing
 
 ---
 
