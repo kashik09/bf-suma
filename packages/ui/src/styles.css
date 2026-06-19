@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f7f6f2;
+  --foreground: #231f20;
+  --surface: #ffffff;
+  --surface-muted: #eee9e1;
+  --border: #d6ddd3;
+  --brand: #1E9E5A;
+  --brand-foreground: #ffffff;
+  --logo-green: #1E9E5A;
+  --logo-blue: #00aadb;
+  --logo-orange: #f48132;
+  --logo-amber: #f9a533;
+  --logo-pink: #ec297b;
+  --logo-ink: #231f20;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+* {
+  box-sizing: border-box;
+}
