@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -95,31 +95,21 @@ export function Turnstile({
     };
   }, [scriptLoaded, onVerify, onError, onExpire, theme, size]);
 
-  const reset = useCallback(() => {
-    if (widgetIdRef.current && window.turnstile) {
-      window.turnstile.reset(widgetIdRef.current);
-    }
-  }, []);
-
   // Skip rendering if no site key configured (dev mode)
   if (!TURNSTILE_SITE_KEY) {
     return null;
   }
 
-  return <div ref={containerRef} className={className} data-turnstile-reset={reset} />;
+  return <div ref={containerRef} className={className} />;
 }
 
 export function useTurnstileReset(containerRef: React.RefObject<HTMLDivElement | null>) {
   return useCallback(() => {
     const container = containerRef.current;
-    if (container) {
-      const resetFn = container.dataset.turnstileReset;
-      if (resetFn && typeof window !== "undefined") {
-        // Find the turnstile iframe and reset
-        const widgetId = container.querySelector("iframe")?.id?.replace("cf-chl-widget-", "");
-        if (widgetId && window.turnstile) {
-          window.turnstile.reset(widgetId);
-        }
+    if (container && typeof window !== "undefined" && window.turnstile) {
+      const widgetId = container.querySelector("iframe")?.id?.replace("cf-chl-widget-", "");
+      if (widgetId) {
+        window.turnstile.reset(widgetId);
       }
     }
   }, [containerRef]);
