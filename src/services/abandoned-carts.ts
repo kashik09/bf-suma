@@ -1,5 +1,18 @@
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/server";
 
+// Type for abandoned_carts table (not in generated Supabase types)
+type AbandonedCartsClient = {
+  from(table: "abandoned_carts"): {
+    upsert(
+      data: Record<string, unknown>,
+      options?: { onConflict: string }
+    ): Promise<{ error: Error | null }>;
+    delete(): {
+      eq(column: string, value: string): Promise<{ error: Error | null }>;
+    };
+  };
+};
+
 export interface AbandonedCartUpsertInput {
   customerEmail: string;
   customerName?: string | null;
@@ -20,7 +33,7 @@ export async function upsertAbandonedCart(input: AbandonedCartUpsertInput): Prom
   const supabase = createServiceRoleSupabaseClient();
   const customerEmail = normalizeEmail(input.customerEmail);
 
-  const { error } = await (supabase as any)
+  const { error } = await (supabase as unknown as AbandonedCartsClient)
     .from("abandoned_carts")
     .upsert(
       {
@@ -43,7 +56,7 @@ export async function deleteAbandonedCartByEmail(email: string): Promise<void> {
   const supabase = createServiceRoleSupabaseClient();
   const customerEmail = normalizeEmail(email);
 
-  const { error } = await (supabase as any)
+  const { error } = await (supabase as unknown as AbandonedCartsClient)
     .from("abandoned_carts")
     .delete()
     .eq("customer_email", customerEmail);

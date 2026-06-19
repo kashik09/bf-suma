@@ -79,7 +79,7 @@ interface OrderStatusUpdateRpcRow {
   updated_at: string;
 }
 
-export interface CreateOrderIntakeResult extends AtomicOrderWriteResultPayload {}
+export type CreateOrderIntakeResult = AtomicOrderWriteResultPayload;
 
 export interface AdminOrderCustomer {
   id: string;
@@ -906,9 +906,9 @@ export async function markOrderPaid(
 ): Promise<{ success: true }> {
   const supabase = createServiceRoleSupabaseClient();
 
-  // Use type assertion for new columns not yet in generated types
+  // Payment tracking columns added after types were generated - no typed alternative
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("orders")
     .update({
       payment_status: "PAID",
@@ -917,7 +917,7 @@ export async function markOrderPaid(
       payment_notes: input.paymentNotes || null,
       payment_received_at: new Date().toISOString(),
       payment_received_by: adminUserId
-    } as any)
+    })
     .eq("id", orderId);
 
   if (error) {
@@ -965,14 +965,14 @@ export async function markOrderDelivered(
     throw updateError;
   }
 
-  // Update delivered_at and delivered_by (type assertion for new columns)
+  // Delivery tracking columns added after types were generated - no typed alternative
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: deliveryError } = await supabase
+  const { error: deliveryError } = await (supabase as any)
     .from("orders")
     .update({
       delivered_at: new Date().toISOString(),
       delivered_by: adminUserId
-    } as any)
+    })
     .eq("id", orderId);
 
   if (deliveryError) {
