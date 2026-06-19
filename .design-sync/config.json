@@ -1,0 +1,6 @@
+{
+  "pkg": "@bf-suma/ui",
+  "globalName": "BfSumaUI",
+  "shape": "package",
+  "buildCmd": "cd packages/ui && npm install && npm run build && npx tailwindcss -i src/styles.css -o dist/styles.css --minify"
+}
