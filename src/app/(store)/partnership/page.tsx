@@ -215,10 +215,19 @@ export default function PartnershipPage() {
               <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
                 Start Your Journey Today
               </h2>
-              <p className="mb-8 text-lg text-slate-300">
+              <p className="mb-6 text-lg text-slate-300">
                 Take the first step toward building your wellness business with BF Suma.
                 Our team is ready to guide you.
               </p>
+              <div className="mb-8 rounded-lg border border-slate-700 bg-slate-800 p-4">
+                <p className="text-sm font-medium text-slate-400">Partner Starter Kit</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  UGX 72,000
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  One-time registration fee includes training materials and starter resources
+                </p>
+              </div>
               <div className="flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
                 <a
                   href="mailto:partnerships@bfsumauganda.com"
