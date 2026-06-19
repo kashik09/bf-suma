@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
 import { PackageCard } from "@/components/storefront/package-card";
 import { PaginationFooter } from "@/components/storefront/pagination-footer";
@@ -80,12 +81,12 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pac
           <p className="mt-2 text-sm text-slate-600">
             Wellness Bundles are being prepared. Check back soon or browse individual products.
           </p>
-          <a
+          <Link
             className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
             href="/shop"
           >
             Browse Products
-          </a>
+          </Link>
         </section>
       )}
 

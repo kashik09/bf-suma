@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Plus, Search, Trash2, X } from "lucide-react";
 import { Card } from "@/components/ui";
 import { formatCurrency } from "@/lib/utils";
@@ -499,12 +500,12 @@ export function PackageForm({ products, initialData, action, submitLabel }: Pack
         >
           {submitLabel}
         </button>
-        <a
+        <Link
           href="/admin/packages"
           className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
         >
           Cancel
-        </a>
+        </Link>
       </div>
     </form>
   );
