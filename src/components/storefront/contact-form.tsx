@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,16 +17,23 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const turnstileRef = useRef<HTMLDivElement>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", email: "", subject: "", message: "", honeypot: "" }
   });
+
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken(null);
+    setTurnstileResetKey((k) => k + 1);
+  }, []);
 
   const handleTurnstileVerify = useCallback((token: string) => {
     setTurnstileToken(token);
@@ -34,6 +41,12 @@ export function ContactForm() {
 
   const onSubmit = async (data: ContactFormData) => {
     setSubmitError(null);
+
+    if (TURNSTILE_ENABLED && !turnstileToken) {
+      setSubmitError("Please complete the security check before submitting.");
+      return;
+    }
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -43,13 +56,16 @@ export function ContactForm() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        resetTurnstile();
         throw new Error(err.message || "Failed to send message");
       }
 
       setSubmitted(true);
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : "Couldn't send your message. Please try again or reach us on WhatsApp."
+        err instanceof Error
+          ? err.message
+          : "Couldn't send your message. Please try again or reach us on WhatsApp."
       );
     }
   };
@@ -66,10 +82,13 @@ export function ContactForm() {
     );
   }
 
+  const isSubmitting = form.formState.isSubmitting;
+  const canSubmit = !isSubmitting && (!TURNSTILE_ENABLED || !!turnstileToken);
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 md:grid-cols-2">
       {submitError && (
-        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+        <div className="col-span-full flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
           <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
           <p className="text-sm text-red-700">{submitError}</p>
         </div>
@@ -107,7 +126,7 @@ export function ContactForm() {
         )}
       </div>
 
-      <div>
+      <div className="col-span-full">
         <label htmlFor="subject" className="mb-1 block text-sm font-medium text-slate-700">
           Subject
         </label>
@@ -116,14 +135,14 @@ export function ContactForm() {
           type="text"
           {...form.register("subject")}
           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-          placeholder="What's this about?"
+          placeholder="Order inquiry, product question, or partnership request"
         />
         {form.formState.errors.subject && (
           <p className="mt-1 text-xs text-red-600">{form.formState.errors.subject.message}</p>
         )}
       </div>
 
-      <div>
+      <div className="col-span-full">
         <label htmlFor="message" className="mb-1 block text-sm font-medium text-slate-700">
           Message
         </label>
@@ -148,24 +167,32 @@ export function ContactForm() {
         autoComplete="off"
       />
 
-      <div ref={turnstileRef}>
-        <Turnstile onVerify={handleTurnstileVerify} size="normal" />
+      <div className="col-span-full">
+        <Turnstile
+          key={turnstileResetKey}
+          onVerify={handleTurnstileVerify}
+          onError={resetTurnstile}
+          onExpire={resetTurnstile}
+          size="normal"
+        />
       </div>
 
-      <button
-        type="submit"
-        disabled={form.formState.isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
-      >
-        {form.formState.isSubmitting ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Sending...
-          </>
-        ) : (
-          "Send message"
-        )}
-      </button>
+      <div className="col-span-full flex justify-end">
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50 md:w-auto"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            "Send message"
+          )}
+        </button>
+      </div>
     </form>
   );
 }
