@@ -1,7 +1,7 @@
 # BF Suma — Completeness Audit
 
 **Date:** 2026-06-16
-**Last Updated:** 2026-06-19
+**Last Updated:** 2026-06-21
 **Auditor:** Claude Code
 
 ---
@@ -61,6 +61,7 @@
 | `e258027` | Fixed invalid data-turnstile-reset prop warning |
 | `6094ce8` | Fixed Next Link internal navigation |
 | `73e0e2b` | Fixed service layer build blockers |
+| `6d3d53b` | Fixed contact form Turnstile retry bug + tablet layout |
 
 ### Production Deploy (2026-06-19)
 
@@ -69,6 +70,29 @@
 | Build | ✅ PASS |
 | Deploy | ✅ READY |
 | Production URL | https://bf-suma.vercel.app |
+
+### Contact Form Fix Deploy (2026-06-21)
+
+| Item | Status |
+|------|--------|
+| Commit | `6d3d53b` |
+| Branch | `claude/gallant-pascal-wkz3ty` |
+| Build | ✅ PASS |
+| Typecheck | ✅ PASS |
+| Deploy | ✅ Deployed to production (`https://bf-suma.vercel.app`) |
+| Fix | Turnstile token now reset after every failed submit — prevents "Security verification failed" on retry |
+| Fix | `onExpire` and `onError` wired — stale tokens cleared automatically |
+| Fix | Submit blocked until fresh Turnstile verification when CAPTCHA is enabled |
+| Layout | Contact form uses `md:grid-cols-2` — Name/Email side-by-side on tablet+ |
+| Layout | Subject, Message, Turnstile, button all full-width |
+| Layout | Submit button right-aligned on tablet+, full-width on mobile |
+| Docs | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` added to `.env.example` |
+
+**⚠️ Follow-up required:** Verify both Turnstile env vars exist in Vercel → Settings → Environment Variables → Production:
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
+- `TURNSTILE_SECRET_KEY`
+
+If `TURNSTILE_SECRET_KEY` is missing from Vercel Production, the server rejects every token and the bug will persist regardless of this fix.
 
 ### Price Update (2026-06-19)
 
@@ -205,15 +229,18 @@
 
 | Item | Priority | Notes |
 |------|----------|-------|
-| Regenerate Supabase types | Medium | Payment/delivery columns need types |
+| Verify Turnstile env vars in Vercel Production | **Critical** | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` must both be set |
 | Admin redirect issue | High | Still unresolved |
+| Regenerate Supabase types | Medium | Payment/delivery columns need types |
 | Reduce `no-unused-vars` warnings | Low | 22 remaining, not blocking |
 
 ## Next 10 Actions
 
 1. ~~Fix ESLint config for CI compatibility~~ — ✅ Done (`c2c7a3b`)
 2. ~~Fix build blockers for production deploy~~ — ✅ Done (`6094ce8`, `73e0e2b`)
-3. **Diagnose admin redirect issue** — NEXT
+3. ~~Fix contact form Turnstile retry bug~~ — ✅ Done (`6d3d53b`, deployed 2026-06-21)
+4. **Verify Turnstile env vars in Vercel Production** — NEXT (critical for contact form fix to hold)
+5. **Diagnose admin redirect issue** — NEXT
 4. Regenerate Supabase types for orders payment/delivery columns
 5. Continue reducing `no-unused-vars` warnings (22 remaining)
 6. Create missing `src/lib/commerce-integrity.ts` or update tests
