@@ -193,22 +193,24 @@ export default async function BlogDetailPage({
 
       <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft">
         {post.cover_image_url ? (
-          <Image
-            alt={`${seoTitle} article cover image`}
-            blurDataURL={BLOG_IMAGE_BLUR_DATA_URL}
-            className="max-h-[420px] w-full object-cover"
-            placeholder="blur"
-            sizes="100vw"
-            src={post.cover_image_url}
-            loading="lazy"
-            width={1400}
-            height={840}
-            priority
-          />
+          <div className="aspect-[2/1] sm:aspect-[21/9]">
+            <Image
+              alt={`${seoTitle} article cover image`}
+              blurDataURL={BLOG_IMAGE_BLUR_DATA_URL}
+              className="h-full w-full object-cover"
+              placeholder="blur"
+              sizes="100vw"
+              src={post.cover_image_url}
+              loading="lazy"
+              width={1400}
+              height={600}
+              priority
+            />
+          </div>
         ) : null}
 
         <div className="space-y-5 p-5 sm:p-8">
-          <header className="space-y-3">
+          <header className="mx-auto max-w-3xl space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm text-slate-500">
                 {post.author} • {formatPublishedDate(post.published_at, post.created_at)}
@@ -236,7 +238,9 @@ export default async function BlogDetailPage({
             ) : null}
           </header>
 
-          <BlogProse content={post.content} />
+          <div className="mx-auto max-w-3xl">
+            <BlogProse content={post.content} />
+          </div>
 
           <section className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
             <h2 className="text-lg font-semibold text-slate-900">Ready to take the next step?</h2>

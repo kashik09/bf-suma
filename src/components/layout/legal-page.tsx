@@ -20,6 +20,19 @@ export function LegalPage({ title, lastUpdated, toc, children }: LegalPageProps)
         <p className="mt-2 text-sm font-medium text-slate-500">Last updated: {lastUpdated}</p>
       </header>
 
+      {/* Mobile/tablet chip bar — wrapping pills replacing the hidden sidebar */}
+      <div className="mb-6 flex flex-wrap gap-2 lg:hidden">
+        {toc.map((item) => (
+          <a
+            key={item.id}
+            href={`#${item.id}`}
+            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800"
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_260px]">
         <article className="min-w-0">
           <div className="prose prose-slate mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-soft prose-headings:font-semibold prose-h2:mt-10 prose-h2:border-t prose-h2:border-slate-200 prose-h2:pt-6 prose-h2:text-xl prose-h3:mt-6 prose-h3:text-lg prose-p:leading-7 prose-li:leading-7 prose-a:text-brand-700 prose-a:no-underline hover:prose-a:underline sm:p-8">

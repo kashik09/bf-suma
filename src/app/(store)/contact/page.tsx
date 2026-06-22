@@ -20,18 +20,18 @@ export default function ContactPage() {
         </p>
       </div>
 
-      {/* Two-column grid */}
+      {/* Two-column grid — contact cards first on mobile, form left on desktop */}
       <div className="grid gap-8 lg:grid-cols-2">
-        {/* Left - Form */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">Send us a message</h2>
-          <ContactForm />
-        </div>
-
-        {/* Right - Quick contact */}
-        <div>
+        {/* Contact cards: top on mobile, right column on desktop */}
+        <div className="order-first lg:order-last">
           <h2 className="mb-4 text-lg font-semibold text-slate-900">Quick contact</h2>
           <QuickContactCard />
+        </div>
+
+        {/* Form: below cards on mobile, left column on desktop */}
+        <div className="order-last rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:order-first">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Send us a message</h2>
+          <ContactForm />
         </div>
       </div>
     </div>

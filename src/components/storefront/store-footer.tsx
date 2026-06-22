@@ -27,7 +27,7 @@ import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 export function StoreFooter() {
   return (
     <footer className="mt-auto border-t border-white/10 bg-logo-spectrum-footer py-8 text-slate-100">
-      <PageContainer className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_repeat(3,minmax(0,1fr))]">
+      <PageContainer className="grid gap-6 sm:grid-cols-2 md:grid-cols-[minmax(0,1.1fr)_repeat(3,minmax(0,1fr))]">
         <div className="space-y-2.5">
           <h3 className="text-lg font-bold text-white">BF Suma</h3>
           <p className="text-sm leading-relaxed text-slate-100/85">{APP_DESCRIPTION}</p>
